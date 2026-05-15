@@ -87,35 +87,101 @@ export const NAV_LINKS = [
   { href: '/search?instant=true', label: 'הזמנה מיידית' },
   { href: '/owners',   label: 'בעלי נכסים' },
 ]
-
-export const ZIMMER_MENU = {
+export const ATTRACTIONS_MENU = {
   byRegion: [
-    { href: '/search', label: 'לכל הצימרים' },
-    {
-      label: 'צימרים בצפון',
-      subItems: [
-        { href: '/search?region=golan', label: 'רמת הגולן' },
-        { href: '/search?region=galil_upper', label: 'גליל עליון' },
-        { href: '/search?region=galil_lower', label: 'גליל תחתון' },
-      ]
-    },
+    { href: '/attractions', label: 'לכל האטרקציות' },
+    { href: '/attractions?region=north', label: 'אטרקציות בצפון' },
+  { href: '/attractions?region=haifa', label: ' אטרקציות באיזור חיפה והקריות' },
+   { href: '/attractions?region=emek', label: 'אטרקציות בעמקים' },
+    { href: '/attractions?region=kinneret', label: 'אטרקציות בכנרת' },
+    { href: '/attractions?region=miron', label: 'אטרקציות במירון' },
+      { href: '/attractions?region=hermon', label: 'אטרקציות בחרמון' },
+ { href: '/attractions?region=gilboa', label: 'אטרקציות בגלבוע' },
+    { href: '/attractions?region=center', label: 'אטרקציות במרכז' },
+   { href: '/attractions?region=south', label: 'אטרקציות בדרום' },
+    { href: '/attractions?region=eilat', label: 'אטרקציות באילת' },
+  
+ 
+    { href: '/attractions?region=jerusalem', label: 'אטרקציות בירושלים' },
+    { href: '/attractions?region=dead_sea', label: 'אטרקציות בים המלח' },
+    { href: '/attractions?region=arava', label: 'אטרקציות בערבה' },
+ 
+    
   ],
   byAudience: [
+    { href: '/attractions?category=couples', label: 'אטרקציות לזוגות' },
+    { href: '/attractions?category=family', label: 'אטרקציות למשפחות' },
+    { href: '/attractions?category=kids', label: 'אטרקציות לילדים' },
+    { href: '/attractions?category=groups', label: 'אטרקציות לקבוצות' },
+  ],
+
+}
+export const VILLAS_MENU = {
+  byRegion: [
+    { href: '/villas', label: 'לכל הוילות' },
+    { href: '/villas?region=north', label: 'וילות בצפון' },
+    { href: '/villas?region=center', label: 'וילות במרכז' },
+    { href: '/villas?region=south', label: 'וילות בדרום' },
+    { href: '/villas?region=galil_west', label: 'וילות בגליל מערבי' },
+    { href: '/villas?region=galil_upper', label: 'וילות בגליל עליון' },
+    { href: '/villas?region=golan', label: 'וילות ברמת הגולן' },
+    { href: '/villas?region=kinneret', label: 'וילות בכנרת' },
+    { href: '/villas?region=jerusalem', label: 'וילות בירושלים' },
+    { href: '/villas?region=coast', label: 'וילות במישור החוף' },
+    { href: '/villas?region=eilat', label: 'וילות באילת' },
+    { href: '/villas?region=negev', label: 'וילות בנגב' },
+    { href: '/villas?region=dead_sea', label: 'וילות בים המלח' },
+  ],
+  byAudience: [
+    { href: '/villas?type=vacation', label: 'וילות לזוגות' },
+    { href: '/villas?category=family', label: 'וילות למשפחות' },
+    { href: '/villas?category=groups', label: 'וילות לקבוצות' },
+    { href: '/villas?category=luxury', label: 'וילות יוקרתיות' },
+    { href: '/villas?category=romantic', label: 'וילות רומנטיות' },
+    { href: '/villas?category=events', label: 'וילות למסיבות רוקדות' },
+  ],
+  byFeatures: [
+    { href: '/villas?available=short', label: 'וילות לטווח קצר' },
+    { href: '/villas?amenity=pets', label: 'וילות שמקבלות כלבים' },
+    { href: '/villas?amenity=heated_pool', label: 'וילות עם בריכה מחוממת' },
+    { href: '/villas?amenity=pool', label: 'וילות עם בריכה' },
+    { href: '/villas?region=arava', label: 'וילות בערבה' },
+  ],
+}
+export const ZIMMER_MENU = {
+  byRegion: [
+    { href: '/search?region=galil', label: 'צימרים בצפון' },
+ { href: '/search?region=galil_west', label: 'צימרים בגליל המערבי' },
+   { href: '/search?region=galil_upper', label: 'צימרים בגליל העליון' },
+ { href: '/search?region=galil_lower', label: 'צימרים בגליל התחתון' },
+ { href: '/search?region=galil', label: 'אירוח דרוזי' },
+ { href: '/search?region=carmel', label: 'צימרים בכנרת' },
+ { href: '/search?region=golan', label: 'צימרים בחרמון' },
+    { href: '/search?region=center', label: 'צימרים במרכז' },
+    { href: '/search?region=jerusalem', label: 'צימרים בירושלים' },
+    { href: '/search?region=dead_sea', label: 'צימרים בים המלח' },
+    { href: '/search?region=jerusalem', label: 'צימרים בדרום' },
+       { href: '/search?region=eilat', label: 'צימרים באילת' },   
+  ],
+byAudience: [
+  { href: '/search?category=religious', label: 'צימרים לדתיים' },  
+    { href: '/search?category=family', label: 'צימרים למשפחות' },  
+  { href: '/search?amenity=heated_pool', label: 'בריכה מחוממת' },
+    { href: '/search?amenity=pool', label: 'צימרים עם בריכה' },
+    { href: '/search?category=romantic', label: 'צימרים לזוגות' },
+    { href: '/search?category=luxury', label: 'צימרים יוקרתיים' },
     { href: '/search?category=romantic', label: 'צימרים רומנטיים' },
-    { href: '/search?category=family', label: 'צימרים למשפחות' },
-    { href: '/search?amenity=pool', label: 'צימרים זולים' },
-    { href: '/search?category=pet_friendly', label: 'צימרים לדתיים' },
-    { href: '/search?amenity=jacuzzi', label: 'צימרים דקה 90' },
-    { href: '/search?amenity=bbq', label: 'צימרים עם בריכה' },
-    { href: '/search?category=luxury', label: 'צימרים לזוגות' },
+    { href: '/search?amenity=shelter', label: 'צימרים עם מרחב מוגן' },
   ],
   byAvailability: [
     { href: '/search?instant=true', label: 'צימרים פנויים' },
-    { href: '/search?available=weekend', label: 'צימרים בסוף\u05e9 הקרוב' },
+    { href: '/search?available=weekend', label: 'צימרים בסוף השבוע הקרוב' },
     { href: '/search?available=last', label: 'צימרים ברגע אחרון' },
     { href: '/search?category=luxury', label: 'צימרים יוקרתיים' },
-    { href: '/search?category=nature', label: 'צימרים רומנטיים' },
-    { href: '/search?deal=true', label: 'צימרים במבצע' },
-    { href: '/search?pool=shared', label: 'צימרים עם מרחב מוגן' },
+    { href: '/search?category=romantic', label: 'צימרים רומנטיים' },
+  
   ],
+
+
+
 }

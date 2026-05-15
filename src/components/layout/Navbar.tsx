@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+
 import Link from 'next/link'
 import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'

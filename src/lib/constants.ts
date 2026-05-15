@@ -87,7 +87,7 @@ export const NAV_LINKS = [
   { href: '/search?instant=true', label: 'הזמנה מיידית' },
   { href: '/owners',   label: 'בעלי נכסים' },
 ]
-export const ATTRACTIONS_MENU = {
+export const ATTRACTIONS_MENU: { byRegion: { href: string; label: string }[]; byAudience: { href: string; label: string }[]; popular: { href: string; label: string }[] } = {
   byRegion: [
     { href: '/attractions', label: 'לכל האטרקציות' },
     { href: '/attractions?region=north', label: 'אטרקציות בצפון' },

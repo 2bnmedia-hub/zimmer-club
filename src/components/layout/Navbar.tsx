@@ -81,7 +81,7 @@ export function Navbar() {
   const attractionsSections = [
     { title: 'אטרקציות לפי איזור', items: ATTRACTIONS_MENU.byRegion },
     { title: 'אטרקציות לפי קהל יעד', items: ATTRACTIONS_MENU.byAudience },
-    { title: 'אטרקציות פופולריות', items: ATTRACTIONS_MENU.popular as { href: string; label: string }[] },
+{ title: 'אטרקציות פופולריות', items: (ATTRACTIONS_MENU as any).popular },
   ]
 
   return (

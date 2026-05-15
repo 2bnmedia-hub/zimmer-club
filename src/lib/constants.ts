@@ -114,7 +114,22 @@ export const ATTRACTIONS_MENU = {
     { href: '/attractions?category=kids', label: 'אטרקציות לילדים' },
     { href: '/attractions?category=groups', label: 'אטרקציות לקבוצות' },
   ],
-
+  popular: [
+    { href: '/attractions?type=racer', label: 'ריצר' },
+    { href: '/attractions?type=climbing', label: 'קיר טיפוס' },
+    { href: '/attractions?type=ezy_rider', label: 'איזי ריידר' },
+    { href: '/attractions?type=laser_tag', label: 'לייזר טאג' },
+    { href: '/attractions?type=horses', label: 'רכיבה על סוסים' },
+    { href: '/attractions?type=karting', label: 'קארטינג' },
+    { href: '/attractions?type=buggy', label: 'באגי' },
+    { href: '/attractions?type=club_car', label: 'קלאב קאר' },
+    { href: '/attractions?type=water_park', label: 'פארק מים' },
+    { href: '/attractions?type=pool', label: 'בריכה' },
+    { href: '/attractions?type=gymboree', label: 'גימבורי' },
+    { href: '/attractions?type=playground', label: 'גן שעשועים' },
+    { href: '/attractions?type=ceramics', label: 'סדנת קרמיקה' },
+    { href: '/attractions?type=cooking', label: 'סדנאות בישול' },
+  ],
 }
 export const VILLAS_MENU: { byRegion: { href: string; label: string }[]; byAudience: { href: string; label: string }[]; byFeatures: { href: string; label: string }[] } = {
   byRegion: [

@@ -5,7 +5,6 @@ import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },

@@ -87,7 +87,7 @@ export const NAV_LINKS = [
   { href: '/search?instant=true', label: 'הזמנה מיידית' },
   { href: '/owners',   label: 'בעלי נכסים' },
 ]
-export const ATTRACTIONS_MENU: { byRegion: { href: string; label: string }[]; byAudience: { href: string; label: string }[]; popular: { href: string; label: string }[] } = {
+export const ATTRACTIONS_MENU = {
   byRegion: [
     { href: '/attractions', label: 'לכל האטרקציות' },
     { href: '/attractions?region=north', label: 'אטרקציות בצפון' },
@@ -116,7 +116,7 @@ export const ATTRACTIONS_MENU: { byRegion: { href: string; label: string }[]; by
   ],
 
 }
-export const VILLAS_MENU = {
+export const VILLAS_MENU: { byRegion: { href: string; label: string }[]; byAudience: { href: string; label: string }[]; byFeatures: { href: string; label: string }[] } = {
   byRegion: [
     { href: '/villas', label: 'לכל הוילות' },
     { href: '/villas?region=north', label: 'וילות בצפון' },

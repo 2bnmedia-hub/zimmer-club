@@ -1,0 +1,275 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+'use client'\
+\
+import \{ useEffect, useState \} from 'react'\
+import \{ useSearchParams \} from 'next/navigation'\
+import Link from 'next/link'\
+import \{ createClient \} from '@/lib/supabase/client'\
+import \{ Navbar \} from '@/components/layout/Navbar'\
+import \{ Footer \} from '@/components/layout/Footer'\
+import \{ Search, SlidersHorizontal, X, Star \} from 'lucide-react'\
+import \{ REGIONS \} from '@/lib/constants'\
+\
+type Property = \{\
+  id: string\
+  name: string\
+  short_description: string\
+  category: string[]\
+  region: string\
+  city: string\
+  price_per_night: number\
+  max_guests: number\
+  bedrooms: number\
+  avg_rating: number\
+  total_reviews: number\
+  instant_book: boolean\
+\}\
+\
+const PROPERTY_TYPES = [\
+  \{ value: '', label: '\uc0\u1492 \u1499 \u1500 ' \},\
+  \{ value: 'zimmer', label: '\uc0\u1510 \u1497 \u1502 \u1512 \u1497 \u1501 ' \},\
+  \{ value: 'villa', label: '\uc0\u1493 \u1497 \u1500 \u1493 \u1514 ' \},\
+  \{ value: 'hotel', label: '\uc0\u1502 \u1500 \u1493 \u1504 \u1493 \u1514 ' \},\
+  \{ value: 'camping', label: '\uc0\u1511 \u1502 \u1508 \u1497 \u1504 \u1490 ' \},\
+]\
+\
+export default function SearchPage() \{\
+  const searchParams = useSearchParams()\
+  const supabase = createClient()\
+\
+  const [properties, setProperties] = useState<Property[]>([])\
+  const [loading, setLoading] = useState(true)\
+  const [showFilters, setShowFilters] = useState(false)\
+\
+  const [filters, setFilters] = useState(\{\
+    category: searchParams.get('category') || '',\
+    region: searchParams.get('region') || '',\
+    minPrice: '',\
+    maxPrice: '',\
+    guests: searchParams.get('guests') || '',\
+    instant_book: false,\
+  \})\
+\
+  useEffect(() => \{\
+    fetchProperties()\
+  \}, [filters])\
+\
+  async function fetchProperties() \{\
+    setLoading(true)\
+\
+    let query = supabase\
+      .from('properties')\
+      .select('*')\
+      .eq('status', 'active')\
+\
+    if (filters.category) \{\
+      query = query.contains('category', [filters.category])\
+    \}\
+    if (filters.region) \{\
+      query = query.eq('region', filters.region)\
+    \}\
+    if (filters.minPrice) \{\
+      query = query.gte('price_per_night', parseInt(filters.minPrice))\
+    \}\
+    if (filters.maxPrice) \{\
+      query = query.lte('price_per_night', parseInt(filters.maxPrice))\
+    \}\
+    if (filters.guests) \{\
+      query = query.gte('max_guests', parseInt(filters.guests))\
+    \}\
+    if (filters.instant_book) \{\
+      query = query.eq('instant_book', true)\
+    \}\
+\
+    const \{ data \} = await query.order('avg_rating', \{ ascending: false \})\
+    setProperties(data || [])\
+    setLoading(false)\
+  \}\
+\
+  const clearFilters = () => \{\
+    setFilters(\{ category: '', region: '', minPrice: '', maxPrice: '', guests: '', instant_book: false \})\
+  \}\
+\
+  const activeFiltersCount = Object.values(filters).filter(v => v !== '' && v !== false).length\
+\
+  return (\
+    <>\
+      <Navbar />\
+      <main className="min-h-screen bg-gray-50" dir="rtl">\
+        <div className="bg-white border-b border-gray-200 px-4 py-4 sticky top-16 z-40">\
+          <div className="max-w-7xl mx-auto flex items-center gap-3">\
+            <div className="flex-1 flex items-center gap-2 bg-gray-100 rounded-xl px-4 py-2.5">\
+              <Search className="w-4 h-4 text-gray-400" />\
+              <input\
+                type="text"\
+                placeholder="\uc0\u1495 \u1497 \u1508 \u1493 \u1513  \u1500 \u1508 \u1497  \u1513 \u1501  \u1488 \u1493  \u1502 \u1497 \u1511 \u1493 \u1501 ..."\
+                className="flex-1 bg-transparent text-sm outline-none text-gray-700"\
+                dir="rtl"\
+              />\
+            </div>\
+            <button\
+              onClick=\{() => setShowFilters(!showFilters)\}\
+              className=\{`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-colors $\{\
+                showFilters ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'\
+              \}`\}\
+            >\
+              <SlidersHorizontal className="w-4 h-4" />\
+              \uc0\u1508 \u1497 \u1500 \u1496 \u1512 \u1497 \u1501 \
+              \{activeFiltersCount > 0 && (\
+                <span className="bg-yellow-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">\
+                  \{activeFiltersCount\}\
+                </span>\
+              )\}\
+            </button>\
+          </div>\
+\
+          \{showFilters && (\
+            <div className="max-w-7xl mx-auto mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">\
+              <select\
+                value=\{filters.category\}\
+                onChange=\{(e) => setFilters(prev => (\{ ...prev, category: e.target.value \}))\}\
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"\
+              >\
+                \{PROPERTY_TYPES.map(t => (\
+                  <option key=\{t.value\} value=\{t.value\}>\{t.label\}</option>\
+                ))\}\
+              </select>\
+\
+              <select\
+                value=\{filters.region\}\
+                onChange=\{(e) => setFilters(prev => (\{ ...prev, region: e.target.value \}))\}\
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"\
+              >\
+                <option value="">\uc0\u1499 \u1500  \u1492 \u1488 \u1497 \u1494 \u1493 \u1512 \u1497 \u1501 </option>\
+                \{Object.entries(REGIONS).map(([key, r]) => (\
+                  <option key=\{key\} value=\{key\}>\{r.label\}</option>\
+                ))\}\
+              </select>\
+\
+              <input\
+                type="number"\
+                placeholder="\uc0\u1502 \u1495 \u1497 \u1512  \u1502 \u1497 \u1504 \u1497 \u1502 \u1493 \u1501 "\
+                value=\{filters.minPrice\}\
+                onChange=\{(e) => setFilters(prev => (\{ ...prev, minPrice: e.target.value \}))\}\
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"\
+              />\
+\
+              <input\
+                type="number"\
+                placeholder="\uc0\u1502 \u1495 \u1497 \u1512  \u1502 \u1511 \u1505 \u1497 \u1502 \u1493 \u1501 "\
+                value=\{filters.maxPrice\}\
+                onChange=\{(e) => setFilters(prev => (\{ ...prev, maxPrice: e.target.value \}))\}\
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"\
+              />\
+\
+              <input\
+                type="number"\
+                placeholder="\uc0\u1502 \u1505 \u1508 \u1512  \u1488 \u1493 \u1512 \u1495 \u1497 \u1501 "\
+                value=\{filters.guests\}\
+                onChange=\{(e) => setFilters(prev => (\{ ...prev, guests: e.target.value \}))\}\
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"\
+              />\
+\
+              <div className="flex items-center gap-2">\
+                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">\
+                  <input\
+                    type="checkbox"\
+                    checked=\{filters.instant_book\}\
+                    onChange=\{(e) => setFilters(prev => (\{ ...prev, instant_book: e.target.checked \}))\}\
+                    className="w-4 h-4 accent-yellow-600"\
+                  />\
+                  \uc0\u1492 \u1494 \u1502 \u1504 \u1492  \u1502 \u1497 \u1497 \u1491 \u1497 \u1514 \
+                </label>\
+                \{activeFiltersCount > 0 && (\
+                  <button onClick=\{clearFilters\} className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700">\
+                    <X className="w-3 h-3" />\
+                    \uc0\u1504 \u1511 \u1492 \
+                  </button>\
+                )\}\
+              </div>\
+            </div>\
+          )\}\
+        </div>\
+\
+        <div className="max-w-7xl mx-auto px-4 py-8">\
+          <p className="text-sm text-gray-500 mb-6">\
+            \{loading ? '\uc0\u1502 \u1495 \u1508 \u1513 ...' : `\u1504 \u1502 \u1510 \u1488 \u1493  $\{properties.length\} \u1504 \u1499 \u1505 \u1497 \u1501 `\}\
+          </p>\
+\
+          \{loading ? (\
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">\
+              \{[...Array(6)].map((_, i) => (\
+                <div key=\{i\} className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">\
+                  <div className="h-48 bg-gray-200" />\
+                  <div className="p-4 space-y-3">\
+                    <div className="h-4 bg-gray-200 rounded w-3/4" />\
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />\
+                    <div className="h-3 bg-gray-200 rounded w-1/4" />\
+                  </div>\
+                </div>\
+              ))\}\
+            </div>\
+          ) : properties.length === 0 ? (\
+            <div className="text-center py-20">\
+              <p className="text-gray-400 text-lg mb-2">\uc0\u1500 \u1488  \u1504 \u1502 \u1510 \u1488 \u1493  \u1504 \u1499 \u1505 \u1497 \u1501 </p>\
+              <p className="text-gray-400 text-sm">\uc0\u1504 \u1505 \u1492  \u1500 \u1513 \u1504 \u1493 \u1514  \u1488 \u1514  \u1492 \u1508 \u1497 \u1500 \u1496 \u1512 \u1497 \u1501 </p>\
+              <button onClick=\{clearFilters\} className="mt-4 px-5 py-2 rounded-xl text-sm font-medium text-white" style=\{\{ backgroundColor: '#8B6914' \}\}>\
+                \uc0\u1504 \u1511 \u1492  \u1508 \u1497 \u1500 \u1496 \u1512 \u1497 \u1501 \
+              </button>\
+            </div>\
+          ) : (\
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">\
+              \{properties.map((p) => (\
+                <Link key=\{p.id\} href=\{`/properties/$\{p.id\}`\}\
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">\
+                  <div className="h-48 bg-gray-200 relative">\
+                    <div className="absolute top-3 right-3 flex gap-2">\
+                      \{p.instant_book && (\
+                        <span className="bg-white text-xs font-bold px-2 py-1 rounded-full text-yellow-700">\
+                          \uc0\u1492 \u1494 \u1502 \u1504 \u1492  \u1502 \u1497 \u1497 \u1491 \u1497 \u1514 \
+                        </span>\
+                      )\}\
+                    </div>\
+                  </div>\
+                  <div className="p-4">\
+                    <div className="flex items-start justify-between mb-1">\
+                      <h3 className="font-bold text-gray-900 text-base group-hover:text-yellow-700 transition-colors">\
+                        \{p.name\}\
+                      </h3>\
+                      \{p.avg_rating > 0 && (\
+                        <div className="flex items-center gap-1 text-sm text-gray-600">\
+                          <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />\
+                          <span>\{p.avg_rating\}</span>\
+                        </div>\
+                      )\}\
+                    </div>\
+                    <p className="text-sm text-gray-500 mb-2">\{p.city || REGIONS[p.region as keyof typeof REGIONS]?.label\}</p>\
+                    \{p.short_description && (\
+                      <p className="text-xs text-gray-400 mb-3 line-clamp-2">\{p.short_description\}</p>\
+                    )\}\
+                    <div className="flex items-center justify-between">\
+                      <div>\
+                        <span className="font-bold text-gray-900">\uc0\u8362 \{p.price_per_night\}</span>\
+                        <span className="text-xs text-gray-500"> / \uc0\u1500 \u1497 \u1500 \u1492 </span>\
+                      </div>\
+                      <span className="text-xs text-gray-400">\uc0\u1506 \u1491  \{p.max_guests\} \u1488 \u1493 \u1512 \u1495 \u1497 \u1501 </span>\
+                    </div>\
+                  </div>\
+                </Link>\
+              ))\}\
+            </div>\
+          )\}\
+        </div>\
+      </main>\
+      <Footer />\
+    </>\
+  )\
+\}}

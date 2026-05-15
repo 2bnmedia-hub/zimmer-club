@@ -2,9 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Search, User, ChevronDown } from 'lucide-react'
+import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
+import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
@@ -50,7 +52,35 @@ function MegaMenu({ sections, onClose }: {
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function loadUser() {
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) return
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', authUser.id)
+        .single()
+
+      setUser({
+        name: profile?.full_name || authUser.email || '',
+        role: profile?.role || 'guest',
+      })
+    }
+    loadUser()
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+    window.location.href = '/'
+  }
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -125,16 +155,54 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden lg:flex items-center gap-3">
+           <div className="hidden lg:flex items-center gap-3">
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <Search className="w-5 h-5 text-gray-600" />
             </button>
-            <Link href="/auth/login" className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-              <User className="w-4 h-4" />
-              <span>שלום אורח, התחבר</span>
-            </Link>
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  <span>שלום, {user.name.split(' ')[0]}</span>
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-48 py-1" dir="rtl">
+                    <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                      לוח בקרה
+                    </Link>
+                    <Link href="/dashboard/properties/new"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                      הוסף נכס
+                    </Link>
+                    <hr className="my-1 border-gray-100" />
+                    <button onClick={handleLogout}
+                      className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
+                      <LogOut className="w-4 h-4" />
+                      התנתק
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link href="/auth/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+                  כניסה
+                </Link>
+                <Link href="/auth/register"
+                  className="px-4 py-2 text-sm font-bold text-white rounded-full transition-colors"
+                  style={{ backgroundColor: '#8B6914' }}>
+                  הרשמה חינם
+                </Link>
+              </div>
+            )}
           </div>
-
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"

@@ -1,178 +1,86 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, Bell, ChevronDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { NAV_LINKS, ZIMMER_MENU } from '@/lib/constants'
+import { Menu, X, Search, User } from 'lucide-react'
 
-interface NavbarProps {
-  transparent?: boolean
-}
+const NAV_ITEMS = [
+  { href: '/zimmerim', label: 'צימרים' },
+  { href: '/villas', label: 'וילות ובקתות' },
+  { href: '/hotels', label: 'מלונות' },
+  { href: '/attractions', label: 'אטרקציות' },
+  { href: '/camping', label: 'קמפינג' },
+  { href: '/deals', label: 'מבצעים', badge: true },
+  { href: '/advertise', label: 'פרסמו אצלנו' },
+  { href: '/find', label: 'מצא לי זימר' },
+]
 
-export function Navbar({ transparent = false }: NavbarProps) {
+export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [zimmerOpen, setZimmerOpen] = useState(false)
-  const zimmerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (zimmerRef.current && !zimmerRef.current.contains(e.target as Node)) {
-        setZimmerOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
 
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-50 transition-all duration-300',
-        transparent ? 'bg-transparent' : 'bg-cream-50/95 backdrop-blur-md border-b border-sand-100'
-      )}
-    >
-      <nav className="page-container">
-        <div className="flex items-center justify-between h-16 lg:h-18">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" dir="rtl">
+      <nav className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 shrink-0">
-            <img src="/logo.png" alt="Zimmer Club" className="h-14 w-auto" />
+          <Link href="/" className="shrink-0">
+            <img src="/logo.png" alt="Zimmer Club" className="h-12 w-auto" />
           </Link>
 
-          {/* Desktop Nav */}
-          <ul className="hidden lg:flex items-center gap-8 list-none">
-            {/* צימרים dropdown */}
-            <li>
-              <div ref={zimmerRef} className="relative">
-                <button
-                  onClick={() => setZimmerOpen(!zimmerOpen)}
-                  className="flex items-center gap-1 text-sm font-medium text-taupe hover:text-charcoal transition-colors duration-200"
+          <ul className="hidden lg:flex items-center gap-1 list-none flex-1 justify-center">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={item.badge
+                    ? 'px-4 py-2 text-sm font-medium text-white rounded-full transition-colors'
+                    : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
+                  }
+                  style={item.badge ? { backgroundColor: '#8B6914' } : {}}
                 >
-                  צימרים
-                  <ChevronDown className={cn('w-4 h-4 transition-transform duration-200', zimmerOpen && 'rotate-180')} />
-                </button>
-              </div>
-            </li>
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-sm font-medium text-taupe hover:text-charcoal transition-colors duration-200">
-                  {link.label}
+                  {item.label}
                 </Link>
               </li>
             ))}
           </ul>
 
-          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm font-medium text-taupe hover:text-charcoal transition-colors px-4 py-2">
-              כניסה
-            </Link>
-            <Link href="/auth/register" className="btn-primary text-sm py-2 px-5">
-              הרשמה חינם
+            <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+              <Search className="w-5 h-5 text-gray-600" />
+            </button>
+            <Link href="/auth/login" className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+              <User className="w-4 h-4" />
+              <span>שלום אורח, התחבר</span>
             </Link>
           </div>
 
-          {/* Mobile button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-sand-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="תפריט"
           >
-            {mobileOpen ? <X className="w-5 h-5 text-charcoal" /> : <Menu className="w-5 h-5 text-charcoal" />}
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
 
-      {/* Mega Menu — מחוץ ל-nav, רוחב מלא */}
-      {zimmerOpen && (
-        <div className="hidden lg:block absolute top-full right-0 left-0 bg-white border-t border-sand-100 shadow-2xl z-50">
-          <div className="page-container py-8" dir="rtl">
-            <div className="grid grid-cols-3 gap-12">
-              <div>
-                <h3 className="text-xs font-bold text-taupe uppercase tracking-widest mb-4 border-b border-sand-100 pb-2">
-                  צימרים לפי איזור
-                </h3>
-                <ul className="space-y-2">
-                  {ZIMMER_MENU.byRegion.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.href} onClick={() => setZimmerOpen(false)}
-                        className="text-sm text-charcoal hover:text-gold transition-colors block py-1">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-taupe uppercase tracking-widest mb-4 border-b border-sand-100 pb-2">
-                  צימרים לפי קהל יעד
-                </h3>
-                <ul className="space-y-2">
-                  {ZIMMER_MENU.byAudience.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.href} onClick={() => setZimmerOpen(false)}
-                        className="text-sm text-charcoal hover:text-gold transition-colors block py-1">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-taupe uppercase tracking-widest mb-4 border-b border-sand-100 pb-2">
-                  צימרים לפי זמינות
-                </h3>
-                <ul className="space-y-2">
-                  {ZIMMER_MENU.byAvailability.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.href} onClick={() => setZimmerOpen(false)}
-                        className="text-sm text-charcoal hover:text-gold transition-colors block py-1">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-cream-50 border-t border-sand-100" dir="rtl">
-          <div className="page-container py-4 space-y-1">
-            <div>
-              <button
-                onClick={() => setZimmerOpen(!zimmerOpen)}
-                className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-taupe hover:text-charcoal hover:bg-sand-100 rounded-xl"
-              >
-                צימרים
-                <ChevronDown className={cn('w-4 h-4 transition-transform', zimmerOpen && 'rotate-180')} />
-              </button>
-              {zimmerOpen && (
-                <div className="px-4 pb-2 space-y-1">
-                  {[...ZIMMER_MENU.byRegion, ...ZIMMER_MENU.byAudience, ...ZIMMER_MENU.byAvailability].map((item) => (
-                    <Link key={item.label} href={item.href}
-                      onClick={() => { setMobileOpen(false); setZimmerOpen(false) }}
-                      className="block px-4 py-2 text-sm text-taupe hover:text-charcoal hover:bg-sand-100 rounded-lg">
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href}
+        <div className="lg:hidden bg-white border-t border-gray-200" dir="rtl">
+          <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-medium text-taupe hover:text-charcoal hover:bg-sand-100 rounded-xl transition-colors">
-                {link.label}
+                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                {item.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-sand-100 flex gap-2">
-              <Link href="/auth/login" className="flex-1 btn-outline text-center text-sm py-2">כניסה</Link>
-              <Link href="/auth/register" className="flex-1 btn-primary text-center text-sm py-2">הרשמה</Link>
+            <div className="pt-3 border-t border-gray-200">
+              <Link href="/auth/login" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
+                כניסה / הרשמה
+              </Link>
             </div>
           </div>
         </div>
@@ -183,35 +91,25 @@ export function Navbar({ transparent = false }: NavbarProps) {
 
 export function NavbarAuth({ userName, role }: { userName: string; role: 'guest' | 'owner' | 'admin' }) {
   const dashboardHref = role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'
-
   return (
-    <header className="sticky top-0 z-50 bg-cream-50/95 backdrop-blur-md border-b border-sand-100">
-      <nav className="page-container">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" dir="rtl">
+      <nav className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-charcoal">
-            zimmer<span className="text-gold">.</span>club
+          <Link href="/" className="shrink-0">
+            <img src="/logo.png" alt="Zimmer Club" className="h-12 w-auto" />
           </Link>
-          <div className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="text-sm font-medium text-taupe hover:text-charcoal">
-                {link.label}
+          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href}
+                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
+                {item.label}
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <button className="relative p-2 rounded-xl hover:bg-sand-100 transition-colors">
-              <Bell className="w-5 h-5 text-taupe" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-gold rounded-full" />
-            </button>
-            <Link href={dashboardHref}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-sand-100 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-gold-light flex items-center justify-center text-xs font-bold text-gold-deep">
-                {userName.slice(0, 2)}
-              </div>
-              <span className="text-sm font-medium text-charcoal hidden sm:block">{userName}</span>
-              <ChevronDown className="w-4 h-4 text-taupe" />
-            </Link>
-          </div>
+          <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+            <User className="w-4 h-4" />
+            <span>{userName}</span>
+          </Link>
         </div>
       </nav>
     </header>

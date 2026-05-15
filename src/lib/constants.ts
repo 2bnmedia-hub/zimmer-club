@@ -91,12 +91,14 @@ export const NAV_LINKS = [
 export const ZIMMER_MENU = {
   byRegion: [
     { href: '/search', label: 'לכל הצימרים' },
-    { href: '/search?region=galil', label: 'צימרים בצפון' },
-    { href: '/search?region=jerusalem', label: 'צימרים בדרום' },
-    { href: '/search?region=center', label: 'צימרים במרכז' },
-    { href: '/search?region=carmel', label: 'צימרים בכנרת' },
-    { href: '/search?region=dead_sea', label: 'צימרים בחרמון' },
-    { href: '/search?region=golan', label: 'צימרים בירושלים' },
+    {
+      label: 'צימרים בצפון',
+      subItems: [
+        { href: '/search?region=golan', label: 'רמת הגולן' },
+        { href: '/search?region=galil_upper', label: 'גליל עליון' },
+        { href: '/search?region=galil_lower', label: 'גליל תחתון' },
+      ]
+    },
   ],
   byAudience: [
     { href: '/search?category=romantic', label: 'צימרים רומנטיים' },

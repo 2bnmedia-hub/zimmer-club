@@ -80,7 +80,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           {/* Check-in */}
           <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-            <div className="flex-1">
+      <div className="flex-1">
               <label className="label">תאריך כניסה</label>
               <input
                 type="date"
@@ -109,30 +109,36 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          {/* Guests + Search */}
-          <div className="flex items-center gap-3 p-5">
-            <Users className="w-4 h-4 text-gold shrink-0" />
-            <div className="flex-1">
-              <label className="label">אורחים</label>
-              <select
-                value={guests}
-                onChange={(e) => setGuests(Number(e.target.value))}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
-                dir="rtl"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((n) => (
-                  <option key={n} value={n}>{n} אורחים</option>
-                ))}
-              </select>
-            </div>
-            <button
-              onClick={handleSearch}
-              className="btn-gold flex items-center gap-2 py-2.5 px-4 text-sm shrink-0"
-            >
-              <Search className="w-4 h-4" />
-              <span className="hidden sm:inline">חיפוש</span>
-            </button>
-          </div>
+        {/* Guests + Search */}
+<div className="flex items-center gap-4 p-5 w-full">
+  <Users className="w-4 h-4 text-gold shrink-0" />
+
+  <div className="w-[95px] shrink-0">
+    <label className="label">מספר האורחים</label>
+
+    <select
+      value={guests}
+      onChange={(e) => setGuests(Number(e.target.value))}
+      className="w-full text-sm bg-transparent outline-none text-charcoal font-medium text-right appearance-none"
+      dir="rtl"
+      style={{ direction: 'rtl', textAlign: 'right' }}
+    >
+      {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((n) => (
+        <option key={n} value={n}>
+          {n === 1 ? 'אורח אחד' : `${n} אורחים`}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <button
+    onClick={handleSearch}
+    className="btn-gold flex items-center justify-center gap-2 py-2.5 px-5 text-sm shrink-0 w-[110px] whitespace-nowrap"
+  >
+    <Search className="w-4 h-4 shrink-0" />
+    <span>חיפוש</span>
+  </button>
+</div>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ export default function HomePage() {
 
       <main>
         {/* HERO */}
-        <section className="relative min-h-[88vh] flex flex-col items-center justify-center text-center px-4 py-20 overflow-hidden">
+        <section className="relative min-h-[88vh] flex flex-col items-center justify-center text-center px-4 py-20 overflow-hidden bg-transparent">
           
           {/* Background Image */}
 <div
@@ -21,11 +21,9 @@ export default function HomePage() {
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    opacity: 5,
   }}
 />
           {/* Overlay */}
-          <div className="absolute inset-0 bg-[#faf8f4]/80 z-0" />
 
           <div className="relative z-10 max-w-4xl mx-auto">
             

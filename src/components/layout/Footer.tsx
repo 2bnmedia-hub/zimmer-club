@@ -1,0 +1,86 @@
+import Link from 'next/link'
+
+const footerLinks = {
+  'אירוח': [
+    { href: '/search', label: 'חיפוש נכסים' },
+    { href: '/search?category=romantic', label: 'נכסים רומנטיים' },
+    { href: '/search?category=luxury', label: 'וילות יוקרה' },
+    { href: '/search?category=family', label: 'מתאים למשפחות' },
+    { href: '/search?category=pet_friendly', label: 'ידידותי לבעלי חיים' },
+  ],
+  'בעלי נכסים': [
+    { href: '/owners', label: 'פרסמו את הנכס שלכם' },
+    { href: '/owners/how-it-works', label: 'איך זה עובד' },
+    { href: '/dashboard/owner', label: 'לוח בקרה' },
+    { href: '/owners/pricing', label: 'תמחור ועמלות' },
+  ],
+  'zimmer.club': [
+    { href: '/about', label: 'אודות' },
+    { href: '/blog', label: 'בלוג' },
+    { href: '/contact', label: 'צור קשר' },
+    { href: '/help', label: 'מרכז עזרה' },
+  ],
+}
+
+export function Footer() {
+  return (
+    <footer className="bg-espresso text-cream-50/70">
+      <div className="page-container">
+        {/* Main footer */}
+        <div className="py-14 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="text-2xl font-bold text-cream-50 mb-3">
+              zimmer<span className="text-gold">.</span>club
+            </div>
+            <p className="text-sm leading-relaxed mb-4">
+              חוויות אירוח בלתי נשכחות ברחבי ישראל. מצאו את הבריחה המושלמת שלכם.
+            </p>
+            <div className="flex gap-3">
+              {['📘', '📸', '🎵'].map((icon, i) => (
+                <button
+                  key={i}
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-sm"
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Links */}
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div key={title}>
+              <h3 className="text-sm font-bold text-cream-50 mb-4 uppercase tracking-wider">
+                {title}
+              </h3>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm hover:text-cream-50 transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream-50/50">
+          <p>© 2025 zimmer.club — כל הזכויות שמורות</p>
+          <p className="text-xs text-cream-50/40">מבית <a href="https://2bnmedia.com" target="_blank" rel="noopener noreferrer" className="hover:text-cream-50 transition-colors">2bnmedia.com</a></p>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="hover:text-cream-50 transition-colors">פרטיות</Link>
+            <Link href="/terms" className="hover:text-cream-50 transition-colors">תנאי שימוש</Link>
+            <Link href="/accessibility" className="hover:text-cream-50 transition-colors">נגישות</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}

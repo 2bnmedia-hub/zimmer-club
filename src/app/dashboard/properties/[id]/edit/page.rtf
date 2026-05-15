@@ -1,0 +1,347 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 'use client'\
+\
+import \{ useEffect, useState \} from 'react'\
+import \{ useRouter, useParams \} from 'next/navigation'\
+import \{ createClient \} from '@/lib/supabase/client'\
+import \{ REGIONS \} from '@/lib/constants'\
+import \{ ArrowRight \} from 'lucide-react'\
+\
+const PROPERTY_TYPES = [\
+  \{ value: 'zimmer', label: '\uc0\u1510 \u1497 \u1502 \u1512 ' \},\
+  \{ value: 'villa', label: '\uc0\u1493 \u1497 \u1500 \u1492 ' \},\
+  \{ value: 'hotel', label: '\uc0\u1502 \u1500 \u1493 \u1503 ' \},\
+  \{ value: 'camping', label: '\uc0\u1511 \u1502 \u1508 \u1497 \u1504 \u1490 ' \},\
+]\
+\
+const AMENITIES_LIST = [\
+  \{ key: 'pool', label: '\uc0\u1489 \u1512 \u1497 \u1499 \u1492 ' \},\
+  \{ key: 'jacuzzi', label: "\uc0\u1490 '\u1511 \u1493 \u1494 \u1497 " \},\
+  \{ key: 'wifi', label: 'WiFi' \},\
+  \{ key: 'parking', label: '\uc0\u1495 \u1504 \u1497 \u1492 ' \},\
+  \{ key: 'bbq', label: '\uc0\u1489 \u1512 \u1489 \u1497 \u1511 \u1497 \u1493 ' \},\
+  \{ key: 'ac', label: '\uc0\u1502 \u1497 \u1494 \u1493 \u1490 ' \},\
+  \{ key: 'kitchen', label: '\uc0\u1502 \u1496 \u1489 \u1495 ' \},\
+  \{ key: 'fireplace', label: '\uc0\u1511 \u1502 \u1497 \u1503 ' \},\
+  \{ key: 'garden', label: '\uc0\u1490 \u1497 \u1504 \u1492 ' \},\
+  \{ key: 'sea_view', label: '\uc0\u1504 \u1493 \u1507  \u1500 \u1497 \u1501 ' \},\
+  \{ key: 'mountain_view', label: '\uc0\u1504 \u1493 \u1507  \u1500 \u1492 \u1512 \u1497 \u1501 ' \},\
+  \{ key: 'sauna', label: '\uc0\u1505 \u1488 \u1493 \u1504 \u1492 ' \},\
+  \{ key: 'gym', label: '\uc0\u1495 \u1491 \u1512  \u1499 \u1493 \u1513 \u1512 ' \},\
+  \{ key: 'baby_cot', label: '\uc0\u1506 \u1512 \u1497 \u1505 \u1492  \u1500 \u1514 \u1497 \u1504 \u1493 \u1511 ' \},\
+  \{ key: 'wheelchair', label: '\uc0\u1504 \u1490 \u1497 \u1513  \u1500 \u1504 \u1499 \u1497 \u1501 ' \},\
+  \{ key: 'shelter', label: '\uc0\u1502 \u1512 \u1495 \u1489  \u1502 \u1493 \u1490 \u1503 ' \},\
+  \{ key: 'heated_pool', label: '\uc0\u1489 \u1512 \u1497 \u1499 \u1492  \u1502 \u1495 \u1493 \u1502 \u1502 \u1514 ' \},\
+  \{ key: 'pets', label: '\uc0\u1497 \u1491 \u1497 \u1491 \u1493 \u1514 \u1497  \u1500 \u1499 \u1500 \u1489 \u1497 \u1501 ' \},\
+]\
+\
+export default function EditPropertyPage() \{\
+  const router = useRouter()\
+  const params = useParams()\
+  const supabase = createClient()\
+  const [loading, setLoading] = useState(true)\
+  const [saving, setSaving] = useState(false)\
+  const [error, setError] = useState('')\
+  const [success, setSuccess] = useState(false)\
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])\
+  const [isAdmin, setIsAdmin] = useState(false)\
+\
+  const [form, setForm] = useState(\{\
+    name: '',\
+    short_description: '',\
+    description: '',\
+    category: 'zimmer',\
+    region: '',\
+    city: '',\
+    address: '',\
+    price_per_night: '',\
+    min_nights: '1',\
+    max_guests: '2',\
+    bedrooms: '1',\
+    bathrooms: '1',\
+    instant_book: false,\
+    status: 'pending',\
+  \})\
+\
+  useEffect(() => \{\
+    async function load() \{\
+      const \{ data: \{ user \} \} = await supabase.auth.getUser()\
+      if (!user) \{ router.push('/auth/login'); return \}\
+\
+      const \{ data: profile \} = await supabase\
+        .from('profiles')\
+        .select('role')\
+        .eq('id', user.id)\
+        .single()\
+\
+      setIsAdmin(profile?.role === 'admin')\
+\
+      const \{ data: property \} = await supabase\
+        .from('properties')\
+        .select('*')\
+        .eq('id', params.id)\
+        .single()\
+\
+      if (!property) \{ router.push('/dashboard/owner'); return \}\
+\
+      if (profile?.role !== 'admin' && property.owner_id !== user.id) \{\
+        router.push('/dashboard/owner')\
+        return\
+      \}\
+\
+      setForm(\{\
+        name: property.name || '',\
+        short_description: property.short_description || '',\
+        description: property.description || '',\
+        category: property.category?.[0] || 'zimmer',\
+        region: property.region || '',\
+        city: property.city || '',\
+        address: property.address || '',\
+        price_per_night: property.price_per_night?.toString() || '',\
+        min_nights: property.min_nights?.toString() || '1',\
+        max_guests: property.max_guests?.toString() || '2',\
+        bedrooms: property.bedrooms?.toString() || '1',\
+        bathrooms: property.bathrooms?.toString() || '1',\
+        instant_book: property.instant_book || false,\
+        status: property.status || 'pending',\
+      \})\
+\
+      setLoading(false)\
+    \}\
+    load()\
+  \}, [])\
+\
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => \{\
+    const \{ name, value, type \} = e.target\
+    setForm(prev => (\{\
+      ...prev,\
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value\
+    \}))\
+  \}\
+\
+  const toggleAmenity = (key: string) => \{\
+    setSelectedAmenities(prev =>\
+      prev.includes(key) ? prev.filter(a => a !== key) : [...prev, key]\
+    )\
+  \}\
+\
+  const handleSubmit = async (e: React.FormEvent) => \{\
+    e.preventDefault()\
+    setSaving(true)\
+    setError('')\
+\
+    const \{ error: updateError \} = await supabase\
+      .from('properties')\
+      .update(\{\
+        name: form.name,\
+        short_description: form.short_description,\
+        description: form.description,\
+        category: [form.category],\
+        region: form.region,\
+        city: form.city,\
+        address: form.address,\
+        price_per_night: parseInt(form.price_per_night),\
+        min_nights: parseInt(form.min_nights),\
+        max_guests: parseInt(form.max_guests),\
+        bedrooms: parseInt(form.bedrooms),\
+        bathrooms: parseInt(form.bathrooms),\
+        instant_book: form.instant_book,\
+        ...(isAdmin && \{ status: form.status \}),\
+        updated_at: new Date().toISOString(),\
+      \})\
+      .eq('id', params.id)\
+\
+    if (updateError) \{\
+      setError(updateError.message)\
+    \} else \{\
+      setSuccess(true)\
+      setTimeout(() => setSuccess(false), 3000)\
+    \}\
+    setSaving(false)\
+  \}\
+\
+  if (loading) return (\
+    <div className="min-h-screen flex items-center justify-center">\
+      <div className="text-gray-500">\uc0\u1496 \u1493 \u1506 \u1503 ...</div>\
+    </div>\
+  )\
+\
+  return (\
+    <div className="min-h-screen bg-gray-50" dir="rtl">\
+      <div className="max-w-3xl mx-auto px-4 py-10">\
+        <div className="flex items-center gap-3 mb-8">\
+          <button onClick=\{() => router.back()\}\
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors">\
+            <ArrowRight className="w-5 h-5 text-gray-500" />\
+          </button>\
+          <h1 className="text-2xl font-bold text-gray-900">\uc0\u1506 \u1512 \u1497 \u1499 \u1514  \u1504 \u1499 \u1505 </h1>\
+        </div>\
+\
+        <form onSubmit=\{handleSubmit\} className="space-y-6">\
+\
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">\
+            <h2 className="font-bold text-gray-700 text-lg">\uc0\u1508 \u1512 \u1496 \u1497  \u1492 \u1504 \u1499 \u1505 </h2>\
+\
+            <div>\
+              <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1513 \u1501  \u1492 \u1504 \u1499 \u1505  *</label>\
+              <input name="name" value=\{form.name\} onChange=\{handleChange\} required\
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+            </div>\
+\
+            <div>\
+              <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1514 \u1497 \u1488 \u1493 \u1512  \u1511 \u1510 \u1512 </label>\
+              <input name="short_description" value=\{form.short_description\} onChange=\{handleChange\}\
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+            </div>\
+\
+            <div>\
+              <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1514 \u1497 \u1488 \u1493 \u1512  \u1502 \u1500 \u1488 </label>\
+              <textarea name="description" value=\{form.description\} onChange=\{handleChange\} rows=\{4\}\
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 resize-none" />\
+            </div>\
+\
+            <div className="grid grid-cols-2 gap-4">\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1505 \u1493 \u1490  \u1504 \u1499 \u1505 </label>\
+                <select name="category" value=\{form.category\} onChange=\{handleChange\}\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">\
+                  \{PROPERTY_TYPES.map(t => (\
+                    <option key=\{t.value\} value=\{t.value\}>\{t.label\}</option>\
+                  ))\}\
+                </select>\
+              </div>\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1488 \u1497 \u1494 \u1493 \u1512 </label>\
+                <select name="region" value=\{form.region\} onChange=\{handleChange\}\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">\
+                  <option value="">\uc0\u1489 \u1495 \u1512  \u1488 \u1497 \u1494 \u1493 \u1512 </option>\
+                  \{Object.entries(REGIONS).map(([key, r]) => (\
+                    <option key=\{key\} value=\{key\}>\{r.label\}</option>\
+                  ))\}\
+                </select>\
+              </div>\
+            </div>\
+\
+            <div className="grid grid-cols-2 gap-4">\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1506 \u1497 \u1512 /\u1497 \u1497 \u1513 \u1493 \u1489 </label>\
+                <input name="city" value=\{form.city\} onChange=\{handleChange\}\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1499 \u1514 \u1493 \u1489 \u1514 </label>\
+                <input name="address" value=\{form.address\} onChange=\{handleChange\}\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+            </div>\
+          </div>\
+\
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">\
+            <h2 className="font-bold text-gray-700 text-lg">\uc0\u1514 \u1502 \u1495 \u1493 \u1512  \u1493 \u1511 \u1497 \u1489 \u1493 \u1500 \u1514 </h2>\
+\
+            <div className="grid grid-cols-2 gap-4">\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1502 \u1495 \u1497 \u1512  \u1500 \u1500 \u1497 \u1500 \u1492  (\u8362 )</label>\
+                <input name="price_per_night" type="number" value=\{form.price_per_night\} onChange=\{handleChange\} min="1"\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1502 \u1497 \u1504 \u1497 \u1502 \u1493 \u1501  \u1500 \u1497 \u1500 \u1493 \u1514 </label>\
+                <input name="min_nights" type="number" value=\{form.min_nights\} onChange=\{handleChange\} min="1"\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+            </div>\
+\
+            <div className="grid grid-cols-3 gap-4">\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1502 \u1511 \u1505 \u1497 \u1502 \u1493 \u1501  \u1488 \u1493 \u1512 \u1495 \u1497 \u1501 </label>\
+                <input name="max_guests" type="number" value=\{form.max_guests\} onChange=\{handleChange\} min="1"\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1495 \u1491 \u1512 \u1497  \u1513 \u1497 \u1504 \u1492 </label>\
+                <input name="bedrooms" type="number" value=\{form.bedrooms\} onChange=\{handleChange\} min="0"\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+              <div>\
+                <label className="block text-sm font-medium text-gray-700 mb-1">\uc0\u1495 \u1491 \u1512 \u1497  \u1512 \u1495 \u1510 \u1492 </label>\
+                <input name="bathrooms" type="number" value=\{form.bathrooms\} onChange=\{handleChange\} min="0"\
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />\
+              </div>\
+            </div>\
+\
+            <div className="flex items-center gap-2">\
+              <input type="checkbox" name="instant_book" id="instant_book"\
+                checked=\{form.instant_book\} onChange=\{handleChange\}\
+                className="w-4 h-4 accent-yellow-600" />\
+              <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">\uc0\u1492 \u1494 \u1502 \u1504 \u1492  \u1502 \u1497 \u1497 \u1491 \u1497 \u1514 </label>\
+            </div>\
+          </div>\
+\
+          \{isAdmin && (\
+            <div className="bg-white rounded-2xl p-6 shadow-sm">\
+              <h2 className="font-bold text-gray-700 text-lg mb-4">\uc0\u1505 \u1496 \u1496 \u1493 \u1505  (\u1488 \u1491 \u1502 \u1497 \u1503  \u1489 \u1500 \u1489 \u1491 )</h2>\
+              <select name="status" value=\{form.status\} onChange=\{handleChange\}\
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">\
+                <option value="pending">\uc0\u1502 \u1502 \u1514 \u1497 \u1503  \u1500 \u1488 \u1497 \u1513 \u1493 \u1512 </option>\
+                <option value="active">\uc0\u1508 \u1506 \u1497 \u1500 </option>\
+                <option value="inactive">\uc0\u1500 \u1488  \u1508 \u1506 \u1497 \u1500 </option>\
+                <option value="rejected">\uc0\u1504 \u1491 \u1495 \u1492 </option>\
+              </select>\
+            </div>\
+          )\}\
+\
+          <div className="bg-white rounded-2xl p-6 shadow-sm">\
+            <h2 className="font-bold text-gray-700 text-lg mb-4">\uc0\u1502 \u1488 \u1508 \u1497 \u1497 \u1504 \u1497 \u1501  \u1493 \u1513 \u1497 \u1512 \u1493 \u1514 \u1497 \u1501 </h2>\
+            <div className="grid grid-cols-3 gap-3">\
+              \{AMENITIES_LIST.map((amenity) => (\
+                <button key=\{amenity.key\} type="button"\
+                  onClick=\{() => toggleAmenity(amenity.key)\}\
+                  className=\{`px-3 py-2 rounded-xl text-sm font-medium border transition-colors $\{\
+                    selectedAmenities.includes(amenity.key)\
+                      ? 'bg-yellow-600 text-white border-yellow-600'\
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-yellow-600'\
+                  \}`\}>\
+                  \{amenity.label\}\
+                </button>\
+              ))\}\
+            </div>\
+          </div>\
+\
+          \{error && (\
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">\
+              \{error\}\
+            </div>\
+          )\}\
+\
+          \{success && (\
+            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">\
+              \uc0\u1492 \u1504 \u1499 \u1505  \u1506 \u1493 \u1491 \u1499 \u1503  \u1489 \u1492 \u1510 \u1500 \u1495 \u1492 !\
+            </div>\
+          )\}\
+\
+          <div className="flex gap-3">\
+            <button type="submit" disabled=\{saving\}\
+              className="flex-1 py-3 rounded-xl font-bold text-white text-sm"\
+              style=\{\{ backgroundColor: '#8B6914' \}\}>\
+              \{saving ? '\uc0\u1513 \u1493 \u1502 \u1512 ...' : '\u1513 \u1502 \u1493 \u1512  \u1513 \u1497 \u1504 \u1493 \u1497 \u1497 \u1501 '\}\
+            </button>\
+            <button type="button" onClick=\{() => router.back()\}\
+              className="px-6 py-3 rounded-xl font-bold text-gray-700 text-sm border border-gray-200 hover:bg-gray-50">\
+              \uc0\u1489 \u1497 \u1496 \u1493 \u1500 \
+            </button>\
+          </div>\
+\
+        </form>\
+      </div>\
+    </div>\
+  )\
+\}}

@@ -10,8 +10,8 @@ const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
   { href: '/camping', label: 'קמפינג' },
   { href: '/deals', label: 'מבצעים', badge: true },
-  { href: '/advertise', label: 'פרסמו אצלנו' },
-  { href: '/find', label: 'מצא לי זימר' },
+  { href: '/advertise', label: 'פרסמו באתר' },
+  { href: '/find', label: 'אתרו לי זימר' },
 ]
 
 type MenuItem = { href: string; label: string }
@@ -81,7 +81,7 @@ export function Navbar() {
   const attractionsSections = [
     { title: 'אטרקציות לפי איזור', items: ATTRACTIONS_MENU.byRegion },
     { title: 'אטרקציות לפי קהל יעד', items: ATTRACTIONS_MENU.byAudience },
-{ title: 'אטרקציות פופולריות', items: (ATTRACTIONS_MENU as any).popular },
+    { title: 'אטרקציות פופולריות', items: ATTRACTIONS_MENU.popular as { href: string; label: string }[] },
   ]
 
   return (

@@ -192,16 +192,16 @@ export default function FindPage() {
       <div className="flex-1 max-w-2xl w-full mx-auto px-4 pb-6">
         <div className="space-y-4 mb-6">
           {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-end'}`}>
+            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-center'}`}>
               {msg.role === 'ai' && (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center ml-2 flex-shrink-0 self-end mb-1"
                   style={{ background: 'linear-gradient(135deg, #1a4a2e, #2d6a4f)' }}>
                   <Sparkles className="w-4 h-4" style={{ color: '#C8960C' }} />
                 </div>
               )}
-              <div className={`max-w-xs lg:max-w-sm px-5 py-3.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line shadow-lg ${msg.role === 'ai' ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
+              <div className={`max-w-lg w-full px-8 py-6 rounded-2xl text-sm leading-relaxed whitespace-pre-line shadow-lg ${msg.role === 'ai' ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
                 style={msg.role === 'ai'
-                  ? { background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(10px)', color: 'rgba(255,255,255,0.9)', border: '1px solid rgba(255,255,255,0.1)' }
+                  ? { background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(10px)', color: '#1a1a1a', border: '1px solid rgba(255,255,255,0.8)' }
                   : { background: 'linear-gradient(135deg, #1a4a2e, #2d6a4f)', color: 'white', border: '1px solid rgba(45,106,79,0.5)' }
                 }>
                 {msg.text}

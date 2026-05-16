@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { REGIONS } from '@/lib/constants'
-import { ArrowRight, Upload, X, Image } from 'lucide-react'
+import { ArrowRight, Upload, X, Star } from 'lucide-react'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -34,6 +34,13 @@ const AMENITIES_LIST = [
   { key: 'pets', label: 'ידידותי לכלבים' },
 ]
 
+type PropertyImage = {
+  id: string
+  url: string
+  is_primary: boolean
+  order: number
+}
+
 export default function EditPropertyPage() {
   const router = useRouter()
   const params = useParams()
@@ -44,7 +51,7 @@ export default function EditPropertyPage() {
   const [success, setSuccess] = useState(false)
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [isAdmin, setIsAdmin] = useState(false)
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<PropertyImage[]>([])
   const [uploading, setUploading] = useState(false)
   const [form, setForm] = useState({
     name: '',
@@ -88,12 +95,12 @@ export default function EditPropertyPage() {
         instant_book: property.instant_book || false,
         status: property.status || 'pending',
       })
- const { data: imgData } = await supabase
+      const { data: imgData } = await supabase
         .from('property_images')
-        .select('url')
+        .select('*')
         .eq('property_id', params.id)
-        .order('position')
-      setImages(imgData?.map(i => i.url) || [])
+        .order('order')
+      setImages(imgData || [])
       setLoading(false)
     }
     load()
@@ -106,6 +113,41 @@ export default function EditPropertyPage() {
 
   const toggleAmenity = (key: string) => {
     setSelectedAmenities(prev => prev.includes(key) ? prev.filter(a => a !== key) : [...prev, key])
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setUploading(true)
+    for (const file of Array.from(files)) {
+      const ext = file.name.split('.').pop()
+      const fileName = `${params.id}/${Date.now()}.${ext}`
+      const { error: uploadError } = await supabase.storage.from('property-images').upload(fileName, file)
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
+        const isPrimary = images.length === 0
+        const { data: newImg } = await supabase.from('property_images').insert({
+          property_id: params.id,
+          url: urlData.publicUrl,
+          'order': images.length,
+          is_primary: isPrimary,
+        }).select().single()
+        if (newImg) setImages(prev => [...prev, newImg])
+      }
+    }
+    setUploading(false)
+    e.target.value = ''
+  }
+
+  const handleDeleteImage = async (id: string) => {
+    await supabase.from('property_images').delete().eq('id', id)
+    setImages(prev => prev.filter(i => i.id !== id))
+  }
+
+  const handleSetPrimary = async (id: string) => {
+    await supabase.from('property_images').update({ is_primary: false }).eq('property_id', params.id)
+    await supabase.from('property_images').update({ is_primary: true }).eq('id', id)
+    setImages(prev => prev.map(i => ({ ...i, is_primary: i.id === id })))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -132,33 +174,7 @@ export default function EditPropertyPage() {
     if (updateError) { setError(updateError.message) } else { setSuccess(true); setTimeout(() => setSuccess(false), 3000) }
     setSaving(false)
   }
-const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-    setUploading(true)
-    for (const file of Array.from(files)) {
-      const ext = file.name.split('.').pop()
-      const fileName = `${params.id}/${Date.now()}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from('property-images')
-        .upload(fileName, file)
-      if (!uploadError) {
-        const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
-        await supabase.from('property_images').insert({
-          property_id: params.id,
-          url: urlData.publicUrl,
-          "order": images.length,
-        })
-        setImages(prev => [...prev, urlData.publicUrl])
-      }
-    }
-    setUploading(false)
-  }
 
-  const handleDeleteImage = async (url: string) => {
-    await supabase.from('property_images').delete().eq('url', url)
-    setImages(prev => prev.filter(i => i !== url))
-  }
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
 
   return (
@@ -169,6 +185,42 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
           <h1 className="text-2xl font-bold text-gray-900">עריכת נכס</h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* גלריית תמונות */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-2">גלריית תמונות</h2>
+            <p className="text-xs text-gray-400 mb-4">לחץ על כוכב להגדרת תמונה ראשית. לחץ X למחיקה.</p>
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {images.map((img) => (
+                <div key={img.id} className="relative group aspect-video">
+                  <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
+                  {img.is_primary && (
+                    <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1">
+                      <Star className="w-3 h-3 text-white fill-white" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => handleSetPrimary(img.id)}
+                      className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
+                      <Star className="w-3.5 h-3.5 text-white" />
+                    </button>
+                    <button type="button" onClick={() => handleDeleteImage(img.id)}
+                      className="p-1.5 bg-red-500 rounded-full" title="מחק">
+                      <X className="w-3.5 h-3.5 text-white" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                <span className="text-xs text-gray-400">{uploading ? 'מעלה...' : 'הוסף תמונות'}</span>
+                <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" disabled={uploading} />
+              </label>
+            </div>
+            <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
+          </div>
+
+          {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>
             <div>
@@ -209,6 +261,8 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               </div>
             </div>
           </div>
+
+          {/* תמחור */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
@@ -240,6 +294,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">הזמנה מיידית</label>
             </div>
           </div>
+
           {isAdmin && (
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="font-bold text-gray-700 text-lg mb-4">סטטוס (אדמין בלבד)</h2>
@@ -251,6 +306,8 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               </select>
             </div>
           )}
+
+          {/* מאפיינים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-4">מאפיינים ושירותים</h2>
             <div className="grid grid-cols-3 gap-3">
@@ -262,27 +319,10 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-4">תמונות הנכס</h2>
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              {images.map((url) => (
-                <div key={url} className="relative group">
-                  <img src={url} alt="" className="w-full h-32 object-cover rounded-xl" />
-                  <button type="button" onClick={() => handleDeleteImage(url)}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-              <label className="h-32 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                <Upload className="w-6 h-6 text-gray-400 mb-1" />
-                <span className="text-xs text-gray-400">{uploading ? 'מעלה...' : 'הוסף תמונה'}</span>
-                <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" disabled={uploading} />
-              </label>
-            </div>
-          </div>
+
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
           {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">הנכס עודכן בהצלחה!</div>}
+
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="flex-1 py-3 rounded-xl font-bold text-white text-sm" style={{ backgroundColor: '#8B6914' }}>
               {saving ? 'שומר...' : 'שמור שינויים'}

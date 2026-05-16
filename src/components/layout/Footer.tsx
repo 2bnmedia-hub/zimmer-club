@@ -34,7 +34,7 @@ export function Footer() {
               zimmer<span className="text-gold">.</span>club
             </div>
             <p className="text-sm leading-relaxed mb-4">
-              חוויות אירוח בלתי נשכחות ברחבי ישראל. מצאו את הבריחה המושלמת שלכם.
+              חוויות אירוח בלתי נשכחות ברחבי ישראל — גלו את חופשת היוקרה המושלמת שלכם.
             </p>
             <div className="flex gap-3">
               {['📘', '📸', '🎵'].map((icon, i) => (

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Plus, Edit } from 'lucide-react'
+import { Plus, Edit, ArrowRight } from 'lucide-react'
 
 type Property = {
   id: string
@@ -55,6 +55,10 @@ export default function OwnerDashboard() {
       <header className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
+            <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#8B6914] transition-colors mb-1">
+              <ArrowRight className="w-4 h-4" />
+              חזרה לדף הבית
+            </Link>
             <h1 className="text-xl font-bold text-gray-900">לוח בקרה</h1>
             <p className="text-sm text-gray-500">שלום, {userName}</p>
           </div>

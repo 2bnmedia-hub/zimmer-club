@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { REGIONS } from '@/lib/constants'
-import { ArrowRight, Upload, X, Star } from 'lucide-react'
+import { ArrowRight, Upload, X, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -39,6 +39,185 @@ type PropertyImage = {
   url: string
   is_primary: boolean
   order: number
+}
+
+type DateStatus = 'blocked' | 'approved'
+
+type BlockedDate = {
+  id: string
+  date: string
+  status: DateStatus
+}
+
+const HEBREW_MONTHS = [
+  'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+  'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
+]
+
+const HEBREW_DAYS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש']
+
+function Calendar({
+  propertyId,
+  supabase,
+}: {
+  propertyId: string
+  supabase: ReturnType<typeof createClient>
+}) {
+  const today = new Date()
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth())
+  const [currentYear, setCurrentYear] = useState(today.getFullYear())
+  const [dateMap, setDateMap] = useState<Record<string, DateStatus>>({})
+  const [loadingDates, setLoadingDates] = useState(true)
+
+  useEffect(() => {
+    async function loadDates() {
+      setLoadingDates(true)
+      const { data } = await supabase
+        .from('blocked_dates')
+        .select('id, date, status')
+        .eq('property_id', propertyId)
+      if (data) {
+        const map: Record<string, DateStatus> = {}
+        data.forEach((d: BlockedDate) => { map[d.date] = d.status })
+        setDateMap(map)
+      }
+      setLoadingDates(false)
+    }
+    loadDates()
+  }, [propertyId])
+
+  const getDaysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate()
+  const getFirstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay()
+
+  const formatDate = (day: number) => {
+    const m = String(currentMonth + 1).padStart(2, '0')
+    const d = String(day).padStart(2, '0')
+    return `${currentYear}-${m}-${d}`
+  }
+
+  const handleDayClick = async (day: number) => {
+    const dateStr = formatDate(day)
+    const current = dateMap[dateStr]
+
+    // מחזור: פנוי → תפוס → מאושר → פנוי
+    if (!current) {
+      // פנוי → תפוס
+      const { error } = await supabase.from('blocked_dates').upsert({
+        property_id: propertyId,
+        date: dateStr,
+        status: 'blocked',
+      }, { onConflict: 'property_id,date' })
+      if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'blocked' }))
+    } else if (current === 'blocked') {
+      // תפוס → מאושר
+      const { error } = await supabase.from('blocked_dates').upsert({
+        property_id: propertyId,
+        date: dateStr,
+        status: 'approved',
+      }, { onConflict: 'property_id,date' })
+      if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'approved' }))
+    } else {
+      // מאושר → פנוי (מחק)
+      const { error } = await supabase.from('blocked_dates').delete()
+        .eq('property_id', propertyId).eq('date', dateStr)
+      if (!error) {
+        setDateMap(prev => {
+          const next = { ...prev }
+          delete next[dateStr]
+          return next
+        })
+      }
+    }
+  }
+
+  const prevMonth = () => {
+    if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1) }
+    else setCurrentMonth(m => m - 1)
+  }
+
+  const nextMonth = () => {
+    if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1) }
+    else setCurrentMonth(m => m + 1)
+  }
+
+  const daysInMonth = getDaysInMonth(currentMonth, currentYear)
+  const firstDay = getFirstDayOfMonth(currentMonth, currentYear)
+  const blanks = Array(firstDay).fill(null)
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
+
+  const getDayStyle = (day: number) => {
+    const dateStr = formatDate(day)
+    const status = dateMap[dateStr]
+    const isPast = new Date(dateStr) < new Date(today.toDateString())
+    if (isPast) return 'bg-gray-50 text-gray-300 cursor-not-allowed'
+    if (status === 'blocked') return 'bg-red-100 text-red-700 hover:bg-red-200 cursor-pointer font-medium'
+    if (status === 'approved') return 'bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer font-medium'
+    return 'hover:bg-yellow-50 hover:text-yellow-700 cursor-pointer text-gray-700'
+  }
+
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-sm">
+      <h2 className="font-bold text-gray-700 text-lg mb-1">ניהול זמינות</h2>
+      <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← מאושר ← פנוי</p>
+
+      {/* מקרא */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-white border border-gray-200" />
+          <span className="text-xs text-gray-500">פנוי</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-red-400" />
+          <span className="text-xs text-gray-500">תפוס</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-green-400" />
+          <span className="text-xs text-gray-500">הזמנה מאושרת</span>
+        </div>
+      </div>
+
+      {/* ניווט חודש */}
+      <div className="flex items-center justify-between mb-4">
+        <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
+          <ChevronRight className="w-4 h-4 text-gray-500" />
+        </button>
+        <span className="font-bold text-gray-800 text-sm">
+          {HEBREW_MONTHS[currentMonth]} {currentYear}
+        </span>
+        <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
+          <ChevronLeft className="w-4 h-4 text-gray-500" />
+        </button>
+      </div>
+
+      {loadingDates ? (
+        <div className="text-center py-8 text-gray-400 text-sm">טוען תאריכים...</div>
+      ) : (
+        <div className="grid grid-cols-7 gap-1">
+          {/* כותרות ימים */}
+          {HEBREW_DAYS.map(d => (
+            <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
+          ))}
+          {/* ריקים */}
+          {blanks.map((_, i) => <div key={`blank-${i}`} />)}
+          {/* ימים */}
+          {days.map(day => {
+            const isPast = new Date(formatDate(day)) < new Date(today.toDateString())
+            return (
+              <button
+                key={day}
+                type="button"
+                disabled={isPast}
+                onClick={() => handleDayClick(day)}
+                className={`aspect-square rounded-lg text-xs flex items-center justify-center transition-colors ${getDayStyle(day)}`}
+              >
+                {day}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function EditPropertyPage() {
@@ -181,9 +360,12 @@ export default function EditPropertyPage() {
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center gap-3 mb-8">
-          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100"><ArrowRight className="w-5 h-5 text-gray-500" /></button>
+          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100">
+            <ArrowRight className="w-5 h-5 text-gray-500" />
+          </button>
           <h1 className="text-2xl font-bold text-gray-900">עריכת נכס</h1>
         </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* גלריית תמונות */}
@@ -219,6 +401,9 @@ export default function EditPropertyPage() {
             </div>
             <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
+
+          {/* לוח שנה זמינות */}
+          <Calendar propertyId={params.id as string} supabase={supabase} />
 
           {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
@@ -331,6 +516,7 @@ export default function EditPropertyPage() {
               ביטול
             </button>
           </div>
+
         </form>
       </div>
     </div>

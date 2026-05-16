@@ -32,7 +32,7 @@ function MegaMenu({ sections, onClose }: {
               <ul className="space-y-2">
                 {section.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} onClick={() => setActiveMenu(null)} onClick={onClose}
+                    <Link href={item.href} onClick={() => setActiveMenu(null)}
                       className="text-sm text-gray-700 hover:text-yellow-700 transition-colors block py-0.5">
                       {item.label}
                     </Link>

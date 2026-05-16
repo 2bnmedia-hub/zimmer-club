@@ -121,7 +121,7 @@ export function Navbar() {
             <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto" />
           </Link>
 
-          <ul className="hidden lg:flex items-center gap-1 list-none flex-1 justify-center">
+          <ul className="hidden lg:flex items-center gap-6 list-none flex-1 justify-center">
             {[
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },

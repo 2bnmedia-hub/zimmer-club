@@ -118,7 +118,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
 
           <Link href="/" className="shrink-0">
-            <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto" />
+            <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
           </Link>
 
           <ul className="hidden lg:flex items-center gap-6 list-none flex-1 justify-center">
@@ -281,7 +281,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
       <nav className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="shrink-0">
-            <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto" />
+            <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_ITEMS.map((item) => (

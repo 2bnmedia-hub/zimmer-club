@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Assistant } from 'next/font/google'
 import '@/styles/globals.css'
 import { Navbar } from '@/components/layout/Navbar'
+import Script from 'next/script'
 
 const assistant = Assistant({
   subsets: ['hebrew', 'latin'],
@@ -48,6 +49,11 @@ export default function RootLayout({
       <body className={`${assistant.className} antialiased`}>
         <Navbar />
         {children}
+        <Script
+          src="https://cdn.userway.org/widget.js"
+          data-account="tsH0mnwtm1"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )

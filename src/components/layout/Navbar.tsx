@@ -142,10 +142,15 @@ export function Navbar() {
                 <Link
                   href={item.href}
                   className={item.badge
-                    ? 'px-4 py-2 text-sm font-medium text-white rounded-full transition-colors'
-                    : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
-                  }
-                  style={item.badge ? { backgroundColor: '#8B6914' } : {}}
+  ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
+  : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
+}
+style={item.badge ? {
+  background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',
+  backgroundSize: '200% auto',
+  animation: 'shimmer 2s linear infinite',
+  boxShadow: '0 0 12px rgba(200,150,12,0.5)',
+} : {}}
                 >
                   {item.label}
                 </Link>

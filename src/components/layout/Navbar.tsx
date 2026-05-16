@@ -22,7 +22,7 @@ function MegaMenu({ sections, onClose }: {
 }) {
   return (
     <div className="hidden lg:block absolute top-full right-0 left-0 bg-white border-t border-gray-200 shadow-2xl z-50">
-      <div className="max-w-7xl mx-auto px-4 py-8" dir="rtl">
+      <div className="max-w-7xl mx-auto px-4 py-[3.7rem]" dir="rtl">
         <div className="grid grid-cols-3 gap-12">
           {sections.map((section) => (
             <div key={section.title}>

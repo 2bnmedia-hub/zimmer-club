@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { href: '/camping', label: 'קמפינג' },
   { href: '/deals', label: 'מבצעים', badge: true },
   { href: '/advertise', label: 'פרסמו באתר' },
-  { href: '/find', label: 'אתרו לי זימר' },
+  { href: '/find', label: 'אתרו לי צימר' },
 ]
 
 type MenuItem = { href: string; label: string }

@@ -213,8 +213,18 @@ export default function NewPropertyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">איזור *</label>
                 <select name="region" value={form.region} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                  <option value="">בחר איזור</option>
-                  {Object.entries(REGIONS).map(([key, r]) => <option key={key} value={key}>{r.label}</option>)}
+                <option value="">בחר איזור</option>
+<option value="galil_north">צימרים בצפון</option>
+<option value="galil_west">צימרים בגליל המערבי</option>
+<option value="galil_upper">צימרים בגליל העליון</option>
+<option value="galil_lower">צימרים בגליל התחתון</option>
+<option value="kinneret">צימרים בכנרת</option>
+<option value="hermon">צימרים בחרמון</option>
+<option value="center">צימרים במרכז</option>
+<option value="jerusalem">צימרים בירושלים</option>
+<option value="dead_sea">צימרים בים המלח</option>
+<option value="negev">צימרים בדרום</option>
+<option value="eilat">צימרים באילת</option>
                 </select>
               </div>
             </div>

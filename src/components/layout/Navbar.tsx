@@ -285,7 +285,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)}
+              <Link key={item.href} href={item.href} onClick={() => {}}
                 className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
                 {item.label}
               </Link>

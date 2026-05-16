@@ -51,7 +51,7 @@ export default function RootLayout({
         {children}
         <Script
           src="https://cdn.userway.org/widget.js"
-          data-account="tsH0mnwtm1"
+          data-account="tsH0mnwtm1" data-position="left"
           strategy="afterInteractive"
         />
       </body>

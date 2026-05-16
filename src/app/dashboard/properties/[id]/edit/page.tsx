@@ -368,6 +368,9 @@ export default function EditPropertyPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
+          {/* לוח שנה זמינות */}
+          <Calendar propertyId={params.id as string} supabase={supabase} />
+
           {/* גלריית תמונות */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-2">גלריית תמונות</h2>
@@ -401,9 +404,6 @@ export default function EditPropertyPage() {
             </div>
             <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
-
-          {/* לוח שנה זמינות */}
-          <Calendar propertyId={params.id as string} supabase={supabase} />
 
           {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">

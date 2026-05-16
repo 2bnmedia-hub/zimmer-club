@@ -8,7 +8,7 @@ import { LatestProperties } from '@/components/property/LatestProperties'
 export default function HomePage() {
   return (
     <>
-      <Navbar />
+      
 
       <main>
         {/* HERO */}

@@ -256,7 +256,7 @@ style={item.badge ? {
               </div>
             ))}
             {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)}
+              <Link key={item.href} href={item.href}
                 onClick={() => { setActiveMenu(null); setMobileOpen(false) }}
                 className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
                 {item.label}

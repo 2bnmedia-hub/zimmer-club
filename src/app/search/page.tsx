@@ -92,8 +92,19 @@ function SearchContent() {
               </select>
               <select value={filters.region} onChange={(e) => setFilters(prev => ({ ...prev, region: e.target.value }))}
                 className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none">
-                <option value="">כל האיזורים</option>
-                {Object.entries(REGIONS).map(([key, r]) => <option key={key} value={key}>{r.label}</option>)}
+<option value="">כל האיזורים</option>
+                <option value="galil_north">צימרים בצפון</option>
+                <option value="galil_west">צימרים בגליל המערבי</option>
+                <option value="galil_upper">צימרים בגליל העליון</option>
+                <option value="galil_lower">צימרים בגליל התחתון</option>
+                <option value="kinneret">צימרים בכנרת</option>
+                <option value="hermon">צימרים בחרמון</option>
+                <option value="center">צימרים במרכז</option>
+                <option value="jerusalem">צימרים בירושלים</option>
+                <option value="dead_sea">צימרים בים המלח</option>
+                <option value="negev">צימרים בדרום</option>
+                <option value="eilat">צימרים באילת</option>
+
               </select>
               <input type="number" placeholder="מחיר מינימום" value={filters.minPrice}
                 onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}

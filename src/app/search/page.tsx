@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -32,7 +32,7 @@ const PROPERTY_TYPES = [
   { value: 'camping', label: 'קמפינג' },
 ]
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams()
   const supabase = createClient()
   const [properties, setProperties] = useState<Property[]>([])
@@ -177,5 +177,13 @@ export default function SearchPage() {
       </main>
       <Footer />
     </>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>}>
+      <SearchContent />
+    </Suspense>
   )
 }

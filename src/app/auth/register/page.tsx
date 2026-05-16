@@ -20,11 +20,11 @@ export default function RegisterPage() {
     role: 'guest',
   })
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     if (form.password !== form.confirmPassword) { setError('הסיסמאות אינן תואמות'); return }

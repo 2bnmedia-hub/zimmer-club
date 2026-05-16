@@ -90,7 +90,7 @@ export default function FindPage() {
   }, [])
 
   useEffect(() => {
-    if (messages.length > 1) bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (messages.length > 1 || results.length > 0) bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, results])
 
   const handleOption = async (option: string) => {

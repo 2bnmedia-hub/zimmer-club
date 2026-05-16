@@ -245,7 +245,7 @@ style={item.badge ? {
                 {activeMenu === menu.name && (
                   <div className="px-4 space-y-1">
                     {menu.items.map((item) => (
-                      <Link key={item.label} href={item.href} onClick={() => setActiveMenu(null)}
+                      <Link key={item.label} href={item.href}
                         onClick={() => { setMobileOpen(false); setActiveMenu(null) }}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
                         {item.label}

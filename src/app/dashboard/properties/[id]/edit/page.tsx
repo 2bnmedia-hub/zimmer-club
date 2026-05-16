@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { REGIONS } from '@/lib/constants'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Upload, X, Image } from 'lucide-react'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -44,6 +44,8 @@ export default function EditPropertyPage() {
   const [success, setSuccess] = useState(false)
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [isAdmin, setIsAdmin] = useState(false)
+  const [images, setImages] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
   const [form, setForm] = useState({
     name: '',
     short_description: '',
@@ -86,6 +88,12 @@ export default function EditPropertyPage() {
         instant_book: property.instant_book || false,
         status: property.status || 'pending',
       })
+ const { data: imgData } = await supabase
+        .from('property_images')
+        .select('url')
+        .eq('property_id', params.id)
+        .order('position')
+      setImages(imgData?.map(i => i.url) || [])
       setLoading(false)
     }
     load()
@@ -124,7 +132,33 @@ export default function EditPropertyPage() {
     if (updateError) { setError(updateError.message) } else { setSuccess(true); setTimeout(() => setSuccess(false), 3000) }
     setSaving(false)
   }
+const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setUploading(true)
+    for (const file of Array.from(files)) {
+      const ext = file.name.split('.').pop()
+      const fileName = `${params.id}/${Date.now()}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('property-images')
+        .upload(fileName, file)
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
+        await supabase.from('property_images').insert({
+          property_id: params.id,
+          url: urlData.publicUrl,
+          position: images.length,
+        })
+        setImages(prev => [...prev, urlData.publicUrl])
+      }
+    }
+    setUploading(false)
+  }
 
+  const handleDeleteImage = async (url: string) => {
+    await supabase.from('property_images').delete().eq('url', url)
+    setImages(prev => prev.filter(i => i !== url))
+  }
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
 
   return (
@@ -226,6 +260,25 @@ export default function EditPropertyPage() {
                   {amenity.label}
                 </button>
               ))}
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-4">תמונות הנכס</h2>
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {images.map((url) => (
+                <div key={url} className="relative group">
+                  <img src={url} alt="" className="w-full h-32 object-cover rounded-xl" />
+                  <button type="button" onClick={() => handleDeleteImage(url)}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+              <label className="h-32 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                <span className="text-xs text-gray-400">{uploading ? 'מעלה...' : 'הוסף תמונה'}</span>
+                <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" disabled={uploading} />
+              </label>
             </div>
           </div>
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}

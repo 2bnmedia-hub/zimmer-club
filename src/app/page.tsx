@@ -3,6 +3,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { SearchBar } from '@/components/search/SearchBar'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
+import { LatestProperties } from '@/components/property/LatestProperties'
 
 export default function HomePage() {
   return (
@@ -69,7 +70,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
+        <LatestProperties />
         {/* CATEGORIES */}
         <section className="section-padding bg-cream-50">
           <div className="page-container">

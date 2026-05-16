@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Assistant } from 'next/font/google'
 import '@/styles/globals.css'
+import { Navbar } from '@/components/layout/Navbar'
 
 const assistant = Assistant({
   subsets: ['hebrew', 'latin'],
@@ -45,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl" className={assistant.variable}>
       <body className={`${assistant.className} antialiased`}>
+        <Navbar />
         {children}
       </body>
     </html>

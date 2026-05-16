@@ -10,6 +10,7 @@ import { Search, SlidersHorizontal, X, Star } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
 
 type Property = {
+  images?: { url: string }[]
   id: string
   name: string
   short_description: string
@@ -51,7 +52,7 @@ function SearchContent() {
 
   async function fetchProperties() {
     setLoading(true)
-    let query = supabase.from('properties').select('*').eq('status', 'active')
+    let query = supabase.from('properties').select('*, property_images(url, order)').eq('status', 'active')
     if (filters.category) query = query.contains('category', [filters.category])
     if (filters.region) query = query.eq('region', filters.region)
     if (filters.minPrice) query = query.gte('price_per_night', parseInt(filters.minPrice))
@@ -143,8 +144,12 @@ function SearchContent() {
               {properties.map((p) => (
                 <Link key={p.id} href={`/properties/${p.id}`}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
-                  <div className="h-48 bg-gray-200 relative">
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">אין תמונה</div>
+                  <div className="h-48 bg-gray-200 relative overflow-hidden">
+                    {p.images && p.images.length > 0 ? (
+                      <img src={p.images[0].url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">אין תמונה</div>
+                    )}
                     {p.instant_book && (
                       <span className="absolute top-3 right-3 bg-white text-xs font-bold px-2 py-1 rounded-full text-yellow-700">הזמנה מיידית</span>
                     )}

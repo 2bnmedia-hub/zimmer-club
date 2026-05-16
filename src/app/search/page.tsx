@@ -10,7 +10,6 @@ import { Search, SlidersHorizontal, X, Star } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
 
 type Property = {
-  images?: { url: string }[]
   id: string
   name: string
   short_description: string
@@ -19,10 +18,10 @@ type Property = {
   city: string
   price_per_night: number
   max_guests: number
-  bedrooms: number
   avg_rating: number
   total_reviews: number
   instant_book: boolean
+  property_images: { url: string }[]
 }
 
 const PROPERTY_TYPES = [
@@ -52,7 +51,10 @@ function SearchContent() {
 
   async function fetchProperties() {
     setLoading(true)
-    let query = supabase.from('properties').select('*, property_images(url, order)').eq('status', 'active')
+    let query = supabase
+      .from('properties')
+      .select('*, property_images(url, "order")')
+      .eq('status', 'active')
     if (filters.category) query = query.contains('category', [filters.category])
     if (filters.region) query = query.eq('region', filters.region)
     if (filters.minPrice) query = query.gte('price_per_night', parseInt(filters.minPrice))
@@ -87,23 +89,23 @@ function SearchContent() {
           {showFilters && (
             <div className="max-w-7xl mx-auto mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
               <select value={filters.category} onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600">
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none">
                 {PROPERTY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
               <select value={filters.region} onChange={(e) => setFilters(prev => ({ ...prev, region: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600">
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none">
                 <option value="">כל האיזורים</option>
                 {Object.entries(REGIONS).map(([key, r]) => <option key={key} value={key}>{r.label}</option>)}
               </select>
               <input type="number" placeholder="מחיר מינימום" value={filters.minPrice}
                 onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600" />
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none" />
               <input type="number" placeholder="מחיר מקסימום" value={filters.maxPrice}
                 onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600" />
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none" />
               <input type="number" placeholder="מספר אורחים" value={filters.guests}
                 onChange={(e) => setFilters(prev => ({ ...prev, guests: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600" />
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none" />
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={filters.instant_book}
@@ -112,7 +114,7 @@ function SearchContent() {
                   הזמנה מיידית
                 </label>
                 {activeFiltersCount > 0 && (
-                  <button onClick={clearFilters} className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700">
+                  <button onClick={clearFilters} className="flex items-center gap-1 text-xs text-red-500">
                     <X className="w-3 h-3" />נקה
                   </button>
                 )}
@@ -141,41 +143,44 @@ function SearchContent() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((p) => (
-                <Link key={p.id} href={`/properties/${p.id}`}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
-                  <div className="h-48 bg-gray-200 relative overflow-hidden">
-                    {p.images && p.images.length > 0 ? (
-                      <img src={p.images[0].url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">אין תמונה</div>
-                    )}
-                    {p.instant_book && (
-                      <span className="absolute top-3 right-3 bg-white text-xs font-bold px-2 py-1 rounded-full text-yellow-700">הזמנה מיידית</span>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="font-bold text-gray-900 text-base group-hover:text-yellow-700 transition-colors">{p.name}</h3>
-                      {p.avg_rating > 0 && (
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                          <span>{p.avg_rating}</span>
-                        </div>
+              {properties.map((p) => {
+                const firstImage = p.property_images?.[0]?.url
+                return (
+                  <Link key={p.id} href={`/properties/${p.id}`}
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+                    <div className="h-48 bg-gray-200 relative overflow-hidden">
+                      {firstImage ? (
+                        <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">אין תמונה</div>
+                      )}
+                      {p.instant_book && (
+                        <span className="absolute top-3 right-3 bg-white text-xs font-bold px-2 py-1 rounded-full text-yellow-700">הזמנה מיידית</span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mb-2">{p.city || REGIONS[p.region as keyof typeof REGIONS]?.label}</p>
-                    {p.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2">{p.short_description}</p>}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="font-bold text-gray-900">₪{p.price_per_night}</span>
-                        <span className="text-xs text-gray-500"> / לילה</span>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-bold text-gray-900 text-base group-hover:text-yellow-700 transition-colors">{p.name}</h3>
+                        {p.avg_rating > 0 && (
+                          <div className="flex items-center gap-1 text-sm text-gray-600">
+                            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                            <span>{p.avg_rating}</span>
+                          </div>
+                        )}
                       </div>
-                      <span className="text-xs text-gray-400">עד {p.max_guests} אורחים</span>
+                      <p className="text-sm text-gray-500 mb-2">{p.city || REGIONS[p.region as keyof typeof REGIONS]?.label}</p>
+                      {p.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2">{p.short_description}</p>}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-bold text-gray-900">₪{p.price_per_night}</span>
+                          <span className="text-xs text-gray-500"> / לילה</span>
+                        </div>
+                        <span className="text-xs text-gray-400">עד {p.max_guests} אורחים</span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                )
+              })}
             </div>
           )}
         </div>

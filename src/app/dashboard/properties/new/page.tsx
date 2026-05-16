@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { REGIONS } from '@/lib/constants'
 import { Upload, X, Star } from 'lucide-react'
 
 const PROPERTY_TYPES = [
@@ -32,11 +31,10 @@ const AMENITIES_LIST = [
   { key: 'shelter', label: 'מרחב מוגן' },
   { key: 'heated_pool', label: 'בריכה מחוממת' },
   { key: 'pets', label: 'ידידותי לכלבים' },
-  { key: 'spa', label: "ספא" },
+  { key: 'spa', label: 'ספא צמוד' },
   { key: 'private_pool', label: 'בריכה פרטית' },
   { key: 'snooker', label: 'שולחן סנוקר' },
   { key: 'private_jacuzzi', label: "ג'קוזי פרטי" },
-  { key: 'sukka', label: 'סוכה' },
   { key: 'accessible', label: 'צימר עם נגישות' },
   { key: 'couples', label: 'מתאים לזוגות' },
   { key: 'families', label: 'מתאים למשפחות' },
@@ -46,13 +44,11 @@ const AMENITIES_LIST = [
   { key: 'religious', label: 'מתאים לציבור הדתי' },
   { key: 'suite', label: 'סוויטה' },
   { key: 'treehouse', label: 'בקתת עץ' },
-  { key: 'cave', label: 'מערה' },
+  { key: 'cave', label: 'צימר מערה' },
   { key: 'mobile', label: 'צימר מבודד' },
   { key: 'longstay', label: 'צימרים לטווח ארוך' },
   { key: 'vacation', label: 'דירת נופש' },
-  { key: 'synagogue', label: 'בית כנסת' },
   { key: 'shelter_nearby', label: 'מרחב מוגן קרוב' },
-  { key: 'grapevines', label: 'יקבים' },
 ]
 
 type ImagePreview = {
@@ -97,7 +93,19 @@ export default function NewPropertyPage() {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
-    const newImages = Array.from(files).map((file, idx) => ({
+    const valid = Array.from(files).filter(f => {
+      if (f.size > 2 * 1024 * 1024) {
+        alert(`הקובץ "${f.name}" גדול מ-2MB ולא יתווסף`)
+        return false
+      }
+      return true
+    })
+    const remaining = 14 - images.length
+    if (valid.length > remaining) {
+      alert(`ניתן להוסיף עד 14 תמונות בלבד. יתווספו ${remaining} תמונות.`)
+    }
+    const toAdd = valid.slice(0, remaining)
+    const newImages = toAdd.map((file, idx) => ({
       file,
       url: URL.createObjectURL(file),
       isPrimary: images.length === 0 && idx === 0,
@@ -177,8 +185,6 @@ export default function NewPropertyPage() {
           {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>
-
-            {/* שם + תיאור קצר באותה שורה */}
             <div className="flex gap-4">
               <div className="w-[30%]">
                 <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס *</label>
@@ -193,14 +199,12 @@ export default function NewPropertyPage() {
                   placeholder="משפט אחד שמתאר את הנכס" />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">תיאור מלא</label>
               <textarea name="description" value={form.description} onChange={handleChange} rows={4}
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 resize-none"
                 placeholder="תאר את הנכס בפירוט..." />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">סוג נכס *</label>
@@ -213,22 +217,21 @@ export default function NewPropertyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">איזור *</label>
                 <select name="region" value={form.region} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                <option value="">בחר איזור</option>
-<option value="galil_north">צימרים בצפון</option>
-<option value="galil_west">צימרים בגליל המערבי</option>
-<option value="galil_upper">צימרים בגליל העליון</option>
-<option value="galil_lower">צימרים בגליל התחתון</option>
-<option value="kinneret">צימרים בכנרת</option>
-<option value="hermon">צימרים בחרמון</option>
-<option value="center">צימרים במרכז</option>
-<option value="jerusalem">צימרים בירושלים</option>
-<option value="dead_sea">צימרים בים המלח</option>
-<option value="negev">צימרים בדרום</option>
-<option value="eilat">צימרים באילת</option>
+                  <option value="">בחר איזור</option>
+                  <option value="galil_north">צימרים בצפון</option>
+                  <option value="galil_west">צימרים בגליל המערבי</option>
+                  <option value="galil_upper">צימרים בגליל העליון</option>
+                  <option value="galil_lower">צימרים בגליל התחתון</option>
+                  <option value="kinneret">צימרים בכנרת</option>
+                  <option value="hermon">צימרים בחרמון</option>
+                  <option value="center">צימרים במרכז</option>
+                  <option value="jerusalem">צימרים בירושלים</option>
+                  <option value="dead_sea">צימרים בים המלח</option>
+                  <option value="negev">צימרים בדרום</option>
+                  <option value="eilat">צימרים באילת</option>
                 </select>
               </div>
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב</label>
@@ -268,13 +271,16 @@ export default function NewPropertyPage() {
                   </div>
                 </div>
               ))}
-              <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                <Upload className="w-6 h-6 text-gray-400 mb-1" />
-                <span className="text-xs text-gray-400">הוסף תמונות</span>
-                <input type="file" accept="image/*" multiple onChange={handleImageSelect} className="hidden" />
-              </label>
+              {images.length < 14 && (
+                <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                  <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                  <span className="text-xs text-gray-400">הוסף תמונות</span>
+                  <input type="file" accept="image/*" multiple onChange={handleImageSelect} className="hidden" />
+                </label>
+              )}
             </div>
-            <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
+            <p className="text-xs text-gray-400">{images.length}/14 תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
+            <p className="text-xs text-gray-400 mt-1">* מקסימום 14 תמונות · גודל מקסימלי לתמונה: 2MB</p>
           </div>
 
           {/* תמחור */}

@@ -32,7 +32,7 @@ function MegaMenu({ sections, onClose }: {
               <ul className="space-y-2">
                 {section.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} onClick={onClose}
+                    <Link href={item.href} onClick={() => setActiveMenu(null)} onClick={onClose}
                       className="text-sm text-gray-700 hover:text-yellow-700 transition-colors block py-0.5">
                       {item.label}
                     </Link>
@@ -140,7 +140,7 @@ export function Navbar() {
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
-                  href={item.href}
+                  href={item.href} onClick={() => setActiveMenu(null)}
                   className={item.badge
   ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
   : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
@@ -245,7 +245,7 @@ style={item.badge ? {
                 {activeMenu === menu.name && (
                   <div className="px-4 space-y-1">
                     {menu.items.map((item) => (
-                      <Link key={item.label} href={item.href}
+                      <Link key={item.label} href={item.href} onClick={() => setActiveMenu(null)}
                         onClick={() => { setMobileOpen(false); setActiveMenu(null) }}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
                         {item.label}
@@ -256,7 +256,7 @@ style={item.badge ? {
               </div>
             ))}
             {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href}
+              <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)}
                 onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
                 {item.label}
@@ -285,7 +285,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href}
+              <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)}
                 className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
                 {item.label}
               </Link>

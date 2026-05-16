@@ -147,7 +147,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         await supabase.from('property_images').insert({
           property_id: params.id,
           url: urlData.publicUrl,
-          position: images.length,
+          "order": images.length,
         })
         setImages(prev => [...prev, urlData.publicUrl])
       }

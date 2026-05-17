@@ -229,7 +229,7 @@ export default function FindPage() {
         </div>
 
         {!done && !loading && step < QUESTIONS.length && (
-          <div className="flex flex-nowrap gap-1.5 justify-center mb-8 overflow-x-auto">
+          <div className="flex flex-wrap gap-2.5 justify-center mb-8">
             {currentOptions.map(option => (
               <button key={option} onClick={() => handleOption(option)}
                 className="px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95"

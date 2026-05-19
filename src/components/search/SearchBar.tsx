@@ -70,11 +70,18 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 list="regions-list"
               />
               <datalist id="regions-list">
-                {Object.entries(REGIONS).map(([key, { label }]) => (
-                  <option key={key} value={label} />
-                ))}
-              </datalist>
-            </div>
+                <option value="צימרים בצפון" />
+                <option value="צימרים בגליל המערבי" />
+                <option value="צימרים בגליל העליון" />
+                <option value="צימרים בגליל התחתון" />
+                <option value="צימרים בכנרת" />
+                <option value="צימרים בחרמון" />
+                <option value="צימרים במרכז" />
+                <option value="צימרים בירושלים" />
+                <option value="צימרים בים המלח" />
+                <option value="צימרים בדרום" />
+                <option value="צימרים באילת" />
+              </datalist>            </div>
           </div>
 
           {/* Check-in */}

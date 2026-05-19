@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
@@ -97,7 +96,6 @@ export default function PropertyPage() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-white" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-8">
 

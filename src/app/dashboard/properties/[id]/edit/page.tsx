@@ -512,6 +512,9 @@ export default function EditPropertyPage() {
             <button type="submit" disabled={saving} className="flex-1 py-3 rounded-xl font-bold text-white text-sm" style={{ backgroundColor: '#8B6914' }}>
               {saving ? 'שומר...' : 'שמור שינויים'}
             </button>
+            <button type="button" onClick={async () => { if(confirm("למחוק את הנכס לצמיתות?")) { await supabase.from("properties").delete().eq("id", params.id); router.push("/dashboard/owner") } }} className="px-6 py-3 rounded-xl font-bold text-red-600 text-sm border border-red-200 hover:bg-red-50">
+              מחק נכס
+            </button>
             <button type="button" onClick={() => router.back()} className="px-6 py-3 rounded-xl font-bold text-gray-700 text-sm border border-gray-200 hover:bg-gray-50">
               ביטול
             </button>

@@ -182,7 +182,7 @@ export default function AdvertisePage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">אימייל</label>
                     <div className="relative">
                       <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <input name="email" value={form.email} onChange={handleChange} type="email"
+                      <input name="email" value={form.email} onChange={handleChange} required type="email"
                         placeholder="email@example.com"
                         className="w-full border border-gray-200 rounded-xl pr-10 pl-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
                     </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Check, X, Edit, ArrowRight } from 'lucide-react'
+import { Check, X, Trash2, Edit, ArrowRight } from 'lucide-react'
 
 type Property = {
   id: string
@@ -133,6 +133,7 @@ export default function AdminDashboard() {
                           <>
                             <button onClick={() => updateStatus(p.id, 'active')} className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100"><Check className="w-4 h-4 text-green-600" /></button>
                             <button onClick={() => updateStatus(p.id, 'rejected')} className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100"><X className="w-4 h-4 text-red-600" /></button>
+                            <button onClick={() => { if(confirm('למחוק את הנכס לצמיתות?')) { supabase.from('properties').delete().eq('id', p.id).then(() => setProperties(prev => prev.filter(x => x.id !== p.id))) } }} className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100"><Trash2 className="w-4 h-4 text-gray-500 hover:text-red-600" /></button>
                           </>
                         )}
                         <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><Edit className="w-4 h-4 text-gray-500" /></Link>

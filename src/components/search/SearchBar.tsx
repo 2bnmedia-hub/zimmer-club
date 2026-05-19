@@ -147,7 +147,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             className="btn-gold flex items-center justify-center gap-7 py-2.5 px-15 text-sm"
           >
             <Search className="w-4 h-4 shrink-0" />
-            <span>חיפפפפפפפפפפפוש</span>
+            <span>חיפוש</span>
           </button>
         </div>
 

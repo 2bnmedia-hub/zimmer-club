@@ -7,12 +7,11 @@ import { CheckCircle, Users, Star, TrendingUp, Phone, Mail, User, Home, ArrowRig
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
-  { value: 'villa', label: 'וילה / בקתה' },
-  { value: 'hotel', label: 'מלון / בוטיק' },
-  { value: 'camping', label: 'קמפינג / גלמפינג' },
-  { value: 'other', label: 'אחר' },
+  { value: 'villa', label: 'וילה/בקתה' },
+  { value: 'hotel', label: 'מלון' },
+  { value: 'camping', label: 'קמפינג' },
+  { value: 'attraction', label: 'אטרקציה' },
 ]
-
 const BENEFITS = [
   {
     icon: Users,

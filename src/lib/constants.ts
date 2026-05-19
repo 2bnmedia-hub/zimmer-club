@@ -169,7 +169,6 @@ export const ZIMMER_MENU = {
  { href: '/search?region=galil_west', label: 'צימרים בגליל המערבי' },
    { href: '/search?region=galil_upper', label: 'צימרים בגליל העליון' },
  { href: '/search?region=galil_lower', label: 'צימרים בגליל התחתון' },
- { href: '/search?region=galil', label: 'אירוח דרוזי' },
  { href: '/search?region=carmel', label: 'צימרים בכנרת' },
  { href: '/search?region=golan', label: 'צימרים בחרמון' },
     { href: '/search?region=center', label: 'צימרים במרכז' },

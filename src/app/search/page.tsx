@@ -87,11 +87,11 @@ function SearchContent() {
           {showFilters && (
             <div className="max-w-7xl mx-auto mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
               <select value={filters.category} onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none">
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none" style={{backgroundColor: '#D4C4A8'}}>
                 {PROPERTY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
               <select value={filters.region} onChange={(e) => setFilters(prev => ({ ...prev, region: e.target.value }))}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none">
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none" style={{backgroundColor: '#D4C4A8'}}>
 <option value="">כל האיזורים</option>
                 <option value="galil_north">צימרים בצפון</option>
                 <option value="galil_west">צימרים בגליל המערבי</option>

@@ -30,12 +30,12 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
     setError('')
 
     if (checkIn && checkIn < today) {
-      setError('תאריך הכניסה חייב להיות מהיום ואילך')
+      setError('התאריך שהוזן אינו תקין, נא להזין תאריכים עתידיים')
       return
     }
 
     if (checkOut && checkOut < today) {
-      setError('תאריך היציאה חייב להיות מהיום ואילך')
+      setError('התאריך שהוזן אינו תקין, נא להזין תאריכים עתידיים')
       return
     }
 

@@ -201,7 +201,7 @@ export default function PropertyPage() {
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-2xl font-bold text-gray-900">₪{property.price_per_night}</span>
+                  <span className="text-2xl font-bold text-gray-900">החל מ: ₪{property.price_per_night}</span>
                   <span className="text-sm text-gray-500">/ לילה</span>
                 </div>
                 <div className="space-y-3 mb-4">

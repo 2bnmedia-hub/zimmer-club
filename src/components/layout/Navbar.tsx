@@ -21,7 +21,7 @@ function MegaMenu({ sections, onClose }: {
   onClose: () => void
 }) {
   return (
-    <div className="hidden lg:block absolute top-full right-0 left-0 bg-white border-t border-gray-200 shadow-2xl z-50 min-h-[320px] min-h-[320px]">
+    <div className="hidden lg:block absolute top-full right-0 left-0 bg-white border-t border-gray-200 shadow-2xl z-50 min-h-[320px]">
       <div className="max-w-7xl mx-auto px-4 py-[5rem]" dir="rtl">
         <div className="grid grid-cols-3 gap-12">
           {sections.map((section) => (
@@ -51,7 +51,6 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
 
@@ -80,6 +79,7 @@ export function Navbar() {
     window.location.href = '/'
   }
 
+  // סגור את כל התפריטים בלחיצה מחוץ לנאבבר
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
@@ -90,8 +90,9 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  // פתיחה/סגירה של תפריט — כולל תפריט משתמש תחת המפתח 'user'
   const toggleMenu = (name: string) => {
-    setActiveMenu(activeMenu === name ? null : name)
+    setActiveMenu(prev => prev === name ? null : name)
   }
 
   const zimmerSections = [
@@ -140,17 +141,18 @@ export function Navbar() {
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
-                  href={item.href} onClick={() => setActiveMenu(null)}
+                  href={item.href}
+                  onClick={() => setActiveMenu(null)}
                   className={item.badge
-  ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
-  : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
-}
-style={item.badge ? {
-  background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',
-  backgroundSize: '200% auto',
-  animation: 'shimmer 2s linear infinite',
-  boxShadow: '0 0 12px rgba(200,150,12,0.5)',
-} : {}}
+                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
+                    : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
+                  }
+                  style={item.badge ? {
+                    background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',
+                    backgroundSize: '200% auto',
+                    animation: 'shimmer 2s linear infinite',
+                    boxShadow: '0 0 12px rgba(200,150,12,0.5)',
+                  } : {}}
                 >
                   {item.label}
                 </Link>
@@ -158,29 +160,29 @@ style={item.badge ? {
             ))}
           </ul>
 
-           <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <Search className="w-5 h-5 text-gray-600" />
             </button>
             {user ? (
               <div className="relative">
                 <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  onClick={() => toggleMenu('user')}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <User className="w-4 h-4" />
                   <span>שלום, {user.name.split(' ')[0]}</span>
-                  <ChevronDown className="w-3 h-3" />
+                  <ChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
                 </button>
-                {userMenuOpen && (
+                {activeMenu === 'user' && (
                   <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-48 py-1" dir="rtl">
                     <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
-                      onClick={() => setUserMenuOpen(false)}
+                      onClick={() => setActiveMenu(null)}
                       className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
                       לוח בקרה
                     </Link>
                     <Link href="/dashboard/properties/new"
-                      onClick={() => setUserMenuOpen(false)}
+                      onClick={() => setActiveMenu(null)}
                       className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
                       הוסף נכס
                     </Link>
@@ -206,6 +208,7 @@ style={item.badge ? {
               </div>
             )}
           </div>
+
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"

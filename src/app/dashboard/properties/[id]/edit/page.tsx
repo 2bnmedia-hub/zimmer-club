@@ -357,7 +357,7 @@ export default function EditPropertyPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pt-24" dir="rtl">
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center gap-3 mb-8">
           <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100">

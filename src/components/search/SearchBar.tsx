@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, MapPin, Calendar, Users } from 'lucide-react'
-import { cn, buildQueryString } from '@/lib/utils'
-import { REGIONS } from '@/lib/constants'
+import { buildQueryString } from '@/lib/utils'
 
 interface SearchBarProps {
   variant?: 'hero' | 'compact'
@@ -22,11 +21,29 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const [checkIn, setCheckIn] = useState(initialValues.checkIn || '')
   const [checkOut, setCheckOut] = useState(initialValues.checkOut || '')
   const [guests, setGuests] = useState(initialValues.guests || 2)
+  const [error, setError] = useState('')
 
   const today = new Date().toISOString().split('T')[0]
   const maxDate = '2030-12-31'
 
   const handleSearch = () => {
+    setError('')
+
+    if (checkIn && checkIn < today) {
+      setError('תאריך הכניסה חייב להיות מהיום ואילך')
+      return
+    }
+
+    if (checkOut && checkOut < today) {
+      setError('תאריך היציאה חייב להיות מהיום ואילך')
+      return
+    }
+
+    if (checkIn && checkOut && checkOut <= checkIn) {
+      setError('תאריך היציאה חייב להיות אחרי תאריך הכניסה')
+      return
+    }
+
     const qs = buildQueryString({ region, check_in: checkIn, check_out: checkOut, guests })
     router.push(`/search${qs}`)
   }
@@ -43,10 +60,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           className="flex-1 text-sm bg-transparent outline-none text-charcoal placeholder-stone"
           dir="rtl"
         />
-        <button
-          onClick={handleSearch}
-          className="btn-gold text-sm py-1.5 px-4"
-        >
+        <button onClick={handleSearch} className="btn-gold text-sm py-1.5 px-4">
           <Search className="w-4 h-4" />
         </button>
       </div>
@@ -98,6 +112,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 value={checkIn}
                 onChange={(e) => {
                   setCheckIn(e.target.value)
+                  setError('')
                   if (checkOut && e.target.value > checkOut) setCheckOut('')
                 }}
                 min={today}
@@ -116,7 +131,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <input
                 type="date"
                 value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
+                onChange={(e) => {
+                  setCheckOut(e.target.value)
+                  setError('')
+                }}
                 min={checkIn || today}
                 max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
@@ -137,7 +155,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 dir="rtl"
                 style={{ direction: 'rtl', textAlign: 'right' }}
               >
-               {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((n) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((n) => (
                   <option key={n} value={n}>
                     {n === 1 ? 'אורח אחד' : `${n} אורחים`}
                   </option>
@@ -148,6 +166,13 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
         </div>
+
+        {/* Error message */}
+        {error && (
+          <div className="px-5 py-2 bg-red-50 border-t border-red-100 text-right">
+            <p className="text-sm text-red-600 font-medium">{error}</p>
+          </div>
+        )}
 
         {/* Search Button */}
         <div className="border-t border-sand-100 p-4 flex justify-center">

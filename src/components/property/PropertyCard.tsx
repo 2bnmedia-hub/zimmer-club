@@ -108,7 +108,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             {/* Price */}
             <div className="text-left ltr">
               <span className="text-base font-bold text-charcoal">
-                {formatPrice(property.price_per_night)}
+                החל מ: {formatPrice(property.price_per_night)}
               </span>
               <span className="text-xs text-taupe"> / לילה</span>
             </div>

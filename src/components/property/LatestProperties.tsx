@@ -87,7 +87,7 @@ export function LatestProperties() {
                   {p.short_description && <p className="text-xs text-taupe/70 mb-3 line-clamp-2">{p.short_description}</p>}
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-charcoal text-sm">₪{p.price_per_night}</span>
+                      <span className="font-bold text-charcoal text-sm">החל מ: ₪{p.price_per_night}</span>
                       <span className="text-xs text-taupe"> / לילה</span>
                     </div>
                     <span className="text-xs text-taupe">עד {p.max_guests} אורחים</span>

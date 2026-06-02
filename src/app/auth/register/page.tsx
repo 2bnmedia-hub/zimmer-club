@@ -1,9 +1,52 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+
+function PasswordInput({ name, value, onChange, placeholder }: {
+  name: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  placeholder?: string
+}) {
+  const [show, setShow] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleToggle = () => {
+    if (show) {
+      setShow(false)
+      if (timerRef.current) clearTimeout(timerRef.current)
+    } else {
+      setShow(true)
+      timerRef.current = setTimeout(() => setShow(false), 2000)
+    }
+  }
+
+  return (
+    <div className="relative">
+      <input
+        name={name}
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        required
+        placeholder={placeholder}
+        dir="ltr"
+        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 pr-10"
+      />
+      <button
+        type="button"
+        onClick={handleToggle}
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+      >
+        {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </div>
+  )
+}
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -94,15 +137,25 @@ export default function RegisterPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">סיסמה</label>
-            <input name="password" type="password" value={form.password} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
+            <PasswordInput name="password" value={form.password} onChange={handleChange} />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">אימות סיסמה</label>
-            <input name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
+            <PasswordInput name="confirmPassword" value={form.confirmPassword} onChange={handleChange} />
           </div>
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
-          <button type="submit" disabled={loading} className="w-full py-3 rounded-xl font-bold text-white text-sm" style={{ backgroundColor: '#8B6914' }}>
-            {loading ? 'נרשם...' : 'הרשמה חינם'}
+          <button type="submit" disabled={loading}
+            className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
+            style={{ backgroundColor: '#8B6914', opacity: loading ? 0.8 : 1 }}>
+            {loading ? (
+              <>
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+                נרשם...
+              </>
+            ) : 'הרשמה חינם'}
           </button>
         </form>
         <p className="text-center text-sm text-gray-500 mt-6">

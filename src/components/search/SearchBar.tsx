@@ -23,6 +23,9 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const [checkOut, setCheckOut] = useState(initialValues.checkOut || '')
   const [guests, setGuests] = useState(initialValues.guests || 2)
 
+  const today = new Date().toISOString().split('T')[0]
+  const maxDate = '2030-12-31'
+
   const handleSearch = () => {
     const qs = buildQueryString({ region, check_in: checkIn, check_out: checkOut, guests })
     router.push(`/search${qs}`)
@@ -81,7 +84,8 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 <option value="צימרים בים המלח" />
                 <option value="צימרים בדרום" />
                 <option value="צימרים באילת" />
-              </datalist>            </div>
+              </datalist>
+            </div>
           </div>
 
           {/* Check-in */}
@@ -92,8 +96,12 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <input
                 type="date"
                 value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                onChange={(e) => {
+                  setCheckIn(e.target.value)
+                  if (checkOut && e.target.value > checkOut) setCheckOut('')
+                }}
+                min={today}
+                max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
                 dir="ltr"
               />
@@ -109,7 +117,8 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 type="date"
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
-                min={checkIn || new Date().toISOString().split('T')[0]}
+                min={checkIn || today}
+                max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
                 dir="ltr"
               />

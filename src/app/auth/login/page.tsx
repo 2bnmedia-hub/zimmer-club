@@ -10,6 +10,7 @@ export default function LoginPage() {
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const [form, setForm] = useState({
     email: '',
@@ -23,6 +24,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     setLoading(true)
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -31,10 +33,12 @@ export default function LoginPage() {
     })
 
     if (signInError) {
-      setError('אימייל או סיסמה שגויים')
+      setError('אימייל או סיסמה שגויים. אם שכחת את הסיסמה, לחץ על "שכחת סיסמה?"')
       setLoading(false)
       return
     }
+
+    setSuccess('מתחבר... מיד תועבר לחשבונך')
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setLoading(false); return }
@@ -60,7 +64,8 @@ export default function LoginPage() {
       return
     }
     await supabase.auth.resetPasswordForEmail(form.email)
-    alert('נשלח אימייל לאיפוס סיסמה')
+    setSuccess('נשלח אימייל לאיפוס סיסמה — בדוק את תיבת הדואר שלך')
+    setError('')
   }
 
   return (
@@ -101,10 +106,24 @@ export default function LoginPage() {
             </div>
           )}
 
+          {success && (
+            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">
+              {success}
+            </div>
+          )}
+
           <button type="submit" disabled={loading}
-            className="w-full py-3 rounded-xl font-bold text-white text-sm transition-colors"
-            style={{ backgroundColor: '#8B6914' }}>
-            {loading ? 'נכנס...' : 'כניסה'}
+            className="w-full py-3 rounded-xl font-bold text-white text-sm transition-colors flex items-center justify-center gap-2"
+            style={{ backgroundColor: '#8B6914', opacity: loading ? 0.8 : 1 }}>
+            {loading ? (
+              <>
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+                מתחבר...
+              </>
+            ) : 'כניסה'}
           </button>
         </form>
 

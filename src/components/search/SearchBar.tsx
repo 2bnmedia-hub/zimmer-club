@@ -29,17 +29,27 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const handleSearch = () => {
     setError('')
 
-    if (checkIn && checkIn < today) {
+    if (!region.trim()) {
+      setError('נא לבחור אזור בארץ')
+      return
+    }
+    if (!checkIn) {
+      setError('נא לבחור תאריך כניסה')
+      return
+    }
+    if (!checkOut) {
+      setError('נא לבחור תאריך יציאה')
+      return
+    }
+    if (checkIn < today) {
       setError('התאריך שהוזן אינו תקין, נא להזין תאריכים עתידיים')
       return
     }
-
-    if (checkOut && checkOut < today) {
+    if (checkOut < today) {
       setError('התאריך שהוזן אינו תקין, נא להזין תאריכים עתידיים')
       return
     }
-
-    if (checkIn && checkOut && checkOut <= checkIn) {
+    if (checkOut <= checkIn) {
       setError('תאריך היציאה חייב להיות אחרי תאריך הכניסה')
       return
     }
@@ -80,7 +90,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <input
                 type="text"
                 value={region}
-                onChange={(e) => setRegion(e.target.value)}
+                onChange={(e) => { setRegion(e.target.value); setError('') }}
                 placeholder="הגליל, כרמל, ים המלח..."
                 className="w-full text-sm bg-transparent outline-none text-charcoal placeholder-stone font-medium"
                 dir="rtl"
@@ -131,10 +141,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <input
                 type="date"
                 value={checkOut}
-                onChange={(e) => {
-                  setCheckOut(e.target.value)
-                  setError('')
-                }}
+                onChange={(e) => { setCheckOut(e.target.value); setError('') }}
                 min={checkIn || today}
                 max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"

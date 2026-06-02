@@ -114,7 +114,7 @@ export function Navbar() {
   ]
 
   return (
-    <header ref={navRef} className="sticky top-0 z-50 bg-white/0 border-none shadow-none backdrop-blur-none" dir="rtl">
+    <header ref={navRef} className="sticky top-0 z-50 bg-white/10 border-none shadow-none" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-24">
 
@@ -280,7 +280,7 @@ export function Navbar() {
 export function NavbarAuth({ userName, role }: { userName: string; role: 'guest' | 'owner' | 'admin' }) {
   const dashboardHref = role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'
   return (
-    <header className="sticky top-0 z-50 bg-white/0 border-none shadow-none backdrop-blur-none" dir="rtl">
+    <header className="sticky top-0 z-50 bg-white/10 border-none shadow-none" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-24">
           <Link href="/" className="shrink-0">

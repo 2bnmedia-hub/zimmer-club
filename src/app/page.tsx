@@ -38,7 +38,7 @@ export default function HomePage() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-sm lg:text-base text-taupe max-w-xl mx-auto mb-6 leading-relaxed">
+            <p className="text-sm lg:text-base text-taupe max-w-xl mx-auto mb-6 leading-relaxed" style={{fontFamily: "'Caveat', cursive", fontSize: "1.3rem"}}>
               צימרים רומנטיים - וילות יוקרה ובתי אירוח קסומים.
               <br />
               מחפשים את הבריחה המושלמת? מצאו אותה כאן

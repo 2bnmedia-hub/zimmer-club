@@ -12,7 +12,7 @@ export default function HomePage() {
 
       <main>
         {/* HERO */}
-        <section className="relative min-h-[88vh] flex flex-col items-center justify-center text-center px-4 py-20 overflow-hidden bg-transparent">
+        <section className="relative min-h-[44vh] flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
           
           {/* Background Image */}
 <div
@@ -29,7 +29,7 @@ export default function HomePage() {
           <div className="relative z-10 max-w-4xl mx-auto">
             
             {/* Title */}
-            <h1 className="text-5xl lg:text-7xl font-bold text-charcoal leading-tight tracking-tight mb-6">
+            <h1 className="text-3xl lg:text-5xl font-bold text-charcoal leading-tight tracking-tight mb-6">
               חוויית אירוח
               <br />
               <span className="text-gold-deep">

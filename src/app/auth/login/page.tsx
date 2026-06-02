@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -49,7 +48,6 @@ function PasswordInput({ name, value, onChange, placeholder }: {
 }
 
 export default function LoginPage() {
-  const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -90,11 +88,11 @@ export default function LoginPage() {
       .single()
 
     if (profile?.role === 'admin') {
-      router.push('/dashboard/admin')
+      window.location.href = '/dashboard/admin'
     } else if (profile?.role === 'owner') {
-      router.push('/dashboard/owner')
+      window.location.href = '/dashboard/owner'
     } else {
-      router.push('/')
+      window.location.href = '/'
     }
   }
 

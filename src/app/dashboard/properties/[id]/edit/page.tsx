@@ -505,6 +505,33 @@ export default function EditPropertyPage() {
             </div>
           </div>
 
+          {/* וידאו */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
+            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
+                <span className="text-2xl">🎬</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
+                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
+              </label>
+              {videoPreview && (
+                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
+              )}
+              {form.video_url && !videoPreview && (
+                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
+              )}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-xs text-gray-400">או</span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <input name="video_url" value={form.video_url} onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            </div>
+          </div>
+
           {/* תמחור */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
@@ -549,33 +576,6 @@ export default function EditPropertyPage() {
               </select>
             </div>
           )}
-
-          {/* וידאו */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
-            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
-                <span className="text-2xl">🎬</span>
-                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
-                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
-              </label>
-              {videoPreview && (
-                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-              )}
-              {form.video_url && !videoPreview && (
-                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
-              )}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400">או</span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-              <input name="video_url" value={form.video_url} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
-            </div>
-          </div>
 
           {/* מאפיינים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">

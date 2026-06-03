@@ -1,10 +1,10 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 
 const IDLE_TIMEOUT = 5 * 60 * 1000;
 
 export function useIdleLogout() {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const logout = useCallback(async () => {

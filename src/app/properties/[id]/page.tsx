@@ -17,6 +17,7 @@ type Property = {
   city: string
   address: string
   price_per_night: number
+  video_url?: string
   min_nights: number
   max_guests: number
   bedrooms: number
@@ -182,6 +183,20 @@ export default function PropertyPage() {
               <div className="border-t border-gray-100 pt-6 mb-6">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">{property.description || property.short_description}</p>
               </div>
+
+              {property.video_url && (
+                <div className="border-t border-gray-100 pt-6 mb-6">
+                  <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון הנכס</h2>
+                  <div className="relative w-full" style={{paddingBottom: '56.25%'}}>
+                    <iframe
+                      src={property.video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/').replace('vimeo.com/', 'player.vimeo.com/video/')}
+                      className="absolute inset-0 w-full h-full rounded-xl"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    />
+                  </div>
+                </div>
+              )}
 
               {amenities.length > 0 && (
                 <div className="border-t border-gray-100 pt-6">

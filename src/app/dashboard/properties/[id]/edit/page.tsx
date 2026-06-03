@@ -355,6 +355,7 @@ export default function EditPropertyPage() {
       bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book,
       ...(isAdmin && { status: form.status }),
+      video_url: form.video_url || null,
       updated_at: new Date().toISOString(),
     }).eq('id', params.id)
     if (updateError) {
@@ -518,6 +519,15 @@ export default function EditPropertyPage() {
               </select>
             </div>
           )}
+
+          {/* וידאו */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
+            <p className="text-xs text-gray-400 mb-3">הדבק קישור YouTube או Vimeo</p>
+            <input name="video_url" value={form.video_url} onChange={handleChange}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+              placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+          </div>
 
           {/* מאפיינים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">

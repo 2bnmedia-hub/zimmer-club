@@ -79,6 +79,7 @@ export default function NewPropertyPage() {
     bedrooms: '1',
     bathrooms: '1',
     instant_book: false,
+    video_url: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -166,6 +167,7 @@ export default function NewPropertyPage() {
       bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book,
       status: 'pending',
+      video_url: form.video_url || null,
     }).select().single()
     if (insertError) { setError(insertError.message); setLoading(false); return }
     if (images.length > 0) {
@@ -281,6 +283,15 @@ export default function NewPropertyPage() {
             </div>
             <p className="text-xs text-gray-400">{images.length}/14 תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
             <p className="text-xs text-gray-400 mt-1">* מקסימום 14 תמונות · גודל מקסימלי לתמונה: 2MB</p>
+          </div>
+
+          {/* וידאו */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
+            <p className="text-xs text-gray-400 mb-3">הדבק קישור YouTube או Vimeo</p>
+            <input name="video_url" value={form.video_url} onChange={handleChange}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+              placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
           </div>
 
           {/* תמחור */}

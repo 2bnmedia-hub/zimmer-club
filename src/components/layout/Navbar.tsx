@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
@@ -50,9 +51,12 @@ function MegaMenu({ sections, onClose }: {
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
+  const pathname = usePathname()
+  const isHome = pathname === '/'
 
   useEffect(() => {
     async function loadUser() {
@@ -73,7 +77,16 @@ export function Navbar() {
     loadUser()
   }, [])
 
+  
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50)
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   const handleLogout = async () => {
+
     await supabase.auth.signOut()
     setUser(null)
     window.location.href = '/'
@@ -114,7 +127,15 @@ export function Navbar() {
   ]
 
   return (
-    <header ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-white/10 border-none shadow-none" dir="rtl">
+    <header
+      ref={navRef}
+      dir="rtl"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isHome
+          ? (scrolled ? 'bg-white shadow-md' : 'bg-transparent')
+          : 'bg-white shadow-sm'
+      }`}
+    >
       <nav className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-24">
 

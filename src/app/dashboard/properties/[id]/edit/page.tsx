@@ -247,6 +247,7 @@ export default function EditPropertyPage() {
     bathrooms: '1',
     instant_book: false,
     status: 'pending',
+    video_url: '',
   })
 
   useEffect(() => {

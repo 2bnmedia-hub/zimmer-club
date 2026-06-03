@@ -273,6 +273,7 @@ export default function EditPropertyPage() {
         bedrooms: property.bedrooms?.toString() || '1',
         bathrooms: property.bathrooms?.toString() || '1',
         instant_book: property.instant_book || false,
+        video_url: property.video_url || '',
         status: property.status || 'pending',
       })
       const { data: imgData } = await supabase

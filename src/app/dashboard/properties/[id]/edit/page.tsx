@@ -280,6 +280,13 @@ export default function EditPropertyPage() {
         .eq('property_id', params.id)
         .order('order')
       setImages(imgData || [])
+
+      const { data: amenityData } = await supabase
+        .from('property_amenities')
+        .select('amenity_key')
+        .eq('property_id', params.id)
+      setSelectedAmenities(amenityData?.map((a: { amenity_key: string }) => a.amenity_key) || [])
+
       setLoading(false)
     }
     load()
@@ -350,7 +357,19 @@ export default function EditPropertyPage() {
       ...(isAdmin && { status: form.status }),
       updated_at: new Date().toISOString(),
     }).eq('id', params.id)
-    if (updateError) { setError(updateError.message) } else { setSuccess(true); setTimeout(() => setSuccess(false), 3000) }
+    if (updateError) {
+      setError(updateError.message)
+    } else {
+      // שמירת amenities
+      await supabase.from('property_amenities').delete().eq('property_id', params.id)
+      if (selectedAmenities.length > 0) {
+        await supabase.from('property_amenities').insert(
+          selectedAmenities.map(key => ({ property_id: params.id, amenity_key: key }))
+        )
+      }
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    }
     setSaving(false)
   }
 

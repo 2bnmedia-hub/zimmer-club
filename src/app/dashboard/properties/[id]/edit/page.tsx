@@ -364,7 +364,7 @@ export default function EditPropertyPage() {
       await supabase.from('property_amenities').delete().eq('property_id', params.id)
       if (selectedAmenities.length > 0) {
         const { data: allAmenities } = await supabase.from('amenities').select('id, key')
-        const amenityRows = selectedAmenities.map(key => { const found = allAmenities?.find((a: any) => a.key === key); return found ? { property_id: params.id, amenity_id: found.id } : null }).filter(Boolean)
+        const amenityRows = selectedAmenities.map(key => { const found = allAmenities?.find((a: any) => a.key === key); return found ? { property_id: params.id, amenity_id: found.id } : null }).filter((r): r is { property_id: string; amenity_id: string } => r !== null)
         if (amenityRows.length > 0) await supabase.from('property_amenities').insert(amenityRows)
       }
       setSuccess(true)

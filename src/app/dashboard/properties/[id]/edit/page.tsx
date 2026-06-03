@@ -283,9 +283,9 @@ export default function EditPropertyPage() {
 
       const { data: amenityData } = await supabase
         .from('property_amenities')
-        .select('amenity_key')
+        .select('amenity_id, amenities(key)')
         .eq('property_id', params.id)
-      setSelectedAmenities(amenityData?.map((a: { amenity_key: string }) => a.amenity_key) || [])
+      setSelectedAmenities(amenityData?.map((a: any) => a.amenities?.key).filter(Boolean) || [])
 
       setLoading(false)
     }
@@ -363,9 +363,9 @@ export default function EditPropertyPage() {
       // שמירת amenities
       await supabase.from('property_amenities').delete().eq('property_id', params.id)
       if (selectedAmenities.length > 0) {
-        await supabase.from('property_amenities').insert(
-          selectedAmenities.map(key => ({ property_id: params.id, amenity_key: key }))
-        )
+        const { data: allAmenities } = await supabase.from('amenities').select('id, key')
+        const amenityRows = selectedAmenities.map(key => { const found = allAmenities?.find((a: any) => a.key === key); return found ? { property_id: params.id, amenity_id: found.id } : null }).filter(Boolean)
+        if (amenityRows.length > 0) await supabase.from('property_amenities').insert(amenityRows)
       }
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)

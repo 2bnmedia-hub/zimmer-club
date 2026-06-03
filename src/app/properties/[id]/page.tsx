@@ -69,9 +69,9 @@ export default function PropertyPage() {
 
       const { data: amenityData } = await supabase
         .from('property_amenities')
-        .select('amenity_key')
+        .select('amenity_id, amenities(key)')
         .eq('property_id', params.id)
-      setAmenities(amenityData?.map(a => a.amenity_key) || [])
+      setAmenities(amenityData?.map((a: any) => a.amenities?.key).filter(Boolean) || [])
 
       const { data: imgData } = await supabase
         .from('property_images')

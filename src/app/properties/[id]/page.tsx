@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
-import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight, Navigation } from 'lucide-react'
+import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight, Navigation, Heart } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
+import { useWishlist } from '@/hooks/useWishlist'
 
 type Property = {
   id: string
@@ -197,6 +198,7 @@ export default function PropertyPage() {
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
   const [autoPlay] = useState(true)
+  const { toggle, isLiked } = useWishlist()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -309,7 +311,20 @@ export default function PropertyPage() {
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-gray-400">אין תמונות עדיין</div>
             )}
-            {property.instant_book && (
+            <button
+                onClick={() => toggle(property!.id)}
+                className="absolute top-4 left-4 z-10 bg-white/90 hover:bg-white p-2.5 rounded-full shadow-md transition-all hover:scale-110"
+                aria-label="הוסף למועדפים"
+              >
+                <Heart
+                  className={`w-5 h-5 transition-colors ${
+                    isLiked(property!.id)
+                      ? "fill-red-500 text-red-500"
+                      : "text-gray-400"
+                  }`}
+                />
+              </button>
+              {property.instant_book && (
               <div className="absolute top-4 right-4 z-10">
                 <span className="bg-white text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
                   <Zap className="w-3 h-3" />

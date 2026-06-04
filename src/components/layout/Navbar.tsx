@@ -2,10 +2,11 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
+import { Menu, X, Search, User, ChevronDown, LogOut, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
+import { useWishlist } from '@/hooks/useWishlist'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
@@ -55,6 +56,7 @@ export function Navbar() {
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
+  const { likedIds } = useWishlist()
   const pathname = usePathname()
   const isHome = pathname === '/'
 

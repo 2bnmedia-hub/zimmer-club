@@ -198,6 +198,8 @@ export default function PropertyPage() {
   const [currentImage, setCurrentImage] = useState(0)
   const [loading, setLoading] = useState(true)
   const [checkIn, setCheckIn] = useState('')
+  const [guestName, setGuestName] = useState('')
+  const [guestPhone, setGuestPhone] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [dateError, setDateError] = useState('')
   const [guests, setGuests] = useState(2)
@@ -393,11 +395,24 @@ export default function PropertyPage() {
 
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
-                <div className="flex items-baseline gap-1 mb-6">
+                <p className="text-sm font-medium text-gray-700 mb-3 text-center">אשמח לבצע הזמנה</p>
+                <div className="flex items-baseline gap-1 mb-4">
                   <span className="text-2xl font-bold text-gray-900">החל מ: ₪{property.price_per_night}</span>
                   <span className="text-sm text-gray-500">/ לילה</span>
                 </div>
                 <div className="space-y-3 mb-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">שם מלא *</label>
+                    <input type="text" value={guestName} onChange={(e) => setGuestName(e.target.value)}
+                      placeholder="ישראל ישראלי"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">מספר טלפון *</label>
+                    <input type="tel" value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)}
+                      placeholder="050-0000000" dir="ltr"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                  </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">תאריך כניסה</label>
                     <input type="date" value={checkIn} onChange={(e) => { const val = e.target.value; const t = new Date().toISOString().split("T")[0]; if (val && val < t) { setDateError("תאריך הכניסה אינו תקין — יש לבחור תאריך עתידי"); return } setCheckIn(val); setDateError("") }}

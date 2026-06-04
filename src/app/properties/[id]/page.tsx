@@ -377,7 +377,7 @@ export default function PropertyPage() {
                       src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15`}
                     />
                   </div>
-                  
+                  <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}`}
                     target="_blank"
                     rel="noopener noreferrer"

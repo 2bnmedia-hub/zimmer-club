@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Check, X, Trash2, Edit, ArrowRight } from 'lucide-react'
+import { Check, X, Trash2, Edit, ArrowRight, Phone } from 'lucide-react'
 
 type Property = {
   id: string
@@ -75,9 +75,15 @@ export default function AdminDashboard() {
             <h1 className="text-xl font-bold text-gray-900">לוח בקרה - אדמין</h1>
             <p className="text-sm text-gray-500">ניהול כל הנכסים באתר</p>
           </div>
-          <Link href="/dashboard/properties/new" className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
-            הוסף נכס חדש
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard/admin/contacts" className="px-4 py-2 rounded-xl text-sm font-bold border border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+              <Phone className="w-4 h-4" />
+              אמצעי תקשורת
+            </Link>
+            <Link href="/dashboard/properties/new" className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
+              הוסף נכס חדש
+            </Link>
+          </div>
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">

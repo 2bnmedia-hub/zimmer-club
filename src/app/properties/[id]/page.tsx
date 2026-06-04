@@ -270,7 +270,7 @@ export default function PropertyPage() {
           <div className="h-72 md:h-[480px] bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
             {images.length > 0 ? (
               <>
-                <img src={images[currentImage]} alt={property.name} className="w-full h-full object-cover" />
+                <img src={images[currentImage]} alt={property.name} className="w-full h-full object-cover" style={{ animation: "slideIn 0.6s ease-in-out" }} key={currentImage} />
                 {images.length > 1 && (
                   <>
                     <button onClick={() => setCurrentImage(prev => (prev - 1 + images.length) % images.length)}

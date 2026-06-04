@@ -266,6 +266,7 @@ export default function NewPropertyPage() {
                   <option value="dead_sea">ים המלח</option>
                   <option value="negev">דרום</option>
                   <option value="eilat">אילת</option>
+                  <option value="golan">רמת הגולן</option>
                 </select>
               </div>
             </div>

@@ -31,24 +31,27 @@ export default function HomePage() {
             {/* Title */}
             <h1 className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-6">
               <span style={{
-                background: 'linear-gradient(135deg, #3d2f20 0%, #8B6914 50%, #3d2f20 100%)',
-                backgroundSize: '200% auto',
+                background: 'linear-gradient(120deg, #2c1810 0%, #8B4513 25%, #c9822a 50%, #8B4513 75%, #2c1810 100%)',
+                backgroundSize: '300% auto',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                animation: 'shimmer 3s linear infinite',
+                animation: 'warmGlow 4s ease-in-out infinite',
+                textShadow: 'none',
+                filter: 'drop-shadow(0 2px 8px rgba(139,69,19,0.3))',
               }}>
                 חוויית אירוח
               </span>
               <br />
               <span style={{
-                background: 'linear-gradient(135deg, #8B6914 0%, #c9a84c 40%, #8B6914 100%)',
-                backgroundSize: '200% auto',
+                background: 'linear-gradient(120deg, #8B4513 0%, #d4a843 30%, #f5d078 55%, #d4a843 75%, #8B4513 100%)',
+                backgroundSize: '300% auto',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                animation: 'shimmer 3s linear infinite reverse',
-                fontSize: '1.15em',
+                animation: 'warmGlow 4s ease-in-out infinite reverse',
+                fontSize: '1.1em',
+                filter: 'drop-shadow(0 2px 12px rgba(212,168,67,0.4))',
               }}>
                 שלא תשכחו
               </span>

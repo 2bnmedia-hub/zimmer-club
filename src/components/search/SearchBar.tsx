@@ -79,12 +79,12 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto">
       <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.08)] overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-5">
 
           {/* Property Type */}
-          <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Home className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="label">סוג נכס</label>
@@ -105,7 +105,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Region */}
-          <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
             <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="label">אזור בארץ</label>
@@ -133,7 +133,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Check-in */}
-          <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1">
               <label className="label">תאריך כניסה</label>
@@ -156,7 +156,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Check-out */}
-          <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1">
               <label className="label">תאריך יציאה</label>

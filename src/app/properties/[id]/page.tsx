@@ -131,10 +131,7 @@ function AvailabilityCalendar({ propertyId, supabase }: {
             <div className="w-3 h-3 rounded-full bg-red-400" />
             <span className="text-xs text-gray-500">תפוס</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-green-400" />
-            <span className="text-xs text-gray-500">הזמנה מאושרת</span>
-          </div>
+
         </div>
 
         {/* ניווט חודש */}

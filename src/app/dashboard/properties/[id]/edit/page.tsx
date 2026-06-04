@@ -158,7 +158,7 @@ function Calendar({
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <h2 className="font-bold text-gray-700 text-lg mb-1">ניהול זמינות</h2>
-      <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← מאושר ← פנוי</p>
+      <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← פנוי</p>
 
       {/* מקרא */}
       <div className="flex items-center gap-4 mb-4">

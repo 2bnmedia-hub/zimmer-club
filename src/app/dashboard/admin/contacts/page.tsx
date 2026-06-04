@@ -78,7 +78,6 @@ export default function AdminContactsPage() {
 
         <p className="text-sm text-gray-500 mb-6">פניות מדף "פרסמו אצלנו" יישלחו לכל האמצעים הפעילים למטה.</p>
 
-        {/* רשימת אמצעים קיימים */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 space-y-3">
           <h2 className="font-bold text-gray-700 mb-4">אמצעים פעילים</h2>
           {contacts.length === 0 && <p className="text-sm text-gray-400">אין אמצעי תקשורת מוגדרים</p>}
@@ -103,7 +102,6 @@ export default function AdminContactsPage() {
           ))}
         </div>
 
-        {/* הוספת אמצעי חדש */}
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <h2 className="font-bold text-gray-700 mb-4">הוסף אמצעי תקשורת</h2>
           <div className="space-y-3">

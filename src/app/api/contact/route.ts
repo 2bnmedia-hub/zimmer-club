@@ -13,7 +13,6 @@ export async function POST(req: Request) {
   const body = await req.json()
   const { full_name, phone, email, property_type, message } = body
 
-  // שליפת אמצעי תקשורת פעילים מ-Supabase
   const { data: contacts } = await supabase
     .from('admin_contacts')
     .select('type, value, label')
@@ -36,23 +35,17 @@ export async function POST(req: Request) {
   `
 
   try {
-    // שליחה לכל האימיילים
     if (emailContacts.length > 0) {
-      const toEmails = emailContacts.map(c => c.value)
       await resend.emails.send({
         from: 'noreply@zimmer.club',
-        to: toEmails,
+        to: emailContacts.map(c => c.value),
         subject: `פנייה חדשה מ-zimmer.club — ${full_name}`,
         html: htmlBody,
       })
     }
 
-    // שליחת וואטסאפ — קישור לכל מספר
     for (const wa of whatsappContacts) {
-      const text = encodeURIComponent(
-        `פנייה חדשה מ-zimmer.club\nשם: ${full_name}\nטלפון: ${phone}\nאימייל: ${email || 'לא הוזן'}\nסוג נכס: ${property_type || 'לא הוזן'}\nהערות: ${message || 'אין'}`
-      )
-      // רושמים את הקישור ב-log — בעתיד ניתן לשלוח דרך Twilio
+      const text = encodeURIComponent(`פנייה חדשה מ-zimmer.club\nשם: ${full_name}\nטלפון: ${phone}\nאימייל: ${email || 'לא הוזן'}\nסוג נכס: ${property_type || 'לא הוזן'}\nהערות: ${message || 'אין'}`)
       console.log(`WhatsApp ${wa.value}: https://wa.me/${wa.value}?text=${text}`)
     }
 

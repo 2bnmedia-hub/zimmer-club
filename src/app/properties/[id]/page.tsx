@@ -438,6 +438,35 @@ export default function PropertyPage() {
                   {property.instant_book ? 'הזמן עכשיו' : 'בקש הזמנה'}
                 </button>
                 {property.min_nights > 1 && <p className="text-xs text-gray-400 text-center mt-2">מינימום {property.min_nights} לילות</p>}
+
+                {/* מפה */}
+                {(property.address || property.city) && (
+                  <div className="mt-5 pt-5 border-t border-gray-100">
+                    <h3 className="font-bold text-gray-800 text-sm mb-3 flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4" style={{ color: '#8B6914' }} />
+                      מיקום הנכס
+                    </h3>
+                    <div className="rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+                      <iframe
+                        width="100%"
+                        height="200"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15`}
+                      />
+                    </div>
+                    
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-white transition-colors"
+                      style={{ backgroundColor: '#2563eb' }}
+                    >
+                      <Navigation className="w-3.5 h-3.5" />
+                      נווט ב-Google Maps
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

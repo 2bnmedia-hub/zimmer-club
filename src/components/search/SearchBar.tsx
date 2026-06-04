@@ -121,9 +121,11 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 type="date"
                 value={checkIn}
                 onChange={(e) => {
-                  setCheckIn(e.target.value)
+                  const val = e.target.value
+                  if (val && val < today) return
+                  setCheckIn(val)
                   setError('')
-                  if (checkOut && e.target.value > checkOut) setCheckOut('')
+                  if (checkOut && val > checkOut) setCheckOut('')
                 }}
                 min={today}
                 max={maxDate}
@@ -141,7 +143,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <input
                 type="date"
                 value={checkOut}
-                onChange={(e) => { setCheckOut(e.target.value); setError('') }}
+                onChange={(e) => { const val = e.target.value; if (val && val < (checkIn || today)) return; setCheckOut(val); setError('') }}
                 min={checkIn || today}
                 max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"

@@ -357,13 +357,13 @@ export default function PropertyPage() {
                 <div className="space-y-3 mb-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">תאריך כניסה</label>
-                    <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)}
+                    <input type="date" value={checkIn} onChange={(e) => { const val = e.target.value; const t = new Date().toISOString().split("T")[0]; if (val && val < t) return; setCheckIn(val) }}
                       min={new Date().toISOString().split('T')[0]} max="2099-12-31"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">תאריך יציאה</label>
-                    <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)}
+                    <input type="date" value={checkOut} onChange={(e) => { const val = e.target.value; const t = checkIn || new Date().toISOString().split("T")[0]; if (val && val < t) return; setCheckOut(val) }}
                       min={checkIn || new Date().toISOString().split('T')[0]} max="2099-12-31"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
                   </div>

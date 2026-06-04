@@ -395,7 +395,7 @@ export default function PropertyPage() {
 
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
-                <p className="text-sm font-medium text-gray-700 mb-3 text-center">אשמח לבצע הזמנה</p>
+                <p className="text-lg font-bold text-center mb-4" style={{ color: "#8B6914" }}>אשמח לבצע הזמנה 😊</p>
                 <div className="flex items-baseline gap-1 mb-4">
                   <span className="text-2xl font-bold text-gray-900">החל מ: ₪{property.price_per_night}</span>
                   <span className="text-sm text-gray-500">/ לילה</span>

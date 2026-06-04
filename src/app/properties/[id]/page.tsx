@@ -181,6 +181,8 @@ export default function PropertyPage() {
   const [loading, setLoading] = useState(true)
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
+  const [dateError, setDateError] = useState('')
+  const [checkOut, setCheckOut] = useState('')
   const [guests, setGuests] = useState(2)
 
   useEffect(() => {
@@ -357,17 +359,18 @@ export default function PropertyPage() {
                 <div className="space-y-3 mb-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">תאריך כניסה</label>
-                    <input type="date" value={checkIn} onChange={(e) => { const val = e.target.value; const t = new Date().toISOString().split("T")[0]; if (val && val < t) return; setCheckIn(val) }}
+                    <input type="date" value={checkIn} onChange={(e) => { const val = e.target.value; const t = new Date().toISOString().split("T")[0]; if (val && val < t) { setDateError("תאריך הכניסה אינו תקין — יש לבחור תאריך עתידי"); return } setCheckIn(val); setDateError("") }}
                       min={new Date().toISOString().split('T')[0]} max="2099-12-31"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">תאריך יציאה</label>
-                    <input type="date" value={checkOut} onChange={(e) => { const val = e.target.value; const t = checkIn || new Date().toISOString().split("T")[0]; if (val && val < t) return; setCheckOut(val) }}
+                    <input type="date" value={checkOut} onChange={(e) => { const val = e.target.value; const t = new Date().toISOString().split("T")[0]; if (val && val < t) { setDateError("תאריך היציאה אינו תקין — יש לבחור תאריך עתידי"); return } if (val && checkIn && val <= checkIn) { setDateError("תאריך היציאה חייב להיות אחרי תאריך הכניסה"); return } setCheckOut(val); setDateError("") }}
                       min={checkIn || new Date().toISOString().split('T')[0]} max="2099-12-31"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
                   </div>
                   <div>
+                    {dateError && <p className="text-xs text-red-500 mb-2">{dateError}</p>}
                     <label className="block text-xs font-medium text-gray-600 mb-1">אורחים</label>
                     <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600">

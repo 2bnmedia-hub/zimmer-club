@@ -68,11 +68,22 @@ export default function PropertyPage() {
       if (!data) { router.push('/search'); return }
       setProperty(data)
 
+      // ✅ תיקון — שתי שאילתות נפרדות במקום join
       const { data: amenityData } = await supabase
         .from('property_amenities')
-        .select('amenity_id, amenities(key)')
+        .select('amenity_id')
         .eq('property_id', params.id)
-      setAmenities(amenityData?.map((a: any) => a.amenities?.key).filter(Boolean) || [])
+
+      if (amenityData && amenityData.length > 0) {
+        const ids = amenityData.map((a: any) => a.amenity_id)
+        const { data: amenitiesData } = await supabase
+          .from('amenities')
+          .select('key')
+          .in('id', ids)
+        setAmenities(amenitiesData?.map((a: any) => a.key).filter(Boolean) || [])
+      } else {
+        setAmenities([])
+      }
 
       const { data: imgData } = await supabase
         .from('property_images')

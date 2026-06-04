@@ -24,7 +24,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const [error, setError] = useState('')
 
   const today = new Date().toISOString().split('T')[0]
-  const maxDate = '2030-12-31'
+  const maxDate = '2099-12-31'
 
   const handleSearch = () => {
     setError('')
@@ -126,7 +126,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                   if (checkOut && e.target.value > checkOut) setCheckOut('')
                 }}
                 min={today}
-                max={maxDate} onKeyDown={(e) => e.preventDefault()}
+                max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
                 dir="ltr"
               />
@@ -143,7 +143,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 value={checkOut}
                 onChange={(e) => { setCheckOut(e.target.value); setError('') }}
                 min={checkIn || today}
-                max={maxDate} onKeyDown={(e) => e.preventDefault()}
+                max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
                 dir="ltr"
               />

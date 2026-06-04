@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, MapPin, Calendar, Users } from 'lucide-react'
+import { Search, MapPin, Calendar, Users, Home } from 'lucide-react'
 import { buildQueryString } from '@/lib/utils'
 
 interface SearchBarProps {
@@ -21,6 +21,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const [checkIn, setCheckIn] = useState(initialValues.checkIn || '')
   const [checkOut, setCheckOut] = useState(initialValues.checkOut || '')
   const [guests, setGuests] = useState(initialValues.guests || 2)
+  const [propertyType, setPropertyType] = useState('')
   const [error, setError] = useState('')
 
   const today = new Date().toISOString().split('T')[0]
@@ -54,7 +55,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
       return
     }
 
-    const qs = buildQueryString({ region, check_in: checkIn, check_out: checkOut, guests })
+    const qs = buildQueryString({ region, check_in: checkIn, check_out: checkOut, guests, ...(propertyType && { category: propertyType }) })
     router.push(`/search${qs}`)
   }
 
@@ -80,7 +81,28 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.08)] overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5">
+
+          {/* Property Type */}
+          <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
+            <Home className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <label className="label">סוג נכס</label>
+              <select
+                value={propertyType}
+                onChange={(e) => { setPropertyType(e.target.value); setError('') }}
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
+                dir="rtl"
+              >
+                <option value="">הכל</option>
+                <option value="zimmer">צימר</option>
+                <option value="villa">וילה</option>
+                <option value="hotel">מלון</option>
+                <option value="camping">קמפינג</option>
+                <option value="attraction">אטרקציה</option>
+              </select>
+            </div>
+          </div>
 
           {/* Region */}
           <div className="flex items-start gap-3 p-5 lg:border-l border-b lg:border-b-0 border-sand-100">
@@ -97,17 +119,18 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 list="regions-list"
               />
               <datalist id="regions-list">
-                <option value="צימרים בצפון" />
-                <option value="צימרים בגליל המערבי" />
-                <option value="צימרים בגליל העליון" />
-                <option value="צימרים בגליל התחתון" />
-                <option value="צימרים בכנרת" />
-                <option value="צימרים בחרמון" />
-                <option value="צימרים במרכז" />
-                <option value="צימרים בירושלים" />
-                <option value="צימרים בים המלח" />
-                <option value="צימרים בדרום" />
-                <option value="צימרים באילת" />
+                <option value="בצפון" />
+                <option value="גליל המערבי" />
+                <option value="גליל העליון" />
+                <option value="גליל התחתון" />
+                <option value="כנרת" />
+                <option value="חרמון" />
+                <option value="מרכז" />
+                <option value="ירושלים" />
+                <option value="ים המלח" />
+                <option value="דרום" />
+                <option value="אילת" />
+                <option value="רמת הגולן" />
               </datalist>
             </div>
           </div>

@@ -270,12 +270,13 @@ export default function PropertyPage() {
           <div className="h-72 md:h-[480px] bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
             {images.length > 0 ? (
               <>
-                <div
-                  key={currentImage}
-                  className="w-full h-full absolute inset-0"
-                  style={{ animation: "slideFromRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards" }}
-                >
-                  <img src={images[currentImage]} alt={property.name} className="w-full h-full object-cover" />
+                <div className="w-full h-full flex transition-transform duration-500 ease-in-out absolute inset-0"
+                  style={{ transform: `translateX(${currentImage * -100}%)`, width: `${images.length * 100}%` }}>
+                  {images.map((url, i) => (
+                    <div key={i} style={{ width: `${100 / images.length}%` }} className="h-full shrink-0">
+                      <img src={url} alt={property.name} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
                 </div>
                 {images.length > 1 && (
                   <>

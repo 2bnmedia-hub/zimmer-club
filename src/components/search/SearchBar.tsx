@@ -122,7 +122,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 value={checkIn}
                 onChange={(e) => {
                   const val = e.target.value
-                  if (val && val < today) return
+                  if (val && val < today) { setError('תאריך הכניסה אינו תקין — יש לבחור תאריך עתידי'); return }
                   setCheckIn(val)
                   setError('')
                   if (checkOut && val > checkOut) setCheckOut('')
@@ -143,7 +143,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <input
                 type="date"
                 value={checkOut}
-                onChange={(e) => { const val = e.target.value; if (val && val < (checkIn || today)) return; setCheckOut(val); setError('') }}
+                onChange={(e) => { const val = e.target.value; if (val && val < today) { setError('תאריך היציאה אינו תקין — יש לבחור תאריך עתידי'); return } if (val && checkIn && val <= checkIn) { setError('תאריך היציאה חייב להיות אחרי תאריך הכניסה'); return } setCheckOut(val); setError('') }}
                 min={checkIn || today}
                 max={maxDate}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"

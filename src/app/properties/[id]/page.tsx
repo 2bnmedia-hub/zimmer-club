@@ -182,7 +182,6 @@ export default function PropertyPage() {
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [dateError, setDateError] = useState('')
-  const [checkOut, setCheckOut] = useState('')
   const [guests, setGuests] = useState(2)
 
   useEffect(() => {

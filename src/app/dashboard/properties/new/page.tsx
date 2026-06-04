@@ -255,17 +255,17 @@ export default function NewPropertyPage() {
                 <select name="region" value={form.region} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
                   <option value="">בחר איזור</option>
-                  <option value="galil_north">צימרים בצפון</option>
-                  <option value="galil_west">צימרים בגליל המערבי</option>
-                  <option value="galil_upper">צימרים בגליל העליון</option>
-                  <option value="galil_lower">צימרים בגליל התחתון</option>
-                  <option value="kinneret">צימרים בכנרת</option>
-                  <option value="hermon">צימרים בחרמון</option>
-                  <option value="center">צימרים במרכז</option>
-                  <option value="jerusalem">צימרים בירושלים</option>
-                  <option value="dead_sea">צימרים בים המלח</option>
-                  <option value="negev">צימרים בדרום</option>
-                  <option value="eilat">צימרים באילת</option>
+                  <option value="galil_north">בצפון</option>
+                  <option value="galil_west">גליל המערבי</option>
+                  <option value="galil_upper">גליל העליון</option>
+                  <option value="galil_lower">גליל התחתון</option>
+                  <option value="kinneret">כנרת</option>
+                  <option value="hermon">חרמון</option>
+                  <option value="center">מרכז</option>
+                  <option value="jerusalem">ירושלים</option>
+                  <option value="dead_sea">ים המלח</option>
+                  <option value="negev">דרום</option>
+                  <option value="eilat">אילת</option>
                 </select>
               </div>
             </div>

@@ -113,7 +113,7 @@ function AvailabilityCalendar({ propertyId, supabase }: {
     const isPast = new Date(dateStr) < new Date(today.toDateString())
     if (isPast) return 'bg-gray-50 text-gray-300 cursor-default'
     if (status === 'blocked') return 'bg-red-100 text-red-600 font-medium cursor-default'
-    return 'text-gray-700 hover:bg-yellow-50'
+    return 'bg-green-50 text-green-700'
   }
 
   return (

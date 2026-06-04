@@ -205,7 +205,7 @@ export default function PropertyPage() {
       setCurrentImage(prev => (prev + 1) % images.length)
     }, 3000)
     return () => clearInterval(interval)
-  }, [images.length])
+  }, [images])
   const [checkIn, setCheckIn] = useState('')
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')

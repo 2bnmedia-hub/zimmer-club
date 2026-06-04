@@ -374,7 +374,7 @@ export default function PropertyPage() {
                       height="300"
                       style={{ border: 0 }}
                       loading="lazy"
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15`}
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15&hl=iw`}
                     />
                   </div>
                   <a
@@ -452,7 +452,7 @@ export default function PropertyPage() {
                         height="200"
                         style={{ border: 0 }}
                         loading="lazy"
-                        src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15`}
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15&hl=iw`}
                       />
                     </div>
                     <a
@@ -463,7 +463,7 @@ export default function PropertyPage() {
                       style={{ backgroundColor: '#2563eb' }}
                     >
                       <Navigation className="w-3.5 h-3.5" />
-                      נווט ב-Google Maps
+                      נווט
                     </a>
                   </div>
                 )}

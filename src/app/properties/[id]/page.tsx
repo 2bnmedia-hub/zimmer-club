@@ -196,7 +196,16 @@ export default function PropertyPage() {
   const [amenities, setAmenities] = useState<string[]>([])
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
+  const [autoPlay] = useState(true)
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (images.length <= 1) return
+    const interval = setInterval(() => {
+      setCurrentImage(prev => (prev + 1) % images.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [images.length])
   const [checkIn, setCheckIn] = useState('')
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')

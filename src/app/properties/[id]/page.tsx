@@ -28,6 +28,8 @@ type Property = {
   status: string
 }
 
+type DateStatus = 'blocked' | 'approved'
+
 const AMENITY_LABELS: Record<string, string> = {
   pool: 'בריכה',
   jacuzzi: "ג'קוזי",
@@ -49,6 +51,129 @@ const AMENITY_LABELS: Record<string, string> = {
   pets: 'ידידותי לכלבים',
 }
 
+const HEBREW_MONTHS = [
+  'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+  'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
+]
+const HEBREW_DAYS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש']
+
+function AvailabilityCalendar({ propertyId, supabase }: {
+  propertyId: string
+  supabase: ReturnType<typeof createClient>
+}) {
+  const today = new Date()
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth())
+  const [currentYear, setCurrentYear] = useState(today.getFullYear())
+  const [dateMap, setDateMap] = useState<Record<string, DateStatus>>({})
+  const [loadingDates, setLoadingDates] = useState(true)
+
+  useEffect(() => {
+    async function loadDates() {
+      setLoadingDates(true)
+      const { data } = await supabase
+        .from('blocked_dates')
+        .select('date, status')
+        .eq('property_id', propertyId)
+      if (data) {
+        const map: Record<string, DateStatus> = {}
+        data.forEach((d: any) => { map[d.date] = d.status })
+        setDateMap(map)
+      }
+      setLoadingDates(false)
+    }
+    loadDates()
+  }, [propertyId])
+
+  const getDaysInMonth = (m: number, y: number) => new Date(y, m + 1, 0).getDate()
+  const getFirstDay = (m: number, y: number) => new Date(y, m, 1).getDay()
+
+  const formatDate = (day: number) => {
+    const m = String(currentMonth + 1).padStart(2, '0')
+    const d = String(day).padStart(2, '0')
+    return `${currentYear}-${m}-${d}`
+  }
+
+  const prevMonth = () => {
+    if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1) }
+    else setCurrentMonth(m => m - 1)
+  }
+  const nextMonth = () => {
+    if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1) }
+    else setCurrentMonth(m => m + 1)
+  }
+
+  const daysInMonth = getDaysInMonth(currentMonth, currentYear)
+  const firstDay = getFirstDay(currentMonth, currentYear)
+  const blanks = Array(firstDay).fill(null)
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
+
+  const getDayStyle = (day: number) => {
+    const dateStr = formatDate(day)
+    const status = dateMap[dateStr]
+    const isPast = new Date(dateStr) < new Date(today.toDateString())
+    if (isPast) return 'bg-gray-50 text-gray-300 cursor-default'
+    if (status === 'blocked') return 'bg-red-100 text-red-600 font-medium cursor-default'
+    if (status === 'approved') return 'bg-green-100 text-green-600 font-medium cursor-default'
+    return 'text-gray-700 hover:bg-yellow-50'
+  }
+
+  return (
+    <div className="border-t border-gray-100 pt-6 mt-6">
+      <h2 className="font-bold text-gray-900 text-lg mb-4">זמינות</h2>
+      <div className="bg-gray-50 rounded-2xl p-5">
+
+        {/* מקרא */}
+        <div className="flex items-center gap-5 mb-4">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-white border border-gray-300" />
+            <span className="text-xs text-gray-500">פנוי</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-400" />
+            <span className="text-xs text-gray-500">תפוס</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-green-400" />
+            <span className="text-xs text-gray-500">הזמנה מאושרת</span>
+          </div>
+        </div>
+
+        {/* ניווט חודש */}
+        <div className="flex items-center justify-between mb-3">
+          <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors">
+            <ChevronRight className="w-4 h-4 text-gray-500" />
+          </button>
+          <span className="font-bold text-gray-800 text-sm">
+            {HEBREW_MONTHS[currentMonth]} {currentYear}
+          </span>
+          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors">
+            <ChevronLeft className="w-4 h-4 text-gray-500" />
+          </button>
+        </div>
+
+        {loadingDates ? (
+          <div className="text-center py-8 text-gray-400 text-sm">טוען...</div>
+        ) : (
+          <div className="grid grid-cols-7 gap-1">
+            {HEBREW_DAYS.map(d => (
+              <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
+            ))}
+            {blanks.map((_, i) => <div key={`b-${i}`} />)}
+            {days.map(day => (
+              <div
+                key={day}
+                className={`aspect-square rounded-lg text-xs flex items-center justify-center transition-colors ${getDayStyle(day)}`}
+              >
+                {day}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function PropertyPage() {
   const params = useParams()
   const router = useRouter()
@@ -68,7 +193,6 @@ export default function PropertyPage() {
       if (!data) { router.push('/search'); return }
       setProperty(data)
 
-      // ✅ תיקון — שתי שאילתות נפרדות במקום join
       const { data: amenityData } = await supabase
         .from('property_amenities')
         .select('amenity_id')
@@ -222,6 +346,10 @@ export default function PropertyPage() {
                   </div>
                 </div>
               )}
+
+              {/* לוח זמינות */}
+              <AvailabilityCalendar propertyId={params.id as string} supabase={supabase} />
+
             </div>
 
             <div className="lg:col-span-1">

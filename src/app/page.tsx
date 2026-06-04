@@ -29,10 +29,27 @@ export default function HomePage() {
           <div className="relative z-10 max-w-4xl mx-auto">
             
             {/* Title */}
-            <h1 className="text-3xl lg:text-5xl font-bold text-charcoal leading-tight tracking-tight mb-6">
-              חוויית אירוח
+            <h1 className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-6">
+              <span style={{
+                background: 'linear-gradient(135deg, #3d2f20 0%, #8B6914 50%, #3d2f20 100%)',
+                backgroundSize: '200% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'shimmer 3s linear infinite',
+              }}>
+                חוויית אירוח
+              </span>
               <br />
-              <span className="text-gold-deep">
+              <span style={{
+                background: 'linear-gradient(135deg, #8B6914 0%, #c9a84c 40%, #8B6914 100%)',
+                backgroundSize: '200% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'shimmer 3s linear infinite reverse',
+                fontSize: '1.15em',
+              }}>
                 שלא תשכחו
               </span>
             </h1>

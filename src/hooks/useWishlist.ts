@@ -1,8 +1,22 @@
-import { useState, useEffect } from 'react'
+'use client'
+
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 const STORAGE_KEY = 'zimmer_wishlist'
 
-export function useWishlist() {
+type WishlistContextType = {
+  likedIds: string[]
+  toggle: (id: string) => void
+  isLiked: (id: string) => boolean
+}
+
+const WishlistContext = createContext<WishlistContextType>({
+  likedIds: [],
+  toggle: () => {},
+  isLiked: () => false,
+})
+
+export function WishlistProvider({ children }: { children: ReactNode }) {
   const [likedIds, setLikedIds] = useState<string[]>([])
 
   useEffect(() => {
@@ -22,5 +36,13 @@ export function useWishlist() {
 
   const isLiked = (id: string) => likedIds.includes(id)
 
-  return { likedIds, toggle, isLiked }
+  return (
+    <WishlistContext.Provider value={{ likedIds, toggle, isLiked }}>
+      {children}
+    </WishlistContext.Provider>
+  )
+}
+
+export function useWishlist() {
+  return useContext(WishlistContext)
 }

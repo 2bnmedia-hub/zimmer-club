@@ -358,7 +358,7 @@ export default function PropertyPage() {
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">תאריך כניסה</label>
                     <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)}
-                      min={new Date().toISOString().split('T')[0]}
+                      min={new Date().toISOString().split('T')[0]} max="2030-12-31" onKeyDown={(e) => e.preventDefault()}
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-yellow-600" dir="ltr" />
                   </div>
                   <div>

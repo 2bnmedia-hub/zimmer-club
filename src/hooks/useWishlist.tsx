@@ -68,6 +68,18 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // האזן להתנתקות
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        setUserId(null)
+        setLikedIds([])
+        try { localStorage.removeItem(STORAGE_KEY) } catch {}
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
   const isLiked = (id: string) => likedIds.includes(id)
 
   return (

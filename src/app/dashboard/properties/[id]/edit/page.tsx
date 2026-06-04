@@ -92,23 +92,16 @@ function Calendar({
   const handleDayClick = async (day: number) => {
     const dateStr = formatDate(day)
     const current = dateMap[dateStr]
-
     if (!current) {
       const { error } = await supabase.from('blocked_dates').upsert({
-        property_id: propertyId,
-        date: dateStr,
-        status: 'blocked',
+        property_id: propertyId, date: dateStr, status: 'blocked',
       }, { onConflict: 'property_id,date' })
       if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'blocked' }))
     } else {
       const { error } = await supabase.from('blocked_dates').delete()
         .eq('property_id', propertyId).eq('date', dateStr)
       if (!error) {
-        setDateMap(prev => {
-          const next = { ...prev }
-          delete next[dateStr]
-          return next
-        })
+        setDateMap(prev => { const next = { ...prev }; delete next[dateStr]; return next })
       }
     }
   }
@@ -117,7 +110,6 @@ function Calendar({
     if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1) }
     else setCurrentMonth(m => m - 1)
   }
-
   const nextMonth = () => {
     if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1) }
     else setCurrentMonth(m => m + 1)
@@ -141,7 +133,6 @@ function Calendar({
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <h2 className="font-bold text-gray-700 text-lg mb-1">ניהול זמינות</h2>
       <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← פנוי</p>
-
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-white border border-gray-200" />
@@ -152,19 +143,15 @@ function Calendar({
           <span className="text-xs text-gray-500">תפוס</span>
         </div>
       </div>
-
       <div className="flex items-center justify-between mb-4">
         <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
           <ChevronRight className="w-4 h-4 text-gray-500" />
         </button>
-        <span className="font-bold text-gray-800 text-sm">
-          {HEBREW_MONTHS[currentMonth]} {currentYear}
-        </span>
+        <span className="font-bold text-gray-800 text-sm">{HEBREW_MONTHS[currentMonth]} {currentYear}</span>
         <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
           <ChevronLeft className="w-4 h-4 text-gray-500" />
         </button>
       </div>
-
       {loadingDates ? (
         <div className="text-center py-8 text-gray-400 text-sm">טוען תאריכים...</div>
       ) : (
@@ -176,13 +163,8 @@ function Calendar({
           {days.map(day => {
             const isPast = new Date(formatDate(day)) < new Date(today.toDateString())
             return (
-              <button
-                key={day}
-                type="button"
-                disabled={isPast}
-                onClick={() => handleDayClick(day)}
-                className={`aspect-square rounded-lg text-xs flex items-center justify-center transition-colors ${getDayStyle(day)}`}
-              >
+              <button key={day} type="button" disabled={isPast} onClick={() => handleDayClick(day)}
+                className={`aspect-square rounded-lg text-xs flex items-center justify-center transition-colors ${getDayStyle(day)}`}>
                 {day}
               </button>
             )
@@ -223,6 +205,16 @@ export default function EditPropertyPage() {
     instant_book: false,
     status: 'pending',
     video_url: '',
+    phone_landline: '',
+    whatsapp1: '',
+    whatsapp2: '',
+    email1: '',
+    email2: '',
+    contact_via_phone_landline: false,
+    contact_via_whatsapp1: false,
+    contact_via_whatsapp2: false,
+    contact_via_email1: false,
+    contact_via_email2: false,
   })
 
   useEffect(() => {
@@ -250,25 +242,23 @@ export default function EditPropertyPage() {
         instant_book: property.instant_book || false,
         video_url: property.video_url || '',
         status: property.status || 'pending',
+        phone_landline: property.phone_landline || '',
+        whatsapp1: property.whatsapp1 || '',
+        whatsapp2: property.whatsapp2 || '',
+        email1: property.email1 || '',
+        email2: property.email2 || '',
+        contact_via_phone_landline: property.contact_via_phone_landline || false,
+        contact_via_whatsapp1: property.contact_via_whatsapp1 || false,
+        contact_via_whatsapp2: property.contact_via_whatsapp2 || false,
+        contact_via_email1: property.contact_via_email1 || false,
+        contact_via_email2: property.contact_via_email2 || false,
       })
-      const { data: imgData } = await supabase
-        .from('property_images')
-        .select('*')
-        .eq('property_id', params.id)
-        .order('order')
+      const { data: imgData } = await supabase.from('property_images').select('*').eq('property_id', params.id).order('order')
       setImages(imgData || [])
-
-      const { data: amenityData } = await supabase
-        .from('property_amenities')
-        .select('amenity_id')
-        .eq('property_id', params.id)
-
+      const { data: amenityData } = await supabase.from('property_amenities').select('amenity_id').eq('property_id', params.id)
       if (amenityData && amenityData.length > 0) {
         const ids = amenityData.map((a: any) => a.amenity_id)
-        const { data: amenitiesData } = await supabase
-          .from('amenities')
-          .select('key')
-          .in('id', ids)
+        const { data: amenitiesData } = await supabase.from('amenities').select('key').in('id', ids)
         setSelectedAmenities(amenitiesData?.map((a: any) => a.key).filter(Boolean) || [])
       } else {
         setSelectedAmenities([])
@@ -318,10 +308,7 @@ export default function EditPropertyPage() {
         const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
         const isPrimary = images.length === 0
         const { data: newImg } = await supabase.from('property_images').insert({
-          property_id: params.id,
-          url: urlData.publicUrl,
-          'order': images.length,
-          is_primary: isPrimary,
+          property_id: params.id, url: urlData.publicUrl, 'order': images.length, is_primary: isPrimary,
         }).select().single()
         if (newImg) setImages(prev => [...prev, newImg])
       }
@@ -361,6 +348,16 @@ export default function EditPropertyPage() {
       instant_book: form.instant_book,
       ...(isAdmin && { status: form.status }),
       video_url: form.video_url || null,
+      phone_landline: form.phone_landline || null,
+      whatsapp1: form.whatsapp1 || null,
+      whatsapp2: form.whatsapp2 || null,
+      email1: form.email1 || null,
+      email2: form.email2 || null,
+      contact_via_phone_landline: form.contact_via_phone_landline,
+      contact_via_whatsapp1: form.contact_via_whatsapp1,
+      contact_via_whatsapp2: form.contact_via_whatsapp2,
+      contact_via_email1: form.contact_via_email1,
+      contact_via_email2: form.contact_via_email2,
       updated_at: new Date().toISOString(),
     }).eq('id', params.id)
     if (updateError) {
@@ -373,9 +370,7 @@ export default function EditPropertyPage() {
         const amenityRows = (allAmenities || [])
           .filter((a: any) => selectedAmenities.includes(a.key))
           .map((a: any) => ({ property_id: propertyId, amenity_id: a.id }))
-        if (amenityRows.length > 0) {
-          await supabase.from('property_amenities').insert(amenityRows)
-        }
+        if (amenityRows.length > 0) await supabase.from('property_amenities').insert(amenityRows)
       }
       if (videoFile) {
         const uploadedUrl = await uploadVideo()
@@ -406,6 +401,7 @@ export default function EditPropertyPage() {
 
           <Calendar propertyId={params.id as string} supabase={supabase} />
 
+          {/* גלריית תמונות */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-2">גלריית תמונות</h2>
             <p className="text-xs text-gray-400 mb-4">לחץ על כוכב להגדרת תמונה ראשית. לחץ X למחיקה.</p>
@@ -419,12 +415,10 @@ export default function EditPropertyPage() {
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => handleSetPrimary(img.id)}
-                      className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
+                    <button type="button" onClick={() => handleSetPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
                       <Star className="w-3.5 h-3.5 text-white" />
                     </button>
-                    <button type="button" onClick={() => handleDeleteImage(img.id)}
-                      className="p-1.5 bg-red-500 rounded-full" title="מחק">
+                    <button type="button" onClick={() => handleDeleteImage(img.id)} className="p-1.5 bg-red-500 rounded-full" title="מחק">
                       <X className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
@@ -439,6 +433,7 @@ export default function EditPropertyPage() {
             <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
 
+          {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>
             <div>
@@ -480,6 +475,78 @@ export default function EditPropertyPage() {
             </div>
           </div>
 
+          {/* אמצעי תקשורת לקבלת הזמנות */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת לקבלת הזמנות</h2>
+            <p className="text-xs text-gray-400">סמן ✓ ליד האמצעים שדרכם תרצה לקבל הזמנות</p>
+
+            {/* טלפון קווי */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_phone_landline" id="contact_via_phone_landline"
+                checked={form.contact_via_phone_landline} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_phone_landline" className="block text-sm font-medium text-gray-700 mb-1">טלפון קווי</label>
+                <input name="phone_landline" value={form.phone_landline} onChange={handleChange}
+                  placeholder="03-1234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* וואטסאפ 1 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_whatsapp1" id="contact_via_whatsapp1"
+                checked={form.contact_via_whatsapp1} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_whatsapp1" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 1</label>
+                <input name="whatsapp1" value={form.whatsapp1} onChange={handleChange}
+                  placeholder="972501234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* וואטסאפ 2 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_whatsapp2" id="contact_via_whatsapp2"
+                checked={form.contact_via_whatsapp2} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_whatsapp2" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 2</label>
+                <input name="whatsapp2" value={form.whatsapp2} onChange={handleChange}
+                  placeholder="972501234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* אימייל 1 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_email1" id="contact_via_email1"
+                checked={form.contact_via_email1} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_email1" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 1</label>
+                <input name="email1" value={form.email1} onChange={handleChange}
+                  type="email" placeholder="business@example.com" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* אימייל 2 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_email2" id="contact_via_email2"
+                checked={form.contact_via_email2} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_email2" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 2</label>
+                <input name="email2" value={form.email2} onChange={handleChange}
+                  type="email" placeholder="business2@example.com" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* וידאו */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
             <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
@@ -489,12 +556,8 @@ export default function EditPropertyPage() {
                 <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
                 <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
               </label>
-              {videoPreview && (
-                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-              )}
-              {form.video_url && !videoPreview && (
-                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
-              )}
+              {videoPreview && <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />}
+              {form.video_url && !videoPreview && <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />}
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-200" />
                 <span className="text-xs text-gray-400">או</span>
@@ -506,6 +569,7 @@ export default function EditPropertyPage() {
             </div>
           </div>
 
+          {/* תמחור */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
@@ -550,6 +614,7 @@ export default function EditPropertyPage() {
             </div>
           )}
 
+          {/* מאפיינים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-4">מאפיינים ושירותים</h2>
             <div className="grid grid-cols-3 gap-3">

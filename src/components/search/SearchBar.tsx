@@ -109,29 +109,26 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="label">אזור בארץ</label>
-              <input
-                type="text"
+              <select
                 value={region}
                 onChange={(e) => { setRegion(e.target.value); setError('') }}
-                placeholder="הגליל, כרמל, ים המלח..."
-                className="w-full text-sm bg-transparent outline-none text-charcoal placeholder-stone font-medium"
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
                 dir="rtl"
-                list="regions-list"
-              />
-              <datalist id="regions-list">
-                <option value="בצפון" />
-                <option value="גליל המערבי" />
-                <option value="גליל העליון" />
-                <option value="גליל התחתון" />
-                <option value="כנרת" />
-                <option value="חרמון" />
-                <option value="מרכז" />
-                <option value="ירושלים" />
-                <option value="ים המלח" />
-                <option value="דרום" />
-                <option value="אילת" />
-                <option value="רמת הגולן" />
-              </datalist>
+              >
+                <option value="">בחר אזור...</option>
+                <option value="הצפון">הצפון</option>
+                <option value="גליל המערבי">גליל המערבי</option>
+                <option value="גליל העליון">גליל העליון</option>
+                <option value="גליל התחתון">גליל התחתון</option>
+                <option value="כנרת">כנרת</option>
+                <option value="חרמון">חרמון</option>
+                <option value="מרכז">מרכז</option>
+                <option value="ירושלים">ירושלים</option>
+                <option value="ים המלח">ים המלח</option>
+                <option value="דרום">דרום</option>
+                <option value="אילת">אילת</option>
+                <option value="רמת הגולן">רמת הגולן</option>
+              </select>
             </div>
           </div>
 

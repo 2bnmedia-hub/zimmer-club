@@ -271,13 +271,13 @@ export default function NewPropertyPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב</label>
-                <input name="city" value={form.city} onChange={handleChange}
+                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב *</label>
+                <input name="city" value={form.city} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת</label>
-                <input name="address" value={form.address} onChange={handleChange}
+                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת *</label>
+                <input name="address" value={form.address} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
             </div>

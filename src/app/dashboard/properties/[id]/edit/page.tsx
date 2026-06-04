@@ -108,16 +108,7 @@ function Calendar({
         status: 'blocked',
       }, { onConflict: 'property_id,date' })
       if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'blocked' }))
-    } else if (current === 'blocked') {
-      // תפוס → מאושר
-      const { error } = await supabase.from('blocked_dates').upsert({
-        property_id: propertyId,
-        date: dateStr,
-        status: 'approved',
-      }, { onConflict: 'property_id,date' })
-      if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'approved' }))
     } else {
-      // מאושר → פנוי (מחק)
       const { error } = await supabase.from('blocked_dates').delete()
         .eq('property_id', propertyId).eq('date', dateStr)
       if (!error) {
@@ -151,7 +142,6 @@ function Calendar({
     const isPast = new Date(dateStr) < new Date(today.toDateString())
     if (isPast) return 'bg-gray-50 text-gray-300 cursor-not-allowed'
     if (status === 'blocked') return 'bg-red-100 text-red-700 hover:bg-red-200 cursor-pointer font-medium'
-    if (status === 'approved') return 'bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer font-medium'
     return 'hover:bg-yellow-50 hover:text-yellow-700 cursor-pointer text-gray-700'
   }
 

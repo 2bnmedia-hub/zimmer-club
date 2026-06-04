@@ -47,7 +47,7 @@ export function LatestProperties() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-taupe mb-2">חדש באתר</p>
-            <h2 className="section-title">נכסים שנוספו לאחרונה</h2>
+            <h2 className="section-title">לקוחות ממש אהבו</h2>
           </div>
           <Link href="/search" className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block">
             כל הנכסים ←

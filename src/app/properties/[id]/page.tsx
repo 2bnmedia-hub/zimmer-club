@@ -270,31 +270,37 @@ export default function PropertyPage() {
           <div className="h-72 md:h-[480px] bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
             {images.length > 0 ? (
               <>
-                <div className="w-full h-full flex transition-transform duration-500 ease-in-out absolute inset-0"
-                  style={{ transform: `translateX(${currentImage * -100}%)`, width: `${images.length * 100}%` }}>
-                  {images.map((url, i) => (
-                    <div key={i} style={{ width: `${100 / images.length}%` }} className="h-full shrink-0">
-                      <img src={url} alt={property.name} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
+                {images.map((url, i) => (
+                  <img
+                    key={i}
+                    src={url}
+                    alt={property.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{
+                      opacity: i === currentImage ? 1 : 0,
+                      transform: i === currentImage ? 'translateX(0)' : i < currentImage ? 'translateX(-100%)' : 'translateX(100%)',
+                      transition: 'opacity 0.5s ease, transform 0.5s ease',
+                      zIndex: i === currentImage ? 1 : 0,
+                    }}
+                  />
+                ))}
                 {images.length > 1 && (
                   <>
                     <button onClick={() => setCurrentImage(prev => (prev - 1 + images.length) % images.length)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors">
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <ChevronRight className="w-5 h-5" />
                     </button>
                     <button onClick={() => setCurrentImage(prev => (prev + 1) % images.length)}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors">
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                       {images.map((_, i) => (
                         <button key={i} onClick={() => setCurrentImage(i)}
                           className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`} />
                       ))}
                     </div>
-                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">
                       {currentImage + 1} / {images.length}
                     </div>
                   </>
@@ -304,7 +310,7 @@ export default function PropertyPage() {
               <div className="absolute inset-0 flex items-center justify-center text-gray-400">אין תמונות עדיין</div>
             )}
             {property.instant_book && (
-              <div className="absolute top-4 right-4">
+              <div className="absolute top-4 right-4 z-10">
                 <span className="bg-white text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
                   <Zap className="w-3 h-3" />
                   הזמנה מיידית
@@ -312,7 +318,6 @@ export default function PropertyPage() {
               </div>
             )}
           </div>
-
           {/* תמונות ממוזערות */}
           {images.length > 1 && (
             <div className="flex gap-2 mb-8 overflow-x-auto pb-2">

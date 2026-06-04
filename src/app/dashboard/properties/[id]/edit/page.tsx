@@ -41,13 +41,7 @@ type PropertyImage = {
   order: number
 }
 
-type DateStatus = 'blocked' | 'approved'
-
-type BlockedDate = {
-  id: string
-  date: string
-  status: DateStatus
-}
+type DateStatus = 'blocked'
 
 const HEBREW_MONTHS = [
   'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
@@ -74,11 +68,11 @@ function Calendar({
       setLoadingDates(true)
       const { data } = await supabase
         .from('blocked_dates')
-        .select('id, date, status')
+        .select('date, status')
         .eq('property_id', propertyId)
       if (data) {
         const map: Record<string, DateStatus> = {}
-        data.forEach((d: BlockedDate) => { map[d.date] = d.status })
+        data.forEach((d: any) => { map[d.date] = d.status })
         setDateMap(map)
       }
       setLoadingDates(false)
@@ -99,9 +93,7 @@ function Calendar({
     const dateStr = formatDate(day)
     const current = dateMap[dateStr]
 
-    // מחזור: פנוי → תפוס → מאושר → פנוי
     if (!current) {
-      // פנוי → תפוס
       const { error } = await supabase.from('blocked_dates').upsert({
         property_id: propertyId,
         date: dateStr,
@@ -150,7 +142,6 @@ function Calendar({
       <h2 className="font-bold text-gray-700 text-lg mb-1">ניהול זמינות</h2>
       <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← פנוי</p>
 
-      {/* מקרא */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-white border border-gray-200" />
@@ -162,7 +153,6 @@ function Calendar({
         </div>
       </div>
 
-      {/* ניווט חודש */}
       <div className="flex items-center justify-between mb-4">
         <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
           <ChevronRight className="w-4 h-4 text-gray-500" />
@@ -179,13 +169,10 @@ function Calendar({
         <div className="text-center py-8 text-gray-400 text-sm">טוען תאריכים...</div>
       ) : (
         <div className="grid grid-cols-7 gap-1">
-          {/* כותרות ימים */}
           {HEBREW_DAYS.map(d => (
             <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
           ))}
-          {/* ריקים */}
           {blanks.map((_, i) => <div key={`blank-${i}`} />)}
-          {/* ימים */}
           {days.map(day => {
             const isPast = new Date(formatDate(day)) < new Date(today.toDateString())
             return (
@@ -271,22 +258,21 @@ export default function EditPropertyPage() {
         .order('order')
       setImages(imgData || [])
 
-      // ✅ תיקון — שתי שאילתות נפרדות במקום join
-const { data: amenityData } = await supabase
-  .from('property_amenities')
-  .select('amenity_id')
-  .eq('property_id', params.id)
+      const { data: amenityData } = await supabase
+        .from('property_amenities')
+        .select('amenity_id')
+        .eq('property_id', params.id)
 
-if (amenityData && amenityData.length > 0) {
-  const ids = amenityData.map((a: any) => a.amenity_id)
-  const { data: amenitiesData } = await supabase
-    .from('amenities')
-    .select('key')
-    .in('id', ids)
-  setSelectedAmenities(amenitiesData?.map((a: any) => a.key).filter(Boolean) || [])
-} else {
-  setSelectedAmenities([])
-}
+      if (amenityData && amenityData.length > 0) {
+        const ids = amenityData.map((a: any) => a.amenity_id)
+        const { data: amenitiesData } = await supabase
+          .from('amenities')
+          .select('key')
+          .in('id', ids)
+        setSelectedAmenities(amenitiesData?.map((a: any) => a.key).filter(Boolean) || [])
+      } else {
+        setSelectedAmenities([])
+      }
       setLoading(false)
     }
     load()
@@ -380,19 +366,15 @@ if (amenityData && amenityData.length > 0) {
     if (updateError) {
       setError(updateError.message)
     } else {
-      // שמירת amenities
       const propertyId = String(params.id)
       await supabase.from('property_amenities').delete().eq('property_id', propertyId)
       if (selectedAmenities.length > 0) {
-        const { data: allAmenities, error: amenErr } = await supabase.from('amenities').select('id, key')
-        console.log('allAmenities:', allAmenities, 'err:', amenErr)
+        const { data: allAmenities } = await supabase.from('amenities').select('id, key')
         const amenityRows = (allAmenities || [])
           .filter((a: any) => selectedAmenities.includes(a.key))
           .map((a: any) => ({ property_id: propertyId, amenity_id: a.id }))
-        console.log('amenityRows:', amenityRows)
         if (amenityRows.length > 0) {
-          const { error: insErr } = await supabase.from('property_amenities').insert(amenityRows)
-          console.log('insert error:', insErr)
+          await supabase.from('property_amenities').insert(amenityRows)
         }
       }
       if (videoFile) {
@@ -422,10 +404,8 @@ if (amenityData && amenityData.length > 0) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* לוח שנה זמינות */}
           <Calendar propertyId={params.id as string} supabase={supabase} />
 
-          {/* גלריית תמונות */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-2">גלריית תמונות</h2>
             <p className="text-xs text-gray-400 mb-4">לחץ על כוכב להגדרת תמונה ראשית. לחץ X למחיקה.</p>
@@ -459,7 +439,6 @@ if (amenityData && amenityData.length > 0) {
             <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
 
-          {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>
             <div>
@@ -501,7 +480,6 @@ if (amenityData && amenityData.length > 0) {
             </div>
           </div>
 
-          {/* וידאו */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
             <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
@@ -528,7 +506,6 @@ if (amenityData && amenityData.length > 0) {
             </div>
           </div>
 
-          {/* תמחור */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
@@ -573,7 +550,6 @@ if (amenityData && amenityData.length > 0) {
             </div>
           )}
 
-          {/* מאפיינים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-4">מאפיינים ושירותים</h2>
             <div className="grid grid-cols-3 gap-3">

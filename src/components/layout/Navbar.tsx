@@ -187,6 +187,14 @@ export function Navbar() {
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <Search className="w-5 h-5 text-gray-600" />
             </button>
+            <a href="/wishlist" className="relative p-2 rounded-full hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
+              <Heart className="w-5 h-5 text-gray-600" />
+              {likedIds.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {likedIds.length}
+                </span>
+              )}
+            </a>
             {user ? (
               <div className="relative">
                 <button

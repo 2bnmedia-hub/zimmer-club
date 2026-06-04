@@ -82,6 +82,16 @@ export default function NewPropertyPage() {
     bathrooms: '1',
     instant_book: false,
     video_url: '',
+    phone_landline: '',
+    whatsapp1: '',
+    whatsapp2: '',
+    email1: '',
+    email2: '',
+    contact_via_phone_landline: false,
+    contact_via_whatsapp1: false,
+    contact_via_whatsapp2: false,
+    contact_via_email1: false,
+    contact_via_email2: false,
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -96,10 +106,7 @@ export default function NewPropertyPage() {
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 25 * 1024 * 1024) {
-      alert('הוידאו גדול מ-25MB')
-      return
-    }
+    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
     setVideoFile(file)
     setVideoPreview(URL.createObjectURL(file))
     e.target.value = ''
@@ -109,21 +116,14 @@ export default function NewPropertyPage() {
     const files = e.target.files
     if (!files) return
     const valid = Array.from(files).filter(f => {
-      if (f.size > 2 * 1024 * 1024) {
-        alert(`הקובץ "${f.name}" גדול מ-2MB ולא יתווסף`)
-        return false
-      }
+      if (f.size > 2 * 1024 * 1024) { alert(`הקובץ "${f.name}" גדול מ-2MB ולא יתווסף`); return false }
       return true
     })
     const remaining = 14 - images.length
-    if (valid.length > remaining) {
-      alert(`ניתן להוסיף עד 14 תמונות בלבד. יתווספו ${remaining} תמונות.`)
-    }
+    if (valid.length > remaining) alert(`ניתן להוסיף עד 14 תמונות בלבד. יתווספו ${remaining} תמונות.`)
     const toAdd = valid.slice(0, remaining)
     const newImages = toAdd.map((file, idx) => ({
-      file,
-      url: URL.createObjectURL(file),
-      isPrimary: images.length === 0 && idx === 0,
+      file, url: URL.createObjectURL(file), isPrimary: images.length === 0 && idx === 0,
     }))
     setImages(prev => [...prev, ...newImages])
     e.target.value = ''
@@ -160,10 +160,7 @@ export default function NewPropertyPage() {
       if (!uploadError) {
         const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
         await supabase.from('property_images').insert({
-          property_id: propertyId,
-          url: urlData.publicUrl,
-          order: i,
-          is_primary: img.isPrimary,
+          property_id: propertyId, url: urlData.publicUrl, order: i, is_primary: img.isPrimary,
         })
       }
     }
@@ -192,6 +189,16 @@ export default function NewPropertyPage() {
       instant_book: form.instant_book,
       status: 'pending',
       video_url: form.video_url || null,
+      phone_landline: form.phone_landline || null,
+      whatsapp1: form.whatsapp1 || null,
+      whatsapp2: form.whatsapp2 || null,
+      email1: form.email1 || null,
+      email2: form.email2 || null,
+      contact_via_phone_landline: form.contact_via_phone_landline,
+      contact_via_whatsapp1: form.contact_via_whatsapp1,
+      contact_via_whatsapp2: form.contact_via_whatsapp2,
+      contact_via_email1: form.contact_via_email1,
+      contact_via_email2: form.contact_via_email2,
     }).select().single()
     if (insertError) { setError(insertError.message); setLoading(false); return }
     setUploading(true)
@@ -201,9 +208,7 @@ export default function NewPropertyPage() {
       const uploaded = await uploadVideo(property.id)
       if (uploaded) finalVideoUrl = uploaded
     }
-    if (finalVideoUrl) {
-      await supabase.from('properties').update({ video_url: finalVideoUrl }).eq('id', property.id)
-    }
+    if (finalVideoUrl) await supabase.from('properties').update({ video_url: finalVideoUrl }).eq('id', property.id)
     setUploading(false)
     router.push('/dashboard/owner')
   }
@@ -278,6 +283,72 @@ export default function NewPropertyPage() {
             </div>
           </div>
 
+          {/* אמצעי תקשורת לקבלת הזמנות */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת לקבלת הזמנות</h2>
+            <p className="text-xs text-gray-400">סמן ✓ ליד האמצעים שדרכם תרצה לקבל הזמנות</p>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_phone_landline" id="new_contact_via_phone_landline"
+                checked={form.contact_via_phone_landline} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="new_contact_via_phone_landline" className="block text-sm font-medium text-gray-700 mb-1">טלפון קווי</label>
+                <input name="phone_landline" value={form.phone_landline} onChange={handleChange}
+                  placeholder="03-1234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_whatsapp1" id="new_contact_via_whatsapp1"
+                checked={form.contact_via_whatsapp1} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="new_contact_via_whatsapp1" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 1</label>
+                <input name="whatsapp1" value={form.whatsapp1} onChange={handleChange}
+                  placeholder="972501234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_whatsapp2" id="new_contact_via_whatsapp2"
+                checked={form.contact_via_whatsapp2} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="new_contact_via_whatsapp2" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 2</label>
+                <input name="whatsapp2" value={form.whatsapp2} onChange={handleChange}
+                  placeholder="972501234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_email1" id="new_contact_via_email1"
+                checked={form.contact_via_email1} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="new_contact_via_email1" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 1</label>
+                <input name="email1" value={form.email1} onChange={handleChange}
+                  type="email" placeholder="business@example.com" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_email2" id="new_contact_via_email2"
+                checked={form.contact_via_email2} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="new_contact_via_email2" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 2</label>
+                <input name="email2" value={form.email2} onChange={handleChange}
+                  type="email" placeholder="business2@example.com" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+          </div>
+
           {/* גלריית תמונות */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-1">תמונות הנכס</h2>
@@ -292,12 +363,10 @@ export default function NewPropertyPage() {
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => setPrimary(idx)}
-                      className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
+                    <button type="button" onClick={() => setPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
                       <Star className="w-3.5 h-3.5 text-white" />
                     </button>
-                    <button type="button" onClick={() => removeImage(idx)}
-                      className="p-1.5 bg-red-500 rounded-full" title="מחק">
+                    <button type="button" onClick={() => removeImage(idx)} className="p-1.5 bg-red-500 rounded-full" title="מחק">
                       <X className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
@@ -325,9 +394,7 @@ export default function NewPropertyPage() {
                 <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
                 <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
               </label>
-              {videoPreview && (
-                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-              )}
+              {videoPreview && <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />}
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-200" />
                 <span className="text-xs text-gray-400">או</span>

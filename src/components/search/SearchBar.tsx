@@ -115,7 +115,6 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
                 dir="rtl"
               >
-                <option value="">בחר אזור...</option>
                 <option value="הצפון">הצפון</option>
                 <option value="גליל המערבי">גליל המערבי</option>
                 <option value="גליל העליון">גליל העליון</option>

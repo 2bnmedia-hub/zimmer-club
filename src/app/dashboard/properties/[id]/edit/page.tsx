@@ -285,12 +285,22 @@ export default function EditPropertyPage() {
         .order('order')
       setImages(imgData || [])
 
-      const { data: amenityData } = await supabase
-        .from('property_amenities')
-        .select('amenity_id, amenities(key)')
-        .eq('property_id', params.id)
-      setSelectedAmenities(amenityData?.map((a: any) => a.amenities?.key).filter(Boolean) || [])
+      // ✅ תיקון — שתי שאילתות נפרדות במקום join
+const { data: amenityData } = await supabase
+  .from('property_amenities')
+  .select('amenity_id')
+  .eq('property_id', params.id)
 
+if (amenityData && amenityData.length > 0) {
+  const ids = amenityData.map((a: any) => a.amenity_id)
+  const { data: amenitiesData } = await supabase
+    .from('amenities')
+    .select('key')
+    .in('id', ids)
+  setSelectedAmenities(amenitiesData?.map((a: any) => a.key).filter(Boolean) || [])
+} else {
+  setSelectedAmenities([])
+}
       setLoading(false)
     }
     load()

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
-import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight, Navigation } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
 
 type Property = {
@@ -364,6 +364,30 @@ export default function PropertyPage() {
 
               {/* לוח זמינות */}
               <AvailabilityCalendar propertyId={params.id as string} supabase={supabase} />
+              {/* מפה */}
+              {(property.address || property.city) && (
+                <div className="border-t border-gray-100 pt-6 mt-6">
+                  <h2 className="font-bold text-gray-900 text-lg mb-4">מיקום</h2>
+                  <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <iframe
+                      width="100%"
+                      height="300"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}&output=embed&z=15`}
+                    />
+                  </div>
+                  
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address ? property.address + ', ' : '') + (property.city || '') + ', ישראל')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <Navigation className="w-4 h-4" style={{ color: '#8B6914' }} />
+                    נווט לנכס ב-Google Maps
+                  </a>
+                </div>
+              )}
 
             </div>
 

@@ -7,17 +7,33 @@
 @tailwind utilities;
 
 :root {
-  --cream: #FAF8F4;
+  /* צבעי לוגו */
+  --bronze: #C4956A;
+  --bronze-dark: #8B5E3C;
+  --bronze-light: #D4A876;
+  --green-dark: #1B5E3B;
+  --green-mid: #2D7A52;
+  --green-light: #4A9B6F;
+
+  /* רקעים */
+  --cream: #FAF7F2;
   --warm-white: #FFFDF9;
-  --sand: #E8E0D0;
-  --stone: #C4B89A;
+  --sand: #EDE5D8;
+  --stone: #C8B99A;
   --taupe: #8C7B65;
   --espresso: #3D2F20;
   --charcoal: #1E1A16;
-  --gold: #C9A96E;
-  --gold-light: #E8D5B0;
-  --gold-deep: #A07840;
-  --sage: #7A8C72;
+
+  /* זהב → ברונזה */
+  --gold: #C4956A;
+  --gold-light: #D4A876;
+  --gold-deep: #8B5E3C;
+
+  /* ירוק */
+  --sage: #2D7A52;
+  --sage-light: #4A9B6F;
+  --sage-dark: #1B5E3B;
+
   --text-muted: #9A8E80;
   --radius: 16px;
   --radius-sm: 10px;

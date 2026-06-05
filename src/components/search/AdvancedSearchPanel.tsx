@@ -77,17 +77,17 @@ export function AdvancedSearchPanel() {
           onClick={() => setOpen(!open)}
           className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200"
           style={{
-            background: open ? 'rgba(139,105,20,0.95)' : 'rgba(255,255,255,0.15)',
+            background: open ? 'linear-gradient(135deg, #C4956A, #8B5E3C)' : 'rgba(255,255,255,0.15)',
             backdropFilter: 'blur(8px)',
-            border: '1.5px solid rgba(212,168,67,0.6)',
-            color: open ? '#fff' : '#f5d078',
+            border: '1.5px solid rgba(196,149,106,0.7)',
+            color: open ? '#fff' : '#D4A876',
             boxShadow: open ? '0 4px 20px rgba(139,105,20,0.4)' : '0 2px 12px rgba(0,0,0,0.1)',
           }}
         >
           <SlidersHorizontal className="w-4 h-4" />
           חיפוש מתקדם
           {activeCount > 0 && (
-            <span className="bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" style={{background:'#D4A876', color:'#3D2F20'}}>
               {activeCount}
             </span>
           )}
@@ -97,7 +97,7 @@ export function AdvancedSearchPanel() {
 
       {/* פאנל */}
       {open && (
-        <div className="mt-4 rounded-2xl overflow-hidden shadow-2xl" style={{ background: 'rgba(255,252,245,0.97)', backdropFilter: 'blur(20px)' }}>
+        <div className="mt-4 rounded-2xl overflow-hidden shadow-2xl" style={{ background: 'linear-gradient(135deg, #FAF7F2 0%, #F5EFE6 100%)', border: '1px solid #D4A876', boxShadow: '0 20px 60px rgba(139,94,60,0.15)' }}>
           <div className="p-6 space-y-5">
 
             {/* סוג נכס */}
@@ -108,9 +108,9 @@ export function AdvancedSearchPanel() {
                   <button key={t.value} onClick={() => setFilters(p => ({ ...p, category: t.value }))}
                     className="px-4 py-1.5 rounded-full text-xs font-medium border transition-all"
                     style={{
-                      background: filters.category === t.value ? '#8B6914' : '#fff',
+                      background: filters.category === t.value ? 'linear-gradient(135deg, #C4956A, #8B5E3C)' : '#fff',
                       color: filters.category === t.value ? '#fff' : '#555',
-                      borderColor: filters.category === t.value ? '#8B6914' : '#e5e7eb',
+                      borderColor: filters.category === t.value ? '#C4956A' : '#e5e7eb',
                     }}>
                     {t.label}
                   </button>
@@ -250,7 +250,7 @@ export function AdvancedSearchPanel() {
                 )}
                 <button onClick={handleSearch}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                  style={{ backgroundColor: '#8B6914' }}>
+                  style={{ background: 'linear-gradient(135deg, #C4956A 0%, #8B5E3C 100%)', boxShadow: '0 4px 15px rgba(196,149,106,0.4)' }}>
                   <Search className="w-4 h-4" />
                   חפש עכשיו
                 </button>

@@ -492,7 +492,7 @@ export default function PropertyPage() {
                 <div className="flex gap-2 mt-2">
                   {(property.contact_via_whatsapp1 && property.whatsapp1) && (
                     
-                      href={`https://wa.me/${property.whatsapp1.replace(/[^0-9]/g, '')}`}
+                      href={'https://wa.me/' + (property.whatsapp1 || '').replace(/[^0-9]/g, '')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
@@ -504,7 +504,7 @@ export default function PropertyPage() {
                   )}
                   {(property.contact_via_whatsapp2 && property.whatsapp2) && (
                     
-                      href={`https://wa.me/${property.whatsapp2.replace(/[^0-9]/g, '')}`}
+                      href={'https://wa.me/' + (property.whatsapp2 || '').replace(/[^0-9]/g, '')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
@@ -516,7 +516,7 @@ export default function PropertyPage() {
                   )}
                   {(property.contact_via_phone_landline && property.phone_landline) && (
                     
-                      href={`tel:${property.phone_landline}`}
+                      href={'tel:' + property.phone_landline}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
                       style={{ backgroundColor: '#4B5563' }}
                     >

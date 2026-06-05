@@ -26,6 +26,8 @@ type Property = {
   avg_rating: number
   total_reviews: number
   instant_book: boolean
+  accepts_miluim?: boolean
+  has_shelter?: boolean
   status: string
 }
 
@@ -332,6 +334,18 @@ export default function PropertyPage() {
                 </span>
               </div>
             )}
+            <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 mt-9">
+              {property.accepts_miluim && (
+                <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                  🎖️ מקבלים שובר מילואים
+                </span>
+              )}
+              {property.has_shelter && (
+                <span className="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                  🛡️ קיים מרחב מוגן
+                </span>
+              )}
+            </div>
           </div>
           {/* תמונות ממוזערות */}
           {images.length > 1 && (

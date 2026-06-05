@@ -75,9 +75,9 @@ export default function HomePage() {
             </div>
 
             {/* Search */}
-            <SearchBar onAdvancedSearch={() => setShowAdvanced(true)} />
+            <SearchBar />
 
-            <AdvancedSearchPanel open={showAdvanced} onToggle={() => setShowAdvanced(!showAdvanced)} />
+            <AdvancedSearchPanel />
 
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-6 mt-8">

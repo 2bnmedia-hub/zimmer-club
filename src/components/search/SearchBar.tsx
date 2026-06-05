@@ -84,7 +84,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         <div className="grid grid-cols-1 lg:grid-cols-5">
 
           {/* Property Type */}
-          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Home className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="label">סוג נכס</label>
@@ -105,7 +105,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Region */}
-          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="label">אזור בארץ</label>
@@ -132,7 +132,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Check-in */}
-          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1">
               <label className="label">תאריך כניסה</label>
@@ -155,7 +155,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Check-out */}
-          <div className="flex items-start gap-3 p-6 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1">
               <label className="label">תאריך יציאה</label>
@@ -172,7 +172,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           {/* Guests */}
-          <div className="flex items-start gap-3 p-5">
+          <div className="flex items-start gap-3 px-5 pt-4 pb-2">
             <Users className="w-4 h-4 text-gold mt-0.5 shrink-0" />
             <div className="flex-1">
               <label className="label">מספר האורחים</label>

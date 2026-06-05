@@ -81,6 +81,7 @@ export default function NewPropertyPage() {
     bedrooms: '1',
     bathrooms: '1',
     instant_book: false,
+    accepts_miluim: false,
     video_url: '',
     phone_landline: '',
     whatsapp1: '',
@@ -442,6 +443,10 @@ export default function NewPropertyPage() {
             <div className="flex items-center gap-2">
               <input type="checkbox" name="instant_book" id="instant_book" checked={form.instant_book} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
               <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">הזמנה מיידית</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="accepts_miluim" id="accepts_miluim" checked={form.accepts_miluim} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+              <label htmlFor="accepts_miluim" className="text-sm font-medium text-gray-700">מקבלים שובר מילואים</label>
             </div>
           </div>
 

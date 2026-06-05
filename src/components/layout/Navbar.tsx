@@ -232,7 +232,7 @@ export function Navbar() {
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-2 py-1.5 text-sm font-bold text-white rounded-full transition-colors whitespace-nowrap"
+                  className="px-3 py-1.5 text-sm font-bold text-white rounded-full transition-colors whitespace-nowrap"
                   style={{ backgroundColor: '#8B6914' }}>
                   הרשמה חינם
                 </Link>

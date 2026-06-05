@@ -87,13 +87,7 @@ export default function LoginPage() {
       .eq('id', user.id)
       .single()
 
-    if (profile?.role === 'admin') {
-      window.location.href = '/dashboard/admin'
-    } else if (profile?.role === 'owner') {
-      window.location.href = '/dashboard/owner'
-    } else {
-      window.location.href = '/'
-    }
+    window.location.href = '/'
   }
 
   const handleForgotPassword = async () => {

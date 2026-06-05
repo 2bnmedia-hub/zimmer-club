@@ -11,9 +11,10 @@ import { useWishlist } from '@/hooks/useWishlist'
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
   { href: '/camping', label: 'קמפינג' },
+  { href: '/caravans', label: 'קרוואנים' },
   { href: '/deals', label: 'מבצעים', badge: true },
+  { href: '/find', label: 'תמצאו לי צימר' },
   { href: '/advertise', label: 'פרסמו באתר' },
-  { href: '/find', label: 'אתרו לי צימר' },
 ]
 
 type MenuItem = { href: string; label: string }

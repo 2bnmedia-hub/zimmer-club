@@ -1,16 +1,11 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { SearchBar } from '@/components/search/SearchBar'
-import { AdvancedSearchPanel } from '@/components/search/AdvancedSearchPanel'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
 import { LatestProperties } from '@/components/property/LatestProperties'
 
 export default function HomePage() {
-  const [showAdvanced, setShowAdvanced] = useState(false)
   return (
     <>
       
@@ -76,8 +71,6 @@ export default function HomePage() {
 
             {/* Search */}
             <SearchBar />
-
-            <AdvancedSearchPanel />
 
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-6 mt-8">

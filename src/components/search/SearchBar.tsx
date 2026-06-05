@@ -91,7 +91,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <select
                 value={propertyType}
                 onChange={(e) => { setPropertyType(e.target.value); setError('') }}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium mt-2"
                 dir="rtl"
               >
                 <option value="">הכל</option>
@@ -112,7 +112,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <select
                 value={region}
                 onChange={(e) => { setRegion(e.target.value); setError('') }}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium mt-2"
                 dir="rtl"
               >
                 <option value="הצפון">הצפון</option>
@@ -148,7 +148,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 }}
                 min={today}
                 max={maxDate}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium mt-2"
                 dir="ltr"
               />
             </div>
@@ -165,7 +165,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 onChange={(e) => { const val = e.target.value; if (val && val < today) { setError('תאריך היציאה אינו תקין — יש לבחור תאריך עתידי'); return } if (val && checkIn && val <= checkIn) { setError('תאריך היציאה חייב להיות אחרי תאריך הכניסה'); return } setCheckOut(val); setError('') }}
                 min={checkIn || today}
                 max={maxDate}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium"
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium mt-2"
                 dir="ltr"
               />
             </div>
@@ -179,7 +179,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
               <select
                 value={guests}
                 onChange={(e) => setGuests(Number(e.target.value))}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium text-right appearance-none"
+                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium text-right appearance-none mt-2"
                 dir="rtl"
                 style={{ direction: 'rtl', textAlign: 'right' }}
               >

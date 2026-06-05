@@ -99,6 +99,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 <option value="villa">וילה</option>
                 <option value="hotel">מלון</option>
                 <option value="camping">קמפינג</option>
+                <option value="caravan">קרוואן</option>
                 <option value="attraction">אטרקציה</option>
               </select>
             </div>

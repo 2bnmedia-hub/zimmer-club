@@ -10,6 +10,7 @@ const PROPERTY_TYPES = [
   { value: 'villa', label: 'וילה/בקתה' },
   { value: 'hotel', label: 'מלון' },
   { value: 'camping', label: 'קמפינג' },
+  { value: 'caravan', label: 'קרוואן' },
   { value: 'attraction', label: 'אטרקציה' },
 ]
 

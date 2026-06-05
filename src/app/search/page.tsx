@@ -29,6 +29,7 @@ const PROPERTY_TYPES = [
   { value: 'villa', label: 'וילות' },
   { value: 'hotel', label: 'מלונות' },
   { value: 'camping', label: 'קמפינג' },
+  { value: 'caravan', label: 'קרוואנים' },
 ]
 
 function SearchContent() {

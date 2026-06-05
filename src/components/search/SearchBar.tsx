@@ -7,6 +7,7 @@ import { buildQueryString } from '@/lib/utils'
 
 interface SearchBarProps {
   variant?: 'hero' | 'compact'
+  onAdvancedSearch?: () => void
   initialValues?: {
     region?: string
     checkIn?: string
@@ -15,7 +16,7 @@ interface SearchBarProps {
   }
 }
 
-export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarProps) {
+export function SearchBar({ variant = 'hero', onAdvancedSearch, initialValues = {} }: SearchBarProps) {
   const router = useRouter()
   const [region, setRegion] = useState(initialValues.region || '')
   const [checkIn, setCheckIn] = useState(initialValues.checkIn || '')
@@ -204,14 +205,25 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         )}
 
         {/* Search Button */}
-        <div className="border-t border-sand-100 p-4 flex justify-center">
+        <div className="border-t border-sand-100 p-4 flex items-center justify-center gap-3">
           <button
             onClick={handleSearch}
-            className="btn-gold flex items-center justify-center gap-7 py-2.5 px-15 text-sm"
+            className="btn-gold flex items-center justify-center gap-2 py-2.5 px-8 text-sm"
           >
             <Search className="w-4 h-4 shrink-0" />
             <span>חיפוש</span>
           </button>
+          {onAdvancedSearch && (
+            <button
+              onClick={onAdvancedSearch}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 bg-white text-gray-600 hover:border-yellow-600 hover:text-yellow-700 transition-all"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+              </svg>
+              חיפוש מתקדם
+            </button>
+          )}
         </div>
 
       </div>

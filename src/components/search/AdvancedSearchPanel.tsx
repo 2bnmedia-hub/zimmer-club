@@ -33,9 +33,11 @@ const AUDIENCE_AMENITIES: Record<string, string> = {
 
 const FEATURE_AMENITIES = Object.keys(AMENITY_LABELS)
 
-export function AdvancedSearchPanel() {
+export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onToggle?: () => void }) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpen = open !== undefined ? open : internalOpen
+  const handleToggle = () => onToggle ? onToggle() : setInternalOpen(!internalOpen)
   const [showAmenities, setShowAmenities] = useState(false)
   const [showAudience, setShowAudience] = useState(false)
   const [priceRange, setPriceRange] = useState([200, 35000])
@@ -74,10 +76,10 @@ export function AdvancedSearchPanel() {
       {/* כפתור */}
       <div className="flex justify-center">
         <button
-          onClick={() => setOpen(!open)}
+          onClick={handleToggle}
           className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200"
           style={{
-            background: open ? 'linear-gradient(135deg, #C4956A, #8B5E3C)' : 'rgba(255,255,255,0.15)',
+            background: isOpen ? 'linear-gradient(135deg, #C4956A, #8B5E3C)' : 'rgba(255,255,255,0.15)',
             backdropFilter: 'blur(8px)',
             border: '1.5px solid rgba(196,149,106,0.7)',
             color: open ? '#fff' : '#D4A876',
@@ -91,12 +93,12 @@ export function AdvancedSearchPanel() {
               {activeCount}
             </span>
           )}
-          {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
       </div>
 
       {/* פאנל */}
-      {open && (
+      {isOpen && (
         <div className="mt-4 rounded-2xl overflow-hidden shadow-2xl" style={{ background: 'linear-gradient(135deg, #FAF7F2 0%, #F5EFE6 100%)', border: '1px solid #D4A876', boxShadow: '0 20px 60px rgba(139,94,60,0.15)' }}>
           <div className="p-6 space-y-5">
 

@@ -6,6 +6,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+.btn-shimmer {
+  background: linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+  box-shadow: 0 0 12px rgba(200,150,12,0.5);
+}
+
 :root {
   /* צבעי לוגו */
   --bronze: #C4956A;
@@ -94,10 +106,13 @@ body {
     @apply font-semibold px-6 py-3 rounded-full
            transition-all duration-200 active:scale-95
            disabled:opacity-50 disabled:cursor-not-allowed;
-    background: var(--gold);
+    background: linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%);
+    background-size: 200% auto;
+    animation: shimmer 2s linear infinite;
+    box-shadow: 0 0 12px rgba(200,150,12,0.5);
     color: white;
   }
-  .btn-gold:hover { background: var(--gold-deep); }
+  .btn-gold:hover { opacity: 0.9; }
 
   .btn-outline {
     @apply bg-transparent font-semibold px-6 py-3 rounded-full

@@ -154,7 +154,7 @@ export function Navbar() {
               <li key={item.name}>
                 <button
                   onClick={() => toggleMenu(item.name)}
-                  className="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap"
                 >
                   {item.label}
                   <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
@@ -167,8 +167,8 @@ export function Navbar() {
                   href={item.href}
                   onClick={() => setActiveMenu(null)}
                   className={item.badge
-                    ? 'relative px-3 py-1.5 text-xs font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden whitespace-nowrap'
-                    : 'px-2 py-1.5 text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap'
+                    ? 'relative px-3 py-1.5 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden whitespace-nowrap'
+                    : 'px-2 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap'
                   }
                   style={item.badge ? {
                     background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',
@@ -199,7 +199,7 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => toggleMenu('user')}
-                  className="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
                 >
                   <User className="w-4 h-4" />
                   <span>שלום, {user.name.split(' ')[0]}</span>
@@ -228,11 +228,11 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="px-2 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+                <Link href="/auth/login" className="px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-2 py-1.5 text-xs font-bold text-white rounded-full transition-colors whitespace-nowrap"
+                  className="px-2 py-1.5 text-sm font-bold text-white rounded-full transition-colors whitespace-nowrap"
                   style={{ backgroundColor: '#8B6914' }}>
                   הרשמה חינם
                 </Link>
@@ -325,7 +325,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
               </Link>
             ))}
           </div>
-          <Link href={dashboardHref} className="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+          <Link href={dashboardHref} className="flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
             <User className="w-4 h-4" />
             <span>{userName}</span>
           </Link>

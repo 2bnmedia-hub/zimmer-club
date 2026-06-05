@@ -76,6 +76,8 @@ export interface Property {
   avg_rating: number
   total_reviews: number
   instant_book: boolean
+  accepts_miluim?: boolean
+  has_shelter?: boolean
   created_at: string
   updated_at: string
 }

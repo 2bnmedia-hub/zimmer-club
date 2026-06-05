@@ -221,6 +221,8 @@ export default function EditPropertyPage() {
     bedrooms: '1',
     bathrooms: '1',
     instant_book: false,
+    accepts_miluim: false,
+    has_shelter: false,
     status: 'pending',
     video_url: '',
     phone_landline: '',
@@ -258,6 +260,8 @@ export default function EditPropertyPage() {
         bedrooms: property.bedrooms?.toString() || '1',
         bathrooms: property.bathrooms?.toString() || '1',
         instant_book: property.instant_book || false,
+        accepts_miluim: property.accepts_miluim || false,
+        has_shelter: property.has_shelter || false,
         video_url: property.video_url || '',
         status: property.status || 'pending',
         phone_landline: property.phone_landline || '',
@@ -364,6 +368,8 @@ export default function EditPropertyPage() {
       bedrooms: parseInt(form.bedrooms),
       bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book,
+      accepts_miluim: form.accepts_miluim,
+      has_shelter: form.has_shelter,
       ...(isAdmin && { status: form.status }),
       video_url: form.video_url || null,
       phone_landline: form.phone_landline || null,
@@ -617,6 +623,14 @@ export default function EditPropertyPage() {
             <div className="flex items-center gap-2">
               <input type="checkbox" name="instant_book" id="instant_book" checked={form.instant_book} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
               <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">הזמנה מיידית</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="accepts_miluim" id="accepts_miluim" checked={form.accepts_miluim} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+              <label htmlFor="accepts_miluim" className="text-sm font-medium text-gray-700">מקבלים שובר מילואים</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="has_shelter" id="has_shelter" checked={form.has_shelter} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+              <label htmlFor="has_shelter" className="text-sm font-medium text-gray-700">קיים מרחב מוגן</label>
             </div>
           </div>
 

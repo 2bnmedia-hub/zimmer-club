@@ -41,7 +41,7 @@ export function AdvancedSearchPanel() {
   const [priceRange, setPriceRange] = useState([200, 35000])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [filters, setFilters] = useState({
-    category: '', region: '', guests: '', instant_book: false, accepts_miluim: false,
+    category: '', region: '', guests: '', instant_book: false, accepts_miluim: false, has_shelter: false,
   })
 
   const toggleAmenity = (key: string) => {
@@ -55,6 +55,7 @@ export function AdvancedSearchPanel() {
     if (filters.guests) params.set('guests', filters.guests)
     if (filters.instant_book) params.set('instant_book', '1')
     if (filters.accepts_miluim) params.set('accepts_miluim', '1')
+    if (filters.has_shelter) params.set('has_shelter', '1')
     if (priceRange[0] > 200) params.set('minPrice', String(priceRange[0]))
     if (priceRange[1] < 35000) params.set('maxPrice', String(priceRange[1]))
     if (selectedAmenities.length > 0) params.set('amenities', selectedAmenities.join(','))
@@ -63,7 +64,7 @@ export function AdvancedSearchPanel() {
 
   const activeCount = [
     filters.category, filters.region, filters.guests,
-    filters.instant_book, filters.accepts_miluim,
+    filters.instant_book, filters.accepts_miluim, filters.has_shelter,
     selectedAmenities.length > 0,
     priceRange[0] > 200 || priceRange[1] < 35000,
   ].filter(Boolean).length
@@ -233,10 +234,16 @@ export function AdvancedSearchPanel() {
                     className="w-4 h-4 accent-yellow-600" />
                   <span className="text-sm text-gray-700 font-medium">🪖 מקבלים שובר מילואים</span>
                 </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={filters.has_shelter}
+                    onChange={(e) => setFilters(p => ({ ...p, has_shelter: e.target.checked }))}
+                    className="w-4 h-4 accent-yellow-600" />
+                  <span className="text-sm text-gray-700 font-medium">🛡️ קיים מרחב מוגן</span>
+                </label>
               </div>
               <div className="flex items-center gap-3">
                 {activeCount > 0 && (
-                  <button onClick={() => { setFilters({ category:'', region:'', guests:'', instant_book:false, accepts_miluim:false }); setPriceRange([200,35000]); setSelectedAmenities([]) }}
+                  <button onClick={() => { setFilters({ category:'', region:'', guests:'', instant_book:false, accepts_miluim:false, has_shelter:false }); setPriceRange([200,35000]); setSelectedAmenities([]) }}
                     className="flex items-center gap-1 text-sm text-red-400 hover:text-red-600 font-medium">
                     <X className="w-4 h-4" /> נקה הכל
                   </button>

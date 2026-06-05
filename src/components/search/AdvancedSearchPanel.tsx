@@ -250,7 +250,7 @@ export function AdvancedSearchPanel() {
                 )}
                 <button onClick={handleSearch}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg, #C4956A 0%, #8B5E3C 100%)', boxShadow: '0 4px 15px rgba(196,149,106,0.4)' }}>
+                  style={{ backgroundColor: '#8B6914' }}>
                   <Search className="w-4 h-4" />
                   חפש עכשיו
                 </button>

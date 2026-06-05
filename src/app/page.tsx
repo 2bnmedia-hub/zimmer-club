@@ -72,6 +72,20 @@ export default function HomePage() {
             {/* Search */}
             <SearchBar />
 
+            {/* Advanced Search Button */}
+            <div className="flex justify-center mt-4 mb-2">
+              
+                href="/search"
+                className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-200"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+                </svg>
+                חיפוש מתקדם
+                <span className="text-xs opacity-60 group-hover:opacity-100 transition-opacity">← סנן לפי מחיר, מאפיינים ועוד</span>
+              </a>
+            </div>
+
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-6 mt-8">
               {[

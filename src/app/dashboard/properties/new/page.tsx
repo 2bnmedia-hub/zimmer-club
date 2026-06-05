@@ -82,6 +82,7 @@ export default function NewPropertyPage() {
     bathrooms: '1',
     instant_book: false,
     accepts_miluim: false,
+    has_shelter: false,
     video_url: '',
     phone_landline: '',
     whatsapp1: '',
@@ -447,6 +448,10 @@ export default function NewPropertyPage() {
             <div className="flex items-center gap-2">
               <input type="checkbox" name="accepts_miluim" id="accepts_miluim" checked={form.accepts_miluim} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
               <label htmlFor="accepts_miluim" className="text-sm font-medium text-gray-700">מקבלים שובר מילואים</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="has_shelter" id="has_shelter" checked={form.has_shelter} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+              <label htmlFor="has_shelter" className="text-sm font-medium text-gray-700">קיים מרחב מוגן</label>
             </div>
           </div>
 

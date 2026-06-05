@@ -114,7 +114,7 @@ export default function WishlistPage() {
                       <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" />{p.bedrooms} חד׳</span>
                       <span className="flex items-center gap-1"><Users className="w-3 h-3" />עד {p.max_guests}</span>
                     </div>
-                    <p className="font-bold text-gray-900">החל מ ₪{p.price_per_night} <span className="font-normal text-xs text-gray-400">/ לילה</span></p>
+                    {p.price_per_night > 0 ? <p className="font-bold text-gray-900">החל מ ₪{p.price_per_night} <span className="font-normal text-xs text-gray-400">/ לילה</span></p> : <p className="text-sm text-gray-400">מחיר בתיאום</p>}
                   </Link>
                 </div>
               ))}

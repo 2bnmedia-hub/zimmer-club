@@ -415,7 +415,7 @@ export default function NewPropertyPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">מחיר ללילה (₪) *</label>
-                <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} required min="1"
+                <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="500" />
               </div>
               <div>

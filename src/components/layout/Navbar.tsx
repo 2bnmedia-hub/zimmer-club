@@ -145,7 +145,7 @@ export function Navbar() {
             <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
           </Link>
 
-          <ul className="hidden lg:flex items-center gap-6 list-none flex-1 justify-center">
+          <ul className="hidden lg:flex items-center gap-3 list-none flex-1 justify-center">
             {[
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },
@@ -154,7 +154,7 @@ export function Navbar() {
               <li key={item.name}>
                 <button
                   onClick={() => toggleMenu(item.name)}
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                  className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   {item.label}
                   <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
@@ -168,7 +168,7 @@ export function Navbar() {
                   onClick={() => setActiveMenu(null)}
                   className={item.badge
                     ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
-                    : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
+                    : 'px-2 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
                   }
                   style={item.badge ? {
                     background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',

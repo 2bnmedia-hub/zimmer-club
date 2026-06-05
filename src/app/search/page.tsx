@@ -201,10 +201,19 @@ function SearchContent() {
           </div>
         </div>
 
-        {/* פאנל פילטרים */}
+        {/* פאנל פילטרים - מסך מלא */}
         {showFilters && (
-          <div className="bg-white border-b border-gray-100 shadow-sm">
-            <div className="max-w-7xl mx-auto px-6 py-6 space-y-6" dir="rtl">
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={() => setShowFilters(false)}>
+            <div className="absolute inset-y-0 right-0 w-full max-w-2xl bg-[#FAF7F2] shadow-2xl overflow-y-auto"
+              onClick={e => e.stopPropagation()}>
+              <div className="sticky top-0 bg-[#FAF7F2] border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
+                <h2 className="text-lg font-bold text-gray-900">חיפוש מתקדם</h2>
+                <button onClick={() => setShowFilters(false)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            <div className="px-6 py-6 space-y-6" dir="rtl">
 
               {/* שורה 1 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -336,6 +345,15 @@ function SearchContent() {
               </div>
 
             </div>
+            {/* כפתור החל */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4">
+              <button onClick={() => setShowFilters(false)}
+                className="w-full py-3 rounded-xl font-bold text-white text-sm transition-colors"
+                style={{ backgroundColor: '#8B6914' }}>
+                הצג תוצאות {!loading && `(${properties.length})`}
+              </button>
+            </div>
+          </div>
           </div>
         )}
 

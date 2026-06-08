@@ -210,8 +210,30 @@ export default function PropertyPage() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
 
-          {/* תמונות */}
-          <div className="bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
+          {/* תמונות + מידע בשורה אחת */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_37%] gap-6 mb-8 items-start">
+
+            {/* ימין — מידע */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-center">
+              <p className="text-sm text-gray-500 mb-1">{property.category?.[0]} · {property.city || REGIONS[property.region as keyof typeof REGIONS]?.label}</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{property.name}</h1>
+              {property.avg_rating > 0 && (
+                <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="font-bold text-gray-900">{property.avg_rating}</span>
+                  <span className="text-xs text-gray-500">({property.total_reviews})</span>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                <div className="flex items-center gap-1.5"><Users className="w-4 h-4 text-gray-400" />עד {property.max_guests} אורחים</div>
+                <div className="flex items-center gap-1.5"><BedDouble className="w-4 h-4 text-gray-400" />{property.bedrooms} חדרי שינה</div>
+                <div className="flex items-center gap-1.5"><Bath className="w-4 h-4 text-gray-400" />{property.bathrooms} חדרי רחצה</div>
+                <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" />{property.address || property.city}</div>
+              </div>
+            </div>
+
+            {/* שמאל — תמונה */}
+          <div className="bg-gray-100 rounded-2xl relative overflow-hidden">
             {images.length > 0 ? (
               <>
                 <div className="relative w-full">
@@ -255,6 +277,8 @@ export default function PropertyPage() {
               {property.has_shelter && <span className="bg-orange-400 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">🛡️ קיים מרחב מוגן</span>}
             </div>
           </div>
+
+          </div>{/* סוף grid תמונה+מידע */}
 
           {/* תמונות ממוזערות */}
           {images.length > 1 && (

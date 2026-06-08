@@ -175,7 +175,7 @@ export default function PropertyPage() {
 
       // redirect ל-slug אם הגיע דרך id
       if (data.slug && slugOrId === data.id) {
-        router.replace(`/properties/${data.slug}`)
+        router.replace(`/${data.slug}`)
         return
       }
 

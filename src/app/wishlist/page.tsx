@@ -106,7 +106,7 @@ export default function WishlistPage() {
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </button>
                   </div>
-                  <Link href={`/properties/${p.id}`} className="block p-4">
+                  <Link href={`/${p.slug || p.id}`} className="block p-4">
                     <p className="text-xs text-gray-400 mb-1">{p.category?.[0]}</p>
                     <h2 className="font-bold text-gray-900 mb-2 truncate">{p.name}</h2>
                     <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-3">

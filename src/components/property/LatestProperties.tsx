@@ -56,7 +56,7 @@ export function LatestProperties() {
           {properties.map((p) => {
             const firstImage = p.property_images?.[0]?.url
             return (
-              <Link key={p.id} href={`/properties/${p.id}`}
+              <Link key={p.id} href={`/${p.slug || p.id}`}
                 className="group bg-white rounded-2xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div className="h-48 bg-gray-100 relative overflow-hidden">
                   {firstImage ? (

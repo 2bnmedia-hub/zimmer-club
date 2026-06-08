@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { REGIONS } from '@/lib/constants'
 import { ArrowRight, Upload, X, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { PropertyQR } from '@/components/property/PropertyQR'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -209,6 +210,7 @@ export default function EditPropertyPage() {
   const [videoPreview, setVideoPreview] = useState('')
   const [form, setForm] = useState({
     name: '',
+    slug: '',
     short_description: '',
     description: '',
     category: 'zimmer',
@@ -248,6 +250,7 @@ export default function EditPropertyPage() {
       if (profile?.role !== 'admin' && property.owner_id !== user.id) { router.push('/dashboard/owner'); return }
       setForm({
         name: property.name || '',
+        slug: property.slug || '',
         short_description: property.short_description || '',
         description: property.description || '',
         category: property.category?.[0] || 'zimmer',
@@ -658,6 +661,8 @@ export default function EditPropertyPage() {
               ))}
             </div>
           </div>
+
+          {form.slug && <PropertyQR slug={form.slug} name={form.name} mode="edit" />}
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
           {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">הנכס עודכן בהצלחה!</div>}

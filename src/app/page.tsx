@@ -16,17 +16,19 @@ export default function HomePage() {
           
           {/* Background Image */}
 <div
-  className="absolute inset-0 z-0"
+  className="absolute inset-0 z-0 overflow-hidden"
   style={{
     backgroundImage: "url('/hero-bg.png')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
+    animation: 'kenBurns 18s ease-in-out infinite',
+    transformOrigin: 'center center',
   }}
 />
           {/* Overlay */}
 
-          <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="relative z-10 max-w-4xl mx-auto hero-text-animate">
             
             {/* Title */}
             <h1 className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-6">

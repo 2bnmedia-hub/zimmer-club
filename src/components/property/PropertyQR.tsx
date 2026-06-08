@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
 import { QrCode, Download, Share2 } from 'lucide-react'
 
-export function PropertyQR({ slug, name }: { slug: string; name: string }) {
+export function PropertyQR({ slug, name, mode = 'view' }: { 
+  slug: string
+  name: string
+  mode?: 'view' | 'edit'
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [copied, setCopied] = useState(false)
   const url = `https://zimmer.club/${slug}`
@@ -11,12 +15,12 @@ export function PropertyQR({ slug, name }: { slug: string; name: string }) {
   useEffect(() => {
     if (!canvasRef.current) return
     QRCode.toCanvas(canvasRef.current, url, {
-      width: 200,
+      width: mode === 'edit' ? 200 : 160,
       margin: 2,
       color: { dark: '#1a1a1a', light: '#ffffff' },
       errorCorrectionLevel: 'H',
     })
-  }, [url])
+  }, [url, mode])
 
   const handleDownload = () => {
     const canvas = canvasRef.current
@@ -35,19 +39,35 @@ export function PropertyQR({ slug, name }: { slug: string; name: string }) {
     } catch {}
   }
 
+  // מצב תצוגה — רק QR
+  if (mode === 'view') {
+    return (
+      <div className="border-t border-gray-100 pt-6 mt-6">
+        <h2 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+          <QrCode className="w-5 h-5 text-[#8B6914]" />
+          כרטיס ביקור דיגיטלי
+        </h2>
+        <div className="flex justify-center">
+          <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 inline-block">
+            <canvas ref={canvasRef} className="rounded-lg" />
+          </div>
+        </div>
+        <p className="text-xs text-gray-400 text-center mt-3">סרוק לביקור בדף הנכס</p>
+      </div>
+    )
+  }
+
+  // מצב עריכה — QR + כפתורים
   return (
-    <div className="border-t border-gray-100 pt-6 mt-6">
-      <h2 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+    <div className="bg-white rounded-2xl p-6 shadow-sm">
+      <h2 className="font-bold text-gray-700 text-lg mb-4 flex items-center gap-2">
         <QrCode className="w-5 h-5 text-[#8B6914]" />
         כרטיס ביקור דיגיטלי
       </h2>
       <div className="bg-gray-50 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6">
-        {/* QR Code */}
         <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
           <canvas ref={canvasRef} className="rounded-lg" />
         </div>
-
-        {/* Info */}
         <div className="flex-1 text-center sm:text-right">
           <p className="font-semibold text-gray-900 mb-1">{name}</p>
           <p className="text-sm text-gray-500 mb-4 font-mono break-all">{url}</p>

@@ -236,7 +236,7 @@ export default function PropertyPage() {
                   <a href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל")}
                     target="_blank" rel="noopener noreferrer"
                     className="relative block rounded-xl overflow-hidden border border-gray-100" style={{height:"140px"}}>
-                    <iframe width="100%" height="140" style={{border:0, pointerEvents:"none"}} loading="lazy"
+                    <iframe width="100%" height="140" style={{border:0, pointerEvents:"none", filter:"grayscale(100%) brightness(1.1) sepia(10%)", opacity:0.85}} loading="lazy"
                       src={"https://maps.google.com/maps?q=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל") + "&output=embed&z=15&hl=iw"} />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">

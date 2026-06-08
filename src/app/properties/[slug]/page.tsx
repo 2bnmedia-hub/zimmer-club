@@ -217,7 +217,7 @@ export default function PropertyPage() {
                 <div className="relative w-full">
                   {images.map((url, i) => (
                     <img key={i} src={url} alt={property.name}
-                      className="w-full h-auto block max-h-[80vh] object-contain"
+                      className="w-full h-auto block max-h-[40vh] object-contain"
                       style={{ display: i === currentImage ? 'block' : 'none' }}
                     />
                   ))}

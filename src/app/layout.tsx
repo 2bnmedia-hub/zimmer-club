@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import { Assistant } from 'next/font/google'
 import '@/styles/globals.css'
 import { Navbar } from '@/components/layout/Navbar'
-import { IdleLogoutProvider } from '@/components/layout/IdleLogoutProvider'
-import { WishlistProvider } from '@/hooks/useWishlist'
+import { ProfileProvider } from '@/contexts/ProfileContext'
 import Script from 'next/script'
 
 const assistant = Assistant({
@@ -41,20 +40,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="he" dir="rtl" className={assistant.variable}>
       <body className={`${assistant.className} antialiased`}>
-        <WishlistProvider>
-          <IdleLogoutProvider>
-            <Navbar />
-            {children}
-          </IdleLogoutProvider>
-        </WishlistProvider>
+        <ProfileProvider>
+          <Navbar />
+          {children}
+        </ProfileProvider>
         <Script
           src="https://cdn.userway.org/widget.js"
           data-account="tsH0mnwtm1" data-position="left"

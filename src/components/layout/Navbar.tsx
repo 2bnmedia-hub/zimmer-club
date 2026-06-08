@@ -5,6 +5,7 @@ import { Menu, X, Search, User, ChevronDown, LogOut, Settings } from 'lucide-rea
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
+import { useProfile } from '@/contexts/ProfileContext'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
@@ -53,6 +54,7 @@ export function Navbar() {
   const [user, setUser] = useState<{ name: string; role: string; avatar?: string | null } | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
+  const { avatarUrl, refreshKey } = useProfile()
 
   useEffect(() => {
     async function loadUser() {
@@ -68,11 +70,18 @@ export function Navbar() {
       setUser({
         name: profile?.full_name || authUser.email || '',
         role: profile?.role || 'guest',
-        avatar: profile?.avatar_url || null,
+        avatar: avatarUrl || profile?.avatar_url || null,
       })
     }
     loadUser()
-  }, [])
+  }, [refreshKey])
+
+  // עדכון תמונה מיידי כשהיא משתנה ב-Context
+  useEffect(() => {
+    if (avatarUrl) {
+      setUser(prev => prev ? { ...prev, avatar: avatarUrl } : prev)
+    }
+  }, [avatarUrl])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -252,15 +261,9 @@ export function Navbar() {
         </div>
       </nav>
 
-      {activeMenu === 'zimmer' && (
-        <MegaMenu sections={zimmerSections} onClose={() => setActiveMenu(null)} />
-      )}
-      {activeMenu === 'villas' && (
-        <MegaMenu sections={villasSections} onClose={() => setActiveMenu(null)} />
-      )}
-      {activeMenu === 'attractions' && (
-        <MegaMenu sections={attractionsSections} onClose={() => setActiveMenu(null)} />
-      )}
+      {activeMenu === 'zimmer' && <MegaMenu sections={zimmerSections} onClose={() => setActiveMenu(null)} />}
+      {activeMenu === 'villas' && <MegaMenu sections={villasSections} onClose={() => setActiveMenu(null)} />}
+      {activeMenu === 'attractions' && <MegaMenu sections={attractionsSections} onClose={() => setActiveMenu(null)} />}
 
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200" dir="rtl">
@@ -271,10 +274,8 @@ export function Navbar() {
               { name: 'attractions', label: 'אטרקציות', items: [...ATTRACTIONS_MENU.byRegion, ...ATTRACTIONS_MENU.byAudience, ...ATTRACTIONS_MENU.popular] },
             ].map((menu) => (
               <div key={menu.name}>
-                <button
-                  onClick={() => toggleMenu(menu.name)}
-                  className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl"
-                >
+                <button onClick={() => toggleMenu(menu.name)}
+                  className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
                   {menu.label}
                   <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === menu.name && 'rotate-180')} />
                 </button>

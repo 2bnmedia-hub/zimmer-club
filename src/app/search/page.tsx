@@ -11,6 +11,7 @@ import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
 
 type Property = {
+  slug?: string
   id: string
   name: string
   short_description: string

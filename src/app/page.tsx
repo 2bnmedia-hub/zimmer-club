@@ -12,7 +12,7 @@ export default function HomePage() {
 
       <main>
         {/* HERO */}
-        <section className="relative min-h-[55vh] pt-36 flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
+        <section className="relative min-h-[55vh] pt-16 flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
           
           {/* Background Image */}
 <div

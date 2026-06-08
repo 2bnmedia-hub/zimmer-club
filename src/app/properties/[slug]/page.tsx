@@ -208,7 +208,7 @@ export default function PropertyPage() {
     <>
       <main className="min-h-screen bg-white pt-4" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="flex justify-end mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
+          <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
 
           {/* תמונות */}
           <div className="bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">

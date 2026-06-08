@@ -87,7 +87,7 @@ export default function AdvertisePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pt-4" dir="rtl">
 
       {/* Hero קומפקטי */}
       <div className="relative bg-espresso text-white py-10 px-4 overflow-hidden">

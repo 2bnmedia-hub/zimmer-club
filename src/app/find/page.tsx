@@ -157,7 +157,7 @@ export default function FindPage() {
   const currentOptions = step < QUESTIONS.length ? QUESTIONS[step].options : []
 
   return (
-    <div className="min-h-screen flex flex-col pt-24" dir="rtl"
+    <div className="min-h-screen flex flex-col pt-4" dir="rtl"
       style={{ background: 'linear-gradient(160deg, #0d2818 0%, #1a4a2e 30%, #2d3a1e 60%, #1c2910 100%)' }}>
       <div className="relative text-center pt-14 pb-8 px-4 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full opacity-10"

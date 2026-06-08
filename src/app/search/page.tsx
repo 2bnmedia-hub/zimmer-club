@@ -181,7 +181,7 @@ function SearchContent() {
 
   return (
     <>
-      <main className="min-h-screen bg-[#FAF7F2] pt-24" dir="rtl">
+      <main className="min-h-screen bg-[#FAF7F2] pt-4" dir="rtl">
 
         {/* סרגל עליון */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-16 z-40 shadow-sm">

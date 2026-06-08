@@ -216,7 +216,8 @@ export default function PropertyPage() {
             {/* ימין — מידע */}
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
               <p className="text-sm text-gray-500 mb-1">{property.category?.[0]} · {property.city || REGIONS[property.region as keyof typeof REGIONS]?.label}</p>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{property.name}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{property.name}</h1>
+                {property.short_description && <p className="text-sm text-gray-600 mb-4 leading-relaxed">{property.short_description}</p>}
               {property.avg_rating > 0 && (
                 <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />

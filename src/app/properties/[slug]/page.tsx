@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer'
 import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight, Navigation, Heart } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
+import { PropertyQR } from '@/components/property/PropertyQR'
 
 type Property = {
   id: string
@@ -314,6 +315,7 @@ export default function PropertyPage() {
                 </div>
               )}
               <AvailabilityCalendar propertyId={property.id} supabase={supabase} />
+              {property.slug && <PropertyQR slug={property.slug} name={property.name} />}
             </div>
 
             <div className="lg:col-span-1">

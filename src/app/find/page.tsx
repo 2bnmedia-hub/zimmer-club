@@ -7,6 +7,7 @@ import { REGIONS } from '@/lib/constants'
 import { Sparkles, Star, MapPin, Users, RefreshCw } from 'lucide-react'
 
 type Property = {
+  slug?: string
   id: string
   name: string
   short_description: string

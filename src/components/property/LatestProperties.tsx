@@ -7,6 +7,7 @@ import { Star, Zap } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
 
 type Property = {
+  slug?: string
   id: string
   name: string
   short_description: string

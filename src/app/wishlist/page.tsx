@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/Footer'
 import { Heart, MapPin, BedDouble, Users, ArrowRight, Trash2 } from 'lucide-react'
 
 type Property = {
+  slug?: string
   id: string
   name: string
   city: string

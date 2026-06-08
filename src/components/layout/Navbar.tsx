@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
+import { Menu, X, Search, User, ChevronDown, LogOut, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
@@ -50,7 +50,7 @@ function MegaMenu({ sections, onClose }: {
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null)
+  const [user, setUser] = useState<{ name: string; role: string; avatar?: string | null } | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
 
@@ -61,13 +61,14 @@ export function Navbar() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, role')
+        .select('full_name, role, avatar_url')
         .eq('id', authUser.id)
         .single()
 
       setUser({
         name: profile?.full_name || authUser.email || '',
         role: profile?.role || 'guest',
+        avatar: profile?.avatar_url || null,
       })
     }
     loadUser()
@@ -79,7 +80,6 @@ export function Navbar() {
     window.location.href = '/'
   }
 
-  // סגור את כל התפריטים בלחיצה מחוץ לנאבבר
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
@@ -90,7 +90,6 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  // פתיחה/סגירה של תפריט — כולל תפריט משתמש תחת המפתח 'user'
   const toggleMenu = (name: string) => {
     setActiveMenu(prev => prev === name ? null : name)
   }
@@ -168,28 +167,62 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => toggleMenu('user')}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <User className="w-4 h-4" />
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="" className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C4956A]/30 to-[#1B5E3B]/20 flex items-center justify-center">
+                      <User className="w-4 h-4 text-[#C4956A]" />
+                    </div>
+                  )}
                   <span>שלום, {user.name.split(' ')[0]}</span>
                   <ChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
                 </button>
+
                 {activeMenu === 'user' && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-48 py-1" dir="rtl">
+                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 min-w-52 py-2 overflow-hidden" dir="rtl">
+                    <div className="px-4 py-3 border-b border-gray-100 mb-1">
+                      <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {user.role === 'admin' ? 'מנהל מערכת' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}
+                      </p>
+                    </div>
+
                     <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
                       onClick={() => setActiveMenu(null)}
-                      className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <User className="w-3.5 h-3.5 text-gray-500" />
+                      </div>
                       לוח בקרה
                     </Link>
+
+                    <Link href="/dashboard/profile"
+                      onClick={() => setActiveMenu(null)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
+                        <Settings className="w-3.5 h-3.5 text-[#C4956A]" />
+                      </div>
+                      עריכת פרופיל
+                    </Link>
+
                     <Link href="/dashboard/properties/new"
                       onClick={() => setActiveMenu(null)}
-                      className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm font-bold">+</span>
+                      </div>
                       הוסף נכס
                     </Link>
-                    <hr className="my-1 border-gray-100" />
+
+                    <hr className="my-2 border-gray-100" />
+
                     <button onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
-                      <LogOut className="w-4 h-4" />
+                      className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
+                        <LogOut className="w-3.5 h-3.5 text-red-500" />
+                      </div>
                       התנתק
                     </button>
                   </div>
@@ -265,10 +298,35 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-gray-200">
-              <Link href="/auth/login" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
-                כניסה / הרשמה
-              </Link>
+            <div className="pt-3 border-t border-gray-200 space-y-1">
+              {user ? (
+                <>
+                  <div className="px-4 py-2">
+                    <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                    <p className="text-xs text-gray-400">{user.role === 'admin' ? 'מנהל' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}</p>
+                  </div>
+                  <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
+                    לוח בקרה
+                  </Link>
+                  <Link href="/dashboard/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#C4956A] hover:bg-[#C4956A]/5 rounded-xl">
+                    <Settings className="w-4 h-4" />
+                    עריכת פרופיל
+                  </Link>
+                  <button onClick={handleLogout}
+                    className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl">
+                    <LogOut className="w-4 h-4" />
+                    התנתק
+                  </button>
+                </>
+              ) : (
+                <Link href="/auth/login" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
+                  כניסה / הרשמה
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -288,7 +346,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => {}}
+              <Link key={item.href} href={item.href}
                 className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
                 {item.label}
               </Link>

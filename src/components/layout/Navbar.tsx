@@ -1,20 +1,17 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Menu, X, Search, User, ChevronDown, LogOut, Heart } from 'lucide-react'
+import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
-import { useWishlist } from '@/hooks/useWishlist'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
   { href: '/camping', label: 'קמפינג' },
-  { href: '/caravans', label: 'קרוואנים' },
   { href: '/deals', label: 'מבצעים', badge: true },
-  { href: '/find', label: 'תמצאו לי צימר' },
   { href: '/advertise', label: 'פרסמו באתר' },
+  { href: '/find', label: 'אתרו לי צימר' },
 ]
 
 type MenuItem = { href: string; label: string }
@@ -53,13 +50,9 @@ function MegaMenu({ sections, onClose }: {
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-  const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState<{ name: string; role: string } | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
-  const { likedIds } = useWishlist()
-  const pathname = usePathname()
-  const isHome = pathname === '/'
 
   useEffect(() => {
     async function loadUser() {
@@ -80,16 +73,7 @@ export function Navbar() {
     loadUser()
   }, [])
 
-  
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50)
-    onScroll()
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   const handleLogout = async () => {
-
     await supabase.auth.signOut()
     setUser(null)
     window.location.href = '/'
@@ -130,23 +114,15 @@ export function Navbar() {
   ]
 
   return (
-    <header
-      ref={navRef}
-      dir="rtl"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isHome
-          ? (scrolled ? 'bg-white shadow-md' : 'bg-transparent')
-          : 'bg-white shadow-sm'
-      }`}
-    >
+    <header ref={navRef} className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-24">
+        <div className="flex items-center justify-between h-16">
 
           <Link href="/" className="shrink-0">
             <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
           </Link>
 
-          <ul className="hidden lg:flex items-center gap-1 list-none flex-1 justify-center">
+          <ul className="hidden lg:flex items-center gap-6 list-none flex-1 justify-center">
             {[
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },
@@ -155,7 +131,7 @@ export function Navbar() {
               <li key={item.name}>
                 <button
                   onClick={() => toggleMenu(item.name)}
-                  className="flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   {item.label}
                   <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
@@ -168,8 +144,8 @@ export function Navbar() {
                   href={item.href}
                   onClick={() => setActiveMenu(null)}
                   className={item.badge
-                    ? 'relative px-3 py-1.5 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden whitespace-nowrap'
-                    : 'px-2 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap'
+                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
+                    : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
                   }
                   style={item.badge ? {
                     background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',
@@ -188,19 +164,11 @@ export function Navbar() {
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <Search className="w-5 h-5 text-gray-600" />
             </button>
-            <a href="/wishlist" className="relative p-2 rounded-full hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
-              <Heart className="w-5 h-5 text-gray-600" />
-              {likedIds.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {likedIds.length}
-                </span>
-              )}
-            </a>
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => toggleMenu('user')}
-                  className="flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <User className="w-4 h-4" />
                   <span>שלום, {user.name.split(' ')[0]}</span>
@@ -229,11 +197,11 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+                <Link href="/auth/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-3 py-1.5 text-sm font-bold text-white rounded-full transition-colors whitespace-nowrap"
+                  className="px-4 py-2 text-sm font-bold text-white rounded-full transition-colors"
                   style={{ backgroundColor: '#8B6914' }}>
                   הרשמה חינם
                 </Link>
@@ -312,9 +280,9 @@ export function Navbar() {
 export function NavbarAuth({ userName, role }: { userName: string; role: 'guest' | 'owner' | 'admin' }) {
   const dashboardHref = role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/10 border-none shadow-none" dir="rtl">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-24">
+        <div className="flex items-center justify-between h-16">
           <Link href="/" className="shrink-0">
             <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
           </Link>
@@ -326,7 +294,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
               </Link>
             ))}
           </div>
-          <Link href={dashboardHref} className="flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+          <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
             <User className="w-4 h-4" />
             <span>{userName}</span>
           </Link>

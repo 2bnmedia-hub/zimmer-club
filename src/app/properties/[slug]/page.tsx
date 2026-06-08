@@ -214,7 +214,7 @@ export default function PropertyPage() {
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-6 mb-8 items-start">
 
             {/* ימין — מידע */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-center">
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
               <p className="text-sm text-gray-500 mb-1">{property.category?.[0]} · {property.city || REGIONS[property.region as keyof typeof REGIONS]?.label}</p>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{property.name}</h1>
               {property.avg_rating > 0 && (

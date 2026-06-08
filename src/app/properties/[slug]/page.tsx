@@ -211,7 +211,7 @@ export default function PropertyPage() {
           <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
 
           {/* תמונות + מידע בשורה אחת */}
-          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-6 mb-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[25%_75%] gap-6 mb-8 items-start">
 
             {/* ימין — מידע */}
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
@@ -230,6 +230,18 @@ export default function PropertyPage() {
                 <div className="flex items-center gap-1.5"><Bath className="w-4 h-4 text-gray-400" />{property.bathrooms} חדרי רחצה</div>
                 <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" />{property.address || property.city}</div>
               </div>
+              {(property.address || property.city) && (
+                <div className="mt-4 rounded-xl overflow-hidden border border-gray-100">
+                  <iframe width="100%" height="140" style={{border:0}} loading="lazy"
+                    src={"https://maps.google.com/maps?q=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל") + "&output=embed&z=15&hl=iw"} />
+                  <a href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל")}
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2 text-xs font-bold text-white"
+                    style={{backgroundColor:"#2563eb"}}>
+                    📍 להצגת הנכס על המפה
+                  </a>
+                </div>
+              )}
             </div>
 
             {/* שמאל — תמונה */}
@@ -239,7 +251,7 @@ export default function PropertyPage() {
                 <div className="relative w-full">
                   {images.map((url, i) => (
                     <img key={i} src={url} alt={property.name}
-                      className="w-full h-auto block max-h-[40vh] object-contain"
+                      className="w-full h-auto block max-h-[55vh] object-contain"
                       style={{ display: i === currentImage ? 'block' : 'none' }}
                     />
                   ))}

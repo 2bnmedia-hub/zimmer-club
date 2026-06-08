@@ -8,6 +8,7 @@ import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLe
 import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
 import { PropertyQR } from '@/components/property/PropertyQR'
+import { PropertyReviews } from '@/components/property/PropertyReviews'
 
 type Property = {
   id: string
@@ -337,6 +338,7 @@ export default function PropertyPage() {
               )}
               <AvailabilityCalendar propertyId={property.id} supabase={supabase} />
               {property.slug && <PropertyQR slug={property.slug} name={property.name} />}
+              <PropertyReviews propertyId={property.id} />
             </div>
 
             <div className="lg:col-span-1">

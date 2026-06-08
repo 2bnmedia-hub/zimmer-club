@@ -57,6 +57,15 @@ type ImagePreview = {
   isPrimary: boolean
 }
 
+function toSlug(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
 export default function NewPropertyPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -67,8 +76,10 @@ export default function NewPropertyPage() {
   const [uploading, setUploading] = useState(false)
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [videoPreview, setVideoPreview] = useState('')
+  const [slugPreview, setSlugPreview] = useState('')
   const [form, setForm] = useState({
     name: '',
+    name_en: '',
     short_description: '',
     description: '',
     category: 'zimmer',
@@ -98,7 +109,16 @@ export default function NewPropertyPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
-    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }))
+    const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+
+    if (name === 'name_en') {
+      const slug = toSlug(value)
+      setSlugPreview(slug)
+      setForm(prev => ({ ...prev, name_en: value }))
+      return
+    }
+
+    setForm(prev => ({ ...prev, [name]: newValue }))
   }
 
   const toggleAmenity = (key: string) => {
@@ -118,11 +138,10 @@ export default function NewPropertyPage() {
     const files = e.target.files
     if (!files) return
     const valid = Array.from(files).filter(f => {
-      if (f.size > 2 * 1024 * 1024) { alert(`הקובץ "${f.name}" גדול מ-2MB ולא יתווסף`); return false }
+      if (f.size > 2 * 1024 * 1024) { alert(`הקובץ "${f.name}" גדול מ-2MB`); return false }
       return true
     })
     const remaining = 14 - images.length
-    if (valid.length > remaining) alert(`ניתן להוסיף עד 14 תמונות בלבד. יתווספו ${remaining} תמונות.`)
     const toAdd = valid.slice(0, remaining)
     const newImages = toAdd.map((file, idx) => ({
       file, url: URL.createObjectURL(file), isPrimary: images.length === 0 && idx === 0,
@@ -170,25 +189,38 @@ export default function NewPropertyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.name_en.trim()) { setError('יש להזין שם נכס באנגלית'); return }
+    const slug = toSlug(form.name_en)
+    if (!slug) { setError('שם הנכס באנגלית אינו תקין'); return }
+
     setLoading(true)
     setError('')
+
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('יש להתחבר תחילה'); setLoading(false); return }
+
+    // בדוק שה-slug לא תפוס
+    const { data: existing } = await supabase.from('properties').select('id').eq('slug', slug).single()
+    if (existing) { setError('שם זה כבר תפוס — נסה שם אחר'); setLoading(false); return }
+
     const { data: property, error: insertError } = await supabase.from('properties').insert({
       owner_id: user.id,
       name: form.name,
+      slug,
       short_description: form.short_description,
       description: form.description,
       category: [form.category],
       region: form.region,
       city: form.city,
       address: form.address,
-      price_per_night: parseInt(form.price_per_night),
+      price_per_night: parseInt(form.price_per_night) || 0,
       min_nights: parseInt(form.min_nights),
       max_guests: parseInt(form.max_guests),
       bedrooms: parseInt(form.bedrooms),
       bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book,
+      accepts_miluim: form.accepts_miluim,
+      has_shelter: form.has_shelter,
       status: 'pending',
       video_url: form.video_url || null,
       phone_landline: form.phone_landline || null,
@@ -202,7 +234,9 @@ export default function NewPropertyPage() {
       contact_via_email1: form.contact_via_email1,
       contact_via_email2: form.contact_via_email2,
     }).select().single()
+
     if (insertError) { setError(insertError.message); setLoading(false); return }
+
     setUploading(true)
     if (images.length > 0) await uploadImages(property.id)
     let finalVideoUrl = form.video_url || null
@@ -211,6 +245,14 @@ export default function NewPropertyPage() {
       if (uploaded) finalVideoUrl = uploaded
     }
     if (finalVideoUrl) await supabase.from('properties').update({ video_url: finalVideoUrl }).eq('id', property.id)
+
+    if (selectedAmenities.length > 0) {
+      const { data: amenityRows } = await supabase.from('amenities').select('id, key').in('key', selectedAmenities)
+      if (amenityRows) {
+        await supabase.from('property_amenities').insert(amenityRows.map(a => ({ property_id: property.id, amenity_id: a.id })))
+      }
+    }
+
     setUploading(false)
     router.push('/dashboard/owner')
   }
@@ -238,6 +280,25 @@ export default function NewPropertyPage() {
                   placeholder="משפט אחד שמתאר את הנכס" />
               </div>
             </div>
+
+            {/* שדה שם באנגלית — חדש */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                שם הנכס באנגלית * <span className="text-gray-400 font-normal">(ישמש ככתובת האתר)</span>
+              </label>
+              <input name="name_en" value={form.name_en} onChange={handleChange} required
+                className="w-full border border-yellow-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 bg-yellow-50"
+                placeholder="galil-zimmer" dir="ltr" />
+              {slugPreview && (
+                <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
+                  כתובת האתר שלך:
+                  <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">
+                    zimmer.club/{slugPreview}
+                  </span>
+                </p>
+              )}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">תיאור מלא</label>
               <textarea name="description" value={form.description} onChange={handleChange} rows={4}
@@ -286,70 +347,29 @@ export default function NewPropertyPage() {
             </div>
           </div>
 
-          {/* אמצעי תקשורת לקבלת הזמנות */}
+          {/* אמצעי תקשורת */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת לקבלת הזמנות</h2>
             <p className="text-xs text-gray-400">סמן ✓ ליד האמצעים שדרכם תרצה לקבל הזמנות</p>
-
-            <div className="flex items-center gap-3">
-              <input type="checkbox" name="contact_via_phone_landline" id="new_contact_via_phone_landline"
-                checked={form.contact_via_phone_landline} onChange={handleChange}
-                className="w-4 h-4 accent-yellow-600 shrink-0" />
-              <div className="flex-1">
-                <label htmlFor="new_contact_via_phone_landline" className="block text-sm font-medium text-gray-700 mb-1">טלפון קווי</label>
-                <input name="phone_landline" value={form.phone_landline} onChange={handleChange}
-                  placeholder="03-1234567" dir="ltr"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+            {[
+              { checkName: 'contact_via_phone_landline', fieldName: 'phone_landline', label: 'טלפון קווי', placeholder: '03-1234567' },
+              { checkName: 'contact_via_whatsapp1', fieldName: 'whatsapp1', label: 'וואטסאפ עסקי 1', placeholder: '972501234567' },
+              { checkName: 'contact_via_whatsapp2', fieldName: 'whatsapp2', label: 'וואטסאפ עסקי 2', placeholder: '972501234567' },
+              { checkName: 'contact_via_email1', fieldName: 'email1', label: 'אימייל עסקי 1', placeholder: 'business@example.com', type: 'email' },
+              { checkName: 'contact_via_email2', fieldName: 'email2', label: 'אימייל עסקי 2', placeholder: 'business2@example.com', type: 'email' },
+            ].map(({ checkName, fieldName, label, placeholder, type }) => (
+              <div key={fieldName} className="flex items-center gap-3">
+                <input type="checkbox" name={checkName} id={checkName}
+                  checked={(form as any)[checkName]} onChange={handleChange}
+                  className="w-4 h-4 accent-yellow-600 shrink-0" />
+                <div className="flex-1">
+                  <label htmlFor={checkName} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                  <input name={fieldName} value={(form as any)[fieldName]} onChange={handleChange}
+                    placeholder={placeholder} dir="ltr" type={type || 'text'}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input type="checkbox" name="contact_via_whatsapp1" id="new_contact_via_whatsapp1"
-                checked={form.contact_via_whatsapp1} onChange={handleChange}
-                className="w-4 h-4 accent-yellow-600 shrink-0" />
-              <div className="flex-1">
-                <label htmlFor="new_contact_via_whatsapp1" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 1</label>
-                <input name="whatsapp1" value={form.whatsapp1} onChange={handleChange}
-                  placeholder="972501234567" dir="ltr"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input type="checkbox" name="contact_via_whatsapp2" id="new_contact_via_whatsapp2"
-                checked={form.contact_via_whatsapp2} onChange={handleChange}
-                className="w-4 h-4 accent-yellow-600 shrink-0" />
-              <div className="flex-1">
-                <label htmlFor="new_contact_via_whatsapp2" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 2</label>
-                <input name="whatsapp2" value={form.whatsapp2} onChange={handleChange}
-                  placeholder="972501234567" dir="ltr"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input type="checkbox" name="contact_via_email1" id="new_contact_via_email1"
-                checked={form.contact_via_email1} onChange={handleChange}
-                className="w-4 h-4 accent-yellow-600 shrink-0" />
-              <div className="flex-1">
-                <label htmlFor="new_contact_via_email1" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 1</label>
-                <input name="email1" value={form.email1} onChange={handleChange}
-                  type="email" placeholder="business@example.com" dir="ltr"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input type="checkbox" name="contact_via_email2" id="new_contact_via_email2"
-                checked={form.contact_via_email2} onChange={handleChange}
-                className="w-4 h-4 accent-yellow-600 shrink-0" />
-              <div className="flex-1">
-                <label htmlFor="new_contact_via_email2" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 2</label>
-                <input name="email2" value={form.email2} onChange={handleChange}
-                  type="email" placeholder="business2@example.com" dir="ltr"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* גלריית תמונות */}
@@ -360,18 +380,10 @@ export default function NewPropertyPage() {
               {images.map((img, idx) => (
                 <div key={idx} className="relative group aspect-video">
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
-                  {img.isPrimary && (
-                    <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1">
-                      <Star className="w-3 h-3 text-white fill-white" />
-                    </div>
-                  )}
+                  {img.isPrimary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><Star className="w-3 h-3 text-white fill-white" /></div>}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => setPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
-                      <Star className="w-3.5 h-3.5 text-white" />
-                    </button>
-                    <button type="button" onClick={() => removeImage(idx)} className="p-1.5 bg-red-500 rounded-full" title="מחק">
-                      <X className="w-3.5 h-3.5 text-white" />
-                    </button>
+                    <button type="button" onClick={() => setPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full"><Star className="w-3.5 h-3.5 text-white" /></button>
+                    <button type="button" onClick={() => removeImage(idx)} className="p-1.5 bg-red-500 rounded-full"><X className="w-3.5 h-3.5 text-white" /></button>
                   </div>
                 </div>
               ))}
@@ -384,7 +396,6 @@ export default function NewPropertyPage() {
               )}
             </div>
             <p className="text-xs text-gray-400">{images.length}/14 תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
-            <p className="text-xs text-gray-400 mt-1">* מקסימום 14 תמונות · גודל מקסימלי לתמונה: 2MB</p>
           </div>
 
           {/* וידאו */}
@@ -399,9 +410,7 @@ export default function NewPropertyPage() {
               </label>
               {videoPreview && <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />}
               <div className="flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400">או</span>
-                <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />
               </div>
               <input name="video_url" value={form.video_url} onChange={handleChange}
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
@@ -414,7 +423,7 @@ export default function NewPropertyPage() {
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר ללילה (₪) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר ללילה (₪)</label>
                 <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="500" />
               </div>
@@ -441,17 +450,17 @@ export default function NewPropertyPage() {
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" name="instant_book" id="instant_book" checked={form.instant_book} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
-              <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">הזמנה מיידית</label>
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" name="accepts_miluim" id="accepts_miluim" checked={form.accepts_miluim} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
-              <label htmlFor="accepts_miluim" className="text-sm font-medium text-gray-700">מקבלים שובר מילואים</label>
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" name="has_shelter" id="has_shelter" checked={form.has_shelter} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
-              <label htmlFor="has_shelter" className="text-sm font-medium text-gray-700">קיים מרחב מוגן</label>
+            <div className="space-y-2">
+              {[
+                { name: 'instant_book', label: 'הזמנה מיידית' },
+                { name: 'accepts_miluim', label: 'מקבלים שובר מילואים' },
+                { name: 'has_shelter', label: 'קיים מרחב מוגן' },
+              ].map(({ name, label }) => (
+                <div key={name} className="flex items-center gap-2">
+                  <input type="checkbox" name={name} id={name} checked={(form as any)[name]} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+                  <label htmlFor={name} className="text-sm font-medium text-gray-700">{label}</label>
+                </div>
+              ))}
             </div>
           </div>
 

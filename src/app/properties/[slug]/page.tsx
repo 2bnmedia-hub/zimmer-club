@@ -231,14 +231,17 @@ export default function PropertyPage() {
                 <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" />{property.address || property.city}</div>
               </div>
               {(property.address || property.city) && (
-                <div className="mt-4 rounded-xl overflow-hidden border border-gray-100">
-                  <iframe width="100%" height="140" style={{border:0}} loading="lazy"
-                    src={"https://maps.google.com/maps?q=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל") + "&output=embed&z=15&hl=iw"} />
+                <div className="mt-auto pt-4">
                   <a href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל")}
                     target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-2 text-xs font-bold text-white"
-                    style={{backgroundColor:"#2563eb"}}>
-                    📍 להצגת הנכס על המפה
+                    className="relative block rounded-xl overflow-hidden border border-gray-100" style={{height:"140px"}}>
+                    <iframe width="100%" height="140" style={{border:0, pointerEvents:"none"}} loading="lazy"
+                      src={"https://maps.google.com/maps?q=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל") + "&output=embed&z=15&hl=iw"} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">
+                        📍 להצגת הנכס על המפה
+                      </span>
+                    </div>
                   </a>
                 </div>
               )}

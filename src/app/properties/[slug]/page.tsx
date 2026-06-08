@@ -211,7 +211,7 @@ export default function PropertyPage() {
           <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
 
           {/* תמונות + מידע בשורה אחת */}
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_37%] gap-6 mb-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-6 mb-8 items-start">
 
             {/* ימין — מידע */}
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-center">

@@ -330,7 +330,7 @@ export default function PropertyPage() {
           </button>
 
           {/* תמונות */}
-          <div className="h-72 md:h-[480px] bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
+          <div className="bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
             {images.length > 0 ? (
               <>
                 {images.map((url, i) => (
@@ -338,7 +338,7 @@ export default function PropertyPage() {
                     key={i}
                     src={url}
                     alt={property.name}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="w-full h-auto block object-contain max-h-[80vh]"
                     style={{
                       opacity: i === currentImage ? 1 : 0,
                       transform: i === currentImage ? 'translateX(0)' : i < currentImage ? 'translateX(-100%)' : 'translateX(100%)',

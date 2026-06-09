@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { ProfileProvider } from '@/contexts/ProfileContext'
 import Script from 'next/script'
+import { UnderConstructionBanner } from '@/components/UnderConstructionBanner'
 
 const assistant = Assistant({
   subsets: ['hebrew', 'latin'],
@@ -45,7 +46,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="he" dir="rtl" className={assistant.variable}>
       <body className={`${assistant.className} antialiased`}>
-        <ProfileProvider>
+        <UnderConstructionBanner />
+          <ProfileProvider>
           <Navbar />
       <ScrollToTop />
           {children}

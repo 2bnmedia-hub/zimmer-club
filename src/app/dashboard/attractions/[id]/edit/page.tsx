@@ -120,21 +120,22 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
 
-      const { data: attraction, error: fetchError } = await supabase
-        .from('attractions')
-        .select('*')
-        .eq('id', params.id)
-        .single()
-
-      if (fetchError || !attraction) { setNotFound(true); setPageLoading(false); return }
-
+      // קודם בודקים role — אדמין יכול לראות הכל
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single()
 
-      if (attraction.owner_id !== user.id && profile?.role !== 'admin') {
+      const isAdmin = profile?.role === 'admin'
+
+      // אדמין — מביאים ישירות ללא סינון owner
+      const query = supabase.from('attractions').select('*').eq('id', params.id)
+      const { data: attraction, error: fetchError } = await query.single()
+
+      if (fetchError || !attraction) { setNotFound(true); setPageLoading(false); return }
+
+      if (!isAdmin && attraction.owner_id !== user.id) {
         router.push('/dashboard/owner')
         return
       }

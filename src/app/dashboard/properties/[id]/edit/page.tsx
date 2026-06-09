@@ -209,6 +209,7 @@ export default function EditPropertyPage() {
   const [uploading, setUploading] = useState(false)
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [videoPreview, setVideoPreview] = useState('')
+  const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [form, setForm] = useState({
     name: '',
     slug: '',
@@ -585,8 +586,14 @@ export default function EditPropertyPage() {
                 <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
                 <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
               </label>
-              {videoPreview && <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />}
-              {form.video_url && !videoPreview && <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />}
+              {videoPreview && <div className="relative">
+                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              {form.video_url && !videoPreview && <div className="relative">
+                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-200" />
                 <span className="text-xs text-gray-400">או</span>

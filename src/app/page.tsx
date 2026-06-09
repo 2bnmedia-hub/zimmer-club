@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { SearchBar } from '@/components/search/SearchBar'
@@ -16,17 +15,17 @@ export default function HomePage() {
         <section className="relative min-h-[100svh] sm:min-h-[55vh] pt-20 sm:pt-16 flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
           
           {/* Background Image */}
-<div className="absolute inset-0 z-0 overflow-hidden">
-  <Image
-    src="/hero-bg.png"
-    alt=""
-    fill
-    priority
-    sizes="100vw"
-    className="object-cover object-center"
-    quality={85}
-  />
-</div>
+<div
+  className="absolute inset-0 z-0 overflow-hidden"
+  style={{
+    backgroundImage: "url('/hero-bg.png')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    animation: 'kenBurns 18s ease-in-out infinite',
+    transformOrigin: 'center center',
+  }}
+/>
           {/* Overlay */}
 
           <div className="relative z-10 max-w-4xl mx-auto hero-text-animate">

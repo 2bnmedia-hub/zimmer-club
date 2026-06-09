@@ -365,6 +365,7 @@ export default function EditPropertyPage() {
     setError('')
     const { error: updateError } = await supabase.from('properties').update({
       name: form.name,
+      slug: form.slug || undefined,
       short_description: form.short_description,
       description: form.description,
       category: [form.category],
@@ -505,10 +506,18 @@ export default function EditPropertyPage() {
                 <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
               <div className="w-[70%]">
-                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת האתר (slug) <span className="text-gray-400 font-normal">— לא ניתן לשינוי</span></label>
-                <div className="w-full border border-gray-100 bg-gray-50 rounded-xl px-4 py-2.5 text-sm text-gray-400 font-mono">
-                  zimmer.club/{form.slug}
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס באנגלית <span className="text-gray-400 font-normal">(כתובת האתר)</span></label>
+                <input name="slug" value={form.slug} onChange={handleChange}
+                  className="w-full border border-yellow-300 bg-yellow-50 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 font-mono"
+                  dir="ltr" placeholder="galil-zimmer" />
+                {form.slug && (
+                  <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
+                    כתובת האתר:
+                    <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">
+                      zimmer.club/{form.slug}
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
             <div>

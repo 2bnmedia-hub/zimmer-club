@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Star, ArrowRight } from 'lucide-react'
+import { Upload, X, Star, ArrowRight, Plus, Trash2 } from 'lucide-react'
 
 const ACTIVITY_TYPES = [
-  { key: 'racer', label: 'ריצר' },
+  { key: 'rayzi', label: 'רייזי' },
   { key: 'climbing', label: 'קיר טיפוס' },
   { key: 'ezy_rider', label: 'איזי ריידר' },
   { key: 'laser_tag', label: 'לייזר טאג' },
@@ -43,11 +43,33 @@ const REGIONS = [
   { value: 'golan', label: 'רמת הגולן' },
 ]
 
+const HOURS_OPTIONS = [
+  '06:00','07:00','08:00','09:00','10:00','11:00','12:00',
+  '13:00','14:00','15:00','16:00','17:00','18:00','19:00',
+  '20:00','21:00','22:00','23:00','24:00',
+]
+
+const DAYS = [
+  { key: 'sun', label: "א'" },
+  { key: 'mon', label: "ב'" },
+  { key: 'tue', label: "ג'" },
+  { key: 'wed', label: "ד'" },
+  { key: 'thu', label: "ה'" },
+  { key: 'fri', label: "ו'" },
+  { key: 'sat', label: "ש'" },
+]
+
+type DayHours = { active: boolean; from: string; to: string }
+type WeeklyHours = Record<string, DayHours>
+
 type ImagePreview = { file: File; url: string; isPrimary: boolean }
 
 function toSlug(v: string) {
   return v.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-')
 }
+
+const defaultWeeklyHours = (): WeeklyHours =>
+  Object.fromEntries(DAYS.map(d => [d.key, { active: false, from: '09:00', to: '17:00' }]))
 
 export default function NewAttractionPage() {
   const router = useRouter()
@@ -57,6 +79,8 @@ export default function NewAttractionPage() {
   const [error, setError] = useState('')
   const [images, setImages] = useState<ImagePreview[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [customActivity, setCustomActivity] = useState('')
+  const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(defaultWeeklyHours())
   const [slugPreview, setSlugPreview] = useState('')
   const [form, setForm] = useState({
     name: '',
@@ -67,9 +91,9 @@ export default function NewAttractionPage() {
     city: '',
     address: '',
     price_per_person: '',
-    min_age: '0',
-    max_age: '99',
-    opening_hours: '',
+    min_age: '',
+    max_age: '',
+    notes: '',
     phone: '',
     whatsapp: '',
     email: '',
@@ -89,6 +113,10 @@ export default function NewAttractionPage() {
 
   const toggleType = (key: string) => {
     setSelectedTypes(prev => prev.includes(key) ? prev.filter(t => t !== key) : [...prev, key])
+  }
+
+  const updateDay = (day: string, field: keyof DayHours, value: any) => {
+    setWeeklyHours(prev => ({ ...prev, [day]: { ...prev[day], [field]: value } }))
   }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +141,11 @@ export default function NewAttractionPage() {
   const setPrimary = (idx: number) => {
     setImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === idx })))
   }
+
+  const allTypes = [
+    ...selectedTypes.filter(t => !customActivity || t !== customActivity),
+    ...(customActivity.trim() ? [customActivity.trim()] : []),
+  ]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -140,10 +173,11 @@ export default function NewAttractionPage() {
       city: form.city,
       address: form.address,
       price_per_person: parseInt(form.price_per_person) || 0,
-      min_age: parseInt(form.min_age) || 0,
-      max_age: parseInt(form.max_age) || 99,
-      activity_type: selectedTypes,
-      opening_hours: form.opening_hours,
+      min_age: form.min_age ? parseInt(form.min_age) : null,
+      max_age: form.max_age ? parseInt(form.max_age) : null,
+      activity_type: allTypes,
+      opening_hours: JSON.stringify(weeklyHours),
+      notes: form.notes,
       phone: form.phone,
       whatsapp: form.whatsapp,
       email: form.email,
@@ -154,7 +188,6 @@ export default function NewAttractionPage() {
 
     if (insertError) { setError(insertError.message); setLoading(false); return }
 
-    // העלאת תמונות
     setUploading(true)
     for (let i = 0; i < images.length; i++) {
       const img = images[i]
@@ -212,7 +245,7 @@ export default function NewAttractionPage() {
                 placeholder="park-harapatkaot" dir="ltr" />
               {slugPreview && (
                 <p className="text-xs text-gray-500 mt-1.5">
-                  כתובת: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">zimmer.club/attractions/{slugPreview}</span>
+                  כתובת: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">zimmer.club/{slugPreview}</span>
                 </p>
               )}
             </div>
@@ -220,8 +253,7 @@ export default function NewAttractionPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">תיאור מלא</label>
               <textarea name="description" value={form.description} onChange={handleChange} rows={4}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 resize-none"
-                placeholder="תאר את האטרקציה בפירוט..." />
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 resize-none" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -251,35 +283,75 @@ export default function NewAttractionPage() {
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הפעילות</h2>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר לאדם (₪)</label>
+            {/* מחיר */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">מחיר לאדם (₪)</label>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 whitespace-nowrap">החל מ:</span>
                 <input name="price_per_person" type="number" value={form.price_per_person} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
                   placeholder="50" />
+                <span className="text-sm text-gray-400 whitespace-nowrap">₪</span>
               </div>
+            </div>
+
+            {/* גיל */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מינימום</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מינימום <span className="text-gray-400 font-normal">(אופציונלי)</span></label>
                 <input name="min_age" type="number" value={form.min_age} onChange={handleChange} min="0"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                  placeholder="0" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מקסימום</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מקסימום <span className="text-gray-400 font-normal">(אופציונלי)</span></label>
                 <input name="max_age" type="number" value={form.max_age} onChange={handleChange} min="0"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                  placeholder="99" />
               </div>
             </div>
 
+            {/* שעות פעילות */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">שעות פעילות</label>
-              <input name="opening_hours" value={form.opening_hours} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-                placeholder="א-ה 09:00-17:00, ו 09:00-14:00" />
+              <label className="block text-sm font-medium text-gray-700 mb-3">שעות פעילות</label>
+              <div className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="grid grid-cols-4 bg-gray-50 px-4 py-2 text-xs font-medium text-gray-500">
+                  <span>יום</span>
+                  <span>פעיל</span>
+                  <span>פתיחה</span>
+                  <span>סגירה</span>
+                </div>
+                {DAYS.map(day => (
+                  <div key={day.key} className={`grid grid-cols-4 items-center px-4 py-3 border-t border-gray-100 ${!weeklyHours[day.key].active ? 'opacity-50' : ''}`}>
+                    <span className="text-sm font-medium text-gray-700">{day.label}</span>
+                    <label className="flex items-center cursor-pointer">
+                      <div className="relative">
+                        <input type="checkbox" className="sr-only"
+                          checked={weeklyHours[day.key].active}
+                          onChange={e => updateDay(day.key, 'active', e.target.checked)} />
+                        <div className={`w-9 h-5 rounded-full transition-colors ${weeklyHours[day.key].active ? 'bg-yellow-600' : 'bg-gray-200'}`} />
+                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${weeklyHours[day.key].active ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                      </div>
+                    </label>
+                    <select value={weeklyHours[day.key].from} disabled={!weeklyHours[day.key].active}
+                      onChange={e => updateDay(day.key, 'from', e.target.value)}
+                      className="border border-gray-200 rounded-lg px-2 py-1 text-sm outline-none focus:border-yellow-600 disabled:bg-gray-50">
+                      {HOURS_OPTIONS.map(h => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                    <select value={weeklyHours[day.key].to} disabled={!weeklyHours[day.key].active}
+                      onChange={e => updateDay(day.key, 'to', e.target.value)}
+                      className="border border-gray-200 rounded-lg px-2 py-1 text-sm outline-none focus:border-yellow-600 disabled:bg-gray-50">
+                      {HOURS_OPTIONS.map(h => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                  </div>
+                ))}
+              </div>
             </div>
 
+            {/* סוג פעילות */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">סוג פעילות</label>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-3">
                 {ACTIVITY_TYPES.map(t => (
                   <button key={t.key} type="button" onClick={() => toggleType(t.key)}
                     className={`px-3 py-2 rounded-xl text-sm font-medium border transition-colors ${selectedTypes.includes(t.key) ? 'bg-yellow-600 text-white border-yellow-600' : 'bg-white text-gray-700 border-gray-200 hover:border-yellow-600'}`}>
@@ -287,7 +359,21 @@ export default function NewAttractionPage() {
                   </button>
                 ))}
               </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">פעילות שלא ברשימה? הוסף כאן:</label>
+                <input value={customActivity} onChange={e => setCustomActivity(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                  placeholder="שם הפעילות..." />
+              </div>
             </div>
+          </div>
+
+          {/* הגבלות והערות */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 className="font-bold text-gray-700 text-lg">הגבלות והערות חשובות</h2>
+            <textarea name="notes" value={form.notes} onChange={handleChange} rows={4}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 resize-none"
+              placeholder="לדוגמה: אסור לבעלי בעיות לב, יש להגיע עם נעלי ספורט, מינימום 10 משתתפים..." />
           </div>
 
           {/* אמצעי תקשורת */}
@@ -348,7 +434,7 @@ export default function NewAttractionPage() {
 
           {/* וידאו */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו</h2>
+            <h2 className="font-bold text-gray-700 text-lg mb-2">וידאו</h2>
             <input name="video_url" value={form.video_url} onChange={handleChange}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
               placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />

@@ -5,6 +5,22 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Star, MapPin, Clock, Users, ArrowRight, ChevronLeft, ChevronRight, Navigation, Heart, Phone, Globe } from 'lucide-react'
 
+const DAYS_LABELS: Record<string, string> = {
+  sun: "א'", mon: "ב'", tue: "ג'", wed: "ד'", thu: "ה'", fri: "ו'", sat: "ש'"
+}
+
+function parseHours(opening_hours: string) {
+  try {
+    const parsed = JSON.parse(opening_hours)
+    const activeDays = Object.entries(parsed)
+      .filter(([_, v]: any) => v.active)
+      .map(([k, v]: any) => `${DAYS_LABELS[k]} ${v.from}-${v.to}`)
+    return activeDays.length > 0 ? activeDays.join(' | ') : 'לא צוינו שעות'
+  } catch {
+    return opening_hours
+  }
+}
+
 const REGION_LABELS: Record<string, string> = {
   north: 'צפון', galil_west: 'גליל המערבי', galil_upper: 'גליל העליון',
   galil_lower: 'גליל התחתון', kinneret: 'כנרת', hermon: 'חרמון',
@@ -199,7 +215,7 @@ export default function AttractionPage() {
               {attraction.activity_type?.slice(0,2).map(t => ACTIVITY_LABELS[t]).join(' · ')} · {attraction.city || REGION_LABELS[attraction.region]}
             </p>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{attraction.name}</h1>
-            {attraction.short_description && <p className="text-sm text-gray-600 mb-4">{attraction.short_description}</p>}
+            {attraction.short_description && !attraction.short_description.startsWith('{') && <p className="text-sm text-gray-600 mb-4">{attraction.short_description}</p>}
 
             {attraction.avg_rating > 0 && (
               <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
@@ -225,7 +241,7 @@ export default function AttractionPage() {
               {attraction.opening_hours && (
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-gray-400" />
-                  {attraction.opening_hours}
+                  {parseHours(attraction.opening_hours)}
                 </div>
               )}
               {(attraction.address || attraction.city) && (

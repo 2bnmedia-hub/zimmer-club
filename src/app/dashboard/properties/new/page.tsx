@@ -7,7 +7,8 @@ import { Upload, X, Star } from 'lucide-react'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
-  { value: 'villa', label: 'וילה' },
+  { value: 'complex', label: 'מתחם צימרים' },
+  { value: 'villa', label: 'וילה/בקתה' },
   { value: 'hotel', label: 'מלון' },
   { value: 'camping', label: 'קמפינג' },
 ]

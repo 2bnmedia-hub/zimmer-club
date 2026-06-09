@@ -225,6 +225,14 @@ export function Navbar() {
                       </div>
                       הוסף נכס
                     </Link>
+                    <Link href="/dashboard/attractions/new"
+                      onClick={() => setActiveMenu(null)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm font-bold">🎯</span>
+                      </div>
+                      הוסף אטרקציה
+                    </Link>
 
                     <hr className="my-2 border-gray-100" />
 

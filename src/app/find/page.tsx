@@ -1,3 +1,4 @@
+import Image from 'next/image'
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
@@ -250,7 +251,7 @@ export default function FindPage() {
                 <div className="flex">
                   <div className="w-36 h-32 flex-shrink-0 relative overflow-hidden">
                     {images[p.id] ? (
-                      <img src={images[p.id]} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                      <Image src={images[p.id]} alt={p.name} fill sizes="(max-width:640px) 100vw,33vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-3xl"
                         style={{ background: 'linear-gradient(135deg, #1a4a2e, #0d2818)' }}>🏡</div>

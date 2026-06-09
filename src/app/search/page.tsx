@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
 import { Search, SlidersHorizontal, X, Star, ChevronDown, ChevronUp } from 'lucide-react'
@@ -464,7 +465,7 @@ function SearchContent() {
                     <Link href={`/${p.slug || p.id}`}>
                       <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
                         {firstImage ? (
-                          <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                          <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                         )}

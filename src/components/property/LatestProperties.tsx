@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Star, Zap } from 'lucide-react'
 
@@ -60,7 +61,7 @@ export function LatestProperties() {
                 className="group bg-white rounded-2xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div className="h-36 sm:h-48 bg-gray-100 relative overflow-hidden">
                   {firstImage ? (
-                    <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                    <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 50vw,(max-width:1024px) 25vw,25vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                   )}

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -95,7 +96,7 @@ export default function WishlistPage() {
                 <div key={p.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                   <div className="relative h-48">
                     {images[p.id] ? (
-                      <img src={images[p.id]} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                      <Image src={images[p.id]} alt={p.name} fill sizes="(max-width:640px) 100vw,33vw" className="object-cover" />
                     ) : (
                       <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                     )}

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Menu, X, Search, User, ChevronDown, LogOut, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
@@ -127,7 +128,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-[64px] sm:h-[85px]">
 
           <Link href="/" className="shrink-0" onClick={() => setActiveMenu(null)}>
-            <img src="/logo.png" alt="Zimmer Club" className="h-10 sm:h-16 w-auto logo-shine" />
+            <Image src="/logo.png" alt="Zimmer Club" width={64} height={64} className="h-10 sm:h-16 w-auto logo-shine" priority />
           </Link>
 
           <ul className="hidden lg:flex items-center gap-6 list-none flex-1 justify-center">
@@ -179,7 +180,7 @@ export function Navbar() {
                   className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   {user.avatar ? (
-                    <img src={user.avatar} alt="" className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" loading="lazy" />
+                    <Image src={user.avatar} alt="" width={28} height={28} className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C4956A]/30 to-[#1B5E3B]/20 flex items-center justify-center">
                       <User className="w-4 h-4 text-[#C4956A]" />
@@ -343,7 +344,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
       <nav className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-[64px] sm:h-[85px]">
           <Link href="/" className="shrink-0">
-            <img src="/logo.png" alt="Zimmer Club" className="h-10 sm:h-16 w-auto logo-shine" />
+            <Image src="/logo.png" alt="Zimmer Club" width={64} height={64} className="h-10 sm:h-16 w-auto logo-shine" priority />
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_ITEMS.map((item) => (

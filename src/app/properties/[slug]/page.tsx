@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
+import Image from 'next/image'
 import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight, Navigation, Heart } from 'lucide-react'
 import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
@@ -295,17 +296,14 @@ export default function PropertyPage() {
                   }}>
                   {images.map((url, i) => (
                     <div key={i} className="shrink-0 w-full snap-start gallery-item md:hidden">
-                      <img src={url} alt={property.name} className="w-full h-64 object-cover" />
+                      <Image src={url} alt={property.name} fill sizes="100vw" className="object-cover" />
                     </div>
                   ))}
                 </div>
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block">
                   {images.map((url, i) => (
-                    <img key={i} src={url} alt={property.name}
-                      className="w-full h-auto block max-h-[55vh] object-contain"
-                      style={{ display: i === currentImage ? 'block' : 'none' }}
-                    />
+                    <div key={i} className="relative w-full max-h-[55vh] aspect-video" style={{ display: i === currentImage ? 'block' : 'none' }}><Image src={url} alt={property.name} fill sizes="75vw" className="object-contain" /></div>
                   ))}
                 </div>
                 {images.length > 1 && (
@@ -349,7 +347,7 @@ export default function PropertyPage() {
             <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
               {images.map((url, i) => (
                 <button key={i} onClick={() => setCurrentImage(i)} className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-colors ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <Image src={url} alt="" fill sizes="80px" className="object-cover" />
                 </button>
               ))}
             </div>

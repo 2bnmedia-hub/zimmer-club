@@ -39,8 +39,8 @@ type Attraction = {
   short_description: string
   region: string
   city: string
-  price_per_night: number
-  max_guests: number
+  price_per_person: number
+  activity_type: string[]
   avg_rating: number
   attraction_images: { url: string }[]
 }
@@ -55,6 +55,12 @@ function AttractionsContent() {
   const [audience, setAudience] = useState(searchParams.get('category') || '')
   const [search, setSearch] = useState('')
 
+  // עדכן פילטרים כשה-URL משתנה
+  useEffect(() => {
+    setRegion(searchParams.get('region') || '')
+    setAudience(searchParams.get('category') || '')
+  }, [searchParams])
+
   useEffect(() => { fetchAttractions() }, [region, audience])
 
   async function fetchAttractions() {
@@ -64,19 +70,31 @@ function AttractionsContent() {
       .select('*, attraction_images(url, "order")')
       .eq('status', 'active')
 
-    if (region) query = query.eq('region', region)
+    const regionGroups: Record<string, string[]> = {
+      north: ['north', 'galil', 'galil_upper', 'galil_lower', 'galil_west', 'kinneret', 'hermon', 'golan'],
+      negev: ['negev', 'south', 'arava'],
+    }
+    if (region) {
+      const regions = regionGroups[region] || [region]
+      if (regions.length > 1) query = query.in('region', regions)
+      else query = query.eq('region', regions[0])
+    }
 
     const { data } = await query.order('avg_rating', { ascending: false })
     let results = data || []
 
+    // פילטר לפי קהל יעד — מחפש ב-activity_type
     if (audience) {
-      const { data: amenData } = await supabase.from('amenities').select('id, key').eq('key', audience)
-      const amenIds = amenData?.map((a: any) => a.id) || []
-      if (amenIds.length > 0) {
-        const { data: paData } = await supabase.from('property_amenities').select('property_id, amenity_id').in('amenity_id', amenIds)
-        const propertyIds = new Set(paData?.map((pa: any) => pa.property_id))
-        results = results.filter(p => propertyIds.has(p.id))
+      const audienceMap: Record<string, string[]> = {
+        couples: ['romantic', 'couples'],
+        families: ['family', 'families'],
+        groups: ['groups'],
+        kids: ['kids', 'playground', 'gymboree', 'water_park'],
       }
+      const keys = audienceMap[audience] || [audience]
+      results = results.filter(a =>
+        a.activity_type?.some((t: string) => keys.includes(t))
+      )
     }
 
     setAttractions(results)
@@ -191,10 +209,10 @@ function AttractionsContent() {
                         {a.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">{a.short_description}</p>}
                         <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                           <div>
-                            <span className="font-bold text-gray-900 text-base">₪{a.price_per_night?.toLocaleString()}</span>
+                            <span className="font-bold text-gray-900 text-base">₪{a.price_per_person?.toLocaleString()}</span>
                             <span className="text-xs text-gray-400 mr-1">/ לאדם</span>
                           </div>
-                          <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">עד {a.max_guests} משתתפים</span>
+                          <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg"></span>
                         </div>
                       </div>
                     </Link>

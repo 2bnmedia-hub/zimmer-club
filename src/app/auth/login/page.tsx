@@ -107,7 +107,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-8" dir="rtl">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-4" dir="rtl">
       <div className="bg-white rounded-2xl p-8 shadow-sm max-w-md w-full">
         <div className="text-center mb-8">
           <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={400} height={160} className="h-12 w-auto mx-auto mb-4" priority /></Link>

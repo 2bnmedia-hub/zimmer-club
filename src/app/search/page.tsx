@@ -176,7 +176,7 @@ function SearchContent() {
     selectedAmenities.length > 0, priceRange[0] > 200 || priceRange[1] < 35000,
   ].filter(Boolean).length
 
-  const labelClass = "block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2"
+  const labelClass = "block font-bold text-gray-400 uppercase tracking-widest mb-2"
   const selectClass = "w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-amber-400 bg-white"
 
   return (
@@ -210,7 +210,7 @@ function SearchContent() {
               {/* שורה 1 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className={labelClass}>סוג נכס</label>
+                  <label className={labelClass} style={{fontSize:"13px"}}>סוג נכס</label>
                   <div className="flex flex-wrap gap-1.5">
                     {PROPERTY_TYPES.map(t => (
                       <button key={t.value} onClick={() => setFilters(p => ({ ...p, category: t.value }))}
@@ -226,7 +226,7 @@ function SearchContent() {
                   </div>
                 </div>
                 <div>
-                  <label className={labelClass}>אזור בארץ</label>
+                  <label className={labelClass} style={{fontSize:"13px"}}>אזור בארץ</label>
                   <select value={filters.region} onChange={e => setFilters(p => ({ ...p, region: e.target.value }))} className={selectClass}>
                     <option value="">כל הארץ</option>
                     {['הצפון','גליל המערבי','גליל העליון','גליל התחתון','כנרת','חרמון','מרכז','ירושלים','ים המלח','דרום','אילת','רמת הגולן'].map(r => (
@@ -235,7 +235,7 @@ function SearchContent() {
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>מספר אורחים</label>
+                  <label className={labelClass} style={{fontSize:"13px"}}>מספר אורחים</label>
                   <select value={filters.guests} onChange={e => setFilters(p => ({ ...p, guests: e.target.value }))} className={selectClass}>
                     <option value="">כל הגדלים</option>
                     {[1,2,3,4,5,6,8,10,12,15,20].map(n => <option key={n} value={n}>{n}+ אורחים</option>)}
@@ -245,7 +245,7 @@ function SearchContent() {
 
               {/* מחיר */}
               <div>
-                <label className={labelClass}>מחיר ללילה</label>
+                <label className={labelClass} style={{fontSize:"13px"}}>מחיר ללילה</label>
                 <PriceRangeSlider min={200} max={35000} value={priceRange} onChange={setPriceRange} />
               </div>
 

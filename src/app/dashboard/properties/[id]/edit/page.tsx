@@ -521,8 +521,18 @@ export default function EditPropertyPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">איזור</label>
                 <select name="region" value={form.region} onChange={handleChange} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                  <option value="">בחר איזור</option>
-                  {Object.entries(REGIONS).map(([key, r]) => <option key={key} value={key}>{r.label}</option>)}
+                                    <option value="">בחר איזור</option>
+                  <option value="north">צפון</option>
+                  <option value="galil_west">גליל המערבי</option>
+                  <option value="galil_upper">גליל העליון</option>
+                  <option value="galil_lower">גליל התחתון</option>
+                  <option value="kinneret">כנרת</option>
+                  <option value="hermon">חרמון</option>
+                  <option value="center">מרכז</option>
+                  <option value="jerusalem">ירושלים</option>
+                  <option value="dead_sea">ים המלח</option>
+                  <option value="negev">דרום</option>
+                  <option value="eilat">אילת</option>
                 </select>
               </div>
             </div>

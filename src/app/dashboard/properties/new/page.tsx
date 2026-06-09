@@ -321,8 +321,8 @@ export default function NewPropertyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">איזור *</label>
                 <select name="region" value={form.region} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                  <option value="">בחר איזור</option>
-                  <option value="galil_north">בצפון</option>
+                                    <option value="">בחר איזור</option>
+                  <option value="north">צפון</option>
                   <option value="galil_west">גליל המערבי</option>
                   <option value="galil_upper">גליל העליון</option>
                   <option value="galil_lower">גליל התחתון</option>
@@ -333,7 +333,6 @@ export default function NewPropertyPage() {
                   <option value="dead_sea">ים המלח</option>
                   <option value="negev">דרום</option>
                   <option value="eilat">אילת</option>
-                  <option value="golan">רמת הגולן</option>
                 </select>
               </div>
             </div>

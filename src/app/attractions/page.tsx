@@ -170,7 +170,7 @@ function AttractionsContent() {
                     <Link href={`/${a.slug || a.id}`}>
                       <div className="h-52 bg-gray-100 relative overflow-hidden">
                         {firstImage ? (
-                          <img src={firstImage} alt={a.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={firstImage} alt={a.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-4xl">🎯</div>
                         )}

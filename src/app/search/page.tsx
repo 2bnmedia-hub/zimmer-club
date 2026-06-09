@@ -465,7 +465,7 @@ function SearchContent() {
                     <Link href={`/${p.slug || p.id}`}>
                       <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
                         {firstImage ? (
-                          <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                         )}

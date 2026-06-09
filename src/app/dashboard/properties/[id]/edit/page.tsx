@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { REGIONS } from '@/lib/constants'
 import { ArrowRight, Upload, X, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PropertyQR } from '@/components/property/PropertyQR'
 import { AdminReviews } from '@/components/property/AdminReviews'
@@ -250,7 +249,6 @@ export default function EditPropertyPage() {
       if (!user) { router.push('/auth/login'); return }
       const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
       setIsAdmin(profile?.role === 'admin')
-      console.log('role:', profile?.role, 'isAdmin:', profile?.role === 'admin')
       const { data: property } = await supabase.from('properties').select('*').eq('id', params.id).single()
       if (!property) { router.push('/dashboard/owner'); return }
       if (profile?.role !== 'admin' && property.owner_id !== user.id) { router.push('/dashboard/owner'); return }

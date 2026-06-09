@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Star, Zap } from 'lucide-react'
-import { REGIONS } from '@/lib/constants'
 
 type Property = {
   slug?: string
@@ -83,7 +82,7 @@ export function LatestProperties() {
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-taupe mb-2">{p.city || REGIONS[p.region as keyof typeof REGIONS]?.label}</p>
+                  <p className="text-xs text-taupe mb-2">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
                   {p.short_description && <p className="text-xs text-taupe/70 mb-3 line-clamp-2">{p.short_description}</p>}
                   <div className="flex items-center justify-between">
                     <div>

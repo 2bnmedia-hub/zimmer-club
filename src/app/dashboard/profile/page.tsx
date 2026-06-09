@@ -161,7 +161,7 @@ export default function EditProfilePage() {
               </div>
               <div className="flex justify-center bg-gray-50 rounded-2xl overflow-hidden max-h-80">
                 <ReactCrop crop={crop} onChange={(_, pct) => setCrop(pct)} onComplete={(c) => setCompletedCrop(c)} aspect={1} circularCrop minWidth={50}>
-                  <img ref={imgRef} src={imgSrc} alt="crop" style={{ transform: `scale(${scale})`, transformOrigin: 'center', maxHeight: '300px' }} onLoad={onImageLoad} />
+                  <img ref={imgRef} src={imgSrc} alt="crop" style={{ transform: `scale(${scale})`, transformOrigin: 'center', maxHeight: '300px' }} onLoad={onImageLoad} loading="lazy" />
                 </ReactCrop>
               </div>
               <p className="text-xs text-gray-400 text-center mt-2">גרור את המסגרת לבחירת אזור התמונה</p>
@@ -189,7 +189,7 @@ export default function EditProfilePage() {
           <div className="flex items-center gap-6">
             <div className="relative">
               <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-[#C4956A]/30">
-                {avatarPreview ? <img src={avatarPreview} alt="avatar" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#C4956A]/20 to-[#1B5E3B]/20"><User className="w-10 h-10 text-[#C4956A]" /></div>}
+                {avatarPreview ? <img src={avatarPreview} alt="avatar" className="w-full h-full object-cover" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#C4956A]/20 to-[#1B5E3B]/20"><User className="w-10 h-10 text-[#C4956A]" /></div>}
               </div>
               <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-0 left-0 w-8 h-8 bg-[#C4956A] hover:bg-[#8B5E3C] text-white rounded-full flex items-center justify-center shadow-md transition-colors">
                 <Camera className="w-3.5 h-3.5" />

@@ -248,7 +248,7 @@ export default function PropertyPage() {
 
             {/* ימין — מידע */}
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
-              <p className="text-sm text-gray-500 mb-1">{property.category?.[0]} · {property.city || REGIONS[property.region as keyof typeof REGIONS]?.label}</p>
+              <p className="text-sm text-gray-500 mb-1">{property.category?.[0]} · {property.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[property.region]}</p>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{property.name}</h1>
                 {property.short_description && <p className="text-sm text-gray-600 mb-4 leading-relaxed">{property.short_description}</p>}
               {property.avg_rating > 0 && (
@@ -428,7 +428,11 @@ export default function PropertyPage() {
                     <div className="flex justify-between font-bold text-gray-900"><span>סה״כ</span><span>₪{total}</span></div>
                   </div>
                 )}
-                <button className="w-full py-3 rounded-xl font-bold text-white text-sm transition-colors" style={{backgroundColor:'#8B6914'}} onClick={() => alert('מערכת הזמנות בפיתוח')}>
+                <button className="w-full py-3 rounded-xl font-bold text-white text-sm transition-colors" style={{backgroundColor:'#8B6914'}} onClick={() => {
+                  const el = document.getElementById('booking-form')
+                  if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  // TODO: replace with real booking system
+                }}>
                   {property.instant_book ? 'הזמן עכשיו' : 'בקש הזמנה'}
                 </button>
                 <ContactButtons property={property} />

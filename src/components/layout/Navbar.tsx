@@ -179,7 +179,7 @@ export function Navbar() {
                   className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   {user.avatar ? (
-                    <img src={user.avatar} alt="" className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" />
+                    <img src={user.avatar} alt="" className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" loading="lazy" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C4956A]/30 to-[#1B5E3B]/20 flex items-center justify-center">
                       <User className="w-4 h-4 text-[#C4956A]" />

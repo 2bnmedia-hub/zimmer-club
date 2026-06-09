@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
 import { Search, SlidersHorizontal, X, Star, ChevronDown, ChevronUp } from 'lucide-react'
 import { Heart } from 'lucide-react'
-import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
 
 type Property = {
@@ -478,7 +477,7 @@ function SearchContent() {
                       <div className="p-4">
                         <div className="flex items-start justify-between mb-1.5">
                           <div>
-                            <p className="text-xs text-gray-400 mb-0.5">{p.city || REGIONS[p.region as keyof typeof REGIONS]?.label}</p>
+                            <p className="text-xs text-gray-400 mb-0.5">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
                             <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-amber-800 transition-colors">{p.name}</h3>
                           </div>
                           {p.avg_rating > 0 && (

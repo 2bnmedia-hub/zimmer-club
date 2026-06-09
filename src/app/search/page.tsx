@@ -133,7 +133,11 @@ function SearchContent() {
       .gte('price_per_night', priceRange[0])
       .lte('price_per_night', priceRange[1])
 
-    if (filters.category) query = query.contains('category', [filters.category])
+    // קטגוריות קהל יעד — מגיעות מדף הבית דרך CATEGORIES
+    const AUDIENCE_KEYS = ['romantic', 'family', 'luxury', 'nature', 'beach', 'desert', 'pet_friendly']
+    const isAudienceCategory = filters.category && AUDIENCE_KEYS.includes(filters.category)
+
+    if (filters.category && !isAudienceCategory) query = query.contains('category', [filters.category])
     if (filters.region) query = query.eq('region', filters.region)
     if (filters.guests) query = query.gte('max_guests', parseInt(filters.guests))
     if (filters.instant_book) query = query.eq('instant_book', true)
@@ -143,8 +147,14 @@ function SearchContent() {
     const { data } = await query.order('avg_rating', { ascending: false })
     let results = data || []
 
-    if (selectedAmenities.length > 0) {
-      const { data: amenData } = await supabase.from('amenities').select('id, key').in('key', selectedAmenities)
+    // מיזוג amenities לפי קהל יעד + פילטרים שנבחרו
+    const amenityKeys = [
+      ...(isAudienceCategory ? [filters.category!] : []),
+      ...selectedAmenities,
+    ]
+
+    if (amenityKeys.length > 0) {
+      const { data: amenData } = await supabase.from('amenities').select('id, key').in('key', amenityKeys)
       const amenIds = amenData?.map((a: any) => a.id) || []
       if (amenIds.length > 0) {
         const { data: paData } = await supabase.from('property_amenities').select('property_id, amenity_id').in('amenity_id', amenIds)

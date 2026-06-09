@@ -42,7 +42,7 @@ type Attraction = {
   price_per_night: number
   max_guests: number
   avg_rating: number
-  property_images: { url: string }[]
+  attraction_images: { url: string }[]
 }
 
 function AttractionsContent() {
@@ -60,10 +60,9 @@ function AttractionsContent() {
   async function fetchAttractions() {
     setLoading(true)
     let query = supabase
-      .from('properties')
-      .select('*, property_images(url, "order")')
+      .from('attractions')
+      .select('*, attraction_images(url, "order")')
       .eq('status', 'active')
-      .contains('category', ['attraction'])
 
     if (region) query = query.eq('region', region)
 
@@ -165,10 +164,10 @@ function AttractionsContent() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((a) => {
-                const firstImage = a.property_images?.[0]?.url
+                const firstImage = a.attraction_images?.[0]?.url
                 return (
                   <div key={a.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group relative">
-                    <Link href={`/${a.slug || a.id}`}>
+                    <Link href={`/attractions/${a.slug || a.id}`}>
                       <div className="h-52 bg-gray-100 relative overflow-hidden">
                         {firstImage ? (
                           <Image src={firstImage} alt={a.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -193,7 +192,7 @@ function AttractionsContent() {
                         <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                           <div>
                             <span className="font-bold text-gray-900 text-base">₪{a.price_per_night?.toLocaleString()}</span>
-                            <span className="text-xs text-gray-400 mr-1">/ כניסה</span>
+                            <span className="text-xs text-gray-400 mr-1">/ לאדם</span>
                           </div>
                           <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">עד {a.max_guests} משתתפים</span>
                         </div>

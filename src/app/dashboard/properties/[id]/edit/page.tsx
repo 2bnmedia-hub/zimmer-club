@@ -499,9 +499,17 @@ export default function EditPropertyPage() {
           {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס *</label>
-              <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+            <div className="flex gap-4">
+              <div className="w-[30%]">
+                <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס *</label>
+                <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+              <div className="w-[70%]">
+                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת האתר (slug) <span className="text-gray-400 font-normal">— לא ניתן לשינוי</span></label>
+                <div className="w-full border border-gray-100 bg-gray-50 rounded-xl px-4 py-2.5 text-sm text-gray-400 font-mono">
+                  zimmer.club/{form.slug}
+                </div>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">תיאור קצר</label>

@@ -165,7 +165,7 @@ export const VILLAS_MENU: { byRegion: { href: string; label: string }[]; byAudie
 }
 export const ZIMMER_MENU = {
   byRegion: [
-    { href: '/search?region=galil', label: 'צימרים בצפון' },
+    { href: '/search?region=north', label: 'צימרים בצפון' },
  { href: '/search?region=galil_west', label: 'צימרים בגליל המערבי' },
    { href: '/search?region=galil_upper', label: 'צימרים בגליל העליון' },
  { href: '/search?region=galil_lower', label: 'צימרים בגליל התחתון' },

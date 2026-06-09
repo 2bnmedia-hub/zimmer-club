@@ -126,6 +126,20 @@ function SearchContent() {
     has_shelter: false,
   })
 
+  // עדכן filters כשה-URL משתנה
+  useEffect(() => {
+    setFilters({
+      category: searchParams.get('category') || '',
+      region: searchParams.get('region') || '',
+      guests: searchParams.get('guests') || '',
+      check_in: searchParams.get('check_in') || '',
+      check_out: searchParams.get('check_out') || '',
+      instant_book: searchParams.get('instant') === 'true',
+      accepts_miluim: false,
+      has_shelter: false,
+    })
+  }, [searchParams])
+
   useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities])
   // eslint-disable-next-line react-hooks/exhaustive-deps
 

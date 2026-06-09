@@ -110,7 +110,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-4" dir="rtl">
       <div className="bg-white rounded-2xl p-8 shadow-sm max-w-md w-full">
         <div className="text-center mb-8">
-          <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={48} height={48} className="h-12 w-auto mx-auto mb-4" priority /></Link>
+          <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={400} height={160} className="h-12 w-auto mx-auto mb-4" priority /></Link>
           <h1 className="text-2xl font-bold text-gray-900">כניסה לחשבון</h1>
           <p className="text-sm text-gray-500 mt-1">ברוך השב!</p>
         </div>

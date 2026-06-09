@@ -462,6 +462,36 @@ export default function EditPropertyPage() {
             </div>
             <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
+          {/* וידאו */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
+            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
+                <span className="text-2xl">🎬</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
+                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
+              </label>
+              {videoPreview && <div className="relative">
+                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              {form.video_url && !videoPreview && <div className="relative">
+                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-xs text-gray-400">או</span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <input name="video_url" value={form.video_url} onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            </div>
+          </div>
+
+          {/* תמחור */}
 
           {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
@@ -576,36 +606,6 @@ export default function EditPropertyPage() {
             </div>
           </div>
 
-          {/* וידאו */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
-            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
-                <span className="text-2xl">🎬</span>
-                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
-                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
-              </label>
-              {videoPreview && <div className="relative">
-                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
-              </div>}
-              {form.video_url && !videoPreview && <div className="relative">
-                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
-                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
-              </div>}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400">או</span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-              <input name="video_url" value={form.video_url} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
-            </div>
-          </div>
-
-          {/* תמחור */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">

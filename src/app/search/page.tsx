@@ -136,7 +136,10 @@ function SearchContent() {
       .lte('price_per_night', priceRange[1])
 
     // קטגוריות קהל יעד — מגיעות מדף הבית דרך CATEGORIES
-    const AUDIENCE_KEYS = ['romantic', 'family', 'luxury', 'nature', 'beach', 'desert', 'pet_friendly']
+    const AUDIENCE_KEYS = ['romantic', 'family', 'families', 'luxury', 'nature', 'beach', 'desert', 'pet_friendly']
+    // מיפוי קטגוריות דף הבית למפתחות amenities
+    const categoryMap: Record<string, string> = { family: 'families', pet_friendly: 'pets' }
+    const mappedCategory = filters.category ? (categoryMap[filters.category] || filters.category) : ''
     const isAudienceCategory = filters.category && AUDIENCE_KEYS.includes(filters.category)
 
     if (filters.category && !isAudienceCategory) query = query.contains('category', [filters.category])
@@ -151,7 +154,7 @@ function SearchContent() {
 
     // מיזוג amenities לפי קהל יעד + פילטרים שנבחרו
     const amenityKeys = [
-      ...(isAudienceCategory ? [filters.category!] : []),
+      ...(isAudienceCategory ? [mappedCategory] : []),
       ...selectedAmenities,
     ]
 

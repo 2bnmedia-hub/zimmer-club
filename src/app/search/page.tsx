@@ -146,7 +146,30 @@ function SearchContent() {
     const isAudienceCategory = filters.category && AUDIENCE_KEYS.includes(filters.category)
 
     if (filters.category && !isAudienceCategory) query = query.contains('category', [filters.category])
-    if (filters.region) query = query.eq('region', filters.region)
+    
+    // מיפוי אזורים — אזור כללי כולל תת-אזורים
+    const regionGroups: Record<string, string[]> = {
+      north: ['north', 'galil', 'galil_upper', 'galil_lower', 'galil_west', 'kinneret', 'hermon', 'golan'],
+      galil_upper: ['galil_upper'],
+      galil_lower: ['galil_lower'],
+      galil_west: ['galil_west'],
+      kinneret: ['kinneret'],
+      hermon: ['hermon'],
+      golan: ['golan'],
+      center: ['center'],
+      jerusalem: ['jerusalem'],
+      dead_sea: ['dead_sea'],
+      negev: ['negev', 'south', 'arava'],
+      eilat: ['eilat'],
+    }
+    if (filters.region) {
+      const regions = regionGroups[filters.region] || [filters.region]
+      if (regions.length === 1) {
+        query = query.eq('region', regions[0])
+      } else {
+        query = query.in('region', regions)
+      }
+    }
     if (filters.guests) query = query.gte('max_guests', parseInt(filters.guests))
     if (filters.instant_book) query = query.eq('instant_book', true)
     if (filters.accepts_miluim) query = query.eq('accepts_miluim', true)

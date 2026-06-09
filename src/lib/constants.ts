@@ -170,11 +170,11 @@ export const ZIMMER_MENU = {
    { href: '/search?region=galil_upper', label: 'צימרים בגליל העליון' },
  { href: '/search?region=galil_lower', label: 'צימרים בגליל התחתון' },
  { href: '/search?region=kinneret', label: 'צימרים בכנרת' },
- { href: '/search?region=golan', label: 'צימרים בחרמון' },
+ { href: '/search?region=hermon', label: 'צימרים בחרמון' },
     { href: '/search?region=center', label: 'צימרים במרכז' },
     { href: '/search?region=jerusalem', label: 'צימרים בירושלים' },
     { href: '/search?region=dead_sea', label: 'צימרים בים המלח' },
-    { href: '/search?region=jerusalem', label: 'צימרים בדרום' },
+    { href: '/search?region=negev', label: 'צימרים בדרום' },
        { href: '/search?region=eilat', label: 'צימרים באילת' },   
   ],
 byAudience: [

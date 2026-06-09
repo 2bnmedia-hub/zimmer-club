@@ -102,7 +102,7 @@ export default function RegisterPage() {
 
   if (step === 'confirm') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-4" dir="rtl">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-8" dir="rtl">
         <div className="bg-white rounded-2xl p-8 shadow-sm max-w-md w-full text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">✉️</span>
@@ -118,10 +118,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10 pt-4" dir="rtl">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-4 pt-8" dir="rtl">
       <div className="bg-white rounded-2xl p-8 shadow-sm max-w-md w-full">
         <div className="text-center mb-8">
-          <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={48} height={48} className="h-12 w-auto mx-auto mb-4" priority /></Link>
+          <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={400} height={160} className="h-12 w-auto mx-auto mb-4" priority /></Link>
           <h1 className="text-2xl font-bold text-gray-900">הרשמה חינם</h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">

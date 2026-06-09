@@ -175,7 +175,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
       setPageLoading(false)
     }
     load()
-  }, [id])
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target

@@ -79,7 +79,7 @@ const parseWeeklyHours = (raw: unknown): WeeklyHours => {
   return defaultWeeklyHours()
 }
 
-export default function EditAttractionPage({ params }: { params: { id: string } }) {
+export default function EditAttractionPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const supabase = createClient()
 
@@ -117,6 +117,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
 
   useEffect(() => {
     const load = async () => {
+      const { id } = await params
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
 
@@ -128,10 +129,10 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
         .single()
 
       const isAdmin = profile?.role === 'admin'
-      console.log('DEBUG:', { userId: user.id, role: profile?.role, isAdmin, attractionId: params.id })
+      console.log('DEBUG:', { userId: user.id, role: profile?.role, isAdmin, attractionId: id })
 
       // אדמין — מביאים ישירות ללא סינון owner
-      const query = supabase.from('attractions').select('*').eq('id', params.id)
+      const query = supabase.from('attractions').select('*').eq('id', id)
       const { data: attraction, error: fetchError } = await query.single()
 
       if (fetchError || !attraction) { setNotFound(true); setPageLoading(false); return }
@@ -168,13 +169,13 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
       const { data: imgs } = await supabase
         .from('attraction_images')
         .select('*')
-        .eq('attraction_id', params.id)
+        .eq('attraction_id', id)
         .order('order')
       setExistingImages(imgs || [])
       setPageLoading(false)
     }
     load()
-  }, [params.id])
+  }, [id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -261,7 +262,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
         status: form.status,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (updateError) { setError(updateError.message); setLoading(false); return }
 
@@ -279,12 +280,12 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
       for (let i = 0; i < newImages.length; i++) {
         const img = newImages[i]
         const ext = img.file.name.split('.').pop()
-        const fileName = `${params.id}/${Date.now()}_${i}.${ext}`
+        const fileName = `${id}/${Date.now()}_${i}.${ext}`
         const { error: uploadError } = await supabase.storage.from('attraction-images').upload(fileName, img.file)
         if (!uploadError) {
           const { data: urlData } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
           await supabase.from('attraction_images').insert({
-            attraction_id: params.id,
+            attraction_id: id,
             url: urlData.publicUrl,
             order: startOrder + i,
             is_primary: img.isPrimary,

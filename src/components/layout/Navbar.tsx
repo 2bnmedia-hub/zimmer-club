@@ -122,9 +122,9 @@ export function Navbar() {
   ]
 
   return (
-    <header ref={navRef} className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" dir="rtl">
+    <header ref={navRef} className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm h-[85px]" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-[85px]">
 
           <Link href="/" className="shrink-0">
             <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
@@ -339,9 +339,9 @@ export function Navbar() {
 export function NavbarAuth({ userName, role }: { userName: string; role: 'guest' | 'owner' | 'admin' }) {
   const dashboardHref = role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" dir="rtl">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm h-[85px]" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-[85px]">
           <Link href="/" className="shrink-0">
             <img src="/logo.png" alt="Zimmer Club" className="h-16 w-auto logo-shine" />
           </Link>

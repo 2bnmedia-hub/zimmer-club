@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Upload, X, Star, ArrowRight, Loader2 } from 'lucide-react'
@@ -72,14 +72,13 @@ const defaultWeeklyHours = (): WeeklyHours =>
 const parseWeeklyHours = (raw: unknown): WeeklyHours => {
   try {
     const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as WeeklyHours
-    }
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed as WeeklyHours
   } catch {}
   return defaultWeeklyHours()
 }
 
-export default function EditAttractionPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditAttractionPage({ params }: { params: { id: string } }) {
+  const { id } = use(params as unknown as Promise<{ id: string }>)
   const router = useRouter()
   const supabase = createClient()
 
@@ -88,59 +87,32 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [notFound, setNotFound] = useState(false)
-
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([])
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([])
   const [newImages, setNewImages] = useState<NewImagePreview[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [customActivity, setCustomActivity] = useState('')
   const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(defaultWeeklyHours())
-
   const [form, setForm] = useState({
-    name: '',
-    short_description: '',
-    description: '',
-    region: '',
-    city: '',
-    address: '',
-    price_per_person: '',
-    min_age: '',
-    max_age: '',
-    notes: '',
-    phone: '',
-    whatsapp: '',
-    email: '',
-    website: '',
-    video_url: '',
-    status: 'pending',
+    name: '', short_description: '', description: '', region: '', city: '',
+    address: '', price_per_person: '', min_age: '', max_age: '',
+    notes: '', phone: '', whatsapp: '', email: '', website: '', video_url: '', status: 'pending',
   })
 
   useEffect(() => {
     const load = async () => {
-      const { id } = await params
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
 
-      // קודם בודקים role — אדמין יכול לראות הכל
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
       const isAdmin = profile?.role === 'admin'
-      console.log('DEBUG:', { userId: user.id, role: profile?.role, isAdmin, attractionId: id })
 
-      // אדמין — מביאים ישירות ללא סינון owner
-      const query = supabase.from('attractions').select('*').eq('id', id)
-      const { data: attraction, error: fetchError } = await query.single()
+      const { data: attraction, error: fetchError } = await supabase
+        .from('attractions').select('*').eq('id', id).single()
 
       if (fetchError || !attraction) { setNotFound(true); setPageLoading(false); return }
 
-      if (!isAdmin && attraction.owner_id !== user.id) {
-        router.push('/dashboard/owner')
-        return
-      }
+      if (!isAdmin && attraction.owner_id !== user.id) { router.push('/dashboard/owner'); return }
 
       setForm({
         name: attraction.name || '',
@@ -166,16 +138,12 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
       setCustomActivity(types.find(t => !KNOWN_KEYS.has(t)) || '')
       setWeeklyHours(parseWeeklyHours(attraction.opening_hours))
 
-      const { data: imgs } = await supabase
-        .from('attraction_images')
-        .select('*')
-        .eq('attraction_id', id)
-        .order('order')
+      const { data: imgs } = await supabase.from('attraction_images').select('*').eq('attraction_id', id).order('order')
       setExistingImages(imgs || [])
       setPageLoading(false)
     }
     load()
-  }, [])
+  }, [id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -186,22 +154,22 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
     setSelectedTypes(prev => prev.includes(key) ? prev.filter(t => t !== key) : [...prev, key])
   }
 
-  const updateDay = (day: string, field: keyof DayHours, value: any) => {
+  const updateDay = (day: string, field: keyof DayHours, value: boolean | string) => {
     setWeeklyHours(prev => ({ ...prev, [day]: { ...prev[day], [field]: value } }))
   }
 
-  const removeExistingImage = (id: string) => {
-    setRemovedImageIds(prev => [...prev, id])
+  const removeExistingImage = (imgId: string) => {
+    setRemovedImageIds(prev => [...prev, imgId])
     setExistingImages(prev => {
-      const next = prev.filter(img => img.id !== id)
-      const removedWasPrimary = prev.find(img => img.id === id)?.is_primary
+      const next = prev.filter(img => img.id !== imgId)
+      const removedWasPrimary = prev.find(img => img.id === imgId)?.is_primary
       if (removedWasPrimary && next.length > 0) next[0].is_primary = true
       return next
     })
   }
 
-  const setExistingPrimary = (id: string) => {
-    setExistingImages(prev => prev.map(img => ({ ...img, is_primary: img.id === id })))
+  const setExistingPrimary = (imgId: string) => {
+    setExistingImages(prev => prev.map(img => ({ ...img, is_primary: img.id === imgId })))
     setNewImages(prev => prev.map(img => ({ ...img, isPrimary: false })))
   }
 
@@ -210,9 +178,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
     if (!files) return
     const total = existingImages.length + newImages.length
     const toAdd = Array.from(files).slice(0, 14 - total)
-    const previews = toAdd.map((file, idx) => ({
-      file, url: URL.createObjectURL(file), isPrimary: total === 0 && idx === 0,
-    }))
+    const previews = toAdd.map((file, idx) => ({ file, url: URL.createObjectURL(file), isPrimary: total === 0 && idx === 0 }))
     setNewImages(prev => [...prev, ...previews])
     e.target.value = ''
   }
@@ -236,47 +202,27 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.region) { setError('יש לבחור אזור'); return }
-    setLoading(true)
-    setError('')
+    setLoading(true); setError('')
 
-    const { error: updateError } = await supabase
-      .from('attractions')
-      .update({
-        name: form.name,
-        short_description: form.short_description,
-        description: form.description,
-        region: form.region,
-        city: form.city,
-        address: form.address,
-        price_per_person: parseInt(form.price_per_person) || 0,
-        min_age: form.min_age ? parseInt(form.min_age) : null,
-        max_age: form.max_age ? parseInt(form.max_age) : null,
-        activity_type: allTypes,
-        opening_hours: JSON.stringify(weeklyHours),
-        notes: form.notes,
-        phone: form.phone,
-        whatsapp: form.whatsapp,
-        email: form.email,
-        website: form.website,
-        video_url: form.video_url || null,
-        status: form.status,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id)
+    const { error: updateError } = await supabase.from('attractions').update({
+      name: form.name, short_description: form.short_description, description: form.description,
+      region: form.region, city: form.city, address: form.address,
+      price_per_person: parseInt(form.price_per_person) || 0,
+      min_age: form.min_age ? parseInt(form.min_age) : null,
+      max_age: form.max_age ? parseInt(form.max_age) : null,
+      activity_type: allTypes, opening_hours: JSON.stringify(weeklyHours),
+      notes: form.notes, phone: form.phone, whatsapp: form.whatsapp,
+      email: form.email, website: form.website, video_url: form.video_url || null,
+      status: form.status, updated_at: new Date().toISOString(),
+    }).eq('id', id)
 
     if (updateError) { setError(updateError.message); setLoading(false); return }
 
-    if (removedImageIds.length > 0) {
-      await supabase.from('attraction_images').delete().in('id', removedImageIds)
-    }
-
-    for (const img of existingImages) {
-      await supabase.from('attraction_images').update({ is_primary: img.is_primary }).eq('id', img.id)
-    }
+    if (removedImageIds.length > 0) await supabase.from('attraction_images').delete().in('id', removedImageIds)
+    for (const img of existingImages) await supabase.from('attraction_images').update({ is_primary: img.is_primary }).eq('id', img.id)
 
     if (newImages.length > 0) {
       setUploading(true)
-      const startOrder = existingImages.length
       for (let i = 0; i < newImages.length; i++) {
         const img = newImages[i]
         const ext = img.file.name.split('.').pop()
@@ -284,36 +230,26 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
         const { error: uploadError } = await supabase.storage.from('attraction-images').upload(fileName, img.file)
         if (!uploadError) {
           const { data: urlData } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
-          await supabase.from('attraction_images').insert({
-            attraction_id: id,
-            url: urlData.publicUrl,
-            order: startOrder + i,
-            is_primary: img.isPrimary,
-          })
+          await supabase.from('attraction_images').insert({ attraction_id: id, url: urlData.publicUrl, order: existingImages.length + i, is_primary: img.isPrimary })
         }
       }
       setUploading(false)
     }
-
     router.push('/dashboard/owner')
   }
 
-  if (pageLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-yellow-600" />
-      </div>
-    )
-  }
+  if (pageLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Loader2 className="w-8 h-8 animate-spin text-yellow-600" />
+    </div>
+  )
 
-  if (notFound) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
-        <p className="text-gray-600 text-lg">האטרקציה לא נמצאה</p>
-        <button onClick={() => router.back()} className="text-yellow-700 underline text-sm">חזור</button>
-      </div>
-    )
-  }
+  if (notFound) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+      <p className="text-gray-600 text-lg">האטרקציה לא נמצאה</p>
+      <button onClick={() => router.back()} className="text-yellow-700 underline text-sm">חזור</button>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -324,7 +260,6 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
           </button>
           <h1 className="text-2xl font-bold text-gray-900">עריכת אטרקציה</h1>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-6">
 
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
@@ -333,8 +268,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
               <div className="w-[40%]">
                 <label className="block text-sm font-medium text-gray-700 mb-1">שם האטרקציה *</label>
                 <input name="name" value={form.name} onChange={handleChange} required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-                  placeholder="פארק הרפתקאות" />
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
               <div className="w-[60%]">
                 <label className="block text-sm font-medium text-gray-700 mb-1">תיאור קצר</label>
@@ -383,12 +317,12 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מינימום <span className="text-gray-400 font-normal">(אופציונלי)</span></label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מינימום</label>
                 <input name="min_age" type="number" value={form.min_age} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="0" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מקסימום <span className="text-gray-400 font-normal">(אופציונלי)</span></label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">גיל מקסימום</label>
                 <input name="max_age" type="number" value={form.max_age} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="99" />
               </div>
@@ -404,8 +338,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
                     <span className="text-sm font-medium text-gray-700">{day.label}</span>
                     <label className="flex items-center cursor-pointer">
                       <div className="relative">
-                        <input type="checkbox" className="sr-only"
-                          checked={weeklyHours[day.key]?.active ?? false}
+                        <input type="checkbox" className="sr-only" checked={weeklyHours[day.key]?.active ?? false}
                           onChange={e => updateDay(day.key, 'active', e.target.checked)} />
                         <div className={`w-9 h-5 rounded-full transition-colors ${weeklyHours[day.key]?.active ? 'bg-yellow-600' : 'bg-gray-200'}`} />
                         <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${weeklyHours[day.key]?.active ? 'translate-x-4' : 'translate-x-0.5'}`} />
@@ -436,7 +369,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
                 ))}
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">פעילות שלא ברשימה? הוסף כאן:</label>
+                <label className="block text-xs text-gray-500 mb-1">פעילות שלא ברשימה?</label>
                 <input value={customActivity} onChange={e => setCustomActivity(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
                   placeholder="שם הפעילות..." />
@@ -448,7 +381,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
             <h2 className="font-bold text-gray-700 text-lg">הגבלות והערות חשובות</h2>
             <textarea name="notes" value={form.notes} onChange={handleChange} rows={4}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 resize-none"
-              placeholder="לדוגמה: אסור לבעלי בעיות לב, יש להגיע עם נעלי ספורט, מינימום 10 משתתפים..." />
+              placeholder="לדוגמה: אסור לבעלי בעיות לב..." />
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
@@ -529,9 +462,7 @@ export default function EditAttractionPage({ params }: { params: Promise<{ id: s
               placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
           </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>
-          )}
+          {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
 
           <div className="flex gap-3">
             <button type="submit" disabled={loading || uploading}

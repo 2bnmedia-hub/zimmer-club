@@ -119,12 +119,15 @@ function SearchContent() {
     category: searchParams.get('category') || '',
     region: searchParams.get('region') || '',
     guests: searchParams.get('guests') || '',
-    instant_book: false,
+    check_in: searchParams.get('check_in') || '',
+    check_out: searchParams.get('check_out') || '',
+    instant_book: searchParams.get('instant') === 'true',
     accepts_miluim: false,
     has_shelter: false,
   })
 
   useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   async function fetchProperties() {
     setLoading(true)
@@ -172,12 +175,69 @@ function SearchContent() {
       }
     }
 
+    // סינון לפי תאריכים
+    if (filters.check_in && filters.check_out) {
+      const checkIn = new Date(filters.check_in)
+      const checkOut = new Date(filters.check_out)
+      const dates: string[] = []
+      for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {
+        dates.push(d.toISOString().split('T')[0])
+      }
+      if (dates.length > 0) {
+        const { data: blockedData } = await supabase
+          .from('blocked_dates')
+          .select('property_id, date')
+          .in('date', dates)
+          .eq('status', 'blocked')
+        const blockedPropertyIds = new Set((blockedData || []).map((b: any) => b.property_id))
+        results = results.filter(p => !blockedPropertyIds.has(p.id))
+      }
+    }
+
+    // סופ״ש הקרוב
+    if (filters.category === 'weekend') {
+      const today = new Date()
+      const day = today.getDay()
+      const daysUntilFri = (5 - day + 7) % 7 || 7
+      const friday = new Date(today)
+      friday.setDate(today.getDate() + daysUntilFri)
+      const saturday = new Date(friday)
+      saturday.setDate(friday.getDate() + 1)
+      const fridayStr = friday.toISOString().split('T')[0]
+      const saturdayStr = saturday.toISOString().split('T')[0]
+      const { data: blockedWeekend } = await supabase
+        .from('blocked_dates')
+        .select('property_id')
+        .in('date', [fridayStr, saturdayStr])
+        .eq('status', 'blocked')
+      const blockedIds = new Set((blockedWeekend || []).map((b: any) => b.property_id))
+      results = results.filter(p => !blockedIds.has(p.id))
+    }
+
+    // ברגע אחרון — 48 שעות קדימה
+    if (filters.category === 'last') {
+      const now = new Date()
+      const in48h = new Date(now)
+      in48h.setHours(now.getHours() + 48)
+      const dates: string[] = []
+      for (let d = new Date(now); d <= in48h; d.setDate(d.getDate() + 1)) {
+        dates.push(d.toISOString().split('T')[0])
+      }
+      const { data: blockedLast } = await supabase
+        .from('blocked_dates')
+        .select('property_id')
+        .in('date', dates)
+        .eq('status', 'blocked')
+      const blockedIds = new Set((blockedLast || []).map((b: any) => b.property_id))
+      results = results.filter(p => !blockedIds.has(p.id))
+    }
+
     setProperties(results)
     setLoading(false)
   }
 
   const clearFilters = () => {
-    setFilters({ category: '', region: '', guests: '', instant_book: false, accepts_miluim: false, has_shelter: false })
+    setFilters({ category: '', region: '', guests: '', check_in: '', check_out: '', instant_book: false, accepts_miluim: false, has_shelter: false })
     setPriceRange([200, 35000])
     setSelectedAmenities([])
   }

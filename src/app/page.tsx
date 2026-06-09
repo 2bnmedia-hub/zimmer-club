@@ -22,8 +22,6 @@ export default function HomePage() {
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    animation: 'kenBurns 18s ease-in-out infinite',
-    transformOrigin: 'center center',
   }}
 />
           {/* Overlay */}

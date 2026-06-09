@@ -6,11 +6,13 @@ import { SlidersHorizontal, ChevronDown, ChevronUp, X, Search } from 'lucide-rea
 
 const PROPERTY_TYPES = [
   { value: '', label: 'הכל' },
-  { value: 'zimmer', label: 'צימרים' },
-  { value: 'villa', label: 'וילות' },
+  { value: 'zimmer', label: 'צימר' },
+  { value: 'complex', label: 'מתחם צימרים' },
+  { value: 'villa', label: 'וילות ובקתות' },
+  { value: 'caravan', label: 'קרוואנים' },
   { value: 'hotel', label: 'מלונות' },
   { value: 'camping', label: 'קמפינג' },
-  { value: 'caravan', label: 'קרוואנים' },
+  { value: 'attraction', label: 'אטרקציות' },
 ]
 
 const AMENITY_LABELS: Record<string, string> = {

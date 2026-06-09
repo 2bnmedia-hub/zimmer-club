@@ -94,13 +94,14 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium mt-2"
                 dir="rtl"
               >
-                <option value="">הכל</option>
+                                <option value="">הכל</option>
                 <option value="zimmer">צימר</option>
-                <option value="villa">וילה</option>
-                <option value="hotel">מלון</option>
+                <option value="complex">מתחם צימרים</option>
+                <option value="villa">וילות ובקתות</option>
+                <option value="caravan">קרוואנים</option>
+                <option value="hotel">מלונות</option>
                 <option value="camping">קמפינג</option>
-                <option value="caravan">קרוואן</option>
-                <option value="attraction">אטרקציה</option>
+                <option value="attraction">אטרקציות</option>
               </select>
             </div>
           </div>

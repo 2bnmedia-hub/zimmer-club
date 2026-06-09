@@ -128,6 +128,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
         .single()
 
       const isAdmin = profile?.role === 'admin'
+      console.log('DEBUG:', { userId: user.id, role: profile?.role, isAdmin, attractionId: params.id })
 
       // אדמין — מביאים ישירות ללא סינון owner
       const query = supabase.from('attractions').select('*').eq('id', params.id)

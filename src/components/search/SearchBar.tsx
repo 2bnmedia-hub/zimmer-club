@@ -78,37 +78,35 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   return (
     <div className="w-full max-w-5xl mx-auto">
       <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)] overflow-hidden">
-        <div className="divide-y divide-sand-100 sm:divide-y-0 sm:grid sm:grid-cols-5 sm:divide-x sm:divide-sand-100">
+        <div className="grid grid-cols-1 lg:grid-cols-5">
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:flex-col sm:items-start sm:px-5 sm:pt-5 sm:pb-3 sm:gap-0">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Home className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
-              <label className="label hidden sm:block">סוג נכס</label>
+              <label className="label">סוג נכס</label>
               <select value={propertyType} onChange={(e) => { setPropertyType(e.target.value); setError('') }}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium appearance-none cursor-pointer" dir="rtl">
                 {PROPERTY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-taupe shrink-0 sm:hidden" />
           </div>
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:flex-col sm:items-start sm:px-5 sm:pt-5 sm:pb-3 sm:gap-0">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <MapPin className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
-              <label className="label hidden sm:block">אזור בארץ</label>
+              <label className="label">אזור בארץ</label>
               <select value={region} onChange={(e) => { setRegion(e.target.value); setError('') }}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium appearance-none cursor-pointer" dir="rtl">
                 <option value="">בחר אזור</option>
                 {REGIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-taupe shrink-0 sm:hidden" />
           </div>
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:flex-col sm:items-start sm:px-5 sm:pt-5 sm:pb-3 sm:gap-0">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
-              <label className="label hidden sm:block">תאריך כניסה</label>
+              <label className="label">תאריך כניסה</label>
               <input type="date" value={checkIn}
                 onChange={(e) => { const val = e.target.value; if (val && val < today) { setError('תאריך הכניסה אינו תקין'); return } setCheckIn(val); setError(''); if (checkOut && val > checkOut) setCheckOut('') }}
                 min={today} max={maxDate}
@@ -116,10 +114,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:flex-col sm:items-start sm:px-5 sm:pt-5 sm:pb-3 sm:gap-0">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
             <Calendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
-              <label className="label hidden sm:block">תאריך יציאה</label>
+              <label className="label">תאריך יציאה</label>
               <input type="date" value={checkOut}
                 onChange={(e) => { const val = e.target.value; if (val && val < today) { setError('תאריך אינו תקין'); return } if (val && checkIn && val <= checkIn) { setError('תאריך היציאה חייב להיות אחרי תאריך הכניסה'); return } setCheckOut(val); setError('') }}
                 min={checkIn || today} max={maxDate}
@@ -127,17 +125,16 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:flex-col sm:items-start sm:px-5 sm:pt-5 sm:pb-3 sm:gap-0">
+          <div className="flex items-start gap-3 px-5 pt-4 pb-2">
             <Users className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
-              <label className="label hidden sm:block">אורחים</label>
+              <label className="label">אורחים</label>
               <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}
                 className="w-full text-sm bg-transparent outline-none text-charcoal font-medium appearance-none cursor-pointer" dir="rtl">
                 {[1,2,3,4,5,6,7,8,10,12].map(n => <option key={n} value={n}>{n === 1 ? 'אורח אחד' : `${n} אורחים`}</option>)}
                 <option value={99}>מעל 12</option>
               </select>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-taupe shrink-0 sm:hidden" />
           </div>
 
         </div>

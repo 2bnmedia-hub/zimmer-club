@@ -224,6 +224,7 @@ export default function AdminDashboard() {
                         {a.status === 'active' && (
                           <button onClick={() => updateAttrStatus(a.id, 'inactive')} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"><X className="w-4 h-4 text-gray-500" /></button>
                         )}
+                        <button onClick={() => { if(confirm('למחוק את האטרקציה לצמיתות?')) { supabase.from('attractions').delete().eq('id', a.id).then(() => setAttractions(prev => prev.filter(x => x.id !== a.id))) } }} className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100"><Trash2 className="w-4 h-4 text-gray-500 hover:text-red-600" /></button>
                         <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><Edit className="w-4 h-4 text-gray-500" /></Link>
                       </div>
                     </td>

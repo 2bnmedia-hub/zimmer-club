@@ -304,8 +304,21 @@ function SearchContent() {
                   <label className={labelClass} style={{fontSize:"13px"}}>אזור בארץ</label>
                   <select value={filters.region} onChange={e => setFilters(p => ({ ...p, region: e.target.value }))} className={selectClass}>
                     <option value="">כל הארץ</option>
-                    {['הצפון','גליל המערבי','גליל העליון','גליל התחתון','כנרת','חרמון','מרכז','ירושלים','ים המלח','דרום','אילת','רמת הגולן'].map(r => (
-                      <option key={r} value={r}>{r}</option>
+                    {[
+                      { value: 'north', label: 'צפון' },
+                      { value: 'galil_west', label: 'גליל המערבי' },
+                      { value: 'galil_upper', label: 'גליל העליון' },
+                      { value: 'galil_lower', label: 'גליל התחתון' },
+                      { value: 'kinneret', label: 'כנרת' },
+                      { value: 'hermon', label: 'חרמון' },
+                      { value: 'center', label: 'מרכז' },
+                      { value: 'jerusalem', label: 'ירושלים' },
+                      { value: 'dead_sea', label: 'ים המלח' },
+                      { value: 'negev', label: 'דרום' },
+                      { value: 'eilat', label: 'אילת' },
+                      { value: 'golan', label: 'רמת הגולן' },
+                    ].map(r => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
                   </select>
                 </div>

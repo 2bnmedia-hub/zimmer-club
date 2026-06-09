@@ -53,13 +53,13 @@ export function LatestProperties() {
             כל הנכסים ←
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {properties.map((p) => {
             const firstImage = p.property_images?.[0]?.url
             return (
               <Link key={p.id} href={`/${p.slug || p.id}`}
                 className="group bg-white rounded-2xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <div className="h-48 bg-gray-100 relative overflow-hidden">
+                <div className="h-36 sm:h-48 bg-gray-100 relative overflow-hidden">
                   {firstImage ? (
                     <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
@@ -73,7 +73,7 @@ export function LatestProperties() {
                     </div>
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <div className="flex items-start justify-between mb-1">
                     <h3 className="font-bold text-charcoal text-sm group-hover:text-gold-deep transition-colors line-clamp-1">{p.name}</h3>
                     {p.avg_rating > 0 && (

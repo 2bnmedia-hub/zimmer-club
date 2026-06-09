@@ -1,0 +1,157 @@
+
+/* ===========================
+   MOBILE OPTIMIZATIONS
+   =========================== */
+
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+/* Better tap targets — minimum 44px (Apple HIG) */
+button, a, select, input[type="date"] {
+  min-height: 44px;
+}
+input[type="date"] {
+  min-height: 36px;
+}
+
+/* iOS safe area support */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Sticky mobile booking bar */
+.mobile-booking-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: white;
+  border-top: 1px solid #EDE5D8;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+
+/* Mobile filter bottom sheet */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 0 0 env(safe-area-inset-bottom);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #C8B99A;
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+/* Smooth scrolling on iOS */
+.scroll-smooth-ios {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Image gallery swipe */
+.gallery-container {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+.gallery-item {
+  scroll-snap-align: start;
+}
+
+/* Larger touch targets for gallery dots */
+.gallery-dot {
+  padding: 8px;
+  margin: -8px;
+}
+
+/* Mobile card optimizations */
+@media (max-width: 640px) {
+  .card {
+    border-radius: 16px;
+  }
+  
+  .page-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  /* Hero mobile adjustments */
+  .hero-mobile {
+    min-height: 100svh;
+    padding-top: 80px;
+  }
+
+  /* Search bar mobile full width */
+  .search-bar-mobile {
+    margin: 0 -16px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Property page mobile bottom padding for booking bar */
+  .property-content-mobile {
+    padding-bottom: 100px;
+  }
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Active state for touch */
+@media (hover: none) {
+  button:active, a:active {
+    opacity: 0.7;
+    transform: scale(0.97);
+  }
+}
+
+/* Skeleton loading animation */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, #f0ece6 25%, #e8e2db 50%, #f0ece6 75%);
+  background-size: 200% 100%;
+}

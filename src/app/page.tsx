@@ -12,7 +12,7 @@ export default function HomePage() {
 
       <main>
         {/* HERO */}
-        <section className="relative min-h-[55vh] pt-16 flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
+        <section className="relative min-h-[100svh] sm:min-h-[55vh] pt-20 sm:pt-16 flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
           
           {/* Background Image */}
 <div
@@ -31,7 +31,7 @@ export default function HomePage() {
           <div className="relative z-10 max-w-4xl mx-auto hero-text-animate">
             
             {/* Title */}
-            <h1 className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-4 sm:mb-6">
               <span style={{
                 background: 'linear-gradient(120deg, #2c1810 0%, #8B4513 25%, #c9822a 50%, #8B4513 75%, #2c1810 100%)',
                 backgroundSize: '300% auto',
@@ -75,7 +75,7 @@ export default function HomePage() {
             <SearchBar />
 
             {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-6 mt-8">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">
               {[
                 'ביטול חינם עד 48 שעות',
                 'אישור מיידי',
@@ -115,7 +115,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {Object.entries(CATEGORIES).map(([key, cat]) => (
                 <Link
                   key={key}

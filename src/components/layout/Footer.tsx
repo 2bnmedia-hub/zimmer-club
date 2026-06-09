@@ -27,7 +27,7 @@ export function Footer() {
     <footer className="bg-espresso text-cream-50/70">
       <div className="page-container">
         {/* Main footer */}
-        <div className="py-14 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+        <div className="py-10 sm:py-14 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="text-2xl font-bold text-cream-50 mb-3">
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream-50/50">
+        <div className="border-t border-white/10 py-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-between text-xs text-cream-50/50">
           <p>© 2025 zimmer.club — כל הזכויות שמורות</p>
           <p className="text-xs text-cream-50/40">מבית <a href="https://2bnmedia.com" target="_blank" rel="noopener noreferrer" className="hover:text-cream-50 transition-colors">2bnmedia.com</a></p>
           <div className="flex gap-6">

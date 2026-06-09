@@ -260,13 +260,13 @@ function SearchContent() {
 
         {/* סרגל עליון */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-16 z-40 shadow-sm">
-          <div className="max-w-7xl mx-auto flex items-center gap-3">
+          <div className="max-w-7xl mx-auto flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none" style={{scrollbarWidth:"none"}}>
             <div className="w-64 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
               <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />
               <input type="text" placeholder="שם או מיקום..." className="flex-1 bg-transparent text-sm outline-none text-gray-700" dir="rtl" />
             </div>
             <button onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${showFilters ? 'bg-amber-800 text-white border-amber-800' : 'bg-white text-gray-600 border-gray-200 hover:border-amber-400'}`}>
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-sm font-medium border transition-all whitespace-nowrap ${showFilters ? 'bg-amber-800 text-white border-amber-800' : 'bg-white text-gray-600 border-gray-200 hover:border-amber-400'}`}>
               <SlidersHorizontal className="w-4 h-4" />
               חיפוש מתקדם
               {activeCount > 0 && <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{activeCount}</span>}
@@ -431,7 +431,7 @@ function SearchContent() {
         {/* תוצאות */}
         <div className="max-w-7xl mx-auto px-4 py-8">
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
                   <div className="h-52 bg-gray-100" />
@@ -457,13 +457,13 @@ function SearchContent() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {properties.map((p) => {
                 const firstImage = p.property_images?.[0]?.url
                 return (
                   <div key={p.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group relative">
                     <Link href={`/${p.slug || p.id}`}>
-                      <div className="h-52 bg-gray-100 relative overflow-hidden">
+                      <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
                         {firstImage ? (
                           <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (

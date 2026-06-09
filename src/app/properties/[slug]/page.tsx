@@ -205,14 +205,46 @@ export default function PropertyPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
   if (!property) return null
 
+  const regionLabels: Record<string, string> = {
+    north: 'צפון', galil_west: 'גליל המערבי', galil_upper: 'גליל העליון',
+    galil_lower: 'גליל התחתון', kinneret: 'כנרת', hermon: 'חרמון',
+    center: 'מרכז', jerusalem: 'ירושלים', dead_sea: 'ים המלח',
+    negev: 'דרום', eilat: 'אילת', golan: 'רמת הגולן',
+  }
+
   return (
     <>
-      <main className="min-h-screen bg-white pt-4" dir="rtl">
-        <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Mobile sticky booking bar */}
+      <div className="lg:hidden mobile-booking-bar">
+        <div>
+          {property.price_per_night > 0 && (
+            <p className="font-bold text-gray-900 text-base">
+              ₪{property.price_per_night.toLocaleString()}
+              <span className="text-xs font-normal text-gray-500 mr-1">/ לילה</span>
+            </p>
+          )}
+          {property.avg_rating > 0 && (
+            <div className="flex items-center gap-1">
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+              <span className="text-xs text-gray-600 font-medium">{property.avg_rating}</span>
+              <span className="text-xs text-gray-400">({property.total_reviews})</span>
+            </div>
+          )}
+        </div>
+        <button
+          className="flex-1 py-3 rounded-xl font-bold text-white text-sm"
+          style={{ background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 100%)' }}
+          onClick={() => { const el = document.getElementById('booking-form'); el?.scrollIntoView({ behavior: 'smooth' }) }}>
+          {property.instant_book ? '⚡ הזמן עכשיו' : 'בקש הזמנה'}
+        </button>
+      </div>
+
+      <main className="min-h-screen bg-white pt-4 property-content-mobile lg:pb-0" dir="rtl">
+        <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
           <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
 
           {/* תמונות + מידע בשורה אחת */}
-          <div className="grid grid-cols-1 md:grid-cols-[25%_75%] gap-6 mb-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4 md:gap-6 mb-6 md:mb-8 items-start">
 
             {/* ימין — מידע */}
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
@@ -253,7 +285,22 @@ export default function PropertyPage() {
           <div className="bg-gray-100 rounded-2xl relative overflow-hidden">
             {images.length > 0 ? (
               <>
-                <div className="relative w-full">
+                {/* Mobile: horizontal scroll swipe */}
+                <div className="flex overflow-x-auto gallery-container snap-x snap-mandatory md:block md:overflow-visible scrollbar-none"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  onScroll={(e) => {
+                    const el = e.currentTarget
+                    const idx = Math.round(el.scrollLeft / el.offsetWidth)
+                    setCurrentImage(idx)
+                  }}>
+                  {images.map((url, i) => (
+                    <div key={i} className="shrink-0 w-full snap-start gallery-item md:hidden">
+                      <img src={url} alt={property.name} className="w-full h-64 object-cover" />
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop: original display */}
+                <div className="relative w-full hidden md:block">
                   {images.map((url, i) => (
                     <img key={i} src={url} alt={property.name}
                       className="w-full h-auto block max-h-[55vh] object-contain"
@@ -310,7 +357,7 @@ export default function PropertyPage() {
 
 
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
             <div className="lg:col-span-2">
               <div className="border-t border-gray-100 pt-6 mb-6">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">{property.description || property.short_description}</p>
@@ -342,7 +389,7 @@ export default function PropertyPage() {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
+              <div id="booking-form" className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
                 <p className="text-lg font-bold text-center mb-4" style={{color:'#8B6914'}}>אשמח לבצע הזמנה 😊</p>
                 {property.price_per_night > 0 && (
                   <div className="flex items-baseline gap-1 mb-4">

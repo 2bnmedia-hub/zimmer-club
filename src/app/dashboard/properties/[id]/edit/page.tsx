@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { REGIONS } from '@/lib/constants'
 import { ArrowRight, Upload, X, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PropertyQR } from '@/components/property/PropertyQR'
+import { AdminReviews } from '@/components/property/AdminReviews'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -245,6 +246,7 @@ export default function EditPropertyPage() {
       if (!user) { router.push('/auth/login'); return }
       const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
       setIsAdmin(profile?.role === 'admin')
+      console.log('role:', profile?.role, 'isAdmin:', profile?.role === 'admin')
       const { data: property } = await supabase.from('properties').select('*').eq('id', params.id).single()
       if (!property) { router.push('/dashboard/owner'); return }
       if (profile?.role !== 'admin' && property.owner_id !== user.id) { router.push('/dashboard/owner'); return }
@@ -663,6 +665,8 @@ export default function EditPropertyPage() {
           </div>
 
           {form.slug && <PropertyQR slug={form.slug} name={form.name} mode="edit" />}
+
+          {isAdmin && <AdminReviews propertyId={params.id as string} />}
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
           {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">הנכס עודכן בהצלחה!</div>}

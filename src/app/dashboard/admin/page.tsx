@@ -17,12 +17,25 @@ type Property = {
   created_at: string
 }
 
+type Attraction = {
+  id: string
+  name: string
+  activity_type: string[]
+  region: string
+  city: string
+  price_per_person: number
+  status: string
+  created_at: string
+}
+
 export default function AdminDashboard() {
   const router = useRouter()
   const supabase = createClient()
   const [properties, setProperties] = useState<Property[]>([])
+  const [attractions, setAttractions] = useState<Attraction[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [attrFilter, setAttrFilter] = useState('all')
 
   useEffect(() => {
     async function load() {
@@ -32,6 +45,8 @@ export default function AdminDashboard() {
       if (profile?.role !== 'admin') { router.push('/dashboard/owner'); return }
       const { data } = await supabase.from('properties').select('*').order('created_at', { ascending: false })
       setProperties(data || [])
+      const { data: attrData } = await supabase.from('attractions').select('*').order('created_at', { ascending: false })
+      setAttractions(attrData || [])
       setLoading(false)
     }
     load()
@@ -42,13 +57,25 @@ export default function AdminDashboard() {
     setProperties(prev => prev.map(p => p.id === id ? { ...p, status } : p))
   }
 
+  const updateAttrStatus = async (id: string, status: string) => {
+    await supabase.from('attractions').update({ status }).eq('id', id)
+    setAttractions(prev => prev.map(a => a.id === id ? { ...a, status } : a))
+  }
+
   const filtered = filter === 'all' ? properties : properties.filter(p => p.status === filter)
+  const filteredAttr = attrFilter === 'all' ? attractions : attractions.filter(a => a.status === attrFilter)
 
   const stats = {
     total: properties.length,
     pending: properties.filter(p => p.status === 'pending').length,
     active: properties.filter(p => p.status === 'active').length,
     rejected: properties.filter(p => p.status === 'rejected').length,
+  }
+
+  const attrStats = {
+    total: attractions.length,
+    pending: attractions.filter(a => a.status === 'pending').length,
+    active: attractions.filter(a => a.status === 'active').length,
   }
 
   const statusLabel = (status: string) => {
@@ -151,6 +178,61 @@ export default function AdminDashboard() {
             </tbody>
           </table>
           {filtered.length === 0 && <div className="px-6 py-16 text-center text-gray-400">אין נכסים להצגה</div>}
+        </div>
+
+        {/* טבלת אטרקציות */}
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden mt-8">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+            <h2 className="font-bold text-gray-900 ml-auto">אטרקציות ({attrStats.total})</h2>
+            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">{attrStats.pending} ממתינים</span>
+            {['all', 'pending', 'active', 'rejected'].map((f) => (
+              <button key={f} onClick={() => setAttrFilter(f)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${attrFilter === f ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                {f === 'all' ? 'הכל' : f === 'pending' ? 'ממתינים' : f === 'active' ? 'פעילים' : 'נדחו'}
+              </button>
+            ))}
+          </div>
+          <table className="w-full">
+            <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
+              <tr>
+                <th className="px-6 py-3 text-right">שם האטרקציה</th>
+                <th className="px-6 py-3 text-right">איזור</th>
+                <th className="px-6 py-3 text-right">מחיר לאדם</th>
+                <th className="px-6 py-3 text-right">סטטוס</th>
+                <th className="px-6 py-3 text-right">פעולות</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredAttr.map((a) => {
+                const s = statusLabel(a.status)
+                return (
+                  <tr key={a.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-medium text-gray-900">{a.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{a.city || a.region}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">החל מ ₪{a.price_per_person}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {a.status === 'pending' && (
+                          <>
+                            <button onClick={() => updateAttrStatus(a.id, 'active')} className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100"><Check className="w-4 h-4 text-green-600" /></button>
+                            <button onClick={() => updateAttrStatus(a.id, 'rejected')} className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100"><X className="w-4 h-4 text-red-600" /></button>
+                          </>
+                        )}
+                        {a.status === 'active' && (
+                          <button onClick={() => updateAttrStatus(a.id, 'inactive')} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"><X className="w-4 h-4 text-gray-500" /></button>
+                        )}
+                        <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><Edit className="w-4 h-4 text-gray-500" /></Link>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          {filteredAttr.length === 0 && <div className="px-6 py-16 text-center text-gray-400">אין אטרקציות להצגה</div>}
         </div>
       </main>
     </div>

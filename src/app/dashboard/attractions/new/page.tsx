@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Upload, X, Star, ArrowRight, Plus, Trash2 } from 'lucide-react'
 
 const ACTIVITY_TYPES = [
-  { key: 'rayzi', label: 'רייזי' },
+  { key: 'rayzi', label: 'רייזרים' },
   { key: 'climbing', label: 'קיר טיפוס' },
   { key: 'ezy_rider', label: 'איזי ריידר' },
   { key: 'laser_tag', label: 'לייזר טאג' },

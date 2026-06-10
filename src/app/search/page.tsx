@@ -138,6 +138,7 @@ function SearchContent() {
       instant_book: searchParams.get('instant') === 'true',
       accepts_miluim: false,
       has_shelter: false,
+      amenity: searchParams.get('amenity') || '',
     })
   }, [searchParams])
 

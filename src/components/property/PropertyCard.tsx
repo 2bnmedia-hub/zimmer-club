@@ -68,8 +68,9 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center transition-transform hover:scale-110"
             aria-label={isFaved ? 'הסר ממועדפים' : 'הוסף למועדפים'}
           >
-            <Heart
-              className={cn('w-4 h-4 transition-colors', isFaved ? 'fill-red-500 text-red-500' : 'text-taupe')}
+            <IconHeart
+              filled={isFaved}
+              className={cn('w-4 h-4 transition-colors', isFaved ? 'text-red-500' : 'text-taupe')}
             />
           </button>
         </div>

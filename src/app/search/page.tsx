@@ -257,22 +257,28 @@ function SearchContent() {
       results = results.filter(p => !blockedIds.has(p.id))
     }
 
-    // ברגע אחרון — 48 שעות קדימה
+    // ברגע אחרון — שבוע קדימה, לפחות לילה אחד פנוי
     if (filters.category === 'last') {
       const now = new Date()
-      const in48h = new Date(now)
-      in48h.setHours(now.getHours() + 48)
+      const in7days = new Date(now)
+      in7days.setDate(now.getDate() + 7)
       const dates: string[] = []
-      for (let d = new Date(now); d <= in48h; d.setDate(d.getDate() + 1)) {
+      for (let d = new Date(now); d <= in7days; d.setDate(d.getDate() + 1)) {
         dates.push(d.toISOString().split('T')[0])
       }
+      // מצא נכסים שחסומים בכל הלילות בשבוע הקרוב
       const { data: blockedLast } = await supabase
         .from('blocked_dates')
-        .select('property_id')
+        .select('property_id, date')
         .in('date', dates)
         .eq('status', 'blocked')
-      const blockedIds = new Set((blockedLast || []).map((b: any) => b.property_id))
-      results = results.filter(p => !blockedIds.has(p.id))
+      // ספור כמה לילות חסום כל נכס
+      const blockedCount: Record<string, number> = {}
+      ;(blockedLast || []).forEach((b: any) => {
+        blockedCount[b.property_id] = (blockedCount[b.property_id] || 0) + 1
+      })
+      // שמור רק נכסים שיש להם לפחות לילה אחד פנוי (לא חסום בכל הלילות)
+      results = results.filter(p => (blockedCount[p.id] || 0) < dates.length)
     }
 
     setProperties(results)

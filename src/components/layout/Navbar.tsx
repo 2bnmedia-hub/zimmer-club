@@ -356,6 +356,7 @@ export function Navbar() {
       <MegaMenu sections={zimmerSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'zimmer'} />
       <MegaMenu sections={villasSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'villas'} />
       <MegaMenu sections={attractionsSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'attractions'} />
+      <MegaMenu sections={caravanSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'caravans'} />
 
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200" dir="rtl">

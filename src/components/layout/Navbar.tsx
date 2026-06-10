@@ -71,7 +71,7 @@ function MegaMenu({ sections, onClose }: {
       `}</style>
 
       <div className="max-w-7xl mx-auto px-8 py-8" dir="rtl">
-        <div className="grid grid-cols-3 gap-0 divide-x divide-x-reverse" style={{ divideColor: 'rgba(139,105,20,0.08)' }}>
+        <div className="grid grid-cols-3 gap-0 divide-x divide-x-reverse">
           {sections.map((section, i) => (
             <div key={section.title} className={cn('px-8', i === 0 && 'pr-0', i === sections.length - 1 && 'pl-0')}>
               <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid rgba(139,105,20,0.10)' }}>

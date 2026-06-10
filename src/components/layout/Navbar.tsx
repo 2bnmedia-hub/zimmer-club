@@ -207,7 +207,7 @@ export function Navbar() {
             <img src="/logo.png" alt="Zimmer Club" className="h-10 sm:h-16 w-auto logo-shine" />
           </Link>
 
-          <ul className="hidden lg:flex items-center gap-6 list-none flex-1 justify-center">
+          <ul className="hidden lg:flex items-center list-none w-full justify-evenly">
             {[
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },
@@ -250,7 +250,7 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-1 shrink-0">
             <button onClick={() => setActiveMenu(null)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <IconSearch className="w-5 h-5 text-gray-600" />
             </button>
@@ -331,11 +331,11 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+                <Link href="/auth/login" className="px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-4 py-2 text-sm font-bold text-white rounded-full transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold text-white rounded-full transition-colors whitespace-nowrap"
                   style={{ backgroundColor: '#8B6914' }}>
                   הרשמה חינם
                 </Link>

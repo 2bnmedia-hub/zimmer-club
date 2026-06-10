@@ -10,6 +10,7 @@ import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
 import { PropertyQR } from '@/components/property/PropertyQR'
 import { PropertyReviews } from '@/components/property/PropertyReviews'
+import { AdminBackButton } from '@/components/AdminBackButton'
 
 type Property = {
   id: string
@@ -215,6 +216,7 @@ export default function PropertyPage() {
 
   return (
     <>
+      <AdminBackButton />
       {/* Mobile sticky booking bar */}
       <div className="lg:hidden mobile-booking-bar">
         <div>

@@ -182,14 +182,16 @@ export default function AdminDashboard() {
   const [attractions, setAttractions] = useState<Item[]>([])
   const [caravans, setCaravans] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
+  const [adminName, setAdminName] = useState('')
   const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'>('overview')
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
-      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+      const { data: profile } = await supabase.from('profiles').select('role, full_name').eq('id', user.id).single()
       if (profile?.role !== 'admin') { router.push('/dashboard/owner'); return }
+      setAdminName(profile?.full_name || '')
       const [{ data: p }, { data: a }, { data: c }] = await Promise.all([
         supabase.from('properties').select('*').order('created_at', { ascending: false }),
         supabase.from('attractions').select('*').order('created_at', { ascending: false }),
@@ -254,22 +256,25 @@ export default function AdminDashboard() {
 
       {/* Header */}
       <header style={{ background:'#fff', borderBottom:'1.5px solid #f0ece4', boxShadow:'0 2px 12px rgba(139,105,20,0.08)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4 flex-wrap relative">
           <div className="flex items-center gap-4">
             <Link href="/" className="text-sm flex items-center gap-1.5 transition-opacity hover:opacity-70" style={{ color:'#111827' }}>
               <IconArrowRight className="w-3.5 h-3.5"/>חזרה לאתר
             </Link>
             <div className="w-px h-4" style={{ background:'#e5e7eb' }}/>
-            <div>
+            <div className="flex items-center gap-2">
               <p className="text-sm" style={{ color:'#111827' }}>לוח בקרה</p>
-              <h1 className="text-lg font-bold leading-tight" style={{ color:'#2D1E0F' }}>אדמין</h1>
+              <span style={{ color:'#e5e7eb' }}>|</span>
+              <h1 className="text-lg font-bold leading-tight" style={{ color:'#2D1E0F' }}>שלום, {adminName} המנהל</h1>
             </div>
-            {totalPending > 0 && (
-              <span className="text-sm font-bold px-3 py-1.5 rounded-full animate-pulse"
-                style={{ background:'#fffbeb', color:'#d97706', border:'1px solid #fde68a' }}>
-                ⏳ {totalPending} ממתינים
-              </span>
-            )}
+          </div>
+          {totalPending > 0 && (
+            <span className="absolute left-1/2 -translate-x-1/2 text-sm font-bold px-3 py-1.5 rounded-full animate-pulse"
+              style={{ background:'#fffbeb', color:'#d97706', border:'1px solid #fde68a' }}>
+              ⏳ {totalPending} <span style={{ color:'#dc2626' }}>ממתינים</span>
+            </span>
+          )}
+          <div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link href="/dashboard/properties/new"
@@ -302,7 +307,7 @@ export default function AdminDashboard() {
               className="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap"
               style={{
                 borderColor: activeTab===tab.key ? '#8B6914' : 'transparent',
-                color: activeTab===tab.key ? '#8B6914' : '#9ca3af',
+                color: activeTab===tab.key ? '#8B6914' : '#111827',
                 background: 'transparent',
               }}>
               {tab.icon} {tab.label}
@@ -426,12 +431,14 @@ export default function AdminDashboard() {
                     ].flatMap(group => group.items.map(item => (
                       <div key={item.id} className="flex items-center justify-between p-3 rounded-xl"
                         style={{ background:'#fffbeb', border:'1px solid #fde68a' }}>
-                        <div className="min-w-0 flex-1">
+                        <Link href={`/${group.table}/${item.id}`} target="_blank"
+                          className="min-w-0 flex-1 hover:opacity-70 transition-opacity cursor-pointer">
                           <p className="text-sm font-semibold truncate" style={{ color:'#111827' }}>{item.name}</p>
-                          <p className="text-sm" style={{ color:'#111827' }}>
+                          <p className="text-sm flex items-center gap-1" style={{ color:'#111827' }}>
                             {group.type} · {item.city || REGION_LABELS[item.region||''] || ''} · {new Date(item.created_at).toLocaleDateString('he-IL')}
+                            <span className="text-xs" style={{ color:'#d97706' }}>← צפייה</span>
                           </p>
-                        </div>
+                        </Link>
                         <div className="flex gap-1.5 mr-3 shrink-0">
                           <button onClick={()=>approve(group.table, item.id, group.setter)}
                             className="w-8 h-8 rounded-lg flex items-center justify-center hover:scale-110 transition-all"

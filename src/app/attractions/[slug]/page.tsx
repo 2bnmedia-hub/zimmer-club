@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { AdminBackButton } from '@/components/AdminBackButton'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
@@ -109,7 +110,9 @@ function ReviewsSection({ attractionId }: { attractionId: string }) {
   }
 
   return (
-    <div className="border-t border-gray-100 pt-6 mt-6">
+    <>
+      <AdminBackButton />
+      <div className="border-t border-gray-100 pt-6 mt-6">
       <h2 className="font-bold text-gray-900 text-lg mb-4">ביקורות ({reviews.length})</h2>
 
       {user && (
@@ -156,6 +159,7 @@ function ReviewsSection({ attractionId }: { attractionId: string }) {
         </div>
       )}
     </div>
+    </>
   )
 }
 

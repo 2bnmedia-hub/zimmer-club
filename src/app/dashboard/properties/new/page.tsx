@@ -9,10 +9,8 @@ const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
   { value: 'complex', label: 'מתחם צימרים' },
   { value: 'villa', label: 'וילות ובקתות' },
-  { value: 'caravan', label: 'קרוואנים' },
   { value: 'hotel', label: 'מלונות' },
   { value: 'camping', label: 'קמפינג' },
-  { value: 'attraction', label: 'אטרקציות' },
 ]
 
 const AMENITIES_LIST = [

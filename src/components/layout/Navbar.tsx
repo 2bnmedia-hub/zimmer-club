@@ -250,7 +250,7 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden lg:flex items-center gap-1 shrink-0">
+          <div className="hidden lg:flex items-center gap-1 shrink-0 flex-nowrap">
             <button onClick={() => setActiveMenu(null)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <IconSearch className="w-5 h-5 text-gray-600" />
             </button>
@@ -258,7 +258,7 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => toggleMenu('user')}
-                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
                 >
                   {user.avatar ? (
                     <Image src={user.avatar} alt="" width={28} height={28} className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" />
@@ -454,7 +454,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
               </Link>
             ))}
           </div>
-          <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+          <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
             <IconUser className="w-4 h-4" />
             <span>{userName}</span>
           </Link>

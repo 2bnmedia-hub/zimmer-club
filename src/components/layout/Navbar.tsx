@@ -32,7 +32,7 @@ function MegaMenu({ sections, onClose, isOpen }: {
       requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)))
     } else {
       setVisible(false)
-      const t = setTimeout(() => setMounted(false), 350)
+      const t = setTimeout(() => setMounted(false), 180)
       return () => clearTimeout(t)
     }
   }, [isOpen])
@@ -48,8 +48,11 @@ function MegaMenu({ sections, onClose, isOpen }: {
         borderTop: '1px solid rgba(139,105,20,0.10)',
         boxShadow: '0 24px 64px rgba(0,0,0,0.10), 0 4px 16px rgba(139,105,20,0.06)',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(-18px)',
-        transition: 'opacity 0.35s cubic-bezier(0.16,1,0.3,1), transform 0.35s cubic-bezier(0.16,1,0.3,1)',
+        transform: visible ? 'scaleY(1)' : 'scaleY(0.7)',
+        transformOrigin: 'top',
+        transition: visible
+          ? 'opacity 0.1s ease, transform 0.2s cubic-bezier(0.34,1.8,0.64,1)'
+          : 'opacity 0.08s ease, transform 0.1s ease',
       }}
     >
       <style>{`

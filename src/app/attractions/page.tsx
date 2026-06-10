@@ -54,15 +54,17 @@ function AttractionsContent() {
   const [loading, setLoading] = useState(true)
   const [region, setRegion] = useState(searchParams.get('region') || '')
   const [audience, setAudience] = useState(searchParams.get('category') || '')
+  const [activityType, setActivityType] = useState(searchParams.get('type') || '')
   const [search, setSearch] = useState('')
 
   // עדכן פילטרים כשה-URL משתנה
   useEffect(() => {
     setRegion(searchParams.get('region') || '')
     setAudience(searchParams.get('category') || '')
+    setActivityType(searchParams.get('type') || '')
   }, [searchParams])
 
-  useEffect(() => { fetchAttractions() }, [region, audience])
+  useEffect(() => { fetchAttractions() }, [region, audience, activityType])
 
   async function fetchAttractions() {
     setLoading(true)
@@ -83,6 +85,11 @@ function AttractionsContent() {
 
     const { data } = await query.order('avg_rating', { ascending: false })
     let results = data || []
+
+    // פילטר לפי סוג פעילות
+    if (activityType) {
+      results = results.filter(a => a.activity_type?.includes(activityType))
+    }
 
     // פילטר לפי קהל יעד — מחפש ב-activity_type
     if (audience) {

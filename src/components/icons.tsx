@@ -12,7 +12,7 @@ const grad = (id: string) => (
 
 const s = (id: string) => `url(#${id})`
 
-type P = { size?: number; className?: string }
+type P = { size?: number; className?: string; style?: React.CSSProperties }
 
 export const IconSearch = ({ size = 20, className }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>

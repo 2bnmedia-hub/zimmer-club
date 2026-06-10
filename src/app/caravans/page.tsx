@@ -52,7 +52,23 @@ function CaravansContent() {
     relocate: searchParams.get('relocate') === 'true',
   })
 
+  // עדכן filters כשה-URL משתנה (למשל מה-Navbar)
+  useEffect(() => {
+    setFilters({
+      type: searchParams.get('type') || '',
+      region: searchParams.get('region') || '',
+      guests: searchParams.get('guests') || '',
+      instant: searchParams.get('instant') === 'true',
+      relocate: searchParams.get('relocate') === 'true',
+    })
+  }, [searchParams])
+
   useEffect(() => { fetchCaravans() }, [filters])
+
+  const regionGroups: Record<string, string[]> = {
+    north: ['north', 'galil', 'galil_upper', 'galil_lower', 'galil_west', 'kinneret', 'hermon', 'golan'],
+    negev: ['negev', 'south', 'arava'],
+  }
 
   async function fetchCaravans() {
     setLoading(true)
@@ -63,7 +79,11 @@ function CaravansContent() {
       .order('avg_rating', { ascending: false })
 
     if (filters.type) query = query.eq('caravan_type', filters.type)
-    if (filters.region) query = query.eq('region', filters.region)
+    if (filters.region) {
+      const regions = regionGroups[filters.region] || [filters.region]
+      if (regions.length > 1) query = query.in('region', regions)
+      else query = query.eq('region', regions[0])
+    }
     if (filters.guests) query = query.gte('max_guests', parseInt(filters.guests))
     if (filters.instant) query = query.eq('instant_book', true)
     if (filters.relocate) query = query.eq('can_relocate', true)

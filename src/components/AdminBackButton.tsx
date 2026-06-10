@@ -1,22 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useSearchParams } from 'next/navigation'
 
 export function AdminBackButton() {
-  const [isAdmin, setIsAdmin] = useState(false)
-  const supabase = createClient()
+  const searchParams = useSearchParams()
+  const from = searchParams.get('from')
 
-  useEffect(() => {
-    async function check() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-      if (data?.role === 'admin') setIsAdmin(true)
-    }
-    check()
-  }, [])
-
-  if (!isAdmin) return null
+  if (from !== 'dashboard') return null
 
   return (
     <a

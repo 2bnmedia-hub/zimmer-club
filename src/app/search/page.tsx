@@ -159,9 +159,11 @@ function SearchContent() {
     // מיפוי קטגוריות דף הבית למפתחות amenities
     const categoryMap: Record<string, string> = { family: 'families', pet_friendly: 'pets' }
     const mappedCategory = filters.category ? (categoryMap[filters.category] || filters.category) : ''
+    const SPECIAL_KEYS = ['weekend', 'last']
     const isAudienceCategory = filters.category && AUDIENCE_KEYS.includes(filters.category)
+    const isSpecialCategory = filters.category && SPECIAL_KEYS.includes(filters.category)
 
-    if (filters.category && !isAudienceCategory) query = query.contains('category', [filters.category])
+    if (filters.category && !isAudienceCategory && !isSpecialCategory) query = query.contains('category', [filters.category])
     
     // מיפוי אזורים — אזור כללי כולל תת-אזורים
     const regionGroups: Record<string, string[]> = {

@@ -79,6 +79,16 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
 
   return (
     <div className="w-full max-w-5xl mx-auto">
+      <style>{`
+        @keyframes dropDown {
+          from { opacity: 0; transform: scaleY(0.7); }
+          to   { opacity: 1; transform: scaleY(1); }
+        }
+        .search-drop {
+          transform-origin: top;
+          animation: dropDown 0.2s cubic-bezier(0.34,1.8,0.64,1) forwards;
+        }
+      `}</style>
       <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)] overflow-visible">
         <div className="grid grid-cols-1 lg:grid-cols-5">
 
@@ -93,7 +103,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                   <span className="text-gold text-xs" style={{transform: openDrop==='type'?'rotate(180deg)':'rotate(0deg)',display:'inline-block',transition:'transform 0.15s'}}>▾</span>
                 </button>
                 {openDrop === 'type' && (
-                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 min-w-[160px] overflow-hidden">
+                  <div className="search-drop absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-[9999] min-w-[160px] overflow-hidden">
                     {PROPERTY_TYPES.map(t => (
                       <button key={t.value} type="button"
                         onClick={() => { setPropertyType(t.value); setError(''); setOpenDrop(null) }}
@@ -119,8 +129,8 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                   <span className="text-gold text-xs" style={{transform: openDrop==='region'?'rotate(180deg)':'rotate(0deg)',display:'inline-block',transition:'transform 0.15s'}}>▾</span>
                 </button>
                 {openDrop === 'region' && (
-                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 min-w-[180px] overflow-hidden" style={{maxHeight:'220px',overflowY:'auto'}}>
-                    {[{value:'',label:'בחר אזור'},...REGIONS].map(r => (
+                  <div className="search-drop absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-[9999] min-w-[180px] overflow-hidden" style={{maxHeight:'220px',overflowY:'auto'}}>
+                    {[{value:'',label:'כל הארץ'},...REGIONS].map(r => (
                       <button key={r.value} type="button"
                         onClick={() => { setRegion(r.value); setError(''); setOpenDrop(null) }}
                         className="w-full text-right px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors"
@@ -167,7 +177,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
                   <span className="text-gold text-xs" style={{transform: openDrop==='guests'?'rotate(180deg)':'rotate(0deg)',display:'inline-block',transition:'transform 0.15s'}}>▾</span>
                 </button>
                 {openDrop === 'guests' && (
-                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 min-w-[140px] overflow-hidden">
+                  <div className="search-drop absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-[9999] min-w-[140px] overflow-hidden">
                     {[...[1,2,3,4,5,6,7,8,10,12].map(n => ({value:n,label:n===1?'אורח אחד':`${n} אורחים`})),{value:99,label:'מעל 12'}].map(o => (
                       <button key={o.value} type="button"
                         onClick={() => { setGuests(o.value); setOpenDrop(null) }}

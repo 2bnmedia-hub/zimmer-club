@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome } from '@/components/icons'
 import { buildQueryString } from '@/lib/utils'
@@ -42,31 +43,42 @@ function Drop({ id, open, setOpen, label, value, options, onChange }: {
 }) {
   const selected = options.find(o => o.value === value)
   const isOpen = open === id
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const [pos, setPos] = useState({top:0, left:0, width:0})
+
+  useEffect(() => {
+    if (isOpen && btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect()
+      setPos({ top: r.bottom + 6, left: r.left, width: Math.max(r.width, 160) })
+    }
+  }, [isOpen])
+
   return (
-    <div style={{position:'relative'}}>
-      <button type="button" onClick={(e) => { e.stopPropagation(); setOpen(isOpen ? null : id) }}
+    <div>
+      <button ref={btnRef} type="button" onClick={(e) => { e.stopPropagation(); setOpen(isOpen ? null : id) }}
         className="w-full text-sm text-right text-charcoal font-medium flex items-center justify-between gap-1 outline-none">
         <span className={!value ? 'text-gray-400' : ''}>{selected?.label || label}</span>
         <span className="text-gold text-xs" style={{display:'inline-block', transition:'transform 0.15s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'}}>▾</span>
       </button>
-      {isOpen && (
+      {isOpen && typeof document !== 'undefined' && createPortal(
         <div style={{
-          position:'absolute', top:'calc(100% + 8px)', right:0,
+          position:'fixed', top: pos.top, left: pos.left,
           background:'white', border:'1px solid #e5e7eb', borderRadius:'12px',
-          boxShadow:'0 8px 32px rgba(0,0,0,0.12)', zIndex:99999,
-          minWidth:'160px', maxHeight:'280px', overflowY:'auto',
+          boxShadow:'0 8px 32px rgba(0,0,0,0.15)', zIndex:999999,
+          minWidth: pos.width + 'px', maxHeight:'280px', overflowY:'auto',
           transformOrigin:'top',
           animation:'dropAnim 0.2s cubic-bezier(0.34,1.8,0.64,1) forwards'
         }}>
           {options.map(o => (
             <button key={String(o.value)} type="button"
-              onClick={() => { onChange(o.value); setOpen(null) }}
+              onClick={(e) => { e.stopPropagation(); onChange(o.value); setOpen(null) }}
               className="w-full text-right px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors block"
               style={{ color: value === o.value ? '#8B6914' : '#374151', fontWeight: value === o.value ? '700' : '400' }}>
               {o.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

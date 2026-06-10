@@ -28,7 +28,7 @@ export default function HomePage() {
 />
           {/* Overlay */}
 
-          <div className="relative z-10 max-w-4xl mx-auto hero-text-animate">
+          <div className="relative max-w-4xl mx-auto hero-text-animate" style={{zIndex:9999}}>
             
             {/* Title */}
             <h1 className="text-4xl sm:text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-4 sm:mb-6">
@@ -72,7 +72,7 @@ export default function HomePage() {
             </div>
 
             {/* Search */}
-            <SearchBar />
+            <div style={{position:"relative", zIndex:9999}}><SearchBar /></div>
 
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">

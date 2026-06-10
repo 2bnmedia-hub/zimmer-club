@@ -124,6 +124,7 @@ function SearchContent() {
     instant_book: searchParams.get('instant') === 'true',
     accepts_miluim: false,
     has_shelter: false,
+    amenity: searchParams.get('amenity') || '',
   })
 
   // עדכן filters כשה-URL משתנה
@@ -195,6 +196,7 @@ function SearchContent() {
     // מיזוג amenities לפי קהל יעד + פילטרים שנבחרו
     const amenityKeys = [
       ...(isAudienceCategory ? [mappedCategory] : []),
+      ...(filters.amenity ? [filters.amenity] : []),
       ...selectedAmenities,
     ]
 
@@ -277,7 +279,7 @@ function SearchContent() {
   }
 
   const clearFilters = () => {
-    setFilters({ category: '', region: '', guests: '', check_in: '', check_out: '', instant_book: false, accepts_miluim: false, has_shelter: false })
+    setFilters({ category: '', region: '', guests: '', check_in: '', check_out: '', instant_book: false, accepts_miluim: false, has_shelter: false, amenity: '' })
     setPriceRange([200, 35000])
     setSelectedAmenities([])
   }
@@ -287,7 +289,7 @@ function SearchContent() {
 
   const activeCount = [
     filters.category, filters.region, filters.guests,
-    filters.instant_book, filters.accepts_miluim, filters.has_shelter,
+    filters.instant_book, filters.accepts_miluim, filters.has_shelter, filters.amenity,
     selectedAmenities.length > 0, priceRange[0] > 200 || priceRange[1] < 35000,
   ].filter(Boolean).length
 

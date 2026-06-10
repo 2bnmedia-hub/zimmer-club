@@ -192,3 +192,38 @@ byAudience: [
 
 
 }
+
+// ===========================
+// CARAVANS
+// ===========================
+
+export const CARAVAN_TYPES = [
+  { value: 'auto',      label: 'אוטו קרוואן' },
+  { value: 'trailer',   label: 'קרוואן נגרר' },
+  { value: 'stationed', label: 'קרוואן ממוקם' },
+  { value: 'truck',     label: 'קרוואן משאית' },
+]
+
+export const CARAVAN_MENU = {
+  byType: [
+    { href: '/caravans?type=auto',      label: 'אוטו קרוואן' },
+    { href: '/caravans?type=trailer',   label: 'קרוואן נגרר' },
+    { href: '/caravans?type=stationed', label: 'קרוואן ממוקם' },
+    { href: '/caravans?type=truck',     label: 'קרוואן משאית' },
+  ],
+  byRegion: [
+    { href: '/caravans?region=north',     label: 'קרוואנים בצפון' },
+    { href: '/caravans?region=center',    label: 'קרוואנים במרכז' },
+    { href: '/caravans?region=jerusalem', label: 'קרוואנים בירושלים' },
+    { href: '/caravans?region=dead_sea',  label: 'קרוואנים בים המלח' },
+    { href: '/caravans?region=negev',     label: 'קרוואנים בדרום' },
+    { href: '/caravans?region=eilat',     label: 'קרוואנים באילת' },
+    { href: '/caravans?region=golan',     label: 'קרוואנים ברמת הגולן' },
+  ],
+  byFeature: [
+    { href: '/caravans?instant=true',    label: 'זמינים מיידית' },
+    { href: '/caravans?relocate=true',   label: 'כולל הצבה' },
+    { href: '/caravans?guests=4',        label: 'עד 4 אורחים' },
+    { href: '/caravans?guests=6',        label: 'עד 6 אורחים' },
+  ],
+}

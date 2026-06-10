@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings } from '@/components/icons'
 import { cn } from '@/lib/utils'
-import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
+import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU, CARAVAN_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
 import { useProfile } from '@/contexts/ProfileContext'
 
@@ -187,6 +187,11 @@ export function Navbar() {
     { title: 'לפי קהל יעד', icon: '👥', items: VILLAS_MENU.byAudience },
     { title: 'חיפושים פופולריים', icon: '🔥', items: VILLAS_MENU.byFeatures },
   ]
+  const caravanSections = [
+    { title: 'סוג קרוואן', icon: '🚐', items: CARAVAN_MENU.byType },
+    { title: 'לפי אזור', icon: '📍', items: CARAVAN_MENU.byRegion },
+    { title: 'חיפושים פופולריים', icon: '🔥', items: CARAVAN_MENU.byFeature },
+  ]
   const attractionsSections = [
     { title: 'לפי אזור', icon: '📍', items: ATTRACTIONS_MENU.byRegion },
     { title: 'לפי קהל יעד', icon: '👥', items: ATTRACTIONS_MENU.byAudience },
@@ -207,6 +212,7 @@ export function Navbar() {
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },
               { name: 'attractions', label: 'אטרקציות' },
+              { name: 'caravans', label: 'קרוואנים' },
             ].map((item) => (
               <li key={item.name}>
                 <button
@@ -304,6 +310,14 @@ export function Navbar() {
                       </div>
                       הוסף אטרקציה
                     </Link>
+                    <Link href="/dashboard/caravans/new"
+                      onClick={() => setActiveMenu(null)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-500 text-sm font-bold">🚐</span>
+                      </div>
+                      הוסף קרוואן
+                    </Link>
                     <hr className="my-2 border-gray-100" />
                     <button onClick={handleLogout}
                       className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
@@ -350,6 +364,7 @@ export function Navbar() {
               { name: 'zimmer', label: 'צימרים', items: [...ZIMMER_MENU.byRegion, ...ZIMMER_MENU.byAudience, ...ZIMMER_MENU.byAvailability] },
               { name: 'villas', label: 'וילות ובקתות', items: [...VILLAS_MENU.byRegion, ...VILLAS_MENU.byAudience, ...VILLAS_MENU.byFeatures] },
               { name: 'attractions', label: 'אטרקציות', items: [...ATTRACTIONS_MENU.byRegion, ...ATTRACTIONS_MENU.byAudience, ...ATTRACTIONS_MENU.popular] },
+              { name: 'caravans', label: 'קרוואנים', items: [...CARAVAN_MENU.byType, ...CARAVAN_MENU.byRegion, ...CARAVAN_MENU.byFeature] },
             ].map((menu) => (
               <div key={menu.name} style={{ borderBottom: '1px solid rgba(139,105,20,0.06)' }}>
                 <button onClick={() => toggleMenu(menu.name)}

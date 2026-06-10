@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings } from '@/components/icons'
@@ -18,10 +18,27 @@ const NAV_ITEMS = [
 
 type MenuItem = { href: string; label: string }
 
-function MegaMenu({ sections, onClose }: {
+function MegaMenu({ sections, onClose, isOpen }: {
   sections: { title: string; icon: string; items: MenuItem[] }[]
   onClose: () => void
+  isOpen: boolean
 }) {
+  const [visible, setVisible] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setMounted(true)
+      requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)))
+    } else {
+      setVisible(false)
+      const t = setTimeout(() => setMounted(false), 220)
+      return () => clearTimeout(t)
+    }
+  }, [isOpen])
+
+  if (!mounted) return null
+
   return (
     <div
       className="hidden lg:block absolute top-full right-0 left-0 z-50"
@@ -30,7 +47,9 @@ function MegaMenu({ sections, onClose }: {
         backdropFilter: 'blur(16px)',
         borderTop: '1px solid rgba(139,105,20,0.10)',
         boxShadow: '0 24px 64px rgba(0,0,0,0.10), 0 4px 16px rgba(139,105,20,0.06)',
-        animation: 'megaFadeIn 0.22s cubic-bezier(0.16,1,0.3,1)',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(-10px)',
+        transition: 'opacity 0.22s cubic-bezier(0.16,1,0.3,1), transform 0.22s cubic-bezier(0.16,1,0.3,1)',
       }}
     >
       <style>{`
@@ -317,9 +336,9 @@ export function Navbar() {
         </div>
       </nav>
 
-      {activeMenu === 'zimmer' && <MegaMenu sections={zimmerSections} onClose={() => setActiveMenu(null)} />}
-      {activeMenu === 'villas' && <MegaMenu sections={villasSections} onClose={() => setActiveMenu(null)} />}
-      {activeMenu === 'attractions' && <MegaMenu sections={attractionsSections} onClose={() => setActiveMenu(null)} />}
+      <MegaMenu sections={zimmerSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'zimmer'} />
+      <MegaMenu sections={villasSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'villas'} />
+      <MegaMenu sections={attractionsSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'attractions'} />
 
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200" dir="rtl">

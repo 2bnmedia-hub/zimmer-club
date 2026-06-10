@@ -244,7 +244,7 @@ export default function AdminDashboard() {
 
   const tabs = [
     { key:'overview', label:'סקירה כללית', icon:'📊' },
-    { key:'properties', label:'צימרים ווילות', icon:'🏠' },
+    { key:'properties', label:'צימרים, וילות ובקתות', icon:'🏠' },
     { key:'attractions', label:'אטרקציות', icon:'🎯' },
     { key:'caravans', label:'קרוואנים', icon:'🚐' },
     { key:'hotels', label:'מלונות', icon:'🏨' },
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           {totalPending > 0 && (
-            <span className="absolute left-1/2 -translate-x-1/2 text-sm font-bold px-3 py-1.5 rounded-full animate-pulse"
+            <span className="absolute left-1/2 -translate-x-1/2 text-lg font-bold px-5 py-2.5 rounded-full animate-pulse"
               style={{ background:'#fffbeb', color:'#d97706', border:'1px solid #fde68a' }}>
               ⏳ {totalPending} <span style={{ color:'#dc2626' }}>ממתינים</span>
             </span>
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
             <Link href="/dashboard/properties/new"
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:shadow-md"
               style={{ background:'#fff', color:'#111827', border:'1.5px solid #e5e7eb' }}>
-              <IconPlus className="w-3.5 h-3.5 text-gray-900" />צימר/וילה
+              <IconPlus className="w-3.5 h-3.5 text-gray-900" />צימר/וילה/בקתה
             </Link>
             <Link href="/dashboard/caravans/new"
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:shadow-md"
@@ -304,13 +304,14 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-6 flex justify-center gap-0 overflow-x-auto" style={{ scrollbarWidth:'none' }}>
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key as any)}
-              className="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap"
+              className="flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-all whitespace-nowrap"
               style={{
                 borderColor: activeTab===tab.key ? '#8B6914' : 'transparent',
                 color: activeTab===tab.key ? '#8B6914' : '#111827',
+                fontWeight: activeTab===tab.key ? '700' : '400',
                 background: 'transparent',
               }}>
-              {tab.icon} {tab.label}
+              {tab.icon} {tab.key === 'overview' ? <strong style={{fontSize:'1.1em'}}>{tab.label}</strong> : tab.label}
             </button>
           ))}
         </div>

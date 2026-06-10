@@ -214,7 +214,7 @@ export function Navbar() {
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="תפריט"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <IconMenu className="w-5 h-5" />}
+            {mobileOpen ? <IconX className="w-5 h-5" /> : <IconMenu className="w-5 h-5" />}
           </button>
         </div>
       </nav>

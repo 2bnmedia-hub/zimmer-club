@@ -451,7 +451,7 @@ export default function EditPropertyPage() {
                       <IconStar className="w-3.5 h-3.5 text-white" />
                     </button>
                     <button type="button" onClick={() => handleDeleteImage(img.id)} className="p-1.5 bg-red-500 rounded-full" title="מחק">
-                      <X className="w-3.5 h-3.5 text-white" />
+                      <IconX className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
                 </div>

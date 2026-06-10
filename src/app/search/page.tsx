@@ -459,7 +459,7 @@ function SearchContent() {
                 {activeCount > 0 && (
                   <button onClick={clearFilters}
                     className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-600 font-medium transition-colors">
-                    <X className="w-4 h-4" /> נקה הכל
+                    <IconX className="w-4 h-4" /> נקה הכל
                   </button>
                 )}
               </div>

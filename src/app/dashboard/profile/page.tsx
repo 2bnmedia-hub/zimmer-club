@@ -149,7 +149,7 @@ export default function EditProfilePage() {
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" dir="rtl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h3 className="font-semibold text-gray-900">עריכת תמונת פרופיל</h3>
-              <button onClick={() => setCropModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors"><X className="w-4 h-4" /></button>
+              <button onClick={() => setCropModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors"><IconX className="w-4 h-4" /></button>
             </div>
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">

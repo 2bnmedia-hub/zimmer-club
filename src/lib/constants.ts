@@ -183,17 +183,13 @@ byAudience: [
   { href: '/search?amenity=heated_pool', label: 'בריכה מחוממת' },
     { href: '/search?amenity=pool', label: 'צימרים עם בריכה' },
     { href: '/search?amenity=couples', label: 'צימרים לזוגות' },
-    { href: '/search?category=luxury', label: 'צימרים יוקרתיים' },
-    { href: '/search?amenity=couples', label: 'צימרים רומנטיים' },
-    { href: '/search?amenity=shelter_nearby', label: 'צימרים עם מרחב מוגן' },
+        { href: '/search?amenity=shelter_nearby', label: 'צימרים עם מרחב מוגן' },
   ],
   byAvailability: [
     { href: '/search?instant=true', label: 'צימרים פנויים' },
     { href: '/search?available=weekend', label: 'צימרים בסוף השבוע הקרוב' },
     { href: '/search?available=last', label: 'צימרים ברגע אחרון' },
-    { href: '/search?category=luxury', label: 'צימרים יוקרתיים' },
-    { href: '/search?amenity=couples', label: 'צימרים רומנטיים' },
-  
+      
   ],
 
 

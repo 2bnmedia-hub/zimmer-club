@@ -249,7 +249,7 @@ export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onTogg
                 {activeCount > 0 && (
                   <button onClick={() => { setFilters({ category:'', region:'', guests:'', instant_book:false, accepts_miluim:false, has_shelter:false }); setPriceRange([200,35000]); setSelectedAmenities([]) }}
                     className="flex items-center gap-1 text-sm text-red-400 hover:text-red-600 font-medium">
-                    <X className="w-4 h-4" /> נקה הכל
+                    <IconX className="w-4 h-4" /> נקה הכל
                   </button>
                 )}
                 <button onClick={handleSearch}

@@ -144,7 +144,7 @@ export function AdminReviews({ propertyId }: { propertyId: string }) {
                     </button>
                     <button onClick={() => setEditingId(null)}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50">
-                      <X className="w-4 h-4" /> ביטול
+                      <IconX className="w-4 h-4" /> ביטול
                     </button>
                   </div>
                 </div>

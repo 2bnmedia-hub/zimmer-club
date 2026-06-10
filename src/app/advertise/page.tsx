@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { CheckCircle, Users, Star, TrendingUp, Phone, Mail, User, Home, ArrowRight } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -95,7 +95,7 @@ export default function AdvertisePage() {
           style={{ backgroundImage: 'url(/hero-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
         <div className="relative max-w-5xl mx-auto text-center">
           <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white mb-4 transition-colors">
-            <ArrowRight className="w-4 h-4" />
+            <IconArrowRight className="w-4 h-4" />
             חזרה לדף הבית
           </Link>
           <h1 className="text-3xl font-bold mb-2">פרסמו את הנכס שלכם</h1>
@@ -141,7 +141,7 @@ export default function AdvertisePage() {
                 <div className="text-center py-10">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                     style={{ backgroundColor: '#FDF3DC' }}>
-                    <CheckCircle className="w-8 h-8" style={{ color: '#8B6914' }} />
+                    <IconCheckCircle className="w-8 h-8" style={{ color: '#8B6914' }} />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">תודה! קיבלנו את הפרטים</h3>
                   <p className="text-sm text-gray-500">ניצור איתך קשר בהקדם כדי להעלות את הנכס שלך לאוויר.</p>
@@ -155,7 +155,7 @@ export default function AdvertisePage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">שם מלא *</label>
                     <div className="relative">
-                      <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <IconUser className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input name="full_name" value={form.full_name} onChange={handleChange} required
                         placeholder="ישראל ישראלי"
                         className="w-full border border-gray-200 rounded-xl pr-10 pl-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
@@ -165,7 +165,7 @@ export default function AdvertisePage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">טלפון *</label>
                     <div className="relative">
-                      <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <IconPhone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input name="phone" value={form.phone} onChange={handleChange} required
                         type="tel" pattern="[0-9\-+]{7,15}" inputMode="numeric"
                         placeholder="050-0000000"
@@ -176,7 +176,7 @@ export default function AdvertisePage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">אימייל *</label>
                     <div className="relative">
-                      <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <IconMail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input name="email" value={form.email} onChange={handleChange} required
                         type="email" placeholder="email@example.com"
                         className="w-full border border-gray-200 rounded-xl pr-10 pl-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
@@ -186,7 +186,7 @@ export default function AdvertisePage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">סוג הנכס *</label>
                     <div className="relative">
-                      <Home className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <IconHome className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <select name="property_type" value={form.property_type} onChange={handleChange} required
                         className="w-full border border-gray-200 rounded-xl pr-10 pl-4 py-2.5 text-sm outline-none focus:border-yellow-600 appearance-none bg-white">
                         <option value="">בחר סוג נכס</option>

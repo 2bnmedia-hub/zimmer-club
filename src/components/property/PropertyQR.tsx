@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { QrCode, Download, Share2 } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 export function PropertyQR({ slug, name, mode = 'view' }: { 
   slug: string
@@ -44,7 +44,7 @@ export function PropertyQR({ slug, name, mode = 'view' }: {
     return (
       <div className="border-t border-gray-100 pt-6 mt-6">
         <h2 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-          <QrCode className="w-5 h-5 text-[#8B6914]" />
+          <IconQr className="w-5 h-5 text-[#8B6914]" />
           כרטיס ביקור דיגיטלי
         </h2>
         <div className="flex justify-center">
@@ -61,7 +61,7 @@ export function PropertyQR({ slug, name, mode = 'view' }: {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <h2 className="font-bold text-gray-700 text-lg mb-4 flex items-center gap-2">
-        <QrCode className="w-5 h-5 text-[#8B6914]" />
+        <IconQr className="w-5 h-5 text-[#8B6914]" />
         כרטיס ביקור דיגיטלי
       </h2>
       <div className="bg-gray-50 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6">
@@ -76,12 +76,12 @@ export function PropertyQR({ slug, name, mode = 'view' }: {
             <button onClick={handleDownload}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-colors"
               style={{ backgroundColor: '#8B6914' }}>
-              <Download className="w-4 h-4" />
+              <IconDownload className="w-4 h-4" />
               הורד QR
             </button>
             <button onClick={handleShare}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-100 transition-colors">
-              <Share2 className="w-4 h-4" />
+              <IconShare className="w-4 h-4" />
               {copied ? 'הועתק!' : 'העתק קישור'}
             </button>
           </div>

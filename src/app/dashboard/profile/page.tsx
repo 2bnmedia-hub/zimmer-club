@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import { User, Phone, Mail, Camera, Save, ArrowRight, CheckCircle, AlertCircle, Loader2, ZoomIn, ZoomOut, X } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { createClient } from '@/lib/supabase/client'
 import { useProfile } from '@/contexts/ProfileContext'
 
@@ -133,13 +133,13 @@ export default function EditProfilePage() {
   const roleLabel: Record<string, string> = { admin: 'מנהל מערכת', owner: 'בעל נכס', guest: 'גולש' }
   const roleColor: Record<string, string> = { admin: 'bg-purple-100 text-purple-700', owner: 'bg-amber-100 text-amber-700', guest: 'bg-gray-100 text-gray-600' }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#FAF7F2]"><Loader2 className="w-8 h-8 animate-spin text-[#C4956A]" /></div>
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#FAF7F2]"><IconLoader className="w-8 h-8 animate-spin text-[#C4956A]" /></div>
 
   return (
     <div className="min-h-screen bg-[#FAF7F2]" dir="rtl">
       {toast && (
         <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-2xl shadow-xl text-sm font-medium ${toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
-          {toast.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          {toast.type === 'success' ? <IconCheckCircle className="w-4 h-4" /> : <IconAlertCircle className="w-4 h-4" />}
           {toast.message}
         </div>
       )}
@@ -154,9 +154,9 @@ export default function EditProfilePage() {
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-xs text-gray-500">זום:</span>
-                <button onClick={() => setScale(s => Math.max(0.5, s - 0.1))} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"><ZoomOut className="w-4 h-4 text-gray-600" /></button>
+                <button onClick={() => setScale(s => Math.max(0.5, s - 0.1))} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"><IconZoomOut className="w-4 h-4 text-gray-600" /></button>
                 <input type="range" min="0.5" max="3" step="0.05" value={scale} onChange={(e) => setScale(Number(e.target.value))} className="flex-1 accent-[#C4956A]" />
-                <button onClick={() => setScale(s => Math.min(3, s + 0.1))} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"><ZoomIn className="w-4 h-4 text-gray-600" /></button>
+                <button onClick={() => setScale(s => Math.min(3, s + 0.1))} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"><IconZoomIn className="w-4 h-4 text-gray-600" /></button>
                 <span className="text-xs text-gray-500 w-10 text-center">{Math.round(scale * 100)}%</span>
               </div>
               <div className="flex justify-center bg-gray-50 rounded-2xl overflow-hidden max-h-80">
@@ -171,7 +171,7 @@ export default function EditProfilePage() {
               <button onClick={handleCropSave} disabled={uploadingAvatar || !completedCrop}
                 className="flex-1 py-3 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-50"
                 style={{ background: 'linear-gradient(135deg, #C4956A, #8B5E3C)' }}>
-                {uploadingAvatar ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {uploadingAvatar ? <IconLoader className="w-4 h-4 animate-spin" /> : <IconSave className="w-4 h-4" />}
                 {uploadingAvatar ? 'שומר...' : 'שמור תמונה'}
               </button>
             </div>
@@ -181,7 +181,7 @@ export default function EditProfilePage() {
 
       <div className="max-w-2xl mx-auto px-4 py-10">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-8 transition-colors">
-          <ArrowRight className="w-4 h-4" />חזרה לדף הבית
+          <IconArrowRight className="w-4 h-4" />חזרה לדף הבית
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mb-8">עריכת פרופיל</h1>
 
@@ -189,10 +189,10 @@ export default function EditProfilePage() {
           <div className="flex items-center gap-6">
             <div className="relative">
               <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-[#C4956A]/30">
-                {avatarPreview ? <img src={avatarPreview} alt="avatar" className="w-full h-full object-cover" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#C4956A]/20 to-[#1B5E3B]/20"><User className="w-10 h-10 text-[#C4956A]" /></div>}
+                {avatarPreview ? <img src={avatarPreview} alt="avatar" className="w-full h-full object-cover" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#C4956A]/20 to-[#1B5E3B]/20"><IconUser className="w-10 h-10 text-[#C4956A]" /></div>}
               </div>
               <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-0 left-0 w-8 h-8 bg-[#C4956A] hover:bg-[#8B5E3C] text-white rounded-full flex items-center justify-center shadow-md transition-colors">
-                <Camera className="w-3.5 h-3.5" />
+                <IconCamera className="w-3.5 h-3.5" />
               </button>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileSelect} />
             </div>
@@ -206,7 +206,7 @@ export default function EditProfilePage() {
         </div>
 
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-5">
-          <h2 className="text-base font-semibold text-gray-900 mb-6 flex items-center gap-2"><User className="w-4 h-4 text-[#C4956A]" />פרטים אישיים</h2>
+          <h2 className="text-base font-semibold text-gray-900 mb-6 flex items-center gap-2"><IconUser className="w-4 h-4 text-[#C4956A]" />פרטים אישיים</h2>
           <div className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">שם מלא</label>
@@ -241,7 +241,7 @@ export default function EditProfilePage() {
         </div>
 
         <button onClick={handleSave} disabled={saving} className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-white font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-60" style={{ background: 'linear-gradient(135deg, #C4956A, #8B5E3C)' }}>
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {saving ? <IconLoader className="w-4 h-4 animate-spin" /> : <IconSave className="w-4 h-4" />}
           {saving ? 'שומר...' : 'שמור שינויים'}
         </button>
       </div>

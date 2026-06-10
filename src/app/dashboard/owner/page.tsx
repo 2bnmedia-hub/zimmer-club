@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Plus, Edit, ArrowRight } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
   id: string
@@ -69,7 +69,7 @@ export default function OwnerDashboard() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
             <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#8B6914] transition-colors mb-1">
-              <ArrowRight className="w-4 h-4" />
+              <IconArrowRight className="w-4 h-4" />
               חזרה לדף הבית
             </Link>
             <h1 className="text-xl font-bold text-gray-900">לוח בקרה</h1>
@@ -77,11 +77,11 @@ export default function OwnerDashboard() {
           </div>
           <div className="flex gap-2">
             <Link href="/dashboard/properties/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
-              <Plus className="w-4 h-4" />
+              <IconPlus className="w-4 h-4" />
               הוסף נכס
             </Link>
             <Link href="/dashboard/attractions/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600">
-              <Plus className="w-4 h-4" />
+              <IconPlus className="w-4 h-4" />
               הוסף אטרקציה
             </Link>
           </div>
@@ -114,7 +114,7 @@ export default function OwnerDashboard() {
             <div className="px-6 py-16 text-center">
               <p className="text-gray-400 mb-4">אין לך נכסים עדיין</p>
               <Link href="/dashboard/properties/new" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
-                <Plus className="w-4 h-4" />
+                <IconPlus className="w-4 h-4" />
                 הוסף את הנכס הראשון שלך
               </Link>
             </div>
@@ -142,7 +142,7 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4 text-sm text-gray-500">{p.avg_rating ? `⭐ ${p.avg_rating}` : '—'}</td>
                       <td className="px-6 py-4">
                         <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block">
-                          <Edit className="w-4 h-4 text-gray-500" />
+                          <IconEdit className="w-4 h-4 text-gray-500" />
                         </Link>
                       </td>
                     </tr>
@@ -158,7 +158,7 @@ export default function OwnerDashboard() {
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-bold text-gray-900">האטרקציות שלי</h2>
               <Link href="/dashboard/attractions/new" className="flex items-center gap-1.5 text-sm font-medium text-amber-600 hover:text-amber-700">
-                <Plus className="w-4 h-4" />הוסף אטרקציה
+                <IconPlus className="w-4 h-4" />הוסף אטרקציה
               </Link>
             </div>
             <table className="w-full">
@@ -182,7 +182,7 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4 text-sm text-gray-500">{a.avg_rating ? `⭐ ${a.avg_rating}` : '—'}</td>
                       <td className="px-6 py-4">
                         <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block">
-                          <Edit className="w-4 h-4 text-gray-500" />
+                          <IconEdit className="w-4 h-4 text-gray-500" />
                         </Link>
                       </td>
                     </tr>
@@ -197,7 +197,7 @@ export default function OwnerDashboard() {
           <div className="bg-white rounded-2xl shadow-sm p-8 mt-6 text-center">
             <p className="text-gray-400 mb-4">אין לך אטרקציות עדיין</p>
             <Link href="/dashboard/attractions/new" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600">
-              <Plus className="w-4 h-4" />הוסף אטרקציה ראשונה
+              <IconPlus className="w-4 h-4" />הוסף אטרקציה ראשונה
             </Link>
           </div>
         )}

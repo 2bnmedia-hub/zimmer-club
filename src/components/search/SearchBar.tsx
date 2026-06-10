@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, MapPin, Calendar, Users, Home, ChevronDown } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown } from '@/components/icons'
 import { buildQueryString } from '@/lib/utils'
 
 interface SearchBarProps {
@@ -67,10 +67,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   if (variant === 'compact') {
     return (
       <div className="flex items-center gap-2 bg-white border border-sand-100 rounded-2xl px-4 py-2 shadow-sm">
-        <MapPin className="w-4 h-4 text-taupe shrink-0" />
+        <IconMapPin className="w-4 h-4 text-taupe shrink-0" />
         <input type="text" value={region} onChange={(e) => setRegion(e.target.value)}
           placeholder="לאן?" className="flex-1 text-sm bg-transparent outline-none text-charcoal placeholder-stone" dir="rtl" />
-        <button onClick={handleSearch} className="btn-gold text-sm py-1.5 px-4"><Search className="w-4 h-4" /></button>
+        <button onClick={handleSearch} className="btn-gold text-sm py-1.5 px-4"><IconSearch className="w-4 h-4" /></button>
       </div>
     )
   }
@@ -81,7 +81,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         <div className="grid grid-cols-1 lg:grid-cols-5">
 
           <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
-            <Home className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
+            <IconHome className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">סוג נכס</label>
               <select value={propertyType} onChange={(e) => { setPropertyType(e.target.value); setError('') }}
@@ -92,7 +92,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
-            <MapPin className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
+            <IconMapPin className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">אזור בארץ</label>
               <select value={region} onChange={(e) => { setRegion(e.target.value); setError('') }}
@@ -104,7 +104,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
-            <Calendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
+            <IconCalendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">תאריך כניסה</label>
               <input type="date" value={checkIn}
@@ -115,7 +115,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
-            <Calendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
+            <IconCalendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">תאריך יציאה</label>
               <input type="date" value={checkOut}
@@ -126,7 +126,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           <div className="flex items-start gap-3 px-5 pt-4 pb-2">
-            <Users className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
+            <IconUsers className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">אורחים</label>
               <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}
@@ -148,7 +148,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         <div className="border-t border-sand-100 p-4 flex items-center justify-center relative">
           <button onClick={handleSearch}
             className="btn-gold flex items-center justify-center gap-2 py-2.5 px-8 text-sm">
-            <Search className="w-4 h-4 shrink-0" />
+            <IconSearch className="w-4 h-4 shrink-0" />
             <span>חיפוש</span>
           </button>
           <a href="/search"

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Star, Zap, MapPin } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { cn, formatPrice, truncate } from '@/lib/utils'
 import type { Property } from '@/types'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
@@ -48,7 +48,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <div className="absolute top-3 right-3 flex flex-col gap-1.5">
             {property.instant_book && (
               <span className="badge badge-gold flex items-center gap-1">
-                <Zap className="w-3 h-3" />
+                <IconZap className="w-3 h-3" />
                 הזמנה מיידית
               </span>
             )}
@@ -78,7 +78,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         <div className="p-4">
           {/* Location */}
           <div className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-taupe mb-1.5">
-            <MapPin className="w-3 h-3" />
+            <IconMapPin className="w-3 h-3" />
             {region?.label} • {property.city}
           </div>
 
@@ -100,7 +100,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <div className="flex items-center justify-between pt-3 border-t border-sand-100">
             {/* Rating */}
             <div className="flex items-center gap-1">
-              <Star className="w-3.5 h-3.5 fill-gold text-gold" />
+              <IconStar className="w-3.5 h-3.5 fill-gold text-gold" />
               <span className="text-sm font-bold text-charcoal">{property.avg_rating?.toFixed(1)}</span>
               <span className="text-xs text-taupe">({property.total_reviews})</span>
             </div>

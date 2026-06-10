@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { REGIONS } from '@/lib/constants'
-import { Sparkles, Star, MapPin, Users, RefreshCw } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
   slug?: string
@@ -167,7 +167,7 @@ export default function FindPage() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold mb-5 tracking-wider uppercase"
             style={{ background: 'rgba(139,105,20,0.2)', color: '#C8960C', border: '1px solid rgba(200,150,12,0.3)' }}>
-            <Sparkles className="w-3.5 h-3.5" />
+            <IconSparkles className="w-3.5 h-3.5" />
             חיפוש חכם מבוסס AI
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-3 tracking-tight">
@@ -199,7 +199,7 @@ export default function FindPage() {
               {msg.role === 'ai' && (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center ml-2 flex-shrink-0 self-end mb-1"
                   style={{ background: 'linear-gradient(135deg, #1a4a2e, #2d6a4f)' }}>
-                  <Sparkles className="w-4 h-4" style={{ color: '#C8960C' }} />
+                  <IconSparkles className="w-4 h-4" style={{ color: '#C8960C' }} />
                 </div>
               )}
               <div className={`max-w-lg w-full px-8 py-6 rounded-2xl text-sm leading-relaxed whitespace-pre-line shadow-lg ${msg.role === 'ai' ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
@@ -215,7 +215,7 @@ export default function FindPage() {
             <div className="flex justify-end">
               <div className="w-8 h-8 rounded-full flex items-center justify-center ml-2 flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, #1a4a2e, #2d6a4f)' }}>
-                <Sparkles className="w-4 h-4" style={{ color: '#C8960C' }} />
+                <IconSparkles className="w-4 h-4" style={{ color: '#C8960C' }} />
               </div>
               <div className="px-5 py-4 rounded-2xl rounded-bl-sm"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -273,13 +273,13 @@ export default function FindPage() {
                       <h3 className="font-bold text-white text-sm leading-tight group-hover:text-yellow-300 transition-colors">{p.name}</h3>
                       {p.avg_rating > 0 && (
                         <div className="flex items-center gap-0.5 text-xs flex-shrink-0 mr-2" style={{ color: '#C8960C' }}>
-                          <Star className="w-3 h-3 fill-current" />
+                          <IconStar className="w-3 h-3 fill-current" />
                           {p.avg_rating}
                         </div>
                       )}
                     </div>
                     <div className="flex items-center gap-1 text-xs mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                      <MapPin className="w-3 h-3" />
+                      <IconMapPin className="w-3 h-3" />
                       {p.city || REGIONS[p.region as keyof typeof REGIONS]?.label}
                     </div>
                     {p.short_description && <p className="text-xs mb-2 line-clamp-2" style={{ color: 'rgba(255,255,255,0.5)' }}>{p.short_description}</p>}
@@ -289,7 +289,7 @@ export default function FindPage() {
                         <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}> / לילה</span>
                       </div>
                       <div className="flex items-center gap-1 text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                        <Users className="w-3 h-3" />
+                        <IconUsers className="w-3 h-3" />
                         עד {p.max_guests}
                       </div>
                     </div>
@@ -315,7 +315,7 @@ export default function FindPage() {
             <button onClick={reset}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
               style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <RefreshCw className="w-4 h-4" />
+              <IconRefresh className="w-4 h-4" />
               חפש שוב
             </button>
           </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Plus, Trash2, ArrowRight } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Contact = {
   id: string
@@ -71,7 +71,7 @@ export default function AdminContactsPage() {
       <div className="max-w-2xl mx-auto px-4 py-10">
         <div className="flex items-center gap-3 mb-8">
           <button onClick={() => router.push('/dashboard/admin')} className="p-2 rounded-lg hover:bg-gray-100">
-            <ArrowRight className="w-5 h-5 text-gray-500" />
+            <IconArrowRight className="w-5 h-5 text-gray-500" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900">ניהול אמצעי תקשורת</h1>
         </div>
@@ -96,7 +96,7 @@ export default function AdminContactsPage() {
                 <span className="text-xs text-gray-500">{c.active ? 'פעיל' : 'כבוי'}</span>
               </label>
               <button onClick={() => deleteContact(c.id)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                <Trash2 className="w-4 h-4" />
+                <IconTrash className="w-4 h-4" />
               </button>
             </div>
           ))}
@@ -132,7 +132,7 @@ export default function AdminContactsPage() {
             <button onClick={addContact} disabled={saving || !newValue.trim()}
               className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50"
               style={{ backgroundColor: '#8B6914' }}>
-              <Plus className="w-4 h-4" />
+              <IconPlus className="w-4 h-4" />
               {saving ? 'מוסיף...' : 'הוסף'}
             </button>
           </div>

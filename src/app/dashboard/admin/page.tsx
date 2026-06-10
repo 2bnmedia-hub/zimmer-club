@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Check, X, Trash2, Edit, ArrowRight, Phone } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
   id: string
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
 <div>
 <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#8B6914] transition-colors mb-4">
-  <ArrowRight className="w-4 h-4" />
+  <IconArrowRight className="w-4 h-4" />
   חזרה לדף הבית
 </Link>
             <h1 className="text-xl font-bold text-gray-900">לוח בקרה - אדמין</h1>
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/dashboard/admin/contacts" className="px-4 py-2 rounded-xl text-sm font-bold border border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-              <Phone className="w-4 h-4" />
+              <IconPhone className="w-4 h-4" />
               אמצעי תקשורת
             </Link>
             <Link href="/dashboard/properties/new" className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
@@ -164,12 +164,12 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-2">
                         {p.status === 'pending' && (
                           <>
-                            <button onClick={() => updateStatus(p.id, 'active')} className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100"><Check className="w-4 h-4 text-green-600" /></button>
+                            <button onClick={() => updateStatus(p.id, 'active')} className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100"><IconCheck className="w-4 h-4 text-green-600" /></button>
                             <button onClick={() => updateStatus(p.id, 'rejected')} className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100"><X className="w-4 h-4 text-red-600" /></button>
-                            <button onClick={() => { if(confirm('למחוק את הנכס לצמיתות?')) { supabase.from('properties').delete().eq('id', p.id).then(() => setProperties(prev => prev.filter(x => x.id !== p.id))) } }} className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100"><Trash2 className="w-4 h-4 text-gray-500 hover:text-red-600" /></button>
+                            <button onClick={() => { if(confirm('למחוק את הנכס לצמיתות?')) { supabase.from('properties').delete().eq('id', p.id).then(() => setProperties(prev => prev.filter(x => x.id !== p.id))) } }} className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100"><IconTrash className="w-4 h-4 text-gray-500 hover:text-red-600" /></button>
                           </>
                         )}
-                        <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><Edit className="w-4 h-4 text-gray-500" /></Link>
+                        <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><IconEdit className="w-4 h-4 text-gray-500" /></Link>
                       </div>
                     </td>
                   </tr>
@@ -217,15 +217,15 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-2">
                         {a.status === 'pending' && (
                           <>
-                            <button onClick={() => updateAttrStatus(a.id, 'active')} className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100"><Check className="w-4 h-4 text-green-600" /></button>
+                            <button onClick={() => updateAttrStatus(a.id, 'active')} className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100"><IconCheck className="w-4 h-4 text-green-600" /></button>
                             <button onClick={() => updateAttrStatus(a.id, 'rejected')} className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100"><X className="w-4 h-4 text-red-600" /></button>
                           </>
                         )}
                         {a.status === 'active' && (
                           <button onClick={() => updateAttrStatus(a.id, 'inactive')} className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"><X className="w-4 h-4 text-gray-500" /></button>
                         )}
-                        <button onClick={() => { if(confirm('למחוק את האטרקציה לצמיתות?')) { supabase.from('attractions').delete().eq('id', a.id).then(() => setAttractions(prev => prev.filter(x => x.id !== a.id))) } }} className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100"><Trash2 className="w-4 h-4 text-gray-500 hover:text-red-600" /></button>
-                        <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><Edit className="w-4 h-4 text-gray-500" /></Link>
+                        <button onClick={() => { if(confirm('למחוק את האטרקציה לצמיתות?')) { supabase.from('attractions').delete().eq('id', a.id).then(() => setAttractions(prev => prev.filter(x => x.id !== a.id))) } }} className="p-1.5 rounded-lg bg-gray-100 hover:bg-red-100"><IconTrash className="w-4 h-4 text-gray-500 hover:text-red-600" /></button>
+                        <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100"><IconEdit className="w-4 h-4 text-gray-500" /></Link>
                       </div>
                     </td>
                   </tr>

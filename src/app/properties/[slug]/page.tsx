@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
 import Image from 'next/image'
-import { Star, MapPin, Users, BedDouble, Bath, Zap, ArrowRight, Check, ChevronLeft, ChevronRight, Navigation, Heart } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
 import { PropertyQR } from '@/components/property/PropertyQR'
@@ -108,9 +108,9 @@ function AvailabilityCalendar({ propertyId, supabase }: { propertyId: string; su
           <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-red-400" /><span className="text-xs text-gray-500">תפוס</span></div>
         </div>
         <div className="flex items-center justify-between mb-3">
-          <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"><ChevronRight className="w-4 h-4 text-gray-500" /></button>
+          <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"><IconChevronRight className="w-4 h-4 text-gray-500" /></button>
           <span className="font-bold text-gray-800 text-sm">{HEBREW_MONTHS[currentMonth]} {currentYear}</span>
-          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"><ChevronLeft className="w-4 h-4 text-gray-500" /></button>
+          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"><IconChevronLeft className="w-4 h-4 text-gray-500" /></button>
         </div>
         {loadingDates ? <div className="text-center py-8 text-gray-400 text-sm">טוען...</div> : (
           <div className="grid grid-cols-7 gap-1">
@@ -226,7 +226,7 @@ export default function PropertyPage() {
           )}
           {property.avg_rating > 0 && (
             <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+              <IconStar className="w-3 h-3 fill-yellow-400 text-yellow-400" />
               <span className="text-xs text-gray-600 font-medium">{property.avg_rating}</span>
               <span className="text-xs text-gray-400">({property.total_reviews})</span>
             </div>
@@ -242,7 +242,7 @@ export default function PropertyPage() {
 
       <main className="min-h-screen bg-white pt-4 property-content-mobile lg:pb-0" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
-          <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><ArrowRight className="w-4 h-4" />חזרה</button></div>
+          <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><IconArrowRight className="w-4 h-4" />חזרה</button></div>
 
           {/* תמונות + מידע בשורה אחת */}
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4 md:gap-6 mb-6 md:mb-8 items-start">
@@ -254,16 +254,16 @@ export default function PropertyPage() {
                 {property.short_description && <p className="text-sm text-gray-600 mb-4 leading-relaxed">{property.short_description}</p>}
               {property.avg_rating > 0 && (
                 <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <IconStar className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <span className="font-bold text-gray-900">{property.avg_rating}</span>
                   <span className="text-xs text-gray-500">({property.total_reviews})</span>
                 </div>
               )}
               <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-                <div className="flex items-center gap-1.5"><Users className="w-4 h-4 text-gray-400" />עד {property.max_guests} אורחים</div>
-                <div className="flex items-center gap-1.5"><BedDouble className="w-4 h-4 text-gray-400" />{property.bedrooms} חדרי שינה</div>
-                <div className="flex items-center gap-1.5"><Bath className="w-4 h-4 text-gray-400" />{property.bathrooms} חדרי רחצה</div>
-                <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" />{property.address || property.city}</div>
+                <div className="flex items-center gap-1.5"><IconUsers className="w-4 h-4 text-gray-400" />עד {property.max_guests} אורחים</div>
+                <div className="flex items-center gap-1.5"><IconBed className="w-4 h-4 text-gray-400" />{property.bedrooms} חדרי שינה</div>
+                <div className="flex items-center gap-1.5"><IconBath className="w-4 h-4 text-gray-400" />{property.bathrooms} חדרי רחצה</div>
+                <div className="flex items-center gap-1.5"><IconMapPin className="w-4 h-4 text-gray-400" />{property.address || property.city}</div>
               </div>
               {(property.address || property.city) && (
                 <div className="mt-auto pt-4">
@@ -310,11 +310,11 @@ export default function PropertyPage() {
                   <>
                     <button onClick={() => setCurrentImage(prev => (prev - 1 + images.length) % images.length)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
-                      <ChevronRight className="w-5 h-5" />
+                      <IconChevronRight className="w-5 h-5" />
                     </button>
                     <button onClick={() => setCurrentImage(prev => (prev + 1) % images.length)}
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
-                      <ChevronLeft className="w-5 h-5" />
+                      <IconChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                       {images.map((_, i) => <button key={i} onClick={() => setCurrentImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`} />)}
@@ -327,11 +327,11 @@ export default function PropertyPage() {
               <div className="h-64 flex items-center justify-center text-gray-400">אין תמונות עדיין</div>
             )}
             <button onClick={() => toggle(property!.id)} className="absolute top-4 left-4 z-10 bg-white/90 hover:bg-white p-2.5 rounded-full shadow-md transition-all hover:scale-110" aria-label="הוסף למועדפים">
-              <Heart className={`w-5 h-5 transition-colors ${isLiked(property!.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+              <IconHeart className={`w-5 h-5 transition-colors ${isLiked(property!.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
             </button>
             {property.instant_book && (
               <div className="absolute top-4 right-4 z-10">
-                <span className="bg-white text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1"><Zap className="w-3 h-3" />הזמנה מיידית</span>
+                <span className="bg-white text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1"><IconZap className="w-3 h-3" />הזמנה מיידית</span>
               </div>
             )}
             <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 mt-9">
@@ -375,7 +375,7 @@ export default function PropertyPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {amenities.map((key) => (
                       <div key={key} className="flex items-center gap-2 text-sm text-gray-700">
-                        <Check className="w-4 h-4 text-green-500 shrink-0" />{AMENITY_LABELS[key] || key}
+                        <IconCheck className="w-4 h-4 text-green-500 shrink-0" />{AMENITY_LABELS[key] || key}
                       </div>
                     ))}
                   </div>
@@ -437,7 +437,7 @@ export default function PropertyPage() {
                 {property.min_nights > 1 && <p className="text-xs text-gray-400 text-center mt-2">מינימום {property.min_nights} לילות</p>}
                 {(property.address || property.city) && (
                   <div className="mt-5 pt-5 border-t border-gray-100">
-                    <h3 className="font-bold text-gray-800 text-sm mb-3 flex items-center gap-1.5"><MapPin className="w-4 h-4" style={{color:'#8B6914'}} />מיקום הנכס</h3>
+                    <h3 className="font-bold text-gray-800 text-sm mb-3 flex items-center gap-1.5"><IconMapPin className="w-4 h-4" style={{color:'#8B6914'}} />מיקום הנכס</h3>
                     <div className="rounded-xl overflow-hidden border border-gray-100 shadow-sm">
                       <iframe width="100%" height="200" style={{border:0}} loading="lazy"
                         src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address?property.address+', ':'')+( property.city||'')+', ישראל')}&output=embed&z=15&hl=iw`} />
@@ -445,7 +445,7 @@ export default function PropertyPage() {
                     <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address?property.address+', ':'')+(property.city||'')+', ישראל')}`}
                       target="_blank" rel="noopener noreferrer"
                       className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-white transition-colors" style={{backgroundColor:'#2563eb'}}>
-                      <Navigation className="w-3.5 h-3.5" />נווט
+                      <IconNavigation className="w-3.5 h-3.5" />נווט
                     </a>
                   </div>
                 )}

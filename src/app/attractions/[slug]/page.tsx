@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Star, MapPin, Clock, Users, ArrowRight, ChevronLeft, ChevronRight, Navigation, Heart, Phone, Globe } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const DAYS_LABELS: Record<string, string> = {
   sun: "א'", mon: "ב'", tue: "ג'", wed: "ד'", thu: "ה'", fri: "ו'", sat: "ש'"
@@ -118,7 +118,7 @@ function ReviewsSection({ attractionId }: { attractionId: string }) {
           <div className="flex gap-1 mb-3">
             {[1,2,3,4,5].map(s => (
               <button key={s} type="button" onClick={() => setRating(s)}>
-                <Star className={`w-6 h-6 ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                <IconStar className={`w-6 h-6 ${s <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
               </button>
             ))}
           </div>
@@ -146,7 +146,7 @@ function ReviewsSection({ attractionId }: { attractionId: string }) {
                 </div>
                 <div className="flex gap-0.5">
                   {[1,2,3,4,5].map(s => (
-                    <Star key={s} className={`w-4 h-4 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                    <IconStar key={s} className={`w-4 h-4 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
                   ))}
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function AttractionPage() {
       <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
 
         <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6">
-          <ArrowRight className="w-4 h-4" />חזרה
+          <IconArrowRight className="w-4 h-4" />חזרה
         </button>
 
         {/* תמונות + מידע */}
@@ -219,7 +219,7 @@ export default function AttractionPage() {
 
             {attraction.avg_rating > 0 && (
               <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <IconStar className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <span className="font-bold text-gray-900">{attraction.avg_rating}</span>
                 <span className="text-xs text-gray-500">({attraction.total_reviews})</span>
               </div>
@@ -234,19 +234,19 @@ export default function AttractionPage() {
               )}
               {attraction.min_age > 0 && (
                 <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-gray-400" />
+                  <IconUsers className="w-4 h-4 text-gray-400" />
                   גיל {attraction.min_age}{attraction.max_age < 99 ? `–${attraction.max_age}` : '+'}
                 </div>
               )}
               {attraction.opening_hours && (
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-gray-400" />
+                  <IconClock className="w-4 h-4 text-gray-400" />
                   {parseHours(attraction.opening_hours)}
                 </div>
               )}
               {(attraction.address || attraction.city) && (
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                  <IconMapPin className="w-4 h-4 text-gray-400" />
                   {attraction.address || attraction.city}
                 </div>
               )}
@@ -265,13 +265,13 @@ export default function AttractionPage() {
               {attraction.phone && (
                 <a href={`tel:${attraction.phone}`}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-white bg-gray-600">
-                  <Phone className="w-4 h-4" />חייג עכשיו
+                  <IconPhone className="w-4 h-4" />חייג עכשיו
                 </a>
               )}
               {attraction.website && (
                 <a href={attraction.website} target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-gray-700 border border-gray-200 hover:bg-gray-50">
-                  <Globe className="w-4 h-4" />אתר האטרקציה
+                  <IconGlobe className="w-4 h-4" />אתר האטרקציה
                 </a>
               )}
             </div>
@@ -293,7 +293,7 @@ export default function AttractionPage() {
                 <a href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
                   target="_blank" rel="noopener noreferrer"
                   className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-white bg-blue-600">
-                  <Navigation className="w-3.5 h-3.5" />נווט לאטרקציה
+                  <IconNavigation className="w-3.5 h-3.5" />נווט לאטרקציה
                 </a>
               </div>
             )}
@@ -320,11 +320,11 @@ export default function AttractionPage() {
                     <>
                       <button onClick={() => setCurrentImage(prev => (prev - 1 + images.length) % images.length)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md z-10">
-                        <ChevronRight className="w-5 h-5" />
+                        <IconChevronRight className="w-5 h-5" />
                       </button>
                       <button onClick={() => setCurrentImage(prev => (prev + 1) % images.length)}
                         className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md z-10">
-                        <ChevronLeft className="w-5 h-5" />
+                        <IconChevronLeft className="w-5 h-5" />
                       </button>
                       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                         {images.map((_, i) => (
@@ -341,7 +341,7 @@ export default function AttractionPage() {
             )}
             <button onClick={() => setLiked(l => !l)}
               className="absolute top-4 left-4 z-10 bg-white/90 p-2.5 rounded-full shadow-md">
-              <Heart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+              <IconHeart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
             </button>
           </div>
         </div>

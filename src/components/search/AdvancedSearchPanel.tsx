@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { SlidersHorizontal, ChevronDown, ChevronUp, X, Search } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const PROPERTY_TYPES = [
   { value: '', label: 'הכל' },
@@ -88,14 +88,14 @@ export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onTogg
             boxShadow: open ? '0 4px 20px rgba(139,105,20,0.4)' : '0 2px 12px rgba(0,0,0,0.1)',
           }}
         >
-          <SlidersHorizontal className="w-4 h-4" />
+          <IconSliders className="w-4 h-4" />
           חיפוש מתקדם
           {activeCount > 0 && (
             <span className="text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" style={{background:'#D4A876', color:'#3D2F20'}}>
               {activeCount}
             </span>
           )}
-          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {isOpen ? <IconChevronUp className="w-4 h-4" /> : <IconChevronDown className="w-4 h-4" />}
         </button>
       </div>
 
@@ -174,7 +174,7 @@ export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onTogg
                       {selectedAmenities.filter(k => FEATURE_AMENITIES.includes(k)).length}
                     </span>}
                 </span>
-                {showAmenities ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                {showAmenities ? <IconChevronUp className="w-4 h-4 text-gray-400" /> : <IconChevronDown className="w-4 h-4 text-gray-400" />}
               </button>
               {showAmenities && (
                 <div className="p-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -204,7 +204,7 @@ export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onTogg
                       {selectedAmenities.filter(k => Object.keys(AUDIENCE_AMENITIES).includes(k)).length}
                     </span>}
                 </span>
-                {showAudience ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                {showAudience ? <IconChevronUp className="w-4 h-4 text-gray-400" /> : <IconChevronDown className="w-4 h-4 text-gray-400" />}
               </button>
               {showAudience && (
                 <div className="p-4 flex flex-wrap gap-2">
@@ -255,7 +255,7 @@ export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onTogg
                 <button onClick={handleSearch}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
                   style={{ backgroundColor: '#8B6914' }}>
-                  <Search className="w-4 h-4" />
+                  <IconSearch className="w-4 h-4" />
                   חפש עכשיו
                 </button>
               </div>

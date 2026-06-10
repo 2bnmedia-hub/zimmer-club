@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { Star, Zap } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
   slug?: string
@@ -68,7 +68,7 @@ export function LatestProperties() {
                   {p.instant_book && (
                     <div className="absolute top-3 right-3">
                       <span className="bg-white text-yellow-700 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                        <Zap className="w-3 h-3" />מיידי
+                        <IconZap className="w-3 h-3" />מיידי
                       </span>
                     </div>
                   )}
@@ -78,7 +78,7 @@ export function LatestProperties() {
                     <h3 className="font-bold text-charcoal text-sm group-hover:text-gold-deep transition-colors line-clamp-1">{p.name}</h3>
                     {p.avg_rating > 0 && (
                       <div className="flex items-center gap-0.5 shrink-0">
-                        <Star className="w-3 h-3 fill-gold text-gold" />
+                        <IconStar className="w-3 h-3 fill-gold text-gold" />
                         <span className="text-xs text-taupe">{p.avg_rating}</span>
                       </div>
                     )}

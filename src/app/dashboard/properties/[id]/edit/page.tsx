@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { ArrowRight, Upload, X, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { PropertyQR } from '@/components/property/PropertyQR'
 import { AdminReviews } from '@/components/property/AdminReviews'
 
@@ -167,11 +167,11 @@ function Calendar({
       </div>
       <div className="flex items-center justify-between mb-4">
         <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
-          <ChevronRight className="w-4 h-4 text-gray-500" />
+          <IconChevronRight className="w-4 h-4 text-gray-500" />
         </button>
         <span className="font-bold text-gray-800 text-sm">{HEBREW_MONTHS[currentMonth]} {currentYear}</span>
         <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
-          <ChevronLeft className="w-4 h-4 text-gray-500" />
+          <IconChevronLeft className="w-4 h-4 text-gray-500" />
         </button>
       </div>
       {loadingDates ? (
@@ -424,14 +424,14 @@ export default function EditPropertyPage() {
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center gap-3 mb-8">
           <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100">
-            <ArrowRight className="w-5 h-5 text-gray-500" />
+            <IconArrowRight className="w-5 h-5 text-gray-500" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900">עריכת נכס</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          <Calendar propertyId={params.id as string} supabase={supabase} />
+          <IconCalendar propertyId={params.id as string} supabase={supabase} />
 
           {/* גלריית תמונות */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
@@ -443,12 +443,12 @@ export default function EditPropertyPage() {
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
                   {img.is_primary && (
                     <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1">
-                      <Star className="w-3 h-3 text-white fill-white" />
+                      <IconStar className="w-3 h-3 text-white fill-white" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
                     <button type="button" onClick={() => handleSetPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
-                      <Star className="w-3.5 h-3.5 text-white" />
+                      <IconStar className="w-3.5 h-3.5 text-white" />
                     </button>
                     <button type="button" onClick={() => handleDeleteImage(img.id)} className="p-1.5 bg-red-500 rounded-full" title="מחק">
                       <X className="w-3.5 h-3.5 text-white" />
@@ -457,7 +457,7 @@ export default function EditPropertyPage() {
                 </div>
               ))}
               <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                <IconUpload className="w-6 h-6 text-gray-400 mb-1" />
                 <span className="text-xs text-gray-400">{uploading ? 'מעלה...' : 'הוסף תמונות'}</span>
                 <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" disabled={uploading} />
               </label>
@@ -476,11 +476,11 @@ export default function EditPropertyPage() {
               </label>
               {videoPreview && <div className="relative">
                 <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
               </div>}
               {form.video_url && !videoPreview && <div className="relative">
                 <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
-                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
               </div>}
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-200" />

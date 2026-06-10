@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Star } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -384,16 +384,16 @@ export default function NewPropertyPage() {
               {images.map((img, idx) => (
                 <div key={idx} className="relative group aspect-video">
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
-                  {img.isPrimary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><Star className="w-3 h-3 text-white fill-white" /></div>}
+                  {img.isPrimary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><IconStar className="w-3 h-3 text-white fill-white" /></div>}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => setPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full"><Star className="w-3.5 h-3.5 text-white" /></button>
+                    <button type="button" onClick={() => setPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full"><IconStar className="w-3.5 h-3.5 text-white" /></button>
                     <button type="button" onClick={() => removeImage(idx)} className="p-1.5 bg-red-500 rounded-full"><X className="w-3.5 h-3.5 text-white" /></button>
                   </div>
                 </div>
               ))}
               {images.length < 14 && (
                 <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                  <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                  <IconUpload className="w-6 h-6 text-gray-400 mb-1" />
                   <span className="text-xs text-gray-400">הוסף תמונות</span>
                   <input type="file" accept="image/*" multiple onChange={handleImageSelect} className="hidden" />
                 </label>
@@ -414,7 +414,7 @@ export default function NewPropertyPage() {
               </label>
               {videoPreview && <div className="relative">
                 <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><Star className="w-4 h-4 text-white fill-white" /></button>
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
               </div>}
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />

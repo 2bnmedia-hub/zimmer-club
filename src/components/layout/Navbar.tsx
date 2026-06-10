@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X, Search, User, ChevronDown, LogOut, Settings } from 'lucide-react'
+import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
@@ -143,7 +143,7 @@ export function Navbar() {
                   className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   {item.label}
-                  <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
                 </button>
               </li>
             ))}
@@ -171,7 +171,7 @@ export function Navbar() {
 
           <div className="hidden lg:flex items-center gap-3">
             <button onClick={() => setActiveMenu(null)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <Search className="w-5 h-5 text-gray-600" />
+              <IconSearch className="w-5 h-5 text-gray-600" />
             </button>
             {user ? (
               <div className="relative">
@@ -183,11 +183,11 @@ export function Navbar() {
                     <Image src={user.avatar} alt="" width={28} height={28} className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C4956A]/30 to-[#1B5E3B]/20 flex items-center justify-center">
-                      <User className="w-4 h-4 text-[#C4956A]" />
+                      <IconUser className="w-4 h-4 text-[#C4956A]" />
                     </div>
                   )}
                   <span>שלום, {user.name.split(' ')[0]}</span>
-                  <ChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
                 </button>
 
                 {activeMenu === 'user' && (
@@ -203,7 +203,7 @@ export function Navbar() {
                       onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <User className="w-3.5 h-3.5 text-gray-500" />
+                        <IconUser className="w-3.5 h-3.5 text-gray-500" />
                       </div>
                       לוח בקרה
                     </Link>
@@ -212,7 +212,7 @@ export function Navbar() {
                       onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
-                        <Settings className="w-3.5 h-3.5 text-[#C4956A]" />
+                        <IconSettings className="w-3.5 h-3.5 text-[#C4956A]" />
                       </div>
                       עריכת פרופיל
                     </Link>
@@ -239,7 +239,7 @@ export function Navbar() {
                     <button onClick={handleLogout}
                       className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                       <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
-                        <LogOut className="w-3.5 h-3.5 text-red-500" />
+                        <IconLogOut className="w-3.5 h-3.5 text-red-500" />
                       </div>
                       התנתק
                     </button>
@@ -265,7 +265,7 @@ export function Navbar() {
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="תפריט"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileOpen ? <IconX className="w-5 h-5" /> : <IconMenu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
@@ -286,7 +286,7 @@ export function Navbar() {
                 <button onClick={() => toggleMenu(menu.name)}
                   className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
                   {menu.label}
-                  <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === menu.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === menu.name && 'rotate-180')} />
                 </button>
                 {activeMenu === menu.name && (
                   <div className="px-4 space-y-1">
@@ -323,12 +323,12 @@ export function Navbar() {
                   <Link href="/dashboard/profile"
                     onClick={() => setMobileOpen(false)}
                     className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#C4956A] hover:bg-[#C4956A]/5 rounded-xl">
-                    <Settings className="w-4 h-4" />
+                    <IconSettings className="w-4 h-4" />
                     עריכת פרופיל
                   </Link>
                   <button onClick={handleLogout}
                     className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl">
-                    <LogOut className="w-4 h-4" />
+                    <IconLogOut className="w-4 h-4" />
                     התנתק
                   </button>
                 </>
@@ -363,7 +363,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
             ))}
           </div>
           <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-            <User className="w-4 h-4" />
+            <IconUser className="w-4 h-4" />
             <span>{userName}</span>
           </Link>
         </div>

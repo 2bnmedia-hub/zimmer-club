@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
-import { Search, Star } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { Heart } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
 
@@ -123,7 +123,7 @@ function AttractionsContent() {
 
             {/* חיפוש חופשי */}
             <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 w-52">
-              <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <IconSearch className="w-3.5 h-3.5 text-gray-400 shrink-0" />
               <input type="text" placeholder="חפש אטרקציה..." value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="flex-1 bg-transparent text-sm outline-none text-gray-700" dir="rtl" />
@@ -174,7 +174,7 @@ function AttractionsContent() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-7 h-7 text-gray-300" />
+                <IconSearch className="w-7 h-7 text-gray-300" />
               </div>
               <p className="text-gray-500 text-lg font-medium mb-2">לא נמצאו אטרקציות</p>
               <p className="text-gray-400 text-sm">נסה לשנות את הפילטרים</p>
@@ -201,7 +201,7 @@ function AttractionsContent() {
                           </div>
                           {a.avg_rating > 0 && (
                             <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg shrink-0">
-                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                              <IconStar className="w-3 h-3 fill-amber-400 text-amber-400" />
                               <span className="text-xs font-bold text-amber-800">{a.avg_rating}</span>
                             </div>
                           )}
@@ -218,7 +218,7 @@ function AttractionsContent() {
                     </Link>
                     <button onClick={() => toggle(a.id)}
                       className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110">
-                      <Heart className={`w-4 h-4 transition-colors ${isLiked(a.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                      <IconHeart className={`w-4 h-4 transition-colors ${isLiked(a.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
                     </button>
                   </div>
                 )

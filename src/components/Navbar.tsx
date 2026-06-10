@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Search, User, ChevronDown, LogOut } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
@@ -134,7 +134,7 @@ export function Navbar() {
                   className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   {item.label}
-                  <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
                 </button>
               </li>
             ))}
@@ -162,7 +162,7 @@ export function Navbar() {
 
           <div className="hidden lg:flex items-center gap-3">
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <Search className="w-5 h-5 text-gray-600" />
+              <IconSearch className="w-5 h-5 text-gray-600" />
             </button>
             {user ? (
               <div className="relative">
@@ -170,9 +170,9 @@ export function Navbar() {
                   onClick={() => toggleMenu('user')}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <User className="w-4 h-4" />
+                  <IconUser className="w-4 h-4" />
                   <span>שלום, {user.name.split(' ')[0]}</span>
-                  <ChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
                 </button>
                 {activeMenu === 'user' && (
                   <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-48 py-1" dir="rtl">
@@ -189,7 +189,7 @@ export function Navbar() {
                     <hr className="my-1 border-gray-100" />
                     <button onClick={handleLogout}
                       className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
-                      <LogOut className="w-4 h-4" />
+                      <IconLogOut className="w-4 h-4" />
                       התנתק
                     </button>
                   </div>
@@ -214,7 +214,7 @@ export function Navbar() {
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="תפריט"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileOpen ? <X className="w-5 h-5" /> : <IconMenu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
@@ -243,7 +243,7 @@ export function Navbar() {
                   className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl"
                 >
                   {menu.label}
-                  <ChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === menu.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === menu.name && 'rotate-180')} />
                 </button>
                 {activeMenu === menu.name && (
                   <div className="px-4 space-y-1">
@@ -295,7 +295,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
             ))}
           </div>
           <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-            <User className="w-4 h-4" />
+            <IconUser className="w-4 h-4" />
             <span>{userName}</span>
           </Link>
         </div>

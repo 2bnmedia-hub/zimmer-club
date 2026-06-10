@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useWishlist } from '@/hooks/useWishlist'
 import { Footer } from '@/components/layout/Footer'
-import { Heart, MapPin, BedDouble, Users, ArrowRight, Trash2 } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
   slug?: string
@@ -64,12 +64,12 @@ export default function WishlistPage() {
         <div className="max-w-6xl mx-auto px-4 py-8">
 
           <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
-            <ArrowRight className="w-4 h-4" />
+            <IconArrowRight className="w-4 h-4" />
             חזרה
           </button>
 
           <div className="flex items-center gap-3 mb-8">
-            <Heart className="w-6 h-6 fill-red-500 text-red-500" />
+            <IconHeart className="w-6 h-6 fill-red-500 text-red-500" />
             <h1 className="text-2xl font-bold text-gray-900">המועדפים שלי</h1>
             {likedIds.length > 0 && (
               <span className="bg-red-100 text-red-600 text-sm font-bold px-3 py-0.5 rounded-full">
@@ -82,7 +82,7 @@ export default function WishlistPage() {
             <div className="text-center py-20 text-gray-400">טוען...</div>
           ) : likedIds.length === 0 ? (
             <div className="text-center py-20">
-              <Heart className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+              <IconHeart className="w-16 h-16 text-gray-200 mx-auto mb-4" />
               <p className="text-gray-500 text-lg mb-2">עוד לא הוספת נכסים למועדפים</p>
               <p className="text-gray-400 text-sm mb-6">לחץ על הלב בדף הנכס כדי לשמור אותו כאן</p>
               <Link href="/search"
@@ -106,16 +106,16 @@ export default function WishlistPage() {
                       className="absolute top-3 left-3 bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110"
                       aria-label="הסר מהמועדפים"
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                      <IconTrash className="w-4 h-4 text-red-500" />
                     </button>
                   </div>
                   <Link href={`/${p.slug || p.id}`} className="block p-4">
                     <p className="text-xs text-gray-400 mb-1">{p.category?.[0]}</p>
                     <h2 className="font-bold text-gray-900 mb-2 truncate">{p.name}</h2>
                     <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-3">
-                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{p.city}</span>
-                      <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" />{p.bedrooms} חד׳</span>
-                      <span className="flex items-center gap-1"><Users className="w-3 h-3" />עד {p.max_guests}</span>
+                      <span className="flex items-center gap-1"><IconMapPin className="w-3 h-3" />{p.city}</span>
+                      <span className="flex items-center gap-1"><IconBed className="w-3 h-3" />{p.bedrooms} חד׳</span>
+                      <span className="flex items-center gap-1"><IconUsers className="w-3 h-3" />עד {p.max_guests}</span>
                     </div>
                     {p.price_per_night > 0 ? <p className="font-bold text-gray-900">החל מ ₪{p.price_per_night} <span className="font-normal text-xs text-gray-400">/ לילה</span></p> : <p className="text-sm text-gray-400">מחיר בתיאום</p>}
                   </Link>

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Star, Trash2, Pencil, X, Check } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Review = {
   id: string
@@ -26,7 +26,7 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
           onMouseLeave={() => onChange && setHovered(0)}
           className={onChange ? 'cursor-pointer' : 'cursor-default'}
         >
-          <Star className={`w-4 h-4 transition-colors ${i <= (hovered || value) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+          <IconStar className={`w-4 h-4 transition-colors ${i <= (hovered || value) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
         </button>
       ))}
     </div>
@@ -140,7 +140,7 @@ export function AdminReviews({ propertyId }: { propertyId: string }) {
                   <div className="flex gap-2">
                     <button onClick={() => handleSave(review.id)}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700">
-                      <Check className="w-4 h-4" /> שמור
+                      <IconCheck className="w-4 h-4" /> שמור
                     </button>
                     <button onClick={() => setEditingId(null)}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50">
@@ -160,11 +160,11 @@ export function AdminReviews({ propertyId }: { propertyId: string }) {
                       <StarRating value={review.rating} />
                       <button onClick={() => startEdit(review)}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 transition-colors">
-                        <Pencil className="w-4 h-4" />
+                        <IconPencil className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleDelete(review.id)}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
-                        <Trash2 className="w-4 h-4" />
+                        <IconTrash className="w-4 h-4" />
                       </button>
                     </div>
                   </div>

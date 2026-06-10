@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Star, Send, User } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Review = {
   id: string
@@ -37,7 +37,7 @@ function StarRating({ value, onChange, size = 'md' }: {
           onMouseLeave={() => onChange && setHovered(0)}
           className={onChange ? 'cursor-pointer' : 'cursor-default'}
         >
-          <Star className={`${sz} transition-colors ${
+          <IconStar className={`${sz} transition-colors ${
             i <= (hovered || value)
               ? 'fill-yellow-400 text-yellow-400'
               : 'text-gray-300'
@@ -58,7 +58,7 @@ function ReviewCard({ review }: { review: Review }) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C4956A]/30 to-[#1B5E3B]/20 flex items-center justify-center">
-            <User className="w-5 h-5 text-[#C4956A]" />
+            <IconUser className="w-5 h-5 text-[#C4956A]" />
           </div>
           <div>
             <p className="font-semibold text-gray-900 text-sm">{review.reviewer_name || 'אורח'}</p>
@@ -179,7 +179,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
           <h2 className="font-bold text-gray-900 text-lg">חוות דעת</h2>
           {avg && (
             <div className="flex items-center gap-1.5 bg-yellow-50 px-3 py-1 rounded-xl">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <IconStar className="w-4 h-4 fill-yellow-400 text-yellow-400" />
               <span className="font-bold text-gray-900">{avg}</span>
               <span className="text-xs text-gray-500">({reviews.length})</span>
             </div>
@@ -189,7 +189,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
           <button onClick={() => setShowForm(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-colors"
             style={{ backgroundColor: '#8B6914' }}>
-            <Star className="w-4 h-4" />
+            <IconStar className="w-4 h-4" />
             כתוב חוות דעת
           </button>
         )}
@@ -237,7 +237,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
             <button type="submit" disabled={submitting || form.rating === 0}
               className="flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold disabled:opacity-50 transition-all"
               style={{ backgroundColor: '#8B6914' }}>
-              <Send className="w-4 h-4" />
+              <IconSend className="w-4 h-4" />
               {submitting ? 'שולח...' : 'פרסם חוות דעת'}
             </button>
             <button type="button" onClick={() => setShowForm(false)}
@@ -250,7 +250,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
 
       {submitted && !showForm && (
         <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700 mb-6 flex items-center gap-2">
-          <Star className="w-4 h-4 fill-green-500 text-green-500" />
+          <IconStar className="w-4 h-4 fill-green-500 text-green-500" />
           תודה! חוות הדעת שלך פורסמה.
         </div>
       )}

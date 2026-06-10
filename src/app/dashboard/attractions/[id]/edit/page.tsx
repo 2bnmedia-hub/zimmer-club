@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Star, ArrowRight, Loader2 } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const ACTIVITY_TYPES = [
   { key: 'rayzi', label: 'רייזרים' },
@@ -240,7 +240,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
 
   if (pageLoading) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Loader2 className="w-8 h-8 animate-spin text-yellow-600" />
+      <IconLoader className="w-8 h-8 animate-spin text-yellow-600" />
     </div>
   )
 
@@ -256,7 +256,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center gap-3 mb-8">
           <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100">
-            <ArrowRight className="w-5 h-5 text-gray-500" />
+            <IconArrowRight className="w-5 h-5 text-gray-500" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900">עריכת אטרקציה</h1>
         </div>
@@ -427,9 +427,9 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
               {existingImages.map(img => (
                 <div key={img.id} className="relative group aspect-video">
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
-                  {img.is_primary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><Star className="w-3 h-3 text-white fill-white" /></div>}
+                  {img.is_primary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><IconStar className="w-3 h-3 text-white fill-white" /></div>}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => setExistingPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full"><Star className="w-3.5 h-3.5 text-white" /></button>
+                    <button type="button" onClick={() => setExistingPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full"><IconStar className="w-3.5 h-3.5 text-white" /></button>
                     <button type="button" onClick={() => removeExistingImage(img.id)} className="p-1.5 bg-red-500 rounded-full"><X className="w-3.5 h-3.5 text-white" /></button>
                   </div>
                 </div>
@@ -438,16 +438,16 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
                 <div key={idx} className="relative group aspect-video">
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
                   <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full">חדש</div>
-                  {img.isPrimary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><Star className="w-3 h-3 text-white fill-white" /></div>}
+                  {img.isPrimary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><IconStar className="w-3 h-3 text-white fill-white" /></div>}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => setNewPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full"><Star className="w-3.5 h-3.5 text-white" /></button>
+                    <button type="button" onClick={() => setNewPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full"><IconStar className="w-3.5 h-3.5 text-white" /></button>
                     <button type="button" onClick={() => removeNewImage(idx)} className="p-1.5 bg-red-500 rounded-full"><X className="w-3.5 h-3.5 text-white" /></button>
                   </div>
                 </div>
               ))}
               {totalImages < 14 && (
                 <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                  <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                  <IconUpload className="w-6 h-6 text-gray-400 mb-1" />
                   <span className="text-xs text-gray-400">הוסף תמונות</span>
                   <input type="file" accept="image/*" multiple onChange={handleImageSelect} className="hidden" />
                 </label>

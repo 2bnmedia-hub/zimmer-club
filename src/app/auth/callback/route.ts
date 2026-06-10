@@ -26,7 +26,25 @@ export async function GET(request: NextRequest) {
         },
       }
     )
+
     await supabase.auth.exchangeCodeForSession(code)
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+      const meta = user.user_metadata
+      const updates: Record<string, string> = {}
+
+      if (meta?.full_name) updates.full_name = meta.full_name
+      else if (meta?.name) updates.full_name = meta.name
+
+      if (meta?.avatar_url) updates.avatar_url = meta.avatar_url
+      else if (meta?.picture) updates.avatar_url = meta.picture
+
+      if (Object.keys(updates).length > 0) {
+        await supabase.from('profiles').update(updates).eq('id', user.id)
+      }
+    }
   }
 
   return NextResponse.redirect(new URL('/', request.url))

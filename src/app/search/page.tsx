@@ -147,6 +147,40 @@ function SearchContent() {
 
   async function fetchProperties() {
     setLoading(true)
+
+    // קרוואנים — שליפה מטבלה נפרדת
+    if (filters.category === 'caravan') {
+      let q = supabase.from('caravans').select('*, caravan_images(url, "order")').eq('status', 'active')
+      if (filters.region) q = q.eq('region', filters.region)
+      if (filters.guests) q = q.gte('max_guests', parseInt(filters.guests))
+      const { data } = await q.order('avg_rating', { ascending: false })
+      const results = (data || []).map((c: any) => ({
+        ...c,
+        category: ['caravan'],
+        property_images: c.caravan_images || [],
+        price_per_night: c.price_per_night,
+      }))
+      setProperties(results)
+      setLoading(false)
+      return
+    }
+
+    // אטרקציות — שליפה מטבלה נפרדת
+    if (filters.category === 'attraction') {
+      let q = supabase.from('attractions').select('*, attraction_images(url, "order")').eq('status', 'active')
+      if (filters.region) q = q.eq('region', filters.region)
+      const { data } = await q.order('avg_rating', { ascending: false })
+      const results = (data || []).map((a: any) => ({
+        ...a,
+        category: ['attraction'],
+        property_images: a.attraction_images || [],
+        price_per_night: a.price_per_person || 0,
+      }))
+      setProperties(results)
+      setLoading(false)
+      return
+    }
+
     let query = supabase
       .from('properties')
       .select('*, property_images(url, "order")')

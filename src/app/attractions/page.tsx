@@ -1,4 +1,5 @@
 'use client'
+import { CustomSelect } from '@/components/CustomSelect'
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -130,11 +131,14 @@ function AttractionsContent() {
             </div>
 
             {/* איזור */}
-            <select value={region} onChange={e => setRegion(e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 outline-none focus:border-amber-400 bg-white">
-              <option value="">כל הארץ</option>
-              {REGIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-            </select>
+            <div className="w-48">
+              <CustomSelect
+                value={region}
+                onChange={setRegion}
+                placeholder="כל הארץ"
+                options={[{ value: '', label: 'כל הארץ' }, ...REGIONS]}
+              />
+            </div>
 
             {/* קהל יעד */}
             <div className="flex gap-2 flex-wrap">

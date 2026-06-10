@@ -16,22 +16,22 @@ const PROPERTY_TYPES = [
 
 const BENEFITS = [
   {
-    icon: Users,
+    icon: IconUsers,
     title: 'קהל יעד ממוקד',
     desc: 'אלפי גולשים מחפשים צימרים ונכסי נופש בישראל בכל יום — ישירות אצלנו.',
   },
   {
-    icon: TrendingUp,
+    icon: IconTrendingUp,
     title: 'חשיפה מקסימלית',
     desc: 'הנכס שלך מופיע בתוצאות חיפוש, בדפי איזור, ובניוזלטר שלנו.',
   },
   {
-    icon: Star,
+    icon: IconStar,
     title: 'ניהול פשוט',
     desc: 'לוח בקרה נוח לניהול תאריכים, תמונות, מחירים וביקורות — הכל במקום אחד.',
   },
   {
-    icon: CheckCircle,
+    icon: IconCheckCircle,
     title: 'הרשמה חינמית',
     desc: 'הצטרפות ופרסום ראשוני ללא עלות. שדרוגים פרימיום זמינים בהמשך.',
   },

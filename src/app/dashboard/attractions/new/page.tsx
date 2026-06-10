@@ -13,8 +13,9 @@ const ACTIVITY_TYPES = [
   { key: 'horses', label: 'רכיבה על סוסים' },
   { key: 'karting', label: 'קארטינג' },
   { key: 'buggy', label: 'באגי' },
+  { key: 'club_car', label: 'קלאב קאר' },
   { key: 'water_park', label: 'פארק מים' },
-  { key: 'pool', label: 'בריכה' },
+
   { key: 'gymboree', label: 'גימבורי' },
   { key: 'playground', label: 'גן שעשועים' },
   { key: 'ceramics', label: 'סדנת קרמיקה' },

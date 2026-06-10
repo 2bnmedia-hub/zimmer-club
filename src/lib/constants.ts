@@ -152,7 +152,6 @@ export const VILLAS_MENU: { byRegion: { href: string; label: string }[]; byAudie
     { href: '/search?category=villa&amenity=groups', label: 'וילות לקבוצות' },
     { href: '/search?category=villa&amenity=luxury', label: 'וילות יוקרתיות' },
     { href: '/search?category=villa&amenity=couples', label: 'וילות רומנטיות' },
-    { href: '/search?category=villa&amenity=guests', label: 'וילות למסיבות רוקדות' },
   ],
   byFeatures: [
     { href: '/search?category=villa&instant=true', label: 'וילות לטווח קצר' },

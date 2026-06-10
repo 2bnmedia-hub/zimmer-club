@@ -156,10 +156,9 @@ export const VILLAS_MENU: { byRegion: { href: string; label: string }[]; byAudie
   ],
   byFeatures: [
     { href: '/search?category=villa&instant=true', label: 'וילות לטווח קצר' },
-    { href: '/search?category=villa&amenity=pets', label: 'וילות שמקבלות כלבים' },
+    { href: '/search?category=villa&amenity=pets', label: 'וילות לבעלי חיים' },
     { href: '/search?category=villa&amenity=heated_pool', label: 'וילות עם בריכה מחוממת' },
     { href: '/search?category=villa&amenity=pool', label: 'וילות עם בריכה' },
-    { href: '/search?category=villa&region=negev', label: 'וילות בערבה' },
   ],
 }
 export const ZIMMER_MENU = {

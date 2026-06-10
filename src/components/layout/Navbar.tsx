@@ -41,7 +41,7 @@ function MegaMenu({ sections, onClose, isOpen }: {
 
   return (
     <div
-      className="hidden lg:block absolute top-full right-0 left-0 z-50"
+      className="hidden lg:block absolute top-full right-0 left-0 z-[9999]"
       style={{
         background: 'rgba(255,255,255,0.98)',
         backdropFilter: 'blur(16px)',

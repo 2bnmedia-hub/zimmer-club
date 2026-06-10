@@ -75,7 +75,7 @@ export default function DeleteDataPage() {
             לא מצאת את מה שחיפשת?
           </p>
           
-            href="mailto:info@zimmer.club"
+          <a href="mailto:info@zimmer.club"
             className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all"
             style={{
               background: 'rgba(139,105,20,0.08)',

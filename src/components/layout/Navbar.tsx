@@ -300,7 +300,7 @@ export function Navbar() {
                       <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
                         <span className="text-gray-500 text-sm font-bold">+</span>
                       </div>
-                      הוסף נכס
+                      הוספת צימר/וילה/בקתה
                     </Link>
                     <Link href="/dashboard/attractions/new"
                       onClick={() => setActiveMenu(null)}
@@ -308,7 +308,7 @@ export function Navbar() {
                       <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
                         <span className="text-gray-500 text-sm font-bold">🎯</span>
                       </div>
-                      הוסף אטרקציה
+                      הוספת אטרקציה
                     </Link>
                     <Link href="/dashboard/caravans/new"
                       onClick={() => setActiveMenu(null)}
@@ -316,7 +316,7 @@ export function Navbar() {
                       <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
                         <span className="text-gray-500 text-sm font-bold">🚐</span>
                       </div>
-                      הוסף קרוואן
+                      הוספת קרוואן
                     </Link>
                     <hr className="my-2 border-gray-100" />
                     <button onClick={handleLogout}

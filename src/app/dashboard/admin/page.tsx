@@ -68,7 +68,7 @@ function DonutChart({ active, pending, rejected, total, label }: {
   return (
     <div className="rounded-2xl p-4 flex flex-col items-center"
       style={{ background: '#fff', border: '1.5px solid #f0ece4', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-      <p className="text-sm font-semibold mb-3 text-center" style={{ color: '#6b7280', fontSize: '11px' }}>{label}</p>
+      <p className="text-sm font-semibold mb-3 text-center" style={{ color: '#6b7280', fontSize: '14px' }}>{label}</p>
       <div className="relative mb-3">
         <canvas ref={canvasRef} width={100} height={100} />
         <div className="absolute inset-0 flex flex-col items-center justify-center">

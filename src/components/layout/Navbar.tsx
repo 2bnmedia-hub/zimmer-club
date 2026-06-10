@@ -19,23 +19,71 @@ const NAV_ITEMS = [
 type MenuItem = { href: string; label: string }
 
 function MegaMenu({ sections, onClose }: {
-  sections: { title: string; items: MenuItem[] }[]
+  sections: { title: string; icon: string; items: MenuItem[] }[]
   onClose: () => void
 }) {
   return (
-    <div className="hidden lg:block absolute top-full right-0 left-0 bg-white border-t border-gray-200 shadow-2xl z-50 min-h-[320px]">
-      <div className="max-w-7xl mx-auto px-4 py-[5rem]" dir="rtl">
-        <div className="grid grid-cols-3 gap-12">
-          {sections.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">
-                {section.title}
-              </h3>
-              <ul className="space-y-2">
+    <div
+      className="hidden lg:block absolute top-full right-0 left-0 z-50"
+      style={{
+        background: 'rgba(255,255,255,0.98)',
+        backdropFilter: 'blur(16px)',
+        borderTop: '1px solid rgba(139,105,20,0.10)',
+        boxShadow: '0 24px 64px rgba(0,0,0,0.10), 0 4px 16px rgba(139,105,20,0.06)',
+        animation: 'megaFadeIn 0.22s cubic-bezier(0.16,1,0.3,1)',
+      }}
+    >
+      <style>{`
+        @keyframes megaFadeIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .mega-link {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 7px 12px;
+          border-radius: 10px;
+          font-size: 13.5px;
+          color: #3D2B1A;
+          transition: all 0.15s;
+          text-decoration: none;
+          position: relative;
+        }
+        .mega-link:hover {
+          background: rgba(139,105,20,0.07);
+          color: #8B6914;
+          padding-right: 16px;
+        }
+        .mega-link::before {
+          content: '';
+          position: absolute;
+          right: 6px;
+          top: 50%;
+          transform: translateY(-50%) scaleY(0);
+          width: 2px;
+          height: 12px;
+          background: #C4956A;
+          border-radius: 2px;
+          transition: transform 0.15s;
+        }
+        .mega-link:hover::before { transform: translateY(-50%) scaleY(1); }
+      `}</style>
+
+      <div className="max-w-7xl mx-auto px-8 py-8" dir="rtl">
+        <div className="grid grid-cols-3 gap-0 divide-x divide-x-reverse" style={{ divideColor: 'rgba(139,105,20,0.08)' }}>
+          {sections.map((section, i) => (
+            <div key={section.title} className={cn('px-8', i === 0 && 'pr-0', i === sections.length - 1 && 'pl-0')}>
+              <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid rgba(139,105,20,0.10)' }}>
+                <span className="text-base">{section.icon}</span>
+                <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: '#B8964A', letterSpacing: '0.14em' }}>
+                  {section.title}
+                </h3>
+              </div>
+              <ul className="space-y-0.5">
                 {section.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} onClick={onClose}
-                      className="text-sm text-gray-700 hover:text-yellow-700 transition-colors block py-0.5">
+                    <Link href={item.href} onClick={onClose} className="mega-link">
                       {item.label}
                     </Link>
                   </li>
@@ -43,6 +91,18 @@ function MegaMenu({ sections, onClose }: {
               </ul>
             </div>
           ))}
+        </div>
+
+        <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(139,105,20,0.08)' }}>
+          <p className="text-xs" style={{ color: '#C4A882' }}>מעל 1,000 נכסי תיירות בכל רחבי הארץ</p>
+          <Link
+            href="/search"
+            onClick={onClose}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all hover:scale-105"
+            style={{ background: 'rgba(139,105,20,0.08)', color: '#8B6914', border: '1px solid rgba(139,105,20,0.18)' }}
+          >
+            לכל החיפוש המתקדם ←
+          </Link>
         </div>
       </div>
     </div>
@@ -61,13 +121,11 @@ export function Navbar() {
     async function loadUser() {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) return
-
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name, role, avatar_url')
         .eq('id', authUser.id)
         .single()
-
       setUser({
         name: profile?.full_name || authUser.email || '',
         role: profile?.role || 'guest',
@@ -77,11 +135,8 @@ export function Navbar() {
     loadUser()
   }, [refreshKey])
 
-  // עדכון תמונה מיידי כשהיא משתנה ב-Context
   useEffect(() => {
-    if (avatarUrl) {
-      setUser(prev => prev ? { ...prev, avatar: avatarUrl } : prev)
-    }
+    if (avatarUrl) setUser(prev => prev ? { ...prev, avatar: avatarUrl } : prev)
   }, [avatarUrl])
 
   const handleLogout = async () => {
@@ -92,34 +147,28 @@ export function Navbar() {
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setActiveMenu(null)
-      }
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setActiveMenu(null)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const toggleMenu = (name: string) => {
-    setActiveMenu(prev => prev === name ? null : name)
-  }
+  const toggleMenu = (name: string) => setActiveMenu(prev => prev === name ? null : name)
 
   const zimmerSections = [
-    { title: 'צימרים לפי איזור', items: ZIMMER_MENU.byRegion },
-    { title: 'צימרים לפי קהל יעד', items: ZIMMER_MENU.byAudience },
-    { title: 'צימרים לפי זמינות', items: ZIMMER_MENU.byAvailability },
+    { title: 'לפי אזור', icon: '📍', items: ZIMMER_MENU.byRegion },
+    { title: 'לפי קהל יעד', icon: '👥', items: ZIMMER_MENU.byAudience },
+    { title: 'לפי זמינות', icon: '📅', items: ZIMMER_MENU.byAvailability },
   ]
-
   const villasSections = [
-    { title: 'וילות לפי איזור', items: VILLAS_MENU.byRegion },
-    { title: 'וילות לפי קהל יעד', items: VILLAS_MENU.byAudience },
-    { title: 'חיפושים פופולריים', items: VILLAS_MENU.byFeatures },
+    { title: 'לפי אזור', icon: '📍', items: VILLAS_MENU.byRegion },
+    { title: 'לפי קהל יעד', icon: '👥', items: VILLAS_MENU.byAudience },
+    { title: 'חיפושים פופולריים', icon: '🔥', items: VILLAS_MENU.byFeatures },
   ]
-
   const attractionsSections = [
-    { title: 'אטרקציות לפי איזור', items: ATTRACTIONS_MENU.byRegion },
-    { title: 'אטרקציות לפי קהל יעד', items: ATTRACTIONS_MENU.byAudience },
-    { title: 'אטרקציות פופולריות', items: ATTRACTIONS_MENU.popular as { href: string; label: string }[] },
+    { title: 'לפי אזור', icon: '📍', items: ATTRACTIONS_MENU.byRegion },
+    { title: 'לפי קהל יעד', icon: '👥', items: ATTRACTIONS_MENU.byAudience },
+    { title: 'אטרקציות פופולריות', icon: '⭐', items: ATTRACTIONS_MENU.popular as { href: string; label: string }[] },
   ]
 
   return (
@@ -140,10 +189,14 @@ export function Navbar() {
               <li key={item.name}>
                 <button
                   onClick={() => toggleMenu(item.name)}
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all"
+                  style={{
+                    color: activeMenu === item.name ? '#8B6914' : '#374151',
+                    background: activeMenu === item.name ? 'rgba(139,105,20,0.07)' : 'transparent',
+                  }}
                 >
                   {item.label}
-                  <IconChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === item.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-4 h-4 transition-transform duration-200', activeMenu === item.name && 'rotate-180')} />
                 </button>
               </li>
             ))}
@@ -189,7 +242,6 @@ export function Navbar() {
                   <span>שלום, {user.name.split(' ')[0]}</span>
                   <IconChevronDown className={cn('w-3 h-3 transition-transform', activeMenu === 'user' && 'rotate-180')} />
                 </button>
-
                 {activeMenu === 'user' && (
                   <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 min-w-52 py-2 overflow-hidden" dir="rtl">
                     <div className="px-4 py-3 border-b border-gray-100 mb-1">
@@ -198,7 +250,6 @@ export function Navbar() {
                         {user.role === 'admin' ? 'מנהל מערכת' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}
                       </p>
                     </div>
-
                     <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
                       onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
@@ -207,7 +258,6 @@ export function Navbar() {
                       </div>
                       לוח בקרה
                     </Link>
-
                     <Link href="/dashboard/profile"
                       onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
@@ -216,7 +266,6 @@ export function Navbar() {
                       </div>
                       עריכת פרופיל
                     </Link>
-
                     <Link href="/dashboard/properties/new"
                       onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
@@ -233,9 +282,7 @@ export function Navbar() {
                       </div>
                       הוסף אטרקציה
                     </Link>
-
                     <hr className="my-2 border-gray-100" />
-
                     <button onClick={handleLogout}
                       className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                       <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
@@ -282,18 +329,25 @@ export function Navbar() {
               { name: 'villas', label: 'וילות ובקתות', items: [...VILLAS_MENU.byRegion, ...VILLAS_MENU.byAudience, ...VILLAS_MENU.byFeatures] },
               { name: 'attractions', label: 'אטרקציות', items: [...ATTRACTIONS_MENU.byRegion, ...ATTRACTIONS_MENU.byAudience, ...ATTRACTIONS_MENU.popular] },
             ].map((menu) => (
-              <div key={menu.name}>
+              <div key={menu.name} style={{ borderBottom: '1px solid rgba(139,105,20,0.06)' }}>
                 <button onClick={() => toggleMenu(menu.name)}
-                  className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
+                  className="flex items-center justify-between w-full px-4 py-3.5 text-sm font-medium rounded-xl transition-all"
+                  style={{
+                    color: activeMenu === menu.name ? '#8B6914' : '#374151',
+                    background: activeMenu === menu.name ? 'rgba(139,105,20,0.04)' : 'transparent',
+                  }}>
                   {menu.label}
-                  <IconChevronDown className={cn('w-4 h-4 transition-transform', activeMenu === menu.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-4 h-4 transition-transform duration-200', activeMenu === menu.name && 'rotate-180')} />
                 </button>
                 {activeMenu === menu.name && (
-                  <div className="px-4 space-y-1">
+                  <div className="pb-3 px-2 grid grid-cols-2 gap-1">
                     {menu.items.map((item) => (
                       <Link key={item.label} href={item.href}
                         onClick={() => { setMobileOpen(false); setActiveMenu(null) }}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+                        className="block px-3 py-2 text-sm rounded-lg transition-all"
+                        style={{ color: '#3D2B1A' }}
+                        onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(139,105,20,0.06)'; (e.target as HTMLElement).style.color = '#8B6914' }}
+                        onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent'; (e.target as HTMLElement).style.color = '#3D2B1A' }}>
                         {item.label}
                       </Link>
                     ))}

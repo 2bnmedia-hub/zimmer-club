@@ -131,7 +131,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const guestOptions = [...[1,2,3,4,5,6,7,8,10,12].map(n => ({value:n, label: n===1 ? 'אורח אחד' : `${n} אורחים`})), {value:99, label:'מעל 12'}]
 
   return (
-    <div ref={wrapRef} className="w-full max-w-5xl mx-auto" style={{position:'relative', zIndex:9999}}>
+    <div ref={wrapRef} className="w-full max-w-5xl mx-auto" style={{position:'relative', zIndex:50}}>
       <style>{`
         @keyframes dropAnim {
           from { opacity:0; transform:scaleY(0.85); }

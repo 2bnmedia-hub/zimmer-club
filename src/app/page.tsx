@@ -72,7 +72,7 @@ export default function HomePage() {
             </div>
 
             {/* Search */}
-            <div style={{position:"relative", zIndex:9999}}><SearchBar /></div>
+            <SearchBar />
 
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">

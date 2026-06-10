@@ -1,4 +1,5 @@
 'use client'
+import { useState as useDropdown } from 'react'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -47,6 +48,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   const [checkIn, setCheckIn] = useState(initialValues.checkIn || '')
   const [checkOut, setCheckOut] = useState(initialValues.checkOut || '')
   const [guests, setGuests] = useState(initialValues.guests || 2)
+  const [openDrop, setOpenDrop] = useDropdown<string|null>(null)
   const [propertyType, setPropertyType] = useState('')
   const [error, setError] = useState('')
 
@@ -84,10 +86,25 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             <IconHome className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">סוג נכס</label>
-              <select value={propertyType} onChange={(e) => { setPropertyType(e.target.value); setError('') }}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium appearance-none cursor-pointer" dir="rtl">
-                {PROPERTY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-              </select>
+              <div className="relative">
+                <button type="button" onClick={() => setOpenDrop(openDrop === 'type' ? null : 'type')}
+                  className="w-full text-sm text-right text-charcoal font-medium flex items-center justify-between gap-1 outline-none">
+                  <span>{PROPERTY_TYPES.find(t => t.value === propertyType)?.label || 'כל הסוגים'}</span>
+                  <span className="text-gold text-xs" style={{transform: openDrop==='type'?'rotate(180deg)':'rotate(0deg)',display:'inline-block',transition:'transform 0.15s'}}>▾</span>
+                </button>
+                {openDrop === 'type' && (
+                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 min-w-[160px] overflow-hidden">
+                    {PROPERTY_TYPES.map(t => (
+                      <button key={t.value} type="button"
+                        onClick={() => { setPropertyType(t.value); setError(''); setOpenDrop(null) }}
+                        className="w-full text-right px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors"
+                        style={{ color: propertyType===t.value ? '#8B6914':'#374151', fontWeight: propertyType===t.value?'700':'400' }}>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -95,11 +112,25 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             <IconMapPin className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">אזור בארץ</label>
-              <select value={region} onChange={(e) => { setRegion(e.target.value); setError('') }}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium appearance-none cursor-pointer" dir="rtl">
-                <option value="">בחר אזור</option>
-                {REGIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-              </select>
+              <div className="relative">
+                <button type="button" onClick={() => setOpenDrop(openDrop === 'region' ? null : 'region')}
+                  className="w-full text-sm text-right text-charcoal font-medium flex items-center justify-between gap-1 outline-none">
+                  <span className={region ? '' : 'text-gray-400'}>{REGIONS.find(r => r.value === region)?.label || 'בחר אזור'}</span>
+                  <span className="text-gold text-xs" style={{transform: openDrop==='region'?'rotate(180deg)':'rotate(0deg)',display:'inline-block',transition:'transform 0.15s'}}>▾</span>
+                </button>
+                {openDrop === 'region' && (
+                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 min-w-[180px] overflow-hidden" style={{maxHeight:'220px',overflowY:'auto'}}>
+                    {[{value:'',label:'בחר אזור'},...REGIONS].map(r => (
+                      <button key={r.value} type="button"
+                        onClick={() => { setRegion(r.value); setError(''); setOpenDrop(null) }}
+                        className="w-full text-right px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors"
+                        style={{ color: region===r.value ? '#8B6914':'#374151', fontWeight: region===r.value?'700':'400' }}>
+                        {r.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -129,11 +160,25 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             <IconUsers className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">אורחים</label>
-              <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}
-                className="w-full text-sm bg-transparent outline-none text-charcoal font-medium appearance-none cursor-pointer" dir="rtl">
-                {[1,2,3,4,5,6,7,8,10,12].map(n => <option key={n} value={n}>{n === 1 ? 'אורח אחד' : `${n} אורחים`}</option>)}
-                <option value={99}>מעל 12</option>
-              </select>
+              <div className="relative">
+                <button type="button" onClick={() => setOpenDrop(openDrop === 'guests' ? null : 'guests')}
+                  className="w-full text-sm text-right text-charcoal font-medium flex items-center justify-between gap-1 outline-none">
+                  <span>{guests === 99 ? 'מעל 12' : guests === 1 ? 'אורח אחד' : `${guests} אורחים`}</span>
+                  <span className="text-gold text-xs" style={{transform: openDrop==='guests'?'rotate(180deg)':'rotate(0deg)',display:'inline-block',transition:'transform 0.15s'}}>▾</span>
+                </button>
+                {openDrop === 'guests' && (
+                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg z-50 min-w-[140px] overflow-hidden">
+                    {[...[1,2,3,4,5,6,7,8,10,12].map(n => ({value:n,label:n===1?'אורח אחד':`${n} אורחים`})),{value:99,label:'מעל 12'}].map(o => (
+                      <button key={o.value} type="button"
+                        onClick={() => { setGuests(o.value); setOpenDrop(null) }}
+                        className="w-full text-right px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors"
+                        style={{ color: guests===o.value ? '#8B6914':'#374151', fontWeight: guests===o.value?'700':'400' }}>
+                        {o.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

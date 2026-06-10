@@ -20,12 +20,107 @@ const REGIONS = [
   { value: 'eilat', label: 'אילת' },
 ]
 
+
+const CARAVAN_AMENITIES = [
+  {
+    category: 'נוחות ואבזור פנים',
+    icon: '🛋️',
+    items: [
+      'טלוויזיה חכמה דקה', 'מערכת מולטימדיה מתקדמת', 'אינטרנט אלחוטי (Wi-Fi)',
+      'מזגן', 'חימום פנימי', 'וילונות האפלה אטומים', 'תאורת LED חכמה',
+      'שקעי USB ו-Type-C', 'שקעי 220V', 'כספת אישית', 'שולחן אוכל מתקפל',
+      'ספה נפתחת למיטה', 'מיטה זוגית קבועה', 'מיטות קומותיים', 'מזרן אורטופדי',
+    ]
+  },
+  {
+    category: 'מטבח',
+    icon: '🍳',
+    items: [
+      'מיני בר', 'מקרר', 'מקפיא', 'מיקרוגל', 'כיריים גז', 'כיריים אינדוקציה',
+      'תנור אפייה', 'קומקום חשמלי', 'מכונת קפה', 'טוסטר', 'בר מים',
+      'כיור מטבח', 'משטח עבודה',
+    ]
+  },
+  {
+    category: 'חדר רחצה',
+    icon: '🚿',
+    items: [
+      'מקלחת', 'שירותים כימיים', 'שירותים עם מיכל הדחה', 'כיור רחצה',
+      'מים חמים 24/7', 'מראה מוארת', 'ונטה לאוורור',
+    ]
+  },
+  {
+    category: 'חשמל ואנרגיה',
+    icon: '⚡',
+    items: [
+      'פאנלים סולאריים', 'מצברי ליתיום', 'גנרטור', 'ממיר מתח',
+      'חיבור לחשמל חיצוני', 'מערכת ניהול אנרגיה חכמה', 'תאורת חירום',
+    ]
+  },
+  {
+    category: 'מים ותשתיות',
+    icon: '💧',
+    items: [
+      'מיכל מים נקיים', 'מיכל מים אפורים', 'משאבת מים בלחץ גבוה',
+      'מערכת סינון מים', 'חיבור מים חיצוני',
+    ]
+  },
+  {
+    category: 'חוץ ופנאי',
+    icon: '🌳',
+    items: [
+      'סוכך נפתח', 'פינת ישיבה חיצונית', 'שולחן חוץ', 'כיסאות חוץ',
+      'מנגל גז', 'מטבח חוץ', 'תאורת חוץ', 'מקלחת חיצונית', 'מחסן ציוד חיצוני',
+    ]
+  },
+  {
+    category: 'בידור ויוקרה',
+    icon: '🎬',
+    items: [
+      'מקרן קולנוע', 'מסך הקרנה', 'מערכת סאונד היקפית', 'רמקולי Bluetooth',
+      'קונסולת משחקים', 'Netflix / YouTube מובנים', 'תאורת אווירה RGB',
+      'גג פנורמי', 'חלונות נוף גדולים',
+    ]
+  },
+  {
+    category: 'בטיחות',
+    icon: '🔒',
+    items: [
+      'מצלמות היקפיות', 'מצלמת רוורס', 'גלאי עשן', 'גלאי גז',
+      'מטף כיבוי אש', 'ערכת עזרה ראשונה', 'מערכת אזעקה', 'GPS ואיתור רכב',
+    ]
+  },
+  {
+    category: 'אבזור פרימיום',
+    icon: '💎',
+    items: [
+      "ג'קוזי חיצוני", 'מכונת אספרסו מובנית', 'רצפה מחוממת',
+      'שליטה חכמה מהטלפון', 'מנעול חכם', 'מערכת בית חכם',
+      'טלוויזיה בחדר השינה ובסלון', 'מטען אלחוטי מובנה', 'מקרר יין', 'כורסאות עיסוי',
+    ]
+  },
+  {
+    category: 'מתאים ל',
+    icon: '👥',
+    items: [
+      'משפחות', 'זוגות', 'שומרי שבת', 'ידידותי לחיות מחמד',
+      'נגיש לנכים', 'עישון מותר', 'Self Check-in', 'חניה צמודה',
+      'נוף לים', 'נוף להרים', 'נוף למדבר', 'בריכה פרטית',
+      'עמדת טעינה לרכב חשמלי',
+    ]
+  },
+]
+
 export default function NewCaravanPage() {
   const router = useRouter()
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [images, setImages] = useState<string[]>([])
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
+
+  const toggleAmenity = (item: string) =>
+    setSelectedAmenities(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item])
   const [form, setForm] = useState({
     name: '', short_description: '', description: '',
     caravan_type: 'auto', region: 'north', city: '', address: '',
@@ -33,14 +128,31 @@ export default function NewCaravanPage() {
     can_relocate: false, manufacture_year: '', sleeping_capacity: '',
     max_guests: '2', phone: '', whatsapp: '', email: '',
     instant_book: false,
+    video_url: '',
+    double_beds: '',
+    single_beds: '',
+    phone2: '',
   })
 
   const set = (k: string, v: string | boolean) => setForm(p => ({ ...p, [k]: v }))
 
   async function uploadImages(files: FileList) {
+    const MAX_SIZE = 5 * 1024 * 1024 // 5MB לכל תמונה
+    const fileArray = Array.from(files).filter(f => {
+      if (f.size > MAX_SIZE) {
+        alert(`הקובץ ${f.name} גדול מ-5MB ולא יועלה`)
+        return false
+      }
+      return true
+    })
+    if (fileArray.length === 0) return
     setUploading(true)
+    // הצג preview מיידי
+    const previews = fileArray.map(f => URL.createObjectURL(f))
+    setImages(p => [...p, ...previews])
+    // העלה לסופאבייס והחלף preview ב-URL אמיתי
     const urls: string[] = []
-    for (const file of Array.from(files)) {
+    for (const file of fileArray) {
       const ext = file.name.split('.').pop()
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
       const { error } = await supabase.storage.from('caravan-images').upload(path, file)
@@ -49,7 +161,12 @@ export default function NewCaravanPage() {
         urls.push(data.publicUrl)
       }
     }
-    setImages(p => [...p, ...urls])
+    setImages(p => {
+      const newImages = [...p]
+      const startIdx = newImages.length - previews.length
+      urls.forEach((url, i) => { newImages[startIdx + i] = url })
+      return newImages
+    })
     setUploading(false)
   }
 
@@ -79,12 +196,17 @@ export default function NewCaravanPage() {
       pricing_type: form.pricing_type,
       can_relocate: form.can_relocate,
       manufacture_year: form.manufacture_year ? parseInt(form.manufacture_year) : null,
-      sleeping_capacity: form.sleeping_capacity ? parseInt(form.sleeping_capacity) : null,
+      sleeping_capacity: (parseInt(form.double_beds||'0')*2) + parseInt(form.single_beds||'0') || null,
+      double_beds: form.double_beds ? parseInt(form.double_beds) : null,
+      single_beds: form.single_beds ? parseInt(form.single_beds) : null,
       max_guests: parseInt(form.max_guests),
       phone: form.phone,
+      phone2: form.phone2 || null,
       whatsapp: form.whatsapp,
       email: form.email,
       instant_book: form.instant_book,
+      video_url: form.video_url || null,
+      amenities: selectedAmenities,
       status: 'pending',
     }).select().single()
 
@@ -108,7 +230,6 @@ export default function NewCaravanPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#B8964A', letterSpacing: '0.14em' }}>dashboard</p>
           <h1 className="text-2xl font-bold" style={{ color: '#2D1E0F' }}>הוספת קרוואן חדש</h1>
           <p className="text-sm mt-1" style={{ color: '#9A7C5E' }}>המודעה תועבר לאישור לפני פרסום</p>
         </div>
@@ -117,11 +238,10 @@ export default function NewCaravanPage() {
 
           {/* Section: פרטים בסיסיים */}
           <div className="rounded-2xl p-6 space-y-4" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
-            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>פרטים בסיסיים</h2>
 
             <div>
-              <label className={labelClass} style={{ color: '#8B6914' }}>שם המודעה *</label>
-              <input value={form.name} onChange={e => set('name', e.target.value)} className={inputClass} placeholder="למשל: אוטו קרוואן משפחתי 6 מקומות" style={{ borderColor: '#e5e7eb' }} />
+              <label className={labelClass} style={{ color: '#8B6914' }}>שם העסק *</label>
+              <input value={form.name} onChange={e => set('name', e.target.value)} className={inputClass} placeholder="לדוג׳ קרוואן החלומות" style={{ borderColor: '#e5e7eb' }} />
             </div>
 
             <div>
@@ -142,10 +262,10 @@ export default function NewCaravanPage() {
             </div>
 
             <div>
-              <label className={labelClass} style={{ color: '#8B6914' }}>תיאור קצר</label>
+              <label className={labelClass} style={{ color: '#8B6914' }}>במשפט אחד</label>
               <textarea value={form.short_description} onChange={e => set('short_description', e.target.value)}
-                className={inputClass} rows={2} maxLength={120}
-                placeholder="תיאור קצר שיופיע בכרטיס (עד 120 תווים)"
+                className={inputClass} rows={1} maxLength={120}
+                placeholder="במשפט אחד שיופיע בכרטיס (עד 120 תווים)"
                 style={{ borderColor: '#e5e7eb', resize: 'none' }} />
             </div>
 
@@ -165,27 +285,70 @@ export default function NewCaravanPage() {
               style={{ border: '2px dashed rgba(139,105,20,0.25)', background: 'rgba(139,105,20,0.03)' }}>
               <span className="text-2xl mb-1">📸</span>
               <span className="text-sm font-medium" style={{ color: '#8B6914' }}>{uploading ? 'מעלה...' : 'בחר תמונות'}</span>
-              <span className="text-xs text-gray-400 mt-0.5">JPG, PNG עד 5MB</span>
+              <span className="text-xs text-gray-400 mt-0.5">JPG, PNG — עד 5MB לתמונה</span>
               <input type="file" multiple accept="image/*" className="hidden"
                 onChange={e => e.target.files && uploadImages(e.target.files)} />
             </label>
-            {images.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {images.map((url, i) => (
-                  <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden" style={{ border: i === 0 ? '2px solid #8B6914' : '2px solid #e5e7eb' }}>
-                    <img src={url} alt="" className="w-full h-full object-cover" />
-                    {i === 0 && <span className="absolute bottom-0 right-0 left-0 text-center text-white text-[10px] font-bold py-0.5" style={{ background: 'rgba(139,105,20,0.8)' }}>ראשית</span>}
-                    <button onClick={() => setImages(p => p.filter((_, j) => j !== i))}
-                      className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">×</button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="flex flex-wrap gap-2 mt-2">
+              {images.map((url, i) => (
+                <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden" style={{ border: i === 0 ? '2px solid #8B6914' : '2px solid #e5e7eb' }}>
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  {i === 0 && <span className="absolute bottom-0 right-0 left-0 text-center text-white text-[10px] font-bold py-0.5" style={{ background: 'rgba(139,105,20,0.8)' }}>ראשית</span>}
+                  <button type="button" onClick={() => setImages(p => p.filter((_, j) => j !== i))}
+                    className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">×</button>
+                </div>
+              ))}
+            </div>
           </div>
 
+
+          {/* Section: וידאו */}
+          <div className="rounded-2xl p-6 space-y-4" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
+            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>וידאו (אופציונלי)</h2>
+            <div className="space-y-3">
+              <div>
+                <label className={labelClass} style={{ color: '#8B6914' }}>קישור YouTube / Vimeo</label>
+                <input value={form.video_url || ''} onChange={e => set('video_url', e.target.value)}
+                  className={inputClass} placeholder="https://youtube.com/watch?v=..."
+                  style={{ borderColor: '#e5e7eb' }} />
+              </div>
+              <div>
+                <label className={labelClass} style={{ color: '#8B6914' }}>או העלה קובץ וידאו</label>
+                <label className="flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer transition-all"
+                  style={{ border: '2px dashed rgba(139,105,20,0.25)', background: 'rgba(139,105,20,0.03)' }}>
+                  <span className="text-xl mb-1">🎬</span>
+                  <span className="text-sm font-medium" style={{ color: '#8B6914' }}>בחר קובץ וידאו</span>
+                  <span className="text-xs text-gray-400 mt-0.5">MP4, MOV עד 50MB</span>
+                  <input type="file" accept="video/*" className="hidden" onChange={async e => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    const ext = file.name.split('.').pop()
+                    const path = `videos/${Date.now()}.${ext}`
+                    const { error } = await supabase.storage.from('caravan-images').upload(path, file)
+                    if (!error) {
+                      const { data } = supabase.storage.from('caravan-images').getPublicUrl(path)
+                      set('video_url', data.publicUrl)
+                    }
+                  }} />
+                </label>
+                {form.video_url && form.video_url.startsWith('http') && !form.video_url.includes('youtube') && !form.video_url.includes('vimeo') && (
+                  <p className="text-xs mt-1" style={{ color: '#8B6914' }}>✅ וידאו הועלה בהצלחה</p>
+                )}
+              </div>
+            </div>
+          </div>
           {/* Section: מיקום */}
           <div className="rounded-2xl p-6 space-y-4" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
-            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>מיקום</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>מיקום האיסוף/השכרה</h2>
+            <label className="flex items-center gap-2 cursor-pointer mb-2">
+              <div className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
+                style={{ background: form.can_relocate ? '#8B6914' : '#fff', borderColor: form.can_relocate ? '#8B6914' : '#d1d5db' }}>
+                {form.can_relocate && <span className="text-white text-xs">✓</span>}
+              </div>
+              <input type="checkbox" className="sr-only" checked={form.can_relocate}
+                onChange={e => set('can_relocate', e.target.checked)} />
+              <span className="text-sm text-gray-700">ניתן להציב בשטח כבקשת הלקוח</span>
+            </label>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={labelClass} style={{ color: '#8B6914' }}>אזור *</label>
@@ -198,10 +361,6 @@ export default function NewCaravanPage() {
                 <input value={form.city} onChange={e => set('city', e.target.value)} className={inputClass} placeholder="עיר / יישוב" style={{ borderColor: '#e5e7eb' }} />
               </div>
             </div>
-            <div>
-              <label className={labelClass} style={{ color: '#8B6914' }}>כתובת מדויקת</label>
-              <input value={form.address} onChange={e => set('address', e.target.value)} className={inputClass} placeholder="רחוב, מספר..." style={{ borderColor: '#e5e7eb' }} />
-            </div>
           </div>
 
           {/* Section: תמחור */}
@@ -209,7 +368,7 @@ export default function NewCaravanPage() {
             <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>תמחור</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>מחיר ללילה (₪) *</label>
+                <label className={labelClass} style={{ color: '#8B6914' }}>החל מ: (₪) *</label>
                 <input type="number" value={form.price_per_night} onChange={e => set('price_per_night', e.target.value)} className={inputClass} placeholder="0" style={{ borderColor: '#e5e7eb' }} />
               </div>
               <div>
@@ -222,7 +381,6 @@ export default function NewCaravanPage() {
             <div className="flex items-center gap-6">
               {[
                 { key: 'instant_book', label: '⚡ הזמנה מיידית' },
-                { key: 'can_relocate', label: '🚐 כולל הצבה' },
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <div className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
@@ -242,8 +400,12 @@ export default function NewCaravanPage() {
             <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>מפרט הקרוואן</h2>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>מספר מיטות</label>
-                <input type="number" value={form.sleeping_capacity} onChange={e => set('sleeping_capacity', e.target.value)} className={inputClass} placeholder="0" style={{ borderColor: '#e5e7eb' }} />
+                <label className={labelClass} style={{ color: '#8B6914' }}>מיטות זוגיות</label>
+                <input type="number" value={form.double_beds || ''} onChange={e => set('double_beds', e.target.value)} className={inputClass} placeholder="0" style={{ borderColor: '#e5e7eb' }} />
+              </div>
+              <div>
+                <label className={labelClass} style={{ color: '#8B6914' }}>מיטות בודדות</label>
+                <input type="number" value={form.single_beds || ''} onChange={e => set('single_beds', e.target.value)} className={inputClass} placeholder="0" style={{ borderColor: '#e5e7eb' }} />
               </div>
               <div>
                 <label className={labelClass} style={{ color: '#8B6914' }}>מקס׳ אורחים</label>
@@ -261,8 +423,12 @@ export default function NewCaravanPage() {
             <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>יצירת קשר</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>טלפון</label>
+                <label className={labelClass} style={{ color: '#8B6914' }}>טלפון 1</label>
                 <input value={form.phone} onChange={e => set('phone', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} />
+              </div>
+              <div>
+                <label className={labelClass} style={{ color: '#8B6914' }}>טלפון 2</label>
+                <input value={form.phone2 || ''} onChange={e => set('phone2', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} />
               </div>
               <div>
                 <label className={labelClass} style={{ color: '#8B6914' }}>וואטסאפ</label>
@@ -273,6 +439,33 @@ export default function NewCaravanPage() {
                 <input value={form.email} onChange={e => set('email', e.target.value)} className={inputClass} placeholder="email@example.com" style={{ borderColor: '#e5e7eb' }} />
               </div>
             </div>
+          </div>
+
+
+          {/* Section: שירותים */}
+          <div className="rounded-2xl p-6 space-y-5" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
+            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>שירותים</h2>
+            {CARAVAN_AMENITIES.map(group => (
+              <div key={group.category}>
+                <p className="text-sm font-bold mb-2 flex items-center gap-1.5" style={{ color: '#3D2B1A' }}>
+                  <span>{group.icon}</span> {group.category}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {group.items.map(item => (
+                    <button key={item} type="button" onClick={() => toggleAmenity(item)}
+                      className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all"
+                      style={{
+                        background: selectedAmenities.includes(item) ? 'rgba(139,105,20,0.10)' : '#fff',
+                        color: selectedAmenities.includes(item) ? '#8B6914' : '#6b7280',
+                        borderColor: selectedAmenities.includes(item) ? '#8B6914' : '#e5e7eb',
+                      }}>
+                      {selectedAmenities.includes(item) && <span className="ml-1">✓</span>}
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Submit */}

@@ -17,6 +17,16 @@ type Property = {
   total_reviews: number
 }
 
+type Caravan = {
+  id: string
+  name: string
+  caravan_type: string
+  region: string
+  price_per_night: number
+  status: string
+  avg_rating: number
+}
+
 type Attraction = {
   id: string
   name: string
@@ -32,6 +42,7 @@ export default function OwnerDashboard() {
   const supabase = createClient()
   const [properties, setProperties] = useState<Property[]>([])
   const [attractions, setAttractions] = useState<Attraction[]>([])
+  const [caravans, setCaravans] = useState<Caravan[]>([])
   const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState('')
 
@@ -46,6 +57,8 @@ export default function OwnerDashboard() {
       setProperties(data || [])
       const { data: attrData } = await supabase.from('attractions').select('*').eq('owner_id', user.id).order('created_at', { ascending: false })
       setAttractions(attrData || [])
+      const { data: caravanData } = await supabase.from('caravans').select('*').eq('owner_id', user.id).order('created_at', { ascending: false })
+      setCaravans(caravanData || []); console.log('caravans:', caravanData)
       setLoading(false)
     }
     load()
@@ -80,6 +93,10 @@ export default function OwnerDashboard() {
               <IconPlus className="w-4 h-4" />
               הוסף נכס
             </Link>
+            <Link href="/dashboard/caravans/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-amber-700 hover:bg-amber-800">
+              <IconPlus className="w-4 h-4" />
+              הוסף קרוואן
+            </Link>
             <Link href="/dashboard/attractions/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600">
               <IconPlus className="w-4 h-4" />
               הוסף אטרקציה
@@ -100,6 +117,10 @@ export default function OwnerDashboard() {
           <div className="bg-white rounded-2xl p-5 shadow-sm">
             <p className="text-sm text-gray-500 mb-1">אטרקציות</p>
             <p className="text-3xl font-bold text-amber-600">{attractions.length}</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 shadow-sm">
+            <p className="text-sm text-gray-500 mb-1">קרוואנים</p>
+            <p className="text-3xl font-bold text-amber-800">{caravans.length}</p>
           </div>
           <div className="bg-white rounded-2xl p-5 shadow-sm">
             <p className="text-sm text-gray-500 mb-1">ממתינים לאישור</p>
@@ -190,6 +211,56 @@ export default function OwnerDashboard() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* קרוואנים */}
+        {caravans.length > 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden mt-6">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="font-bold text-gray-900">הקרוואנים שלי</h2>
+              <Link href="/dashboard/caravans/new" className="flex items-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-800">
+                <IconPlus className="w-4 h-4" />הוסף קרוואן
+              </Link>
+            </div>
+            <table className="w-full">
+              <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
+                <tr>
+                  <th className="px-6 py-3 text-right">שם</th>
+                  <th className="px-6 py-3 text-right">סוג</th>
+                  <th className="px-6 py-3 text-right">מחיר/לילה</th>
+                  <th className="px-6 py-3 text-right">סטטוס</th>
+                  <th className="px-6 py-3 text-right">דירוג</th>
+                  <th className="px-6 py-3 text-right">פעולות</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {caravans.map((c) => {
+                  const s = statusLabel(c.status)
+                  return (
+                    <tr key={c.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 font-medium text-gray-900">{c.name}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{{ auto: 'אוטו קרוואן', trailer: 'נגרר', stationed: 'מוצב בשטח', truck: 'משאית' }[c.caravan_type] || c.caravan_type}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">₪{c.price_per_night}</td>
+                      <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{c.avg_rating ? `⭐ ${c.avg_rating}` : '—'}</td>
+                      <td className="px-6 py-4">
+                        <Link href={`/dashboard/caravans/${c.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block">
+                          <IconEdit className="w-4 h-4 text-gray-500" />
+                        </Link>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-sm p-8 mt-6 text-center">
+            <p className="text-gray-400 mb-4">אין לך קרוואנים עדיין</p>
+            <Link href="/dashboard/caravans/new" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-700">
+              <IconPlus className="w-4 h-4" />הוסף קרוואן ראשון
+            </Link>
           </div>
         )}
 

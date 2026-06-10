@@ -78,7 +78,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto" style={{position:"relative", zIndex:9999}}>
       <style>{`
         @keyframes dropDown {
           from { opacity: 0; transform: scaleY(0.7); }
@@ -89,10 +89,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           animation: dropDown 0.2s cubic-bezier(0.34,1.8,0.64,1) forwards;
         }
       `}</style>
-      <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)] overflow-visible">
-        <div className="grid grid-cols-1 lg:grid-cols-5">
+      <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)]">
+        <div className="grid grid-cols-1 lg:grid-cols-5 relative" style={{zIndex: 1}}>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100 overflow-visible">
             <IconHome className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">סוג נכס</label>
@@ -118,7 +118,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100 overflow-visible">
             <IconMapPin className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">אזור בארץ</label>
@@ -144,7 +144,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100 overflow-visible">
             <IconCalendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">תאריך כניסה</label>
@@ -155,7 +155,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100 overflow-visible">
             <IconCalendar className="w-4 h-4 text-gold shrink-0 sm:mb-1.5" />
             <div className="flex-1 min-w-0">
               <label className="label">תאריך יציאה</label>

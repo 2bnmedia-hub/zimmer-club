@@ -116,7 +116,7 @@ function SearchContent() {
   const [priceRange, setPriceRange] = useState<[number, number]>([200, 35000])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [filters, setFilters] = useState({
-    category: searchParams.get('category') || '',
+    category: searchParams.get('available') || searchParams.get('category') || '',
     region: searchParams.get('region') || '',
     guests: searchParams.get('guests') || '',
     check_in: searchParams.get('check_in') || '',
@@ -129,7 +129,7 @@ function SearchContent() {
   // עדכן filters כשה-URL משתנה
   useEffect(() => {
     setFilters({
-      category: searchParams.get('category') || '',
+      category: searchParams.get('available') || searchParams.get('category') || '',
       region: searchParams.get('region') || '',
       guests: searchParams.get('guests') || '',
       check_in: searchParams.get('check_in') || '',
@@ -231,21 +231,24 @@ function SearchContent() {
       }
     }
 
-    // סופ״ש הקרוב
+    // סופ״ש הקרוב — חמישי שישי שבת
     if (filters.category === 'weekend') {
       const today = new Date()
       const day = today.getDay()
-      const daysUntilFri = (5 - day + 7) % 7 || 7
-      const friday = new Date(today)
-      friday.setDate(today.getDate() + daysUntilFri)
-      const saturday = new Date(friday)
-      saturday.setDate(friday.getDate() + 1)
-      const fridayStr = friday.toISOString().split('T')[0]
-      const saturdayStr = saturday.toISOString().split('T')[0]
+      const daysUntilThu = (4 - day + 7) % 7 || 7
+      const thursday = new Date(today)
+      thursday.setDate(today.getDate() + daysUntilThu)
+      const friday = new Date(thursday)
+      friday.setDate(thursday.getDate() + 1)
+      const saturday = new Date(thursday)
+      saturday.setDate(thursday.getDate() + 2)
+      const thuStr = thursday.toISOString().split('T')[0]
+      const friStr = friday.toISOString().split('T')[0]
+      const satStr = saturday.toISOString().split('T')[0]
       const { data: blockedWeekend } = await supabase
         .from('blocked_dates')
         .select('property_id')
-        .in('date', [fridayStr, saturdayStr])
+        .in('date', [thuStr, friStr, satStr])
         .eq('status', 'blocked')
       const blockedIds = new Set((blockedWeekend || []).map((b: any) => b.property_id))
       results = results.filter(p => !blockedIds.has(p.id))

@@ -70,7 +70,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         <IconMapPin className="w-4 h-4 text-taupe shrink-0" />
         <input type="text" value={region} onChange={(e) => setRegion(e.target.value)}
           placeholder="לאן?" className="flex-1 text-sm bg-transparent outline-none text-charcoal placeholder-stone" dir="rtl" />
-        <button onClick={handleSearch} className="btn-gold text-sm py-1.5 px-4"><IconSearch className="w-4 h-4" /></button>
+        <button onClick={handleSearch} className="btn-gold text-sm py-1.5 px-4"><IconSearch className="w-4 h-4" color="white" /></button>
       </div>
     )
   }
@@ -148,7 +148,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         <div className="border-t border-sand-100 p-4 flex items-center justify-center relative">
           <button onClick={handleSearch}
             className="btn-gold flex items-center justify-center gap-2 py-2.5 px-8 text-sm">
-            <IconSearch className="w-4 h-4 shrink-0" />
+            <IconSearch className="w-4 h-4 shrink-0" color="white" />
             <span>חיפוש</span>
           </button>
           <a href="/search"

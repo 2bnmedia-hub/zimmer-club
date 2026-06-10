@@ -178,21 +178,21 @@ export const ZIMMER_MENU = {
        { href: '/search?region=eilat', label: 'צימרים באילת' },   
   ],
 byAudience: [
-  { href: '/search?category=religious', label: 'צימרים לדתיים' },  
-    { href: '/search?category=family', label: 'צימרים למשפחות' },  
+  { href: '/search?amenity=religious', label: 'צימרים לדתיים' },  
+    { href: '/search?amenity=families', label: 'צימרים למשפחות' },  
   { href: '/search?amenity=heated_pool', label: 'בריכה מחוממת' },
     { href: '/search?amenity=pool', label: 'צימרים עם בריכה' },
-    { href: '/search?category=romantic', label: 'צימרים לזוגות' },
+    { href: '/search?amenity=couples', label: 'צימרים לזוגות' },
     { href: '/search?category=luxury', label: 'צימרים יוקרתיים' },
-    { href: '/search?category=romantic', label: 'צימרים רומנטיים' },
-    { href: '/search?amenity=shelter', label: 'צימרים עם מרחב מוגן' },
+    { href: '/search?amenity=couples', label: 'צימרים רומנטיים' },
+    { href: '/search?amenity=shelter_nearby', label: 'צימרים עם מרחב מוגן' },
   ],
   byAvailability: [
     { href: '/search?instant=true', label: 'צימרים פנויים' },
     { href: '/search?available=weekend', label: 'צימרים בסוף השבוע הקרוב' },
     { href: '/search?available=last', label: 'צימרים ברגע אחרון' },
     { href: '/search?category=luxury', label: 'צימרים יוקרתיים' },
-    { href: '/search?category=romantic', label: 'צימרים רומנטיים' },
+    { href: '/search?amenity=couples', label: 'צימרים רומנטיים' },
   
   ],
 

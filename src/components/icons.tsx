@@ -10,15 +10,15 @@ const grad = (id: string) => (
   </defs>
 )
 
-const s = (id: string) => `url(#${id})`
+const s = (id: string, customStroke?: string) => customStroke ? customStroke : `url(#${id})`
 
-type P = { size?: number; className?: string; style?: React.CSSProperties }
+type P = { size?: number; className?: string; style?: React.CSSProperties; color?: string }
 
-export const IconSearch = ({ size = 20, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('gs')}
-    <circle cx="11" cy="11" r="7" stroke={s('gs')} strokeWidth="1.8"/>
-    <path d="M16.5 16.5L21 21" stroke={s('gs')} strokeWidth="1.8" strokeLinecap="round"/>
+export const IconSearch = ({ size = 20, className, style, color }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} style={style}>
+    {!color && grad('gs')}
+    <circle cx="11" cy="11" r="7" stroke={color || s('gs')} strokeWidth="1.8"/>
+    <path d="M16.5 16.5L21 21" stroke={color || s('gs')} strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
 )
 

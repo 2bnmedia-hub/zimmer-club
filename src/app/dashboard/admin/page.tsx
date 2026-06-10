@@ -450,32 +450,32 @@ export default function AdminDashboard() {
         )}
 
         {activeTab==='properties' && <FullTable title="צימרים, וילות ובקתות" items={properties}
-          onApprove={id=>approve('properties',id,setProperties)} onReject={id=>reject('properties',id,setProperties)}
-          onDelete={id=>remove('properties',id,setProperties)} editPath={id=>`/dashboard/properties/${id}/edit`}
+          onApprove={(id:string)=>approve('properties',id,setProperties)} onReject={(id:string)=>reject('properties',id,setProperties)}
+          onDelete={(id:string)=>remove('properties',id,setProperties)} editPath={(id:string)=>`/dashboard/properties/${id}/edit`}
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={(item:Item)=>item.category?.[0]||'—'} />}
 
         {activeTab==='attractions' && <FullTable title="אטרקציות" items={attractions}
-          onApprove={id=>approve('attractions',id,setAttractions)} onReject={id=>reject('attractions',id,setAttractions)}
-          onDelete={id=>remove('attractions',id,setAttractions)} editPath={id=>`/dashboard/attractions/${id}/edit`}
+          onApprove={(id:string)=>approve('attractions',id,setAttractions)} onReject={(id:string)=>reject('attractions',id,setAttractions)}
+          onDelete={(id:string)=>remove('attractions',id,setAttractions)} editPath={(id:string)=>`/dashboard/attractions/${id}/edit`}
           priceLabel={(item:Item)=>item.price_per_person?`₪${item.price_per_person}`:'—'}
           typeLabel={(item:Item)=>item.activity_type?.[0]||'—'} />}
 
         {activeTab==='caravans' && <FullTable title="קרוואנים" items={caravans}
-          onApprove={id=>approve('caravans',id,setCaravans)} onReject={id=>reject('caravans',id,setCaravans)}
-          onDelete={id=>remove('caravans',id,setCaravans)} editPath={id=>`/dashboard/caravans/${id}/edit`}
+          onApprove={(id:string)=>approve('caravans',id,setCaravans)} onReject={(id:string)=>reject('caravans',id,setCaravans)}
+          onDelete={(id:string)=>remove('caravans',id,setCaravans)} editPath={(id:string)=>`/dashboard/caravans/${id}/edit`}
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={(item:Item)=>({'auto':'אוטו','trailer':'נגרר','stationed':'מוצב','truck':'משאית'} as any)[item.caravan_type||'']||'—'} />}
 
         {activeTab==='hotels' && <FullTable title="מלונות" items={properties.filter(p=>p.category?.[0]==='hotel')}
-          onApprove={id=>approve('properties',id,setProperties)} onReject={id=>reject('properties',id,setProperties)}
-          onDelete={id=>remove('properties',id,setProperties)} editPath={id=>`/dashboard/properties/${id}/edit`}
+          onApprove={(id:string)=>approve('properties',id,setProperties)} onReject={(id:string)=>reject('properties',id,setProperties)}
+          onDelete={(id:string)=>remove('properties',id,setProperties)} editPath={(id:string)=>`/dashboard/properties/${id}/edit`}
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={()=>'מלון'} />}
 
         {activeTab==='camping' && <FullTable title="קמפינג" items={properties.filter(p=>p.category?.[0]==='camping')}
-          onApprove={id=>approve('properties',id,setProperties)} onReject={id=>reject('properties',id,setProperties)}
-          onDelete={id=>remove('properties',id,setProperties)} editPath={id=>`/dashboard/properties/${id}/edit`}
+          onApprove={(id:string)=>approve('properties',id,setProperties)} onReject={(id:string)=>reject('properties',id,setProperties)}
+          onDelete={(id:string)=>remove('properties',id,setProperties)} editPath={(id:string)=>`/dashboard/properties/${id}/edit`}
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={()=>'קמפינג'} />}
 

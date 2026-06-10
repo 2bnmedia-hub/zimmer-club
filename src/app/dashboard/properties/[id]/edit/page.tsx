@@ -431,7 +431,7 @@ export default function EditPropertyPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          <IconCalendar propertyId={params.id as string} supabase={supabase} />
+          <Calendar propertyId={params.id as string} supabase={supabase} />
 
           {/* גלריית תמונות */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">

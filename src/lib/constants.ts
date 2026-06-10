@@ -115,7 +115,7 @@ export const ATTRACTIONS_MENU = {
     { href: '/attractions?category=groups', label: 'אטרקציות לקבוצות' },
   ],
   popular: [
-    { href: '/attractions', label: 'ריצר' },
+    { href: '/attractions', label: 'רייזרים' },
     { href: '/attractions', label: 'קיר טיפוס' },
     { href: '/attractions', label: 'איזי ריידר' },
     { href: '/attractions', label: 'לייזר טאג' },
@@ -124,7 +124,6 @@ export const ATTRACTIONS_MENU = {
     { href: '/attractions', label: 'באגי' },
     { href: '/attractions', label: 'קלאב קאר' },
     { href: '/attractions', label: 'פארק מים' },
-    { href: '/attractions', label: 'בריכה' },
     { href: '/attractions', label: 'גימבורי' },
     { href: '/attractions', label: 'גן שעשועים' },
     { href: '/attractions', label: 'סדנת קרמיקה' },

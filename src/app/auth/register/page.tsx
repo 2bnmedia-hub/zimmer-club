@@ -56,7 +56,10 @@ export default function RegisterPage() {
   const handleFacebookSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'facebook',
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        scopes: 'public_profile'
+      }
     })
   }
 

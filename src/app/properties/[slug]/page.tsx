@@ -208,6 +208,26 @@ export default function PropertyPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
   if (!property) return null
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LodgingBusiness',
+    name: property.name,
+    description: property.short_description || property.description,
+    image: images[0] || '',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: property.city || '',
+      addressCountry: 'IL',
+    },
+    priceRange: property.price_per_night ? `₪${property.price_per_night}` : '',
+    aggregateRating: property.avg_rating > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: property.avg_rating,
+      reviewCount: property.total_reviews,
+    } : undefined,
+    url: `https://zimmer.club/${property.slug || property.id}`,
+  }
+
   const regionLabels: Record<string, string> = {
     north: 'צפון', galil_west: 'גליל המערבי', galil_upper: 'גליל העליון',
     galil_lower: 'גליל התחתון', kinneret: 'כנרת', hermon: 'חרמון',
@@ -217,6 +237,7 @@ export default function PropertyPage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AdminBackButton />
       {/* Mobile sticky booking bar */}
       <div className="lg:hidden mobile-booking-bar">

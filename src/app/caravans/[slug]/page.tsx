@@ -91,11 +91,32 @@ export default function CaravanPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
   if (!caravan) return null
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: caravan.name,
+    description: caravan.short_description || caravan.description,
+    image: images[0] || '',
+    offers: {
+      '@type': 'Offer',
+      price: caravan.price_per_night,
+      priceCurrency: 'ILS',
+      availability: 'https://schema.org/InStock',
+    },
+    aggregateRating: caravan.avg_rating > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: caravan.avg_rating,
+      reviewCount: caravan.total_reviews,
+    } : undefined,
+    url: `https://zimmer.club/caravans/${caravan.id}`,
+  }
+
   const waLink = caravan.whatsapp ? `https://wa.me/972${caravan.whatsapp.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`שלום, אני מעוניין בקרוואן ${caravan.name}`)}` : null
   const mapsQuery = encodeURIComponent((caravan.city || '') + ', ישראל')
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AdminBackButton />
       <main className="min-h-screen bg-white pt-4" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">

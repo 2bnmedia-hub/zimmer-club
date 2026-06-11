@@ -201,10 +201,31 @@ export default function AttractionPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
   if (!attraction) return null
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    name: attraction.name,
+    description: attraction.short_description || attraction.description,
+    image: images[0] || '',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: attraction.city || '',
+      addressCountry: 'IL',
+    },
+    aggregateRating: attraction.avg_rating > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: attraction.avg_rating,
+      reviewCount: attraction.total_reviews,
+    } : undefined,
+    url: `https://zimmer.club/attractions/${attraction.slug || attraction.id}`,
+  }
+
   const waLink = attraction.whatsapp ? `https://wa.me/${attraction.whatsapp.replace(/\D/g, '')}` : null
   const mapsQuery = encodeURIComponent((attraction.address ? attraction.address + ', ' : '') + (attraction.city || '') + ', ישראל')
 
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <main className="min-h-screen bg-white pt-4" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
 
@@ -404,5 +425,6 @@ export default function AttractionPage() {
 
       </div>
     </main>
+    </>
   )
 }

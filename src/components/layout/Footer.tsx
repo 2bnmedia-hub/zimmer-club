@@ -24,7 +24,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="bg-espresso text-cream-50/70">
+    <footer className="text-cream-50/70" style={{background:"linear-gradient(135deg, #00854E 0%, #006039 45%, #004D2E 100%)"}}>
       <div className="page-container">
         {/* Main footer */}
         <div className="py-10 sm:py-14 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">

@@ -47,10 +47,16 @@ function Drop({ id, open, setOpen, label, value, options, onChange }: {
   const [pos, setPos] = useState({top:0, left:0, width:0})
 
   useEffect(() => {
-    if (isOpen && btnRef.current) {
-      const r = btnRef.current.getBoundingClientRect()
-      setPos({ top: r.bottom + 6, left: r.left, width: Math.max(r.width, 160) })
+    if (!isOpen || !btnRef.current) return
+    const update = () => {
+      if (btnRef.current) {
+        const r = btnRef.current.getBoundingClientRect()
+        setPos({ top: r.bottom + 6, left: r.left, width: Math.max(r.width, 160) })
+      }
     }
+    update()
+    window.addEventListener('scroll', update, true)
+    return () => window.removeEventListener('scroll', update, true)
   }, [isOpen])
 
   return (
@@ -137,45 +143,24 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           from { opacity:0; transform:scaleY(0.85); }
           to   { opacity:1; transform:scaleY(1); }
         }
-        .search-label {
-          display: block;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #1B5E3B;
-          margin-bottom: 4px;
-        }
-        .search-divider {
-          border-color: rgba(196,165,107,0.2);
-        }
       `}</style>
-      <div className="bg-white rounded-2xl overflow-hidden" style={{
-        border: '1px solid rgba(196,165,107,0.35)',
-        boxShadow: '0 8px 40px rgba(27,94,59,0.08), 0 2px 12px rgba(196,165,107,0.12)',
-      }}>
-        {/* שורת כותרת */}
-        <div className="px-6 py-2.5 flex items-center gap-2" style={{
-          background: 'linear-gradient(135deg, #1B5E3B 0%, #14472D 100%)',
-        }}>
-          <span style={{color:'#C4A56B', fontSize:'11px', fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase'}}>✦ חפשו את הנכס המושלם שלכם</span>
-        </div>
+      <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)]">
         <div className="grid grid-cols-1 lg:grid-cols-5">
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 search-divider" style={{overflow:'visible'}}>
-            <IconHome className="w-4 h-4 shrink-0 mt-0.5" style={{color:'#1B5E3B'}} />
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100" style={{overflow:'visible'}}>
+            <IconHome className="w-4 h-4 text-gold shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0" style={{overflow:'visible'}}>
-              <label className="search-label">סוג נכס</label>
+              <label className="label">סוג נכס</label>
               <Drop id="type" open={openDrop} setOpen={setOpenDrop}
                 label="כל הסוגים" value={propertyType} options={PROPERTY_TYPES}
                 onChange={(v) => { setPropertyType(String(v)); setError('') }} />
             </div>
           </div>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 search-divider" style={{overflow:'visible'}}>
-            <IconMapPin className="w-4 h-4 shrink-0 mt-0.5" style={{color:'#1B5E3B'}} />
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100" style={{overflow:'visible'}}>
+            <IconMapPin className="w-4 h-4 text-gold shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0" style={{overflow:'visible'}}>
-              <label className="search-label">אזור בארץ</label>
+              <label className="label">אזור בארץ</label>
               <Drop id="region" open={openDrop} setOpen={setOpenDrop}
                 label="בחר אזור" value={region}
                 options={[{value:'', label:'כל הארץ'}, ...REGIONS]}
@@ -183,10 +168,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 search-divider">
-            <IconCalendar className="w-4 h-4 shrink-0 mt-0.5" style={{color:'#1B5E3B'}} />
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
+            <IconCalendar className="w-4 h-4 text-gold shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <label className="search-label">תאריך כניסה</label>
+              <label className="label">תאריך כניסה</label>
               <input type="date" value={checkIn}
                 onChange={(e) => { const val = e.target.value; if (val && val < today) { setError('תאריך הכניסה אינו תקין'); return } setCheckIn(val); setError(''); if (checkOut && val > checkOut) setCheckOut('') }}
                 min={today} max={maxDate}
@@ -194,10 +179,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
             </div>
           </div>
 
-          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 search-divider">
-            <IconCalendar className="w-4 h-4 shrink-0 mt-0.5" style={{color:'#1B5E3B'}} />
+          <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100">
+            <IconCalendar className="w-4 h-4 text-gold shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <label className="search-label">תאריך יציאה</label>
+              <label className="label">תאריך יציאה</label>
               <input type="date" value={checkOut}
                 onChange={(e) => { const val = e.target.value; if (val && val < today) { setError('תאריך אינו תקין'); return } if (val && checkIn && val <= checkIn) { setError('תאריך היציאה חייב להיות אחרי תאריך הכניסה'); return } setCheckOut(val); setError('') }}
                 min={checkIn || today} max={maxDate}
@@ -206,9 +191,9 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
 
           <div className="flex items-start gap-3 px-5 pt-4 pb-2" style={{overflow:'visible'}}>
-            <IconUsers className="w-4 h-4 shrink-0 mt-0.5" style={{color:'#1B5E3B'}} />
+            <IconUsers className="w-4 h-4 text-gold shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0" style={{overflow:'visible'}}>
-              <label className="search-label">אורחים</label>
+              <label className="label">אורחים</label>
               <Drop id="guests" open={openDrop} setOpen={setOpenDrop}
                 label="בחר" value={guests} options={guestOptions}
                 onChange={(v) => setGuests(Number(v))} />
@@ -223,12 +208,10 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
           </div>
         )}
 
-        <div className="p-4 flex items-center justify-center relative" style={{borderTop:'1px solid rgba(196,165,107,0.2)'}}>
-          <button onClick={handleSearch}
-            className="flex items-center justify-center gap-2 py-2.5 px-10 text-sm font-bold text-white rounded-full transition-all hover:opacity-90 hover:scale-105"
-            style={{background:'linear-gradient(135deg, #1B5E3B 0%, #14472D 100%)', boxShadow:'0 4px 16px rgba(27,94,59,0.3)', letterSpacing:'0.05em'}}>
+        <div className="border-t border-sand-100 p-4 flex items-center justify-center relative">
+          <button onClick={handleSearch} className="btn-gold flex items-center justify-center gap-2 py-2.5 px-8 text-sm">
             <IconSearch className="w-4 h-4 shrink-0" color="white" />
-            <span>חיפוש נכסים</span>
+            <span>חיפוש</span>
           </button>
           <a href="/search" className="absolute left-4 flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-medium border border-gray-200 bg-white text-gray-500 hover:border-yellow-600 hover:text-yellow-700 transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

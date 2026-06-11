@@ -331,14 +331,35 @@ export default function PropertyPage() {
             <button onClick={() => toggle(property!.id)} className="absolute top-4 left-4 z-10 bg-white/90 hover:bg-white p-2.5 rounded-full shadow-md transition-all hover:scale-110" aria-label="הוסף למועדפים">
               <IconHeart className={`w-5 h-5 transition-colors ${isLiked(property!.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
             </button>
-            {property.instant_book && (
-              <div className="absolute top-4 right-4 z-10">
-                <span className="bg-white text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1"><IconZap className="w-3 h-3" />הזמנה מיידית</span>
-              </div>
-            )}
-            <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 mt-9">
-              {property.accepts_miluim && <span className="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">🪖 מקבלים שובר מילואים</span>}
-              {property.has_shelter && <span className="bg-orange-400 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">🛡️ קיים מרחב מוגן</span>}
+            <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5">
+              <style>{`
+                @keyframes shimmer-badge {
+                  0% { transform: scale(1); opacity: 1; }
+                  50% { transform: scale(1.04); opacity: 0.85; }
+                  100% { transform: scale(1); opacity: 1; }
+                }
+                .badge-shimmer {
+                  background: rgba(255,255,255,0.92);
+                  border: 1px solid rgba(196,165,107,0.3);
+                  animation: shimmer-badge 2.5s ease-in-out infinite;
+                }
+                .badge-shimmer-green {
+                  background: #006039;
+                  animation: shimmer-badge 2.5s ease-in-out infinite;
+                }
+              `}</style>
+              {property.instant_book && (
+                <span className="badge-shimmer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm"
+                  style={{color:'#8B6914', border:'1px solid rgba(196,165,107,0.3)', boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
+                  <IconZap className="w-3 h-3" style={{color:'#C4A56B'}} />הזמנה מיידית
+                </span>
+              )}
+              {property.accepts_miluim && (
+                <span className="badge-shimmer-green flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm"
+                  style={{color:'#fff', boxShadow:'0 2px 8px rgba(0,0,0,0.12)'}}>
+                  מקבלים שובר מילואים
+                </span>
+              )}
             </div>
           </div>
 
@@ -450,21 +471,21 @@ export default function PropertyPage() {
                     ? `https://wa.me/972${waNumber.replace(/^0/, '')}?text=${encodeURIComponent(msgParts)}`
                     : null
                   return (
-                    <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
                       {waUrl && (
                         <a href={waUrl} target="_blank" rel="noopener noreferrer"
-                          className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
-                          style={{ backgroundColor: '#25D366' }}>
+                          className="flex-1 py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                          style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', boxShadow: '0 4px 12px rgba(37,211,102,0.3)' }}>
                           <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.826L.057 23.886l6.232-1.638A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.893 9.893 0 01-5.032-1.37l-.361-.214-3.741.981.999-3.648-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106c5.42 0 9.894 4.474 9.894 9.894 0 5.42-4.474 9.894-9.894 9.894z"/></svg>
-                          שלח וואטסאפ לבעל הנכס
+                          וואטסאפ
                         </a>
                       )}
                       {phoneNumber && (
                         <a href={`tel:${phoneNumber}`}
-                          className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
-                          style={{ backgroundColor: '#1B5E3B' }}>
+                          className="flex-1 py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                          style={{ background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 100%)', boxShadow: '0 4px 12px rgba(139,105,20,0.3)' }}>
                           <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white shrink-0"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                          התקשר עכשיו
+                          התקשר
                         </a>
                       )}
                       {!waUrl && !phoneNumber && (
@@ -473,7 +494,6 @@ export default function PropertyPage() {
                     </div>
                   )
                 })()}
-                <ContactButtons property={property} />
                 {property.min_nights > 1 && <p className="text-xs text-gray-400 text-center mt-2">מינימום {property.min_nights} לילות</p>}
                 {(property.address || property.city) && (
                   <div className="mt-5 pt-5 border-t border-gray-100">
@@ -484,7 +504,7 @@ export default function PropertyPage() {
                     </div>
                     <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address?property.address+', ':'')+(property.city||'')+', ישראל')}`}
                       target="_blank" rel="noopener noreferrer"
-                      className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-white transition-colors" style={{backgroundColor:'#2563eb'}}>
+                      className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-white transition-colors" style={{background:'linear-gradient(135deg, #F8F4EE 0%, #DDD5C8 100%)', color:'#3D2F20', boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}}>
                       <IconNavigation className="w-3.5 h-3.5" />נווט
                     </a>
                   </div>

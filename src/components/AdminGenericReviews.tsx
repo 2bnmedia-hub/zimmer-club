@@ -48,7 +48,7 @@ export function AdminGenericReviews({ entityId, table, foreignKey }: Props) {
   useEffect(() => { loadReviews() }, [])
 
   async function loadReviews() {
-    const selectFields = table === 'reviews' ? '*' : '*, profiles(full_name)'
+    const selectFields = '*'
     const { data } = await supabase.from(table).select(selectFields).eq(foreignKey, entityId).order('created_at', { ascending: false })
     setReviews((data as any) || [])
     setLoading(false)

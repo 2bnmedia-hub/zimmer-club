@@ -107,7 +107,10 @@ export default function EditCaravanPage({ params }: { params: Promise<{ id: stri
       const ext = file.name.split('.').pop()
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
       const { error } = await supabase.storage.from('caravan-images').upload(path, file)
-      if (!error) {
+      if (error) {
+        console.error('Storage upload error:', error)
+        alert('שגיאה בהעלאת תמונה: ' + error.message)
+      } else {
         const { data } = supabase.storage.from('caravan-images').getPublicUrl(path)
         urls.push(data.publicUrl)
       }

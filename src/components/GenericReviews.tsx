@@ -56,7 +56,7 @@ export function GenericReviews({ entityId, table, foreignKey }: GenericReviewsPr
   useEffect(() => { loadReviews(); loadUser() }, [])
 
   async function loadReviews() {
-    const selectFields = table === 'reviews' ? '*' : '*, profiles(full_name)'
+    const selectFields = '*'
     const { data } = await supabase
       .from(table)
       .select(selectFields)

@@ -37,10 +37,10 @@ export const IconMenu = ({ size = 20, className }: P) => (
   </svg>
 )
 
-export const IconX = ({ size = 20, className }: P) => (
+export const IconX = ({ size = 20, className, color }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('gx')}
-    <path d="M18 6L6 18M6 6l12 12" stroke={s('gx')} strokeWidth="1.8" strokeLinecap="round"/>
+    {!color && grad('gx')}
+    <path d="M18 6L6 18M6 6l12 12" stroke={color || s('gx')} strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
 )
 
@@ -140,11 +140,11 @@ export const IconZap = ({ size = 20, className }: P) => (
   </svg>
 )
 
-export const IconEye = ({ size = 20, className }: P) => (
+export const IconEye = ({ size = 20, className, color }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('gey')}
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke={s('gey')} strokeWidth="1.8"/>
-    <circle cx="12" cy="12" r="3" stroke={s('gey')} strokeWidth="1.8"/>
+    {!color && grad('gey')}
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke={color || s('gey')} strokeWidth="1.8"/>
+    <circle cx="12" cy="12" r="3" stroke={color || s('gey')} strokeWidth="1.8"/>
   </svg>
 )
 
@@ -164,18 +164,18 @@ export const IconUpload = ({ size = 20, className }: P) => (
   </svg>
 )
 
-export const IconTrash = ({ size = 20, className }: P) => (
+export const IconTrash = ({ size = 20, className, color }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('gt')}
-    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke={s('gt')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad('gt')}
+    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke={color || s('gt')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
-export const IconEdit = ({ size = 20, className }: P) => (
+export const IconEdit = ({ size = 20, className, color }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('ge')}
-    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke={s('ge')} strokeWidth="1.8" strokeLinecap="round"/>
-    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke={s('ge')} strokeWidth="1.8" strokeLinecap="round"/>
+    {!color && grad('ge')}
+    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke={color || s('ge')} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke={color || s('ge')} strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
 )
 
@@ -186,10 +186,10 @@ export const IconPlus = ({ size = 20, className }: P) => (
   </svg>
 )
 
-export const IconCheck = ({ size = 20, className }: P) => (
+export const IconCheck = ({ size = 20, className, color }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('gck')}
-    <path d="M20 6L9 17l-5-5" stroke={s('gck')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad('gck')}
+    <path d="M20 6L9 17l-5-5" stroke={color || s('gck')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 

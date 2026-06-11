@@ -158,11 +158,11 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, view
                     <td className="px-5 py-3"><span className="px-2.5 py-1 rounded-full text-sm font-semibold" style={{ background:s.bg, color:s.color }}>{s.label}</span></td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
-                        {item.status!=='active' && <button onClick={()=>onApprove(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f0fdf4' }}><IconCheck className="w-3.5 h-3.5 text-gray-900"/></button>}
-                        {item.status!=='rejected' && <button onClick={()=>onReject(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#fff1f2' }}><IconX className="w-3.5 h-3.5 text-gray-900"/></button>}
-                        {viewPath && <Link href={viewPath(item.id)} target="_blank" className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f0f9ff' }}><IconEye className="w-3.5 h-3.5 text-gray-900"/></Link>}
-                        <Link href={editPath(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f9fafb' }}><IconEdit className="w-3.5 h-3.5 text-gray-900"/></Link>
-                        <button onClick={()=>onDelete(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#fff1f2' }}><IconTrash className="w-3.5 h-3.5 text-gray-900"/></button>
+                        {item.status!=='active' && <button onClick={()=>onApprove(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f0fdf4' }}><IconCheck className="w-3.5 h-3.5" color="#111827"/></button>}
+                        {item.status!=='rejected' && <button onClick={()=>onReject(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#fff1f2' }}><IconX className="w-3.5 h-3.5" color="#111827"/></button>}
+                        {viewPath && <Link href={viewPath(item.id)} target="_blank" className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f0f9ff' }}><IconEye className="w-3.5 h-3.5" color="#111827"/></Link>}
+                        <Link href={editPath(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f9fafb' }}><IconEdit className="w-3.5 h-3.5" color="#111827"/></Link>
+                        <button onClick={()=>onDelete(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#fff1f2' }}><IconTrash className="w-3.5 h-3.5" color="#111827"/></button>
                       </div>
                     </td>
                   </tr>

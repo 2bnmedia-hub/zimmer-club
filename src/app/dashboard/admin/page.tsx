@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX, IconEye } from '@/components/icons'
+import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import dynamic from 'next/dynamic'
 const IsraelMap = dynamic(() => import('@/components/map/IsraelMap'), { ssr: false, loading: () => <div style={{ height: '300px', background: '#f9f5ef', borderRadius: '16px' }} className="animate-pulse" /> })
 
@@ -107,8 +108,9 @@ function HBar({ label, value, max, color }: { label: string; value: number; max:
   )
 }
 
-function FullTable({ title, items, onApprove, onReject, onDelete, editPath, viewPath, priceLabel, typeLabel }: any) {
+function FullTable({ title, items, onApprove, onReject, onDelete, editPath, viewPath, priceLabel, typeLabel, reviewsTable, reviewsForeignKey }: any) {
   const [filter, setFilter] = useState('all')
+  const [reviewsId, setReviewsId] = useState<string | null>(null)
   const filtered = filter === 'all' ? items : items.filter((i: Item) => i.status === filter)
   const pending = items.filter((i: Item) => i.status === 'pending').length
   const ss = (s: string) => {
@@ -149,6 +151,7 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, view
                 const s = ss(item.status)
                 const date = new Date(item.created_at).toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit', year:'2-digit' })
                 return (
+                  <>
                   <tr key={item.id} className="border-t transition-colors hover:bg-amber-50/20" style={{ borderColor:'#f5f0e8' }}>
                     <td className="px-5 py-3 font-medium text-sm" style={{ color:'#111827' }}>{item.name}</td>
                     <td className="px-5 py-3 text-sm" style={{ color:'#111827' }}>{typeLabel(item)}</td>
@@ -166,6 +169,14 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, view
                       </div>
                     </td>
                   </tr>
+                  {reviewsTable && reviewsId === item.id && (
+                    <tr key={item.id + '-reviews'}>
+                      <td colSpan={7} className="px-5 py-4 bg-amber-50/30">
+                        <AdminGenericReviews entityId={item.id} table={reviewsTable} foreignKey={reviewsForeignKey} />
+                      </td>
+                    </tr>
+                  )}
+                  </>
                 )
               })}
             </tbody>
@@ -467,12 +478,16 @@ export default function AdminDashboard() {
         {activeTab==='attractions' && <FullTable title="אטרקציות" items={attractions}
           onApprove={(id:string)=>approve('attractions',id,setAttractions)} onReject={(id:string)=>reject('attractions',id,setAttractions)}
           onDelete={(id:string)=>remove('attractions',id,setAttractions)} editPath={(id:string)=>`/dashboard/attractions/${id}/edit`}
+          viewPath={(id:string)=>`/attractions/${id}`}
+          reviewsTable="attraction_reviews" reviewsForeignKey="attraction_id"
           priceLabel={(item:Item)=>item.price_per_person?`₪${item.price_per_person}`:'—'}
           typeLabel={(item:Item)=>item.activity_type?.[0]||'—'} />}
 
         {activeTab==='caravans' && <FullTable title="קרוואנים" items={caravans}
           onApprove={(id:string)=>approve('caravans',id,setCaravans)} onReject={(id:string)=>reject('caravans',id,setCaravans)}
           onDelete={(id:string)=>remove('caravans',id,setCaravans)} editPath={(id:string)=>`/dashboard/caravans/${id}/edit`}
+          viewPath={(id:string)=>`/caravans/${id}`}
+          reviewsTable="caravan_reviews" reviewsForeignKey="caravan_id"
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={(item:Item)=>({'auto':'אוטו','trailer':'נגרר','stationed':'מוצב','truck':'משאית'} as any)[item.caravan_type||'']||'—'} />}
 

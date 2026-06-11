@@ -89,24 +89,17 @@ export const NAV_LINKS = [
 ]
 export const ATTRACTIONS_MENU = {
   byRegion: [
-    { href: '/attractions', label: 'לכל האטרקציות' },
     { href: '/attractions?region=north', label: 'אטרקציות בצפון' },
-  { href: '/attractions?region=north', label: ' אטרקציות באיזור חיפה והקריות' },
-   { href: '/attractions?region=north', label: 'אטרקציות בעמקים' },
+    { href: '/attractions?region=galil_west', label: 'אטרקציות בגליל המערבי' },
+    { href: '/attractions?region=galil_upper', label: 'אטרקציות בגליל העליון' },
+    { href: '/attractions?region=galil_lower', label: 'אטרקציות בגליל התחתון' },
     { href: '/attractions?region=kinneret', label: 'אטרקציות בכנרת' },
-    { href: '/attractions?region=north', label: 'אטרקציות במירון' },
-      { href: '/attractions?region=hermon', label: 'אטרקציות בחרמון' },
- { href: '/attractions?region=north', label: 'אטרקציות בגלבוע' },
+    { href: '/attractions?region=hermon', label: 'אטרקציות בחרמון' },
     { href: '/attractions?region=center', label: 'אטרקציות במרכז' },
-   { href: '/attractions?region=negev', label: 'אטרקציות בדרום' },
-    { href: '/attractions?region=eilat', label: 'אטרקציות באילת' },
-  
- 
     { href: '/attractions?region=jerusalem', label: 'אטרקציות בירושלים' },
     { href: '/attractions?region=dead_sea', label: 'אטרקציות בים המלח' },
-    { href: '/attractions?region=negev', label: 'אטרקציות בערבה' },
- 
-    
+    { href: '/attractions?region=negev', label: 'אטרקציות בדרום' },
+    { href: '/attractions?region=eilat', label: 'אטרקציות באילת' },
   ],
   byAudience: [
     { href: '/attractions?category=couples', label: 'אטרקציות לזוגות' },
@@ -125,8 +118,7 @@ export const ATTRACTIONS_MENU = {
 }
 export const VILLAS_MENU: { byRegion: { href: string; label: string }[]; byAudience: { href: string; label: string }[]; byFeatures: { href: string; label: string }[] } = {
   byRegion: [
-    { href: '/search?category=villa', label: 'לכל הוילות' },
-    { href: '/search?category=villa&region=north', label: 'וילות בצפון' },
+        { href: '/search?category=villa&region=north', label: 'וילות בצפון' },
     { href: '/search?category=villa&region=center', label: 'וילות במרכז' },
     { href: '/search?category=villa&region=negev', label: 'וילות בדרום' },
     { href: '/search?category=villa&region=galil_west', label: 'וילות בגליל מערבי' },

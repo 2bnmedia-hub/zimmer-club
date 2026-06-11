@@ -219,6 +219,8 @@ export default function NewPropertyPage() {
     const { data: existing } = await supabase.from('properties').select('id').eq('slug', slug).single()
     if (existing) { setError('שם זה כבר תפוס — נסה שם אחר'); setLoading(false); return }
 
+    const geoCoords = await geocodeAddress(form.city, form.address)
+
     const { data: property, error: insertError } = await supabase.from('properties').insert({
       owner_id: user.id,
       name: form.name,

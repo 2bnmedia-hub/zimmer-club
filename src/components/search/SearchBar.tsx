@@ -145,6 +145,9 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
         }
       `}</style>
       <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)]">
+        <div className="text-center py-2 border-b border-sand-100">
+          <span className="text-xs font-semibold uppercase tracking-widest text-taupe">חיפוש לפי</span>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-5">
 
           <div className="flex items-start gap-3 px-6 pt-4 pb-2 lg:border-l border-b lg:border-b-0 border-sand-100" style={{overflow:'visible'}}>

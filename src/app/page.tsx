@@ -4,6 +4,7 @@ import { Footer } from '@/components/layout/Footer'
 import { SearchBar } from '@/components/search/SearchBar'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
 import { LatestProperties } from '@/components/property/LatestProperties'
+import { GlobalSearch } from '@/components/search/GlobalSearch'
 
 export default function HomePage() {
   return (
@@ -66,10 +67,8 @@ export default function HomePage() {
               מחפשים את הבריחה המושלמת? מצאו אותה כאן
             </p>
 
-            {/* Badge */}
-            <div className="badge badge-gold text-sm mx-auto mb-10">
-              ✦ מעל 1000 נכסי תיירות הפרוסים בכל הארץ
-            </div>
+            {/* Global Search */}
+            <GlobalSearch />
 
             {/* Search */}
             <SearchBar />

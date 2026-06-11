@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
 import { GenericReviews } from '@/components/GenericReviews'
+import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { IconMapPin, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone } from '@/components/icons'
 import Image from 'next/image'
 
@@ -261,6 +262,7 @@ export default function CaravanPage() {
             )}
 
             <GenericReviews entityId={caravan.id} table="caravan_reviews" foreignKey="caravan_id" />
+              <AdminGenericReviews entityId={caravan.id} table="caravan_reviews" foreignKey="caravan_id" />
           </div>
         </div>
       </main>

@@ -42,10 +42,21 @@ export function AdminGenericReviews({ entityId, table, foreignKey }: Props) {
   const supabase = createClient()
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<Review>>({})
 
-  useEffect(() => { loadReviews() }, [])
+  useEffect(() => {
+    loadReviews()
+    checkAdmin()
+  }, [])
+
+  async function checkAdmin() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    if (data?.role === 'admin') setIsAdmin(true)
+  }
 
   async function loadReviews() {
     const selectFields = '*'
@@ -78,6 +89,7 @@ export function AdminGenericReviews({ entityId, table, foreignKey }: Props) {
   const getName = (r: Review) => r.reviewer_name || r.profiles?.full_name || 'אורח'
   const getText = (r: Review) => r.text || r.comment || ''
 
+  if (!isAdmin) return null
   if (loading) return <div className="text-sm text-gray-400 py-4">טוען ביקורות...</div>
 
   return (

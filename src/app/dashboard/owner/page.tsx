@@ -58,7 +58,7 @@ export default function OwnerDashboard() {
       const { data: attrData } = await supabase.from('attractions').select('*').eq('owner_id', user.id).order('created_at', { ascending: false })
       setAttractions(attrData || [])
       const { data: caravanData } = await supabase.from('caravans').select('*').eq('owner_id', user.id).order('created_at', { ascending: false })
-      setCaravans(caravanData || []); console.log('caravans:', caravanData)
+      setCaravans(caravanData || [])
       setLoading(false)
     }
     load()
@@ -161,8 +161,11 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4 text-sm text-gray-900">₪{p.price_per_night}</td>
                       <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
                       <td className="px-6 py-4 text-sm text-gray-500">{p.avg_rating ? `⭐ ${p.avg_rating}` : '—'}</td>
-                      <td className="px-6 py-4">
-                        <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block">
+                      <td className="px-6 py-4 flex items-center gap-1">
+                        <Link href={`/${p.id}`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה בנכס">
+                          <IconEye className="w-4 h-4 text-gray-400" />
+                        </Link>
+                        <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="עריכה">
                           <IconEdit className="w-4 h-4 text-gray-500" />
                         </Link>
                       </td>
@@ -201,8 +204,11 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4 text-sm text-gray-900">החל מ ₪{a.price_per_person}</td>
                       <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
                       <td className="px-6 py-4 text-sm text-gray-500">{a.avg_rating ? `⭐ ${a.avg_rating}` : '—'}</td>
-                      <td className="px-6 py-4">
-                        <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block">
+                      <td className="px-6 py-4 flex items-center gap-1">
+                        <Link href={`/attractions/${a.id}`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה באטרקציה">
+                          <IconEye className="w-4 h-4 text-gray-400" />
+                        </Link>
+                        <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="עריכה">
                           <IconEdit className="w-4 h-4 text-gray-500" />
                         </Link>
                       </td>
@@ -244,8 +250,11 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4 text-sm text-gray-900">₪{c.price_per_night}</td>
                       <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
                       <td className="px-6 py-4 text-sm text-gray-500">{c.avg_rating ? `⭐ ${c.avg_rating}` : '—'}</td>
-                      <td className="px-6 py-4">
-                        <Link href={`/dashboard/caravans/${c.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block">
+                      <td className="px-6 py-4 flex items-center gap-1">
+                        <Link href={`/caravans/${c.id}`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה בקרוואן">
+                          <IconEye className="w-4 h-4 text-gray-400" />
+                        </Link>
+                        <Link href={`/dashboard/caravans/${c.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="עריכה">
                           <IconEdit className="w-4 h-4 text-gray-500" />
                         </Link>
                       </td>

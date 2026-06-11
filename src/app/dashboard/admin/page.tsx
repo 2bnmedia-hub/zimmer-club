@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX } from '@/components/icons'
+import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX, IconEye } from '@/components/icons'
 import dynamic from 'next/dynamic'
 const IsraelMap = dynamic(() => import('@/components/map/IsraelMap'), { ssr: false, loading: () => <div style={{ height: '300px', background: '#f9f5ef', borderRadius: '16px' }} className="animate-pulse" /> })
 
@@ -107,7 +107,7 @@ function HBar({ label, value, max, color }: { label: string; value: number; max:
   )
 }
 
-function FullTable({ title, items, onApprove, onReject, onDelete, editPath, priceLabel, typeLabel }: any) {
+function FullTable({ title, items, onApprove, onReject, onDelete, editPath, viewPath, priceLabel, typeLabel }: any) {
   const [filter, setFilter] = useState('all')
   const filtered = filter === 'all' ? items : items.filter((i: Item) => i.status === filter)
   const pending = items.filter((i: Item) => i.status === 'pending').length
@@ -160,6 +160,7 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, pric
                       <div className="flex items-center gap-1.5">
                         {item.status!=='active' && <button onClick={()=>onApprove(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f0fdf4' }}><IconCheck className="w-3.5 h-3.5 text-green-600"/></button>}
                         {item.status!=='rejected' && <button onClick={()=>onReject(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#fff1f2' }}><IconX className="w-3.5 h-3.5 text-red-500"/></button>}
+                        {viewPath && <Link href={viewPath(item.id)} target="_blank" className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f0f9ff' }}><IconEye className="w-3.5 h-3.5 text-blue-400"/></Link>}
                         <Link href={editPath(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#f9fafb' }}><IconEdit className="w-3.5 h-3.5 text-gray-500"/></Link>
                         <button onClick={()=>onDelete(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:scale-110 transition-all" style={{ background:'#fff1f2' }}><IconTrash className="w-3.5 h-3.5 text-red-400"/></button>
                       </div>

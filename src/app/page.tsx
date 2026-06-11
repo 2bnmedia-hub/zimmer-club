@@ -77,16 +77,17 @@ export default function HomePage() {
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">
               {[
-                'ביטול חינם עד 48 שעות',
-                'אישור מיידי',
-                'תשלום מאובטח',
+                { icon: '✦', text: 'ללא עמלת הזמנה' },
+                { icon: '✦', text: 'קשר ישיר עם בעל הנכס' },
+                { icon: '✦', text: 'מעל 1,000 נכסי תיירות' },
               ].map((item) => (
                 <div
-                  key={item}
-                  className="flex items-center gap-2 text-sm text-taupe font-medium"
+                  key={item.text}
+                  className="flex items-center gap-2 text-sm font-medium"
+                  style={{ color: '#C4A46B' }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
-                  {item}
+                  <span style={{ color: '#8B6914', fontSize: '10px' }}>{item.icon}</span>
+                  {item.text}
                 </div>
               ))}
             </div>

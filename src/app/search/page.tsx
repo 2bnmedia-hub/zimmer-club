@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -111,6 +111,10 @@ function SearchContent() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [textSearch, setTextSearch] = useState(searchParams.get('q') || '')
+  const [suggestions, setSuggestions] = useState<{id:string, name:string, city:string, category:string[]}[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
   const [showAmenities, setShowAmenities] = useState(false)
   const [showAudience, setShowAudience] = useState(false)
   const [priceRange, setPriceRange] = useState<[number, number]>([200, 35000])
@@ -142,7 +146,30 @@ function SearchContent() {
     })
   }, [searchParams])
 
-  useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities])
+  useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities, textSearch])
+
+  // סגור הצעות בלחיצה מחוץ
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  async function fetchSuggestions(q: string) {
+    if (q.length < 2) { setSuggestions([]); return }
+    const { data } = await supabase
+      .from('properties')
+      .select('id, name, city, category')
+      .eq('status', 'active')
+      .or(`name.ilike.%${q}%,city.ilike.%${q}%,short_description.ilike.%${q}%`)
+      .limit(6)
+    setSuggestions(data || [])
+    setShowSuggestions(true)
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
   async function fetchProperties() {
@@ -317,6 +344,16 @@ function SearchContent() {
       results = results.filter(p => (blockedCount[p.id] || 0) < dates.length)
     }
 
+    // סינון טקסטואלי
+    if (textSearch.trim()) {
+      const q = textSearch.trim().toLowerCase()
+      results = results.filter(p =>
+        p.name?.toLowerCase().includes(q) ||
+        p.city?.toLowerCase().includes(q) ||
+        p.short_description?.toLowerCase().includes(q)
+      )
+    }
+
     setProperties(results)
     setLoading(false)
   }
@@ -346,9 +383,35 @@ function SearchContent() {
         {/* סרגל עליון */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-16 z-40 shadow-sm">
           <div className="max-w-7xl mx-auto flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none" style={{scrollbarWidth:"none"}}>
-            <div className="w-64 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-              <IconSearch className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-              <input type="text" placeholder="שם או מיקום..." className="flex-1 bg-transparent text-sm outline-none text-gray-700" dir="rtl" />
+            <div ref={searchRef} className="relative w-64">
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                <IconSearch className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <input
+                  type="text"
+                  value={textSearch}
+                  onChange={e => { setTextSearch(e.target.value); fetchSuggestions(e.target.value) }}
+                  onFocus={() => textSearch.length >= 2 && setShowSuggestions(true)}
+                  placeholder="שם, עיר או תיאור..."
+                  className="flex-1 bg-transparent text-sm outline-none text-gray-700"
+                  dir="rtl"
+                />
+                {textSearch && (
+                  <button onClick={() => { setTextSearch(''); setSuggestions([]); setShowSuggestions(false) }}
+                    className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
+                )}
+              </div>
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full right-0 left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                  {suggestions.map(s => (
+                    <button key={s.id} onClick={() => { setTextSearch(s.name); setShowSuggestions(false) }}
+                      className="w-full text-right px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors flex items-center gap-2">
+                      <IconSearch className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                      <span className="font-medium text-gray-800">{s.name}</span>
+                      {s.city && <span className="text-gray-400 text-xs">· {s.city}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <button onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-sm font-medium border transition-all whitespace-nowrap ${showFilters ? 'bg-amber-800 text-white border-amber-800' : 'bg-white text-gray-600 border-gray-200 hover:border-amber-400'}`}>

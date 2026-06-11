@@ -446,7 +446,11 @@ export default function AdminDashboard() {
                     ].flatMap(group => group.items.map(item => (
                       <div key={item.id} className="flex items-center justify-between p-3 rounded-xl"
                         style={{ background:'#fffbeb', border:'1px solid #fde68a' }}>
-                        <Link href={`/${group.table}/${item.id}`} target="_blank"
+                        <Link href={
+                            group.table === 'properties' 
+                              ? `/${(item as any).slug || item.id}?from=dashboard`
+                              : `/${group.table}/${(item as any).slug || item.id}?from=dashboard`
+                          } target="_blank"
                           className="min-w-0 flex-1 hover:opacity-70 transition-opacity cursor-pointer">
                           <p className="text-sm font-semibold truncate" style={{ color:'#111827' }}>{item.name}</p>
                           <p className="text-sm flex items-center gap-1" style={{ color:'#111827' }}>
@@ -480,7 +484,7 @@ export default function AdminDashboard() {
         {activeTab==='attractions' && <FullTable title="אטרקציות" items={attractions}
           onApprove={(id:string)=>approve('attractions',id,setAttractions)} onReject={(id:string)=>reject('attractions',id,setAttractions)}
           onDelete={(id:string)=>remove('attractions',id,setAttractions)} editPath={(id:string)=>`/dashboard/attractions/${id}/edit`}
-          viewPath={(id:string)=>`/attractions/${id}`}
+          viewPath={(id:string)=>`/attractions/${id}?from=dashboard`}
           reviewsTable="attraction_reviews" reviewsForeignKey="attraction_id"
           priceLabel={(item:Item)=>item.price_per_person?`₪${item.price_per_person}`:'—'}
           typeLabel={(item:Item)=>item.activity_type?.[0]||'—'} />}
@@ -488,7 +492,7 @@ export default function AdminDashboard() {
         {activeTab==='caravans' && <FullTable title="קרוואנים" items={caravans}
           onApprove={(id:string)=>approve('caravans',id,setCaravans)} onReject={(id:string)=>reject('caravans',id,setCaravans)}
           onDelete={(id:string)=>remove('caravans',id,setCaravans)} editPath={(id:string)=>`/dashboard/caravans/${id}/edit`}
-          viewPath={(id:string)=>`/caravans/${id}`}
+          viewPath={(id:string)=>`/caravans/${id}?from=dashboard`}
           reviewsTable="caravan_reviews" reviewsForeignKey="caravan_id"
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={(item:Item)=>({'auto':'אוטו','trailer':'נגרר','stationed':'מוצב','truck':'משאית'} as any)[item.caravan_type||'']||'—'} />}

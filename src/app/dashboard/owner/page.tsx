@@ -162,7 +162,7 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
                       <td className="px-6 py-4 text-sm text-gray-500">{p.avg_rating ? `⭐ ${p.avg_rating}` : '—'}</td>
                       <td className="px-6 py-4 flex items-center gap-1">
-                        <Link href={`/${p.id}`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה בנכס">
+                        <Link href={`/${p.id}?from=dashboard`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה בנכס">
                           <IconEye className="w-4 h-4 text-gray-400" />
                         </Link>
                         <Link href={`/dashboard/properties/${p.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="עריכה">
@@ -205,7 +205,7 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
                       <td className="px-6 py-4 text-sm text-gray-500">{a.avg_rating ? `⭐ ${a.avg_rating}` : '—'}</td>
                       <td className="px-6 py-4 flex items-center gap-1">
-                        <Link href={`/attractions/${a.id}`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה באטרקציה">
+                        <Link href={`/attractions/${a.id}?from=dashboard`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה באטרקציה">
                           <IconEye className="w-4 h-4 text-gray-400" />
                         </Link>
                         <Link href={`/dashboard/attractions/${a.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="עריכה">
@@ -251,7 +251,7 @@ export default function OwnerDashboard() {
                       <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span></td>
                       <td className="px-6 py-4 text-sm text-gray-500">{c.avg_rating ? `⭐ ${c.avg_rating}` : '—'}</td>
                       <td className="px-6 py-4 flex items-center gap-1">
-                        <Link href={`/caravans/${c.id}`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה בקרוואן">
+                        <Link href={`/caravans/${c.id}?from=dashboard`} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="צפה בקרוואן">
                           <IconEye className="w-4 h-4 text-gray-400" />
                         </Link>
                         <Link href={`/dashboard/caravans/${c.id}/edit`} className="p-1.5 rounded-lg hover:bg-gray-100 inline-block" title="עריכה">

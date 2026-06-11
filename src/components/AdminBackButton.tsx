@@ -1,22 +1,30 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export function AdminBackButton() {
+function BackButton() {
   const searchParams = useSearchParams()
   const from = searchParams.get('from')
-
   if (from !== 'dashboard') return null
 
   return (
     <a
       href="/dashboard/admin"
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-white shadow-xl animate-pulse"
+      className="fixed bottom-6 left-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-lg transition-all hover:scale-105"
       style={{
-        background: 'linear-gradient(135deg, #dc2626, #ef4444)',
-        boxShadow: '0 0 20px rgba(220,38,38,0.5)',
+        background: 'linear-gradient(135deg, #006039 0%, #004D2E 100%)',
+        boxShadow: '0 4px 16px rgba(0,96,57,0.4)',
       }}
     >
-      ← חזרה ללוח הבקרה
+      ← לוח הבקרה
     </a>
+  )
+}
+
+export function AdminBackButton() {
+  return (
+    <Suspense fallback={null}>
+      <BackButton />
+    </Suspense>
   )
 }

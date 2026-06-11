@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Footer } from '@/components/layout/Footer'
 import { GenericReviews } from '@/components/GenericReviews'
+import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { IconMapPin, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone } from '@/components/icons'
 import Image from 'next/image'
@@ -95,6 +96,7 @@ export default function CaravanPage() {
 
   return (
     <>
+      <AdminBackButton />
       <main className="min-h-screen bg-white pt-4" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
 

@@ -123,6 +123,8 @@ export default function EditCaravanPage({ params }: { params: Promise<{ id: stri
 
   async function handleSubmit() {
     if (!form.name || !form.price_per_night) return alert('נא למלא שם ומחיר')
+    if (uploading) return alert('נא להמתין לסיום העלאת התמונות')
+    const validImages = images.filter(url => url.startsWith('http'))
     setSaving(true)
     const { error } = await supabase.from('caravans').update({
       name: form.name,
@@ -154,9 +156,9 @@ export default function EditCaravanPage({ params }: { params: Promise<{ id: stri
     if (error) { alert('שגיאה בשמירה'); setSaving(false); return }
 
     await supabase.from('caravan_images').delete().eq('caravan_id', id)
-    if (images.length > 0) {
+    if (validImages.length > 0) {
       await supabase.from('caravan_images').insert(
-        images.map((url, i) => ({ caravan_id: id, url, is_primary: i === 0, order: i }))
+        validImages.map((url, i) => ({ caravan_id: id, url, is_primary: i === 0, order: i }))
       )
     }
     router.push('/dashboard/owner')

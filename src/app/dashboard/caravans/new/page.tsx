@@ -172,6 +172,8 @@ export default function NewCaravanPage() {
 
   async function handleSubmit() {
     if (!form.name || !form.price_per_night) return alert('נא למלא שם ומחיר')
+    if (uploading) return alert('נא להמתין לסיום העלאת התמונות')
+    const validImages = images.filter(url => url.startsWith('http'))
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -212,9 +214,9 @@ export default function NewCaravanPage() {
 
     if (error || !data) { alert('שגיאה בשמירה'); setSaving(false); return }
 
-    if (images.length > 0) {
+    if (validImages.length > 0) {
       await supabase.from('caravan_images').insert(
-        images.map((url, i) => ({ caravan_id: data.id, url, is_primary: i === 0, order: i }))
+        validImages.map((url, i) => ({ caravan_id: data.id, url, is_primary: i === 0, order: i }))
       )
     }
 

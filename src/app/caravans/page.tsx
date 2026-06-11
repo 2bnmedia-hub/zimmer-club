@@ -228,7 +228,7 @@ function CaravansContent() {
               {caravans.map(c => {
                 const img = c.caravan_images?.[0]?.url
                 return (
-                  <Link key={c.id} href={`/caravans/${c.slug || c.id}`}>
+                  <Link key={c.id} href={`/caravans/${c.id}`}>
                     <div className="bg-white rounded-2xl overflow-hidden group transition-all hover:shadow-lg" style={{ border: '1px solid rgba(139,105,20,0.08)' }}>
                       <div className="h-52 bg-gray-100 relative overflow-hidden rounded-t-2xl">
                         {img ? (

@@ -73,6 +73,11 @@ export default function CaravanPage() {
         data = res.data
       }
       if (!data) { router.push('/caravans'); return }
+      // redirect ל-id אם הגיע דרך slug
+      if (data.slug && slugOrId === data.slug && /[\u0590-\u05FF]/.test(data.slug)) {
+        router.replace(`/caravans/${data.id}`)
+        return
+      }
       setCaravan(data)
       const { data: imgData } = await supabase.from('caravan_images').select('url').eq('caravan_id', data.id).order('order')
       setImages(imgData?.map((i: any) => i.url) || [])

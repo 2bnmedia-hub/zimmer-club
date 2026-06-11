@@ -11,6 +11,7 @@ import { useWishlist } from '@/hooks/useWishlist'
 import { PropertyQR } from '@/components/property/PropertyQR'
 import { PropertyReviews } from '@/components/property/PropertyReviews'
 import { AdminBackButton } from '@/components/AdminBackButton'
+import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 
 type Property = {
   id: string
@@ -407,6 +408,7 @@ export default function PropertyPage() {
               <AvailabilityCalendar propertyId={property.id} supabase={supabase} />
               {property.slug && <PropertyQR slug={property.slug} name={property.name} />}
               <PropertyReviews propertyId={property.id} />
+              <AdminGenericReviews entityId={property.id} table="reviews" foreignKey="property_id" />
             </div>
 
             <div className="lg:col-span-1">

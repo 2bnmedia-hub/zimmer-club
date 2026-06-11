@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { AdminBackButton } from '@/components/AdminBackButton'
+import { GenericReviews } from '@/components/GenericReviews'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
@@ -396,7 +397,7 @@ export default function AttractionPage() {
             </div>
           )}
 
-          <ReviewsSection attractionId={attraction.id} />
+          <GenericReviews entityId={attraction.id} table="attraction_reviews" foreignKey="attraction_id" />
         </div>
 
       </div>

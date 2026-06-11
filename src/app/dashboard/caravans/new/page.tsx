@@ -170,6 +170,18 @@ export default function NewCaravanPage() {
     setUploading(false)
   }
 
+  async function geocodeAddress(city: string) {
+    const query = [city, 'ישראל'].filter(Boolean).join(', ')
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=il`, {
+        headers: { 'Accept-Language': 'he' }
+      })
+      const data = await res.json()
+      if (data?.[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+    } catch {}
+    return null
+  }
+
   async function handleSubmit() {
     if (!form.name || !form.price_per_night) return alert('נא למלא שם ומחיר')
     if (uploading) return alert('נא להמתין לסיום העלאת התמונות')
@@ -182,6 +194,10 @@ export default function NewCaravanPage() {
       .replace(/[\s]+/g, '-')
       .replace(/[^a-z0-9\u0590-\u05FF-]/g, '')
       + '-' + Date.now().toString(36)
+
+    const coords2 = await geocodeAddress(form.city)
+    const lat2 = coords2?.lat || null
+    const lng2 = coords2?.lng || null
 
     const { data, error } = await supabase.from('caravans').insert({
       owner_id: user.id,
@@ -210,6 +226,8 @@ export default function NewCaravanPage() {
       video_url: form.video_url || null,
       amenities: selectedAmenities,
       status: 'pending',
+      lat: lat2,
+      lng: lng2,
     }).select().single()
 
     if (error || !data) { alert('שגיאה בשמירה'); setSaving(false); return }

@@ -109,6 +109,20 @@ export default function NewPropertyPage() {
     contact_via_email2: false,
   })
 
+  async function geocodeAddress(city: string, address: string) {
+    const query = [address, city, 'ישראל'].filter(Boolean).join(', ')
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=il`, {
+        headers: { 'Accept-Language': 'he' }
+      })
+      const data = await res.json()
+      if (data?.[0]) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+      }
+    } catch {}
+    return null
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
@@ -224,6 +238,8 @@ export default function NewPropertyPage() {
       accepts_miluim: form.accepts_miluim,
       has_shelter: form.has_shelter,
       status: 'pending',
+      lat,
+      lng,
       video_url: form.video_url || null,
       phone_landline: form.phone_landline || null,
       whatsapp1: form.whatsapp1 || null,

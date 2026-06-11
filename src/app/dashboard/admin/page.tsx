@@ -195,15 +195,17 @@ export default function AdminDashboard() {
   const [caravans, setCaravans] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
   const [adminName, setAdminName] = useState('')
+  const [adminAvatar, setAdminAvatar] = useState('')
   const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'>('overview')
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
-      const { data: profile } = await supabase.from('profiles').select('role, full_name').eq('id', user.id).single()
+      const { data: profile } = await supabase.from('profiles').select('role, full_name, avatar_url').eq('id', user.id).single()
       if (profile?.role !== 'admin') { router.push('/dashboard/owner'); return }
       setAdminName(profile?.full_name || '')
+      setAdminAvatar(profile?.avatar_url || '')
       const [{ data: p }, { data: a }, { data: c }] = await Promise.all([
         supabase.from('properties').select('*').order('created_at', { ascending: false }),
         supabase.from('attractions').select('*').order('created_at', { ascending: false }),

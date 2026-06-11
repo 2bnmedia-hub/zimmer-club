@@ -278,22 +278,6 @@ export function Navbar() {
                         {user.role === 'admin' ? 'מנהל מערכת' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}
                       </p>
                     </div>
-                    <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
-                      onClick={() => setActiveMenu(null)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <IconUser className="w-3.5 h-3.5 text-gray-500" />
-                      </div>
-                      לוח בקרה
-                    </Link>
-                    <Link href="/dashboard/profile"
-                      onClick={() => setActiveMenu(null)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                      <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
-                        <IconSettings className="w-3.5 h-3.5 text-[#C4956A]" />
-                      </div>
-                      עריכת פרופיל
-                    </Link>
                     <Link href="/dashboard/properties/new"
                       onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
@@ -317,6 +301,22 @@ export function Navbar() {
                         <span className="text-gray-500 text-sm font-bold">🚐</span>
                       </div>
                       הוספת קרוואן
+                    </Link>
+                    <Link href="/dashboard/profile"
+                      onClick={() => setActiveMenu(null)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
+                        <IconSettings className="w-3.5 h-3.5 text-[#C4956A]" />
+                      </div>
+                      עריכת פרופיל
+                    </Link>
+                    <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
+                      onClick={() => setActiveMenu(null)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <IconUser className="w-3.5 h-3.5 text-gray-500" />
+                      </div>
+                      לוח בקרה
                     </Link>
                     <hr className="my-2 border-gray-100" />
                     <button onClick={handleLogout}

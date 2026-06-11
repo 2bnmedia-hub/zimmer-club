@@ -117,10 +117,10 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {Object.entries(CATEGORIES).map(([key, cat]) => (
+              {CATEGORIES.map((cat) => (
                 <Link
-                  key={key}
-                  href={`/search?category=${key}`}
+                  key={cat.key}
+                  href={cat.href}
                   className="card p-5 hover:border-gold transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="w-11 h-11 rounded-xl bg-cream-100 flex items-center justify-center text-2xl mb-4">

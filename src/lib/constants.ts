@@ -18,15 +18,15 @@ export const REGIONS: Record<Region, { label: string; emoji: string; count?: num
 // CATEGORIES
 // ===========================
 
-export const CATEGORIES: Record<PropertyCategory, { label: string; emoji: string; description: string }> = {
-  romantic:    { label: 'רומנטי',           emoji: '💑', description: 'נכסים מושלמים לזוגות' },
-  family:      { label: 'מתאים למשפחות',    emoji: '👨‍👩‍👧‍👦', description: 'מרחב ונוחות לכל המשפחה' },
-  luxury:      { label: 'וילות יוקרה',      emoji: '🏰', description: 'חוויה יוקרתית ומפנקת' },
-  pet_friendly:{ label: 'ידידותי לבעלי חיים', emoji: '🐾', description: 'גם הכלב מוזמן' },
-  nature:      { label: 'טבע ושקט',         emoji: '🌿', description: 'בריחה אל הטבע' },
-  beach:       { label: 'חוף ים',           emoji: '🏖️', description: 'רגלות ברמול' },
-  desert:      { label: 'מדבר',             emoji: '🌵', description: 'שמי כוכבים ודממה' },
-}
+export const CATEGORIES = [
+  { key: 'couples',   href: '/search?amenity=couples',        label: 'רומנטי',              emoji: '💑', description: 'נכסים מושלמים לזוגות' },
+  { key: 'families',  href: '/search?amenity=families',       label: 'מתאים למשפחות',       emoji: '👨‍👩‍👧‍👦', description: 'מרחב ונוחות לכל המשפחה' },
+  { key: 'villa',     href: '/search?category=villa',         label: 'וילות יוקרה',         emoji: '🏰', description: 'חוויה יוקרתית ומפנקת' },
+  { key: 'pets',      href: '/search?amenity=pets',           label: 'ידידותי לבעלי חיים',  emoji: '🐾', description: 'גם הכלב מוזמן' },
+  { key: 'pool',      href: '/search?amenity=pool',           label: 'עם בריכה',            emoji: '🏊', description: 'קירור וכיף במים' },
+  { key: 'jacuzzi',   href: '/search?amenity=jacuzzi',        label: "עם ג'קוזי",           emoji: '🛁', description: 'רגיעה מוחלטת' },
+  { key: 'shelter',   href: '/search?amenity=shelter_nearby', label: 'עם מרחב מוגן',        emoji: '🛡️', description: 'בטחון ורוגע' },
+]
 
 // ===========================
 // AMENITIES

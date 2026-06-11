@@ -12,33 +12,55 @@ export default function HomePage() {
 
       <main>
         {/* HERO */}
-        <section className="relative min-h-[88vh] flex flex-col items-center justify-center text-center px-4 py-20 overflow-hidden bg-transparent">
+        <section className="relative min-h-[100svh] sm:min-h-[55vh] pt-20 sm:pt-16 flex flex-col items-center justify-center text-center px-4 py-8 overflow-hidden bg-transparent">
           
           {/* Background Image */}
 <div
-  className="absolute inset-0 z-0"
+  className="absolute inset-0 z-0 overflow-hidden"
   style={{
     backgroundImage: "url('/hero-bg.png')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
+    animation: 'kenBurns 18s ease-in-out infinite',
+    transformOrigin: 'center center',
   }}
 />
           {/* Overlay */}
 
-          <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="relative max-w-4xl mx-auto hero-text-animate" style={{zIndex:9999}}>
             
             {/* Title */}
-            <h1 className="text-5xl lg:text-7xl font-bold text-charcoal leading-tight tracking-tight mb-6">
-              חוויית אירוח
+            <h1 className="text-4xl sm:text-3xl lg:text-5xl font-bold leading-tight tracking-tight mb-4 sm:mb-6">
+              <span style={{
+                background: 'linear-gradient(120deg, #2c1810 0%, #8B4513 25%, #c9822a 50%, #8B4513 75%, #2c1810 100%)',
+                backgroundSize: '300% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'warmGlow 4s ease-in-out infinite',
+                textShadow: 'none',
+                filter: 'drop-shadow(0 2px 8px rgba(139,69,19,0.3))',
+              }}>
+                חוויית אירוח
+              </span>
               <br />
-              <span className="text-gold-deep">
+              <span style={{
+                background: 'linear-gradient(120deg, #8B4513 0%, #d4a843 30%, #f5d078 55%, #d4a843 75%, #8B4513 100%)',
+                backgroundSize: '300% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'warmGlow 4s ease-in-out infinite reverse',
+                fontSize: '1.1em',
+                filter: 'drop-shadow(0 2px 12px rgba(212,168,67,0.4))',
+              }}>
                 שלא תשכחו
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg lg:text-xl text-taupe max-w-xl mx-auto mb-6 leading-relaxed">
+            <p className="text-sm lg:text-base text-taupe max-w-xl mx-auto mb-6 leading-relaxed">
               צימרים רומנטיים - וילות יוקרה ובתי אירוח קסומים.
               <br />
               מחפשים את הבריחה המושלמת? מצאו אותה כאן
@@ -53,18 +75,19 @@ export default function HomePage() {
             <SearchBar />
 
             {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-6 mt-8">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">
               {[
-                'ביטול חינם עד 48 שעות',
-                'אישור מיידי',
-                'תשלום מאובטח',
+                { icon: '✦', text: 'ללא עמלת הזמנה' },
+                { icon: '✦', text: 'קשר ישיר עם בעל הנכס' },
+                { icon: '✦', text: 'מעל 1,000 נכסי תיירות' },
               ].map((item) => (
                 <div
-                  key={item}
-                  className="flex items-center gap-2 text-sm text-taupe font-medium"
+                  key={item.text}
+                  className="flex items-center gap-2 text-sm font-medium"
+                  style={{ color: '#C4A46B' }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
-                  {item}
+                  <span style={{ color: '#8B6914', fontSize: '10px' }}>{item.icon}</span>
+                  {item.text}
                 </div>
               ))}
             </div>
@@ -93,11 +116,11 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.entries(CATEGORIES).map(([key, cat]) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {CATEGORIES.map((cat) => (
                 <Link
-                  key={key}
-                  href={`/search?category=${key}`}
+                  key={cat.key}
+                  href={cat.href}
                   className="card p-5 hover:border-gold transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="w-11 h-11 rounded-xl bg-cream-100 flex items-center justify-center text-2xl mb-4">

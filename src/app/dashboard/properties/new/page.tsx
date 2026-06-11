@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Star } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
-  { value: 'villa', label: 'וילה' },
-  { value: 'hotel', label: 'מלון' },
+  { value: 'complex', label: 'מתחם צימרים' },
+  { value: 'villa', label: 'וילות ובקתות' },
+  { value: 'hotel', label: 'מלונות' },
   { value: 'camping', label: 'קמפינג' },
 ]
 
@@ -57,6 +58,15 @@ type ImagePreview = {
   isPrimary: boolean
 }
 
+function toSlug(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
 export default function NewPropertyPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -65,8 +75,13 @@ export default function NewPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [images, setImages] = useState<ImagePreview[]>([])
   const [uploading, setUploading] = useState(false)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState('')
+  const [videoAsPrimary, setVideoAsPrimary] = useState(false)
+  const [slugPreview, setSlugPreview] = useState('')
   const [form, setForm] = useState({
     name: '',
+    name_en: '',
     short_description: '',
     description: '',
     category: 'zimmer',
@@ -79,36 +94,73 @@ export default function NewPropertyPage() {
     bedrooms: '1',
     bathrooms: '1',
     instant_book: false,
+    accepts_miluim: false,
+    has_shelter: false,
+    video_url: '',
+    phone_landline: '',
+    whatsapp1: '',
+    whatsapp2: '',
+    email1: '',
+    email2: '',
+    contact_via_phone_landline: false,
+    contact_via_whatsapp1: false,
+    contact_via_whatsapp2: false,
+    contact_via_email1: false,
+    contact_via_email2: false,
   })
+
+  async function geocodeAddress(city: string, address: string) {
+    const query = [address, city, 'ישראל'].filter(Boolean).join(', ')
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=il`, {
+        headers: { 'Accept-Language': 'he' }
+      })
+      const data = await res.json()
+      if (data?.[0]) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+      }
+    } catch {}
+    return null
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
-    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }))
+    const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+
+    if (name === 'name_en') {
+      const slug = toSlug(value)
+      setSlugPreview(slug)
+      setForm(prev => ({ ...prev, name_en: value }))
+      return
+    }
+
+    setForm(prev => ({ ...prev, [name]: newValue }))
   }
 
   const toggleAmenity = (key: string) => {
     setSelectedAmenities(prev => prev.includes(key) ? prev.filter(a => a !== key) : [...prev, key])
   }
 
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
+    setVideoFile(file)
+    setVideoPreview(URL.createObjectURL(file))
+    e.target.value = ''
+  }
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
     const valid = Array.from(files).filter(f => {
-      if (f.size > 2 * 1024 * 1024) {
-        alert(`הקובץ "${f.name}" גדול מ-2MB ולא יתווסף`)
-        return false
-      }
+      if (f.size > 2 * 1024 * 1024) { alert(`הקובץ "${f.name}" גדול מ-2MB`); return false }
       return true
     })
     const remaining = 14 - images.length
-    if (valid.length > remaining) {
-      alert(`ניתן להוסיף עד 14 תמונות בלבד. יתווספו ${remaining} תמונות.`)
-    }
     const toAdd = valid.slice(0, remaining)
     const newImages = toAdd.map((file, idx) => ({
-      file,
-      url: URL.createObjectURL(file),
-      isPrimary: images.length === 0 && idx === 0,
+      file, url: URL.createObjectURL(file), isPrimary: images.length === 0 && idx === 0,
     }))
     setImages(prev => [...prev, ...newImages])
     e.target.value = ''
@@ -123,7 +175,17 @@ export default function NewPropertyPage() {
   }
 
   const setPrimary = (idx: number) => {
-    setImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === idx })))
+    setVideoAsPrimary(false); setImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === idx })))
+  }
+
+  const uploadVideo = async (propertyId: string): Promise<string | null> => {
+    if (!videoFile) return null
+    const ext = videoFile.name.split('.').pop()
+    const fileName = `${propertyId}/video_${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('property-images').upload(fileName, videoFile)
+    if (error) return null
+    const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
+    return data.publicUrl
   }
 
   const uploadImages = async (propertyId: string) => {
@@ -135,10 +197,7 @@ export default function NewPropertyPage() {
       if (!uploadError) {
         const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
         await supabase.from('property_images').insert({
-          property_id: propertyId,
-          url: urlData.publicUrl,
-          order: i,
-          is_primary: img.isPrimary,
+          property_id: propertyId, url: urlData.publicUrl, order: i, is_primary: img.isPrimary,
         })
       }
     }
@@ -146,33 +205,75 @@ export default function NewPropertyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.name_en.trim()) { setError('יש להזין שם נכס באנגלית'); return }
+    const slug = toSlug(form.name_en)
+    if (!slug) { setError('שם הנכס באנגלית אינו תקין'); return }
+
     setLoading(true)
     setError('')
+
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setError('יש להתחבר תחילה'); setLoading(false); return }
+
+    // בדוק שה-slug לא תפוס
+    const { data: existing } = await supabase.from('properties').select('id').eq('slug', slug).single()
+    if (existing) { setError('שם זה כבר תפוס — נסה שם אחר'); setLoading(false); return }
+
+    const geoCoords = await geocodeAddress(form.city, form.address)
+
     const { data: property, error: insertError } = await supabase.from('properties').insert({
       owner_id: user.id,
       name: form.name,
+      slug,
       short_description: form.short_description,
       description: form.description,
       category: [form.category],
       region: form.region,
       city: form.city,
       address: form.address,
-      price_per_night: parseInt(form.price_per_night),
+      price_per_night: parseInt(form.price_per_night) || 0,
       min_nights: parseInt(form.min_nights),
       max_guests: parseInt(form.max_guests),
       bedrooms: parseInt(form.bedrooms),
       bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book,
+      accepts_miluim: form.accepts_miluim,
+      has_shelter: form.has_shelter,
       status: 'pending',
+      lat: geoCoords?.lat || null,
+      lng: geoCoords?.lng || null,
+      video_url: form.video_url || null,
+      phone_landline: form.phone_landline || null,
+      whatsapp1: form.whatsapp1 || null,
+      whatsapp2: form.whatsapp2 || null,
+      email1: form.email1 || null,
+      email2: form.email2 || null,
+      contact_via_phone_landline: form.contact_via_phone_landline,
+      contact_via_whatsapp1: form.contact_via_whatsapp1,
+      contact_via_whatsapp2: form.contact_via_whatsapp2,
+      contact_via_email1: form.contact_via_email1,
+      contact_via_email2: form.contact_via_email2,
     }).select().single()
+
     if (insertError) { setError(insertError.message); setLoading(false); return }
-    if (images.length > 0) {
-      setUploading(true)
-      await uploadImages(property.id)
-      setUploading(false)
+
+    setUploading(true)
+    if (images.length > 0) await uploadImages(property.id)
+    let finalVideoUrl = form.video_url || null
+    if (videoFile) {
+      const uploaded = await uploadVideo(property.id)
+      if (uploaded) finalVideoUrl = uploaded
     }
+    if (finalVideoUrl) await supabase.from('properties').update({ video_url: finalVideoUrl }).eq('id', property.id)
+
+    if (selectedAmenities.length > 0) {
+      const { data: amenityRows } = await supabase.from('amenities').select('id, key').in('key', selectedAmenities)
+      if (amenityRows) {
+        await supabase.from('property_amenities').insert(amenityRows.map(a => ({ property_id: property.id, amenity_id: a.id })))
+      }
+    }
+
+    setUploading(false)
     router.push('/dashboard/owner')
   }
 
@@ -199,6 +300,25 @@ export default function NewPropertyPage() {
                   placeholder="משפט אחד שמתאר את הנכס" />
               </div>
             </div>
+
+            {/* שדה שם באנגלית — חדש */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                שם הנכס באנגלית * <span className="text-gray-400 font-normal">(ישמש ככתובת האתר)</span>
+              </label>
+              <input name="name_en" value={form.name_en} onChange={handleChange} required
+                className="w-full border border-yellow-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 bg-yellow-50"
+                placeholder="galil-zimmer" dir="ltr" />
+              {slugPreview && (
+                <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
+                  כתובת האתר שלך:
+                  <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">
+                    zimmer.club/{slugPreview}
+                  </span>
+                </p>
+              )}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">תיאור מלא</label>
               <textarea name="description" value={form.description} onChange={handleChange} rows={4}
@@ -217,33 +337,59 @@ export default function NewPropertyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">איזור *</label>
                 <select name="region" value={form.region} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                  <option value="">בחר איזור</option>
-                  <option value="galil_north">צימרים בצפון</option>
-                  <option value="galil_west">צימרים בגליל המערבי</option>
-                  <option value="galil_upper">צימרים בגליל העליון</option>
-                  <option value="galil_lower">צימרים בגליל התחתון</option>
-                  <option value="kinneret">צימרים בכנרת</option>
-                  <option value="hermon">צימרים בחרמון</option>
-                  <option value="center">צימרים במרכז</option>
-                  <option value="jerusalem">צימרים בירושלים</option>
-                  <option value="dead_sea">צימרים בים המלח</option>
-                  <option value="negev">צימרים בדרום</option>
-                  <option value="eilat">צימרים באילת</option>
+                                    <option value="">בחר איזור</option>
+                  <option value="north">צפון</option>
+                  <option value="galil_west">גליל המערבי</option>
+                  <option value="galil_upper">גליל העליון</option>
+                  <option value="galil_lower">גליל התחתון</option>
+                  <option value="kinneret">כנרת</option>
+                  <option value="hermon">חרמון</option>
+                  <option value="center">מרכז</option>
+                  <option value="jerusalem">ירושלים</option>
+                  <option value="dead_sea">ים המלח</option>
+                  <option value="negev">דרום</option>
+                  <option value="eilat">אילת</option>
+                  <option value="golan">רמת הגולן</option>
                 </select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב</label>
-                <input name="city" value={form.city} onChange={handleChange}
+                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב *</label>
+                <input name="city" value={form.city} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת</label>
-                <input name="address" value={form.address} onChange={handleChange}
+                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת *</label>
+                <input name="address" value={form.address} onChange={handleChange} required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
             </div>
+          </div>
+
+          {/* אמצעי תקשורת */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת לקבלת הזמנות</h2>
+            <p className="text-xs text-gray-400">סמן ✓ ליד האמצעים שדרכם תרצה לקבל הזמנות</p>
+            {[
+              { checkName: 'contact_via_phone_landline', fieldName: 'phone_landline', label: 'טלפון קווי', placeholder: '03-1234567' },
+              { checkName: 'contact_via_whatsapp1', fieldName: 'whatsapp1', label: 'וואטסאפ עסקי 1', placeholder: '972501234567' },
+              { checkName: 'contact_via_whatsapp2', fieldName: 'whatsapp2', label: 'וואטסאפ עסקי 2', placeholder: '972501234567' },
+              { checkName: 'contact_via_email1', fieldName: 'email1', label: 'אימייל עסקי 1', placeholder: 'business@example.com', type: 'email' },
+              { checkName: 'contact_via_email2', fieldName: 'email2', label: 'אימייל עסקי 2', placeholder: 'business2@example.com', type: 'email' },
+            ].map(({ checkName, fieldName, label, placeholder, type }) => (
+              <div key={fieldName} className="flex items-center gap-3">
+                <input type="checkbox" name={checkName} id={checkName}
+                  checked={(form as any)[checkName]} onChange={handleChange}
+                  className="w-4 h-4 accent-yellow-600 shrink-0" />
+                <div className="flex-1">
+                  <label htmlFor={checkName} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                  <input name={fieldName} value={(form as any)[fieldName]} onChange={handleChange}
+                    placeholder={placeholder} dir="ltr" type={type || 'text'}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* גלריית תמונות */}
@@ -254,33 +400,45 @@ export default function NewPropertyPage() {
               {images.map((img, idx) => (
                 <div key={idx} className="relative group aspect-video">
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
-                  {img.isPrimary && (
-                    <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1">
-                      <Star className="w-3 h-3 text-white fill-white" />
-                    </div>
-                  )}
+                  {img.isPrimary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><IconStar className="w-3 h-3 text-white fill-white" /></div>}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => setPrimary(idx)}
-                      className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
-                      <Star className="w-3.5 h-3.5 text-white" />
-                    </button>
-                    <button type="button" onClick={() => removeImage(idx)}
-                      className="p-1.5 bg-red-500 rounded-full" title="מחק">
-                      <X className="w-3.5 h-3.5 text-white" />
-                    </button>
+                    <button type="button" onClick={() => setPrimary(idx)} className="p-1.5 bg-yellow-500 rounded-full"><IconStar className="w-3.5 h-3.5 text-white" /></button>
+                    <button type="button" onClick={() => removeImage(idx)} className="p-1.5 bg-red-500 rounded-full"><IconX className="w-3.5 h-3.5 text-white" /></button>
                   </div>
                 </div>
               ))}
               {images.length < 14 && (
                 <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                  <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                  <IconUpload className="w-6 h-6 text-gray-400 mb-1" />
                   <span className="text-xs text-gray-400">הוסף תמונות</span>
                   <input type="file" accept="image/*" multiple onChange={handleImageSelect} className="hidden" />
                 </label>
               )}
             </div>
             <p className="text-xs text-gray-400">{images.length}/14 תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
-            <p className="text-xs text-gray-400 mt-1">* מקסימום 14 תמונות · גודל מקסימלי לתמונה: 2MB</p>
+          </div>
+
+          {/* וידאו */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
+            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
+                <span className="text-2xl">🎬</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
+                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
+              </label>
+              {videoPreview && <div className="relative">
+                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <input name="video_url" value={form.video_url} onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            </div>
           </div>
 
           {/* תמחור */}
@@ -288,8 +446,8 @@ export default function NewPropertyPage() {
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר ללילה (₪) *</label>
-                <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} required min="1"
+                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר ללילה (₪)</label>
+                <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="500" />
               </div>
               <div>
@@ -315,9 +473,17 @@ export default function NewPropertyPage() {
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" name="instant_book" id="instant_book" checked={form.instant_book} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
-              <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">הזמנה מיידית</label>
+            <div className="space-y-2">
+              {[
+                { name: 'instant_book', label: 'הזמנה מיידית' },
+                { name: 'accepts_miluim', label: 'מקבלים שובר מילואים' },
+                { name: 'has_shelter', label: 'קיים מרחב מוגן' },
+              ].map(({ name, label }) => (
+                <div key={name} className="flex items-center gap-2">
+                  <input type="checkbox" name={name} id={name} checked={(form as any)[name]} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+                  <label htmlFor={name} className="text-sm font-medium text-gray-700">{label}</label>
+                </div>
+              ))}
             </div>
           </div>
 

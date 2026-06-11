@@ -3,14 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { REGIONS } from '@/lib/constants'
-import { ArrowRight, Upload, X, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
+import { PropertyQR } from '@/components/property/PropertyQR'
+import { AdminReviews } from '@/components/property/AdminReviews'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
-  { value: 'villa', label: 'וילה' },
-  { value: 'hotel', label: 'מלון' },
+  { value: 'complex', label: 'מתחם צימרים' },
+  { value: 'villa', label: 'וילות ובקתות' },
+  { value: 'caravan', label: 'קרוואנים' },
+  { value: 'hotel', label: 'מלונות' },
   { value: 'camping', label: 'קמפינג' },
+  { value: 'attraction', label: 'אטרקציות' },
 ]
 
 const AMENITIES_LIST = [
@@ -32,6 +36,24 @@ const AMENITIES_LIST = [
   { key: 'shelter', label: 'מרחב מוגן' },
   { key: 'heated_pool', label: 'בריכה מחוממת' },
   { key: 'pets', label: 'ידידותי לכלבים' },
+  { key: 'spa', label: 'ספא צמוד' },
+  { key: 'private_pool', label: 'בריכה פרטית' },
+  { key: 'snooker', label: 'שולחן סנוקר' },
+  { key: 'private_jacuzzi', label: "ג'קוזי פרטי" },
+  { key: 'accessible', label: 'צימר עם נגישות' },
+  { key: 'couples', label: 'מתאים לזוגות' },
+  { key: 'families', label: 'מתאים למשפחות' },
+  { key: 'groups', label: 'מתאים לקבוצות' },
+  { key: 'animals', label: 'מקבלים בעלי חיים' },
+  { key: 'guests', label: 'מתאים לאורועים' },
+  { key: 'religious', label: 'מתאים לציבור הדתי' },
+  { key: 'suite', label: 'סוויטה' },
+  { key: 'treehouse', label: 'בקתת עץ' },
+  { key: 'cave', label: 'צימר מערה' },
+  { key: 'mobile', label: 'צימר מבודד' },
+  { key: 'longstay', label: 'צימרים לטווח ארוך' },
+  { key: 'vacation', label: 'דירת נופש' },
+  { key: 'shelter_nearby', label: 'מרחב מוגן קרוב' },
 ]
 
 type PropertyImage = {
@@ -41,13 +63,7 @@ type PropertyImage = {
   order: number
 }
 
-type DateStatus = 'blocked' | 'approved'
-
-type BlockedDate = {
-  id: string
-  date: string
-  status: DateStatus
-}
+type DateStatus = 'blocked'
 
 const HEBREW_MONTHS = [
   'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
@@ -74,11 +90,11 @@ function Calendar({
       setLoadingDates(true)
       const { data } = await supabase
         .from('blocked_dates')
-        .select('id, date, status')
+        .select('date, status')
         .eq('property_id', propertyId)
       if (data) {
         const map: Record<string, DateStatus> = {}
-        data.forEach((d: BlockedDate) => { map[d.date] = d.status })
+        data.forEach((d: any) => { map[d.date] = d.status })
         setDateMap(map)
       }
       setLoadingDates(false)
@@ -98,34 +114,16 @@ function Calendar({
   const handleDayClick = async (day: number) => {
     const dateStr = formatDate(day)
     const current = dateMap[dateStr]
-
-    // מחזור: פנוי → תפוס → מאושר → פנוי
     if (!current) {
-      // פנוי → תפוס
       const { error } = await supabase.from('blocked_dates').upsert({
-        property_id: propertyId,
-        date: dateStr,
-        status: 'blocked',
+        property_id: propertyId, date: dateStr, status: 'blocked',
       }, { onConflict: 'property_id,date' })
       if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'blocked' }))
-    } else if (current === 'blocked') {
-      // תפוס → מאושר
-      const { error } = await supabase.from('blocked_dates').upsert({
-        property_id: propertyId,
-        date: dateStr,
-        status: 'approved',
-      }, { onConflict: 'property_id,date' })
-      if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'approved' }))
     } else {
-      // מאושר → פנוי (מחק)
       const { error } = await supabase.from('blocked_dates').delete()
         .eq('property_id', propertyId).eq('date', dateStr)
       if (!error) {
-        setDateMap(prev => {
-          const next = { ...prev }
-          delete next[dateStr]
-          return next
-        })
+        setDateMap(prev => { const next = { ...prev }; delete next[dateStr]; return next })
       }
     }
   }
@@ -134,7 +132,6 @@ function Calendar({
     if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1) }
     else setCurrentMonth(m => m - 1)
   }
-
   const nextMonth = () => {
     if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1) }
     else setCurrentMonth(m => m + 1)
@@ -151,16 +148,13 @@ function Calendar({
     const isPast = new Date(dateStr) < new Date(today.toDateString())
     if (isPast) return 'bg-gray-50 text-gray-300 cursor-not-allowed'
     if (status === 'blocked') return 'bg-red-100 text-red-700 hover:bg-red-200 cursor-pointer font-medium'
-    if (status === 'approved') return 'bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer font-medium'
     return 'hover:bg-yellow-50 hover:text-yellow-700 cursor-pointer text-gray-700'
   }
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <h2 className="font-bold text-gray-700 text-lg mb-1">ניהול זמינות</h2>
-      <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← מאושר ← פנוי</p>
-
-      {/* מקרא */}
+      <p className="text-xs text-gray-400 mb-4">לחץ על יום לשינוי סטטוס: פנוי ← תפוס ← פנוי</p>
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-white border border-gray-200" />
@@ -170,46 +164,29 @@ function Calendar({
           <div className="w-3 h-3 rounded-full bg-red-400" />
           <span className="text-xs text-gray-500">תפוס</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-green-400" />
-          <span className="text-xs text-gray-500">הזמנה מאושרת</span>
-        </div>
       </div>
-
-      {/* ניווט חודש */}
       <div className="flex items-center justify-between mb-4">
         <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
-          <ChevronRight className="w-4 h-4 text-gray-500" />
+          <IconChevronRight className="w-4 h-4 text-gray-500" />
         </button>
-        <span className="font-bold text-gray-800 text-sm">
-          {HEBREW_MONTHS[currentMonth]} {currentYear}
-        </span>
+        <span className="font-bold text-gray-800 text-sm">{HEBREW_MONTHS[currentMonth]} {currentYear}</span>
         <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100">
-          <ChevronLeft className="w-4 h-4 text-gray-500" />
+          <IconChevronLeft className="w-4 h-4 text-gray-500" />
         </button>
       </div>
-
       {loadingDates ? (
         <div className="text-center py-8 text-gray-400 text-sm">טוען תאריכים...</div>
       ) : (
         <div className="grid grid-cols-7 gap-1">
-          {/* כותרות ימים */}
           {HEBREW_DAYS.map(d => (
             <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
           ))}
-          {/* ריקים */}
           {blanks.map((_, i) => <div key={`blank-${i}`} />)}
-          {/* ימים */}
           {days.map(day => {
             const isPast = new Date(formatDate(day)) < new Date(today.toDateString())
             return (
-              <button
-                key={day}
-                type="button"
-                disabled={isPast}
-                onClick={() => handleDayClick(day)}
-                className={`aspect-square rounded-lg text-xs flex items-center justify-center transition-colors ${getDayStyle(day)}`}
-              >
+              <button key={day} type="button" disabled={isPast} onClick={() => handleDayClick(day)}
+                className={`aspect-square rounded-lg text-xs flex items-center justify-center transition-colors ${getDayStyle(day)}`}>
                 {day}
               </button>
             )
@@ -232,8 +209,12 @@ export default function EditPropertyPage() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [images, setImages] = useState<PropertyImage[]>([])
   const [uploading, setUploading] = useState(false)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState('')
+  const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [form, setForm] = useState({
     name: '',
+    slug: '',
     short_description: '',
     description: '',
     category: 'zimmer',
@@ -246,7 +227,20 @@ export default function EditPropertyPage() {
     bedrooms: '1',
     bathrooms: '1',
     instant_book: false,
+    accepts_miluim: false,
+    has_shelter: false,
     status: 'pending',
+    video_url: '',
+    phone_landline: '',
+    whatsapp1: '',
+    whatsapp2: '',
+    email1: '',
+    email2: '',
+    contact_via_phone_landline: false,
+    contact_via_whatsapp1: false,
+    contact_via_whatsapp2: false,
+    contact_via_email1: false,
+    contact_via_email2: false,
   })
 
   useEffect(() => {
@@ -260,6 +254,7 @@ export default function EditPropertyPage() {
       if (profile?.role !== 'admin' && property.owner_id !== user.id) { router.push('/dashboard/owner'); return }
       setForm({
         name: property.name || '',
+        slug: property.slug || '',
         short_description: property.short_description || '',
         description: property.description || '',
         category: property.category?.[0] || 'zimmer',
@@ -272,14 +267,31 @@ export default function EditPropertyPage() {
         bedrooms: property.bedrooms?.toString() || '1',
         bathrooms: property.bathrooms?.toString() || '1',
         instant_book: property.instant_book || false,
+        accepts_miluim: property.accepts_miluim || false,
+        has_shelter: property.has_shelter || false,
+        video_url: property.video_url || '',
         status: property.status || 'pending',
+        phone_landline: property.phone_landline || '',
+        whatsapp1: property.whatsapp1 || '',
+        whatsapp2: property.whatsapp2 || '',
+        email1: property.email1 || '',
+        email2: property.email2 || '',
+        contact_via_phone_landline: property.contact_via_phone_landline || false,
+        contact_via_whatsapp1: property.contact_via_whatsapp1 || false,
+        contact_via_whatsapp2: property.contact_via_whatsapp2 || false,
+        contact_via_email1: property.contact_via_email1 || false,
+        contact_via_email2: property.contact_via_email2 || false,
       })
-      const { data: imgData } = await supabase
-        .from('property_images')
-        .select('*')
-        .eq('property_id', params.id)
-        .order('order')
+      const { data: imgData } = await supabase.from('property_images').select('*').eq('property_id', params.id).order('order')
       setImages(imgData || [])
+      const { data: amenityData } = await supabase.from('property_amenities').select('amenity_id').eq('property_id', params.id)
+      if (amenityData && amenityData.length > 0) {
+        const ids = amenityData.map((a: any) => a.amenity_id)
+        const { data: amenitiesData } = await supabase.from('amenities').select('key').in('id', ids)
+        setSelectedAmenities(amenitiesData?.map((a: any) => a.key).filter(Boolean) || [])
+      } else {
+        setSelectedAmenities([])
+      }
       setLoading(false)
     }
     load()
@@ -294,6 +306,25 @@ export default function EditPropertyPage() {
     setSelectedAmenities(prev => prev.includes(key) ? prev.filter(a => a !== key) : [...prev, key])
   }
 
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
+    setVideoFile(file)
+    setVideoPreview(URL.createObjectURL(file))
+    e.target.value = ''
+  }
+
+  const uploadVideo = async (): Promise<string | null> => {
+    if (!videoFile) return null
+    const ext = videoFile.name.split('.').pop()
+    const fileName = `${String(params.id)}/video_${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('property-images').upload(fileName, videoFile)
+    if (error) return null
+    const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
+    return data.publicUrl
+  }
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -306,10 +337,7 @@ export default function EditPropertyPage() {
         const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
         const isPrimary = images.length === 0
         const { data: newImg } = await supabase.from('property_images').insert({
-          property_id: params.id,
-          url: urlData.publicUrl,
-          'order': images.length,
-          is_primary: isPrimary,
+          property_id: params.id, url: urlData.publicUrl, 'order': images.length, is_primary: isPrimary,
         }).select().single()
         if (newImg) setImages(prev => [...prev, newImg])
       }
@@ -335,6 +363,7 @@ export default function EditPropertyPage() {
     setError('')
     const { error: updateError } = await supabase.from('properties').update({
       name: form.name,
+      slug: form.slug || undefined,
       short_description: form.short_description,
       description: form.description,
       category: [form.category],
@@ -347,28 +376,61 @@ export default function EditPropertyPage() {
       bedrooms: parseInt(form.bedrooms),
       bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book,
+      accepts_miluim: form.accepts_miluim,
+      has_shelter: form.has_shelter,
       ...(isAdmin && { status: form.status }),
+      video_url: form.video_url || null,
+      phone_landline: form.phone_landline || null,
+      whatsapp1: form.whatsapp1 || null,
+      whatsapp2: form.whatsapp2 || null,
+      email1: form.email1 || null,
+      email2: form.email2 || null,
+      contact_via_phone_landline: form.contact_via_phone_landline,
+      contact_via_whatsapp1: form.contact_via_whatsapp1,
+      contact_via_whatsapp2: form.contact_via_whatsapp2,
+      contact_via_email1: form.contact_via_email1,
+      contact_via_email2: form.contact_via_email2,
       updated_at: new Date().toISOString(),
     }).eq('id', params.id)
-    if (updateError) { setError(updateError.message) } else { setSuccess(true); setTimeout(() => setSuccess(false), 3000) }
+    if (updateError) {
+      setError(updateError.message)
+    } else {
+      const propertyId = String(params.id)
+      await supabase.from('property_amenities').delete().eq('property_id', propertyId)
+      if (selectedAmenities.length > 0) {
+        const { data: allAmenities } = await supabase.from('amenities').select('id, key')
+        const amenityRows = (allAmenities || [])
+          .filter((a: any) => selectedAmenities.includes(a.key))
+          .map((a: any) => ({ property_id: propertyId, amenity_id: a.id }))
+        if (amenityRows.length > 0) await supabase.from('property_amenities').insert(amenityRows)
+      }
+      if (videoFile) {
+        const uploadedUrl = await uploadVideo()
+        if (uploadedUrl) {
+          await supabase.from('properties').update({ video_url: uploadedUrl }).eq('id', params.id)
+          setForm(prev => ({ ...prev, video_url: uploadedUrl }))
+        }
+      }
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    }
     setSaving(false)
   }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gray-50 pt-4" dir="rtl">
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center gap-3 mb-8">
           <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100">
-            <ArrowRight className="w-5 h-5 text-gray-500" />
+            <IconArrowRight className="w-5 h-5 text-gray-500" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900">עריכת נכס</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* לוח שנה זמינות */}
           <Calendar propertyId={params.id as string} supabase={supabase} />
 
           {/* גלריית תמונות */}
@@ -381,36 +443,80 @@ export default function EditPropertyPage() {
                   <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
                   {img.is_primary && (
                     <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1">
-                      <Star className="w-3 h-3 text-white fill-white" />
+                      <IconStar className="w-3 h-3 text-white fill-white" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                    <button type="button" onClick={() => handleSetPrimary(img.id)}
-                      className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
-                      <Star className="w-3.5 h-3.5 text-white" />
+                    <button type="button" onClick={() => handleSetPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full" title="הגדר כראשית">
+                      <IconStar className="w-3.5 h-3.5 text-white" />
                     </button>
-                    <button type="button" onClick={() => handleDeleteImage(img.id)}
-                      className="p-1.5 bg-red-500 rounded-full" title="מחק">
-                      <X className="w-3.5 h-3.5 text-white" />
+                    <button type="button" onClick={() => handleDeleteImage(img.id)} className="p-1.5 bg-red-500 rounded-full" title="מחק">
+                      <IconX className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
                 </div>
               ))}
               <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
-                <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                <IconUpload className="w-6 h-6 text-gray-400 mb-1" />
                 <span className="text-xs text-gray-400">{uploading ? 'מעלה...' : 'הוסף תמונות'}</span>
                 <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" disabled={uploading} />
               </label>
             </div>
             <p className="text-xs text-gray-400">{images.length} תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
+          {/* וידאו */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
+            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
+                <span className="text-2xl">🎬</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
+                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
+              </label>
+              {videoPreview && <div className="relative">
+                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              {form.video_url && !videoPreview && <div className="relative">
+                <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-xs text-gray-400">או</span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <input name="video_url" value={form.video_url} onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            </div>
+          </div>
+
+          {/* תמחור */}
 
           {/* פרטי הנכס */}
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס *</label>
-              <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+            <div className="flex gap-4">
+              <div className="w-[30%]">
+                <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס *</label>
+                <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+              <div className="w-[70%]">
+                <label className="block text-sm font-medium text-gray-700 mb-1">שם הנכס באנגלית <span className="text-gray-400 font-normal">(כתובת האתר)</span></label>
+                <input name="slug" value={form.slug} onChange={handleChange}
+                  className="w-full border border-yellow-300 bg-yellow-50 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 font-mono"
+                  dir="ltr" placeholder="galil-zimmer" />
+                {form.slug && (
+                  <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
+                    כתובת האתר:
+                    <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">
+                      zimmer.club/{form.slug}
+                    </span>
+                  </p>
+                )}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">תיאור קצר</label>
@@ -430,8 +536,19 @@ export default function EditPropertyPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">איזור</label>
                 <select name="region" value={form.region} onChange={handleChange} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                  <option value="">בחר איזור</option>
-                  {Object.entries(REGIONS).map(([key, r]) => <option key={key} value={key}>{r.label}</option>)}
+                                    <option value="">בחר איזור</option>
+                  <option value="north">צפון</option>
+                  <option value="galil_west">גליל המערבי</option>
+                  <option value="galil_upper">גליל העליון</option>
+                  <option value="galil_lower">גליל התחתון</option>
+                  <option value="kinneret">כנרת</option>
+                  <option value="hermon">חרמון</option>
+                  <option value="center">מרכז</option>
+                  <option value="jerusalem">ירושלים</option>
+                  <option value="dead_sea">ים המלח</option>
+                  <option value="negev">דרום</option>
+                  <option value="eilat">אילת</option>
+                  <option value="golan">רמת הגולן</option>
                 </select>
               </div>
             </div>
@@ -447,7 +564,77 @@ export default function EditPropertyPage() {
             </div>
           </div>
 
-          {/* תמחור */}
+          {/* אמצעי תקשורת לקבלת הזמנות */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת לקבלת הזמנות</h2>
+            <p className="text-xs text-gray-400">סמן ✓ ליד האמצעים שדרכם תרצה לקבל הזמנות</p>
+
+            {/* טלפון קווי */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_phone_landline" id="contact_via_phone_landline"
+                checked={form.contact_via_phone_landline} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_phone_landline" className="block text-sm font-medium text-gray-700 mb-1">טלפון קווי</label>
+                <input name="phone_landline" value={form.phone_landline} onChange={handleChange}
+                  placeholder="03-1234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* וואטסאפ 1 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_whatsapp1" id="contact_via_whatsapp1"
+                checked={form.contact_via_whatsapp1} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_whatsapp1" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 1</label>
+                <input name="whatsapp1" value={form.whatsapp1} onChange={handleChange}
+                  placeholder="972501234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* וואטסאפ 2 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_whatsapp2" id="contact_via_whatsapp2"
+                checked={form.contact_via_whatsapp2} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_whatsapp2" className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ עסקי 2</label>
+                <input name="whatsapp2" value={form.whatsapp2} onChange={handleChange}
+                  placeholder="972501234567" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* אימייל 1 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_email1" id="contact_via_email1"
+                checked={form.contact_via_email1} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_email1" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 1</label>
+                <input name="email1" value={form.email1} onChange={handleChange}
+                  type="email" placeholder="business@example.com" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+
+            {/* אימייל 2 */}
+            <div className="flex items-center gap-3">
+              <input type="checkbox" name="contact_via_email2" id="contact_via_email2"
+                checked={form.contact_via_email2} onChange={handleChange}
+                className="w-4 h-4 accent-yellow-600 shrink-0" />
+              <div className="flex-1">
+                <label htmlFor="contact_via_email2" className="block text-sm font-medium text-gray-700 mb-1">אימייל עסקי 2</label>
+                <input name="email2" value={form.email2} onChange={handleChange}
+                  type="email" placeholder="business2@example.com" dir="ltr"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
@@ -478,6 +665,14 @@ export default function EditPropertyPage() {
               <input type="checkbox" name="instant_book" id="instant_book" checked={form.instant_book} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
               <label htmlFor="instant_book" className="text-sm font-medium text-gray-700">הזמנה מיידית</label>
             </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="accepts_miluim" id="accepts_miluim" checked={form.accepts_miluim} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+              <label htmlFor="accepts_miluim" className="text-sm font-medium text-gray-700">מקבלים שובר מילואים</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" name="has_shelter" id="has_shelter" checked={form.has_shelter} onChange={handleChange} className="w-4 h-4 accent-yellow-600" />
+              <label htmlFor="has_shelter" className="text-sm font-medium text-gray-700">קיים מרחב מוגן</label>
+            </div>
           </div>
 
           {isAdmin && (
@@ -504,6 +699,10 @@ export default function EditPropertyPage() {
               ))}
             </div>
           </div>
+
+          {form.slug && <PropertyQR slug={form.slug} name={form.name} mode="edit" />}
+
+          {isAdmin && <AdminReviews propertyId={params.id as string} />}
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
           {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">הנכס עודכן בהצלחה!</div>}

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { Star, Zap } from 'lucide-react'
-import { REGIONS } from '@/lib/constants'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
+  slug?: string
   id: string
   name: string
   short_description: string
@@ -46,48 +47,47 @@ export function LatestProperties() {
       <div className="page-container">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-taupe mb-2">חדש באתר</p>
-            <h2 className="section-title">נכסים שנוספו לאחרונה</h2>
+                        <h2 className="section-title">לקוחות ממש אהבו</h2>
           </div>
           <Link href="/search" className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block">
             כל הנכסים ←
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {properties.map((p) => {
             const firstImage = p.property_images?.[0]?.url
             return (
-              <Link key={p.id} href={`/properties/${p.id}`}
+              <Link key={p.id} href={`/${p.slug || p.id}`}
                 className="group bg-white rounded-2xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <div className="h-48 bg-gray-100 relative overflow-hidden">
+                <div className="h-36 sm:h-48 bg-gray-100 relative overflow-hidden">
                   {firstImage ? (
-                    <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 50vw,(max-width:1024px) 25vw,25vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                   )}
                   {p.instant_book && (
                     <div className="absolute top-3 right-3">
                       <span className="bg-white text-yellow-700 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                        <Zap className="w-3 h-3" />מיידי
+                        <IconZap className="w-3 h-3" />מיידי
                       </span>
                     </div>
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <div className="flex items-start justify-between mb-1">
                     <h3 className="font-bold text-charcoal text-sm group-hover:text-gold-deep transition-colors line-clamp-1">{p.name}</h3>
                     {p.avg_rating > 0 && (
                       <div className="flex items-center gap-0.5 shrink-0">
-                        <Star className="w-3 h-3 fill-gold text-gold" />
+                        <IconStar className="w-3 h-3 fill-gold text-gold" />
                         <span className="text-xs text-taupe">{p.avg_rating}</span>
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-taupe mb-2">{p.city || REGIONS[p.region as keyof typeof REGIONS]?.label}</p>
+                  <p className="text-xs text-taupe mb-2">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
                   {p.short_description && <p className="text-xs text-taupe/70 mb-3 line-clamp-2">{p.short_description}</p>}
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-charcoal text-sm">₪{p.price_per_night}</span>
+                      <span className="font-bold text-charcoal text-sm">החל מ: ₪{p.price_per_night}</span>
                       <span className="text-xs text-taupe"> / לילה</span>
                     </div>
                     <span className="text-xs text-taupe">עד {p.max_guests} אורחים</span>

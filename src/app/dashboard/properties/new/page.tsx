@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
@@ -77,6 +77,10 @@ function toSlug(value: string): string {
     .replace(/-+/g, '-')
 }
 
+declare global {
+  interface Window { initGooglePlaces: () => void; google: any }
+}
+
 export default function NewPropertyPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -89,6 +93,52 @@ export default function NewPropertyPage() {
   const [videoPreview, setVideoPreview] = useState('')
   const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [slugPreview, setSlugPreview] = useState('')
+  const addressInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const initAutocomplete = () => {
+      if (!addressInputRef.current || !window.google?.maps?.places) return
+      const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+        componentRestrictions: { country: 'il' },
+        fields: ['address_components', 'geometry', 'formatted_address'],
+        types: ['address'],
+      })
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace()
+        if (!place.address_components) return
+        let street = '', streetNumber = '', city = ''
+        for (const comp of place.address_components) {
+          if (comp.types.includes('route')) street = comp.long_name
+          if (comp.types.includes('street_number')) streetNumber = comp.long_name
+          if (comp.types.includes('locality')) city = comp.long_name
+          if (!city && comp.types.includes('sublocality')) city = comp.long_name
+        }
+        const address = [street, streetNumber].filter(Boolean).join(' ')
+        setForm(prev => ({ ...prev, address, city }))
+      })
+    }
+
+    if (window.google?.maps?.places) {
+      initAutocomplete()
+      return
+    }
+
+    if (!document.querySelector('script[src*="maps.googleapis.com"]')) {
+      const script = document.createElement('script')
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places&language=he`
+      script.async = true
+      script.onload = initAutocomplete
+      document.head.appendChild(script)
+    } else {
+      const interval = setInterval(() => {
+        if (window.google?.maps?.places) {
+          clearInterval(interval)
+          initAutocomplete()
+        }
+      }, 100)
+      return () => clearInterval(interval)
+    }
+  }, [])
   const [units, setUnits] = useState<UnitForm[]>([])
   const [hasUnits, setHasUnits] = useState(false)
   const [form, setForm] = useState({
@@ -350,7 +400,7 @@ export default function NewPropertyPage() {
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <div className="max-w-3xl mx-auto px-4 py-10">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">הוספת נכס חדש</h1>
-        <p className="text-sm text-gray-400 mb-8">במידה ויש כמה יחידות/נכסים במתחם, ניתן להוסיף אותם בסוף הדף</p>
+        <p className="text-sm text-red-500 mb-8">במידה ויש כמה יחידות/נכסים במתחם, ניתן להוסיף אותם בסוף הדף</p>
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* פרטי הנכס */}
@@ -431,8 +481,10 @@ export default function NewPropertyPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">כתובת *</label>
-                <input name="address" value={form.address} onChange={handleChange} required
+                <input ref={addressInputRef} name="address" value={form.address} onChange={handleChange} required
+                  placeholder="התחל להקליד כתובת..."
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                <p className="text-xs text-gray-400 mt-1">בחר מהרשימה — העיר והכתובת יתמלאו אוטומטית</p>
               </div>
             </div>
           </div>

@@ -65,7 +65,7 @@ export function NewProperties() {
   if (loading || properties.length === 0) return null
 
   return (
-    <section className="section-padding bg-white !pt-8">
+    <section className="section-padding section-gradient-bg !pt-8">
       <div className="page-container !max-w-[90rem] !px-2">
         <div className="flex items-end justify-between mb-6">
           <h2 className="section-title shimmer-text" style={{fontSize: "170%"}}>נכסים חדשים באתר</h2>

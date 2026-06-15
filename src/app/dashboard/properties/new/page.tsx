@@ -475,16 +475,16 @@ export default function NewPropertyPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב *</label>
-                <input name="city" value={form.city} onChange={handleChange} required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
-              </div>
-              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">כתובת *</label>
                 <input ref={addressInputRef} name="address" value={form.address} onChange={handleChange} required
                   placeholder="התחל להקליד כתובת..."
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
                 <p className="text-xs text-gray-400 mt-1">בחר מהרשימה — העיר והכתובת יתמלאו אוטומטית</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב *</label>
+                <input name="city" value={form.city} onChange={handleChange} required readOnly
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 bg-gray-50" />
               </div>
             </div>
           </div>

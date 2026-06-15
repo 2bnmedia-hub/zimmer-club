@@ -118,6 +118,7 @@ export default function NewCaravanPage() {
   const [uploading, setUploading] = useState(false)
   const [images, setImages] = useState<string[]>([])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
+  const [customAmenities, setCustomAmenities] = useState<string[]>([''])
 
   const toggleAmenity = (item: string) =>
     setSelectedAmenities(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item])
@@ -184,6 +185,7 @@ export default function NewCaravanPage() {
 
   async function handleSubmit() {
     if (!form.name || !form.price_per_night) return alert('נא למלא שם ומחיר')
+    if (!form.phone || !form.whatsapp) return alert('נא למלא טלפון 1 ווואטסאפ')
     if (uploading) return alert('נא להמתין לסיום העלאת התמונות')
     const validImages = images.filter(url => url.startsWith('http'))
     setSaving(true)
@@ -224,7 +226,7 @@ export default function NewCaravanPage() {
       email: form.email,
       instant_book: form.instant_book,
       video_url: form.video_url || null,
-      amenities: selectedAmenities,
+      amenities: [...selectedAmenities, ...customAmenities.filter(a => a.trim())],
       status: 'pending',
       lat: lat2,
       lng: lng2,
@@ -443,16 +445,16 @@ export default function NewCaravanPage() {
             <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>יצירת קשר</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>טלפון 1</label>
-                <input value={form.phone} onChange={e => set('phone', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} />
+                <label className={labelClass} style={{ color: '#8B6914' }}>טלפון 1 *</label>
+                <input value={form.phone} onChange={e => set('phone', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} required />
               </div>
               <div>
                 <label className={labelClass} style={{ color: '#8B6914' }}>טלפון 2</label>
                 <input value={form.phone2 || ''} onChange={e => set('phone2', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} />
               </div>
               <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>וואטסאפ</label>
-                <input value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} />
+                <label className={labelClass} style={{ color: '#8B6914' }}>וואטסאפ *</label>
+                <input value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)} className={inputClass} placeholder="050-0000000" style={{ borderColor: '#e5e7eb' }} required />
               </div>
               <div>
                 <label className={labelClass} style={{ color: '#8B6914' }}>מייל</label>
@@ -488,11 +490,42 @@ export default function NewCaravanPage() {
             ))}
           </div>
 
+          {/* שירות אחר */}
+          <div className="rounded-2xl p-6 space-y-3" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
+            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>שירות אחר</h2>
+            {customAmenities.map((val, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <input
+                  value={val}
+                  onChange={e => setCustomAmenities(prev => prev.map((v, i) => i === idx ? e.target.value : v))}
+                  className={inputClass}
+                  placeholder="לרשום סוג שירות"
+                  style={{ borderColor: '#e5e7eb' }}
+                />
+                {idx === customAmenities.length - 1 && (
+                  <button type="button"
+                    onClick={() => setCustomAmenities(prev => [...prev, ''])}
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xl shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #C8960C, #8B6914)' }}>
+                    +
+                  </button>
+                )}
+                {customAmenities.length > 1 && (
+                  <button type="button"
+                    onClick={() => setCustomAmenities(prev => prev.filter((_, i) => i !== idx))}
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xl shrink-0 bg-red-400">
+                    ×
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
           {/* Submit */}
           <div className="flex gap-3 pb-8">
             <button onClick={handleSubmit} disabled={saving}
               className="flex-1 py-3.5 rounded-xl font-bold text-white transition-all hover:scale-105 text-sm"
-              style={{ background: saving ? '#c4a87a' : '#8B6914' }}>
+              style={{ background: saving ? '#c4a87a' : 'linear-gradient(135deg, #C8960C, #8B6914)' }}>
               {saving ? 'שומר...' : 'שלח לאישור ופרסום'}
             </button>
             <button onClick={() => router.back()}

@@ -151,8 +151,8 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, view
                 const s = ss(item.status)
                 const date = new Date(item.created_at).toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit', year:'2-digit' })
                 return (
-                  <>
-                  <tr key={item.id} className="border-t transition-colors hover:bg-amber-50/20" style={{ borderColor:'#f5f0e8' }}>
+                  <React.Fragment key={item.id}>
+                  <tr className="border-t transition-colors hover:bg-amber-50/20" style={{ borderColor:'#f5f0e8' }}>
                     <td className="px-5 py-3 font-medium text-sm" style={{ color:'#111827' }}>{item.name}</td>
                     <td className="px-5 py-3 text-sm" style={{ color:'#111827' }}>{typeLabel(item)}</td>
                     <td className="px-5 py-3 text-sm font-semibold" style={{ color:'#8B6914' }}>{priceLabel(item)}</td>
@@ -176,7 +176,7 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, view
                       </td>
                     </tr>
                   )}
-                  </>
+                  </React.Fragment>
                 )
               })}
             </tbody>

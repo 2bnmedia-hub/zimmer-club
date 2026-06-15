@@ -16,25 +16,82 @@ type Review = {
   profiles?: { full_name: string }
 }
 
-function StarRating({ value, onChange, size = 'md' }: {
+function StarRating({ value, size = 'sm' }: {
   value: number; onChange?: (v: number) => void; size?: 'sm' | 'md' | 'lg'
 }) {
-  const [hovered, setHovered] = useState(0)
-  const px = size === 'lg' ? 32 : size === 'md' ? 24 : 16
+  const px = size === 'lg' ? 20 : 16
+  const stars = Math.round((value / 10) * 5)
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-0.5">
       {[1,2,3,4,5].map(i => (
-        <button key={i} type="button"
-          onClick={() => onChange?.(i)}
-          onMouseEnter={() => onChange && setHovered(i)}
-          onMouseLeave={() => onChange && setHovered(0)}
-          className={onChange ? 'cursor-pointer' : 'cursor-default'}>
-          <svg width={px} height={px} viewBox="0 0 24 24" fill={i <= (hovered || value) ? '#FBBF24' : 'none'}
-            stroke={i <= (hovered || value) ? '#FBBF24' : '#D1D5DB'} strokeWidth="1.5">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </button>
+        <svg key={i} width={px} height={px} viewBox="0 0 24 24"
+          fill={i <= stars ? '#FBBF24' : 'none'}
+          stroke={i <= stars ? '#FBBF24' : '#D1D5DB'} strokeWidth="1.5">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
       ))}
+    </div>
+  )
+}
+
+function SliderRating({ value, onChange, label }: { value: number; onChange: (v: number) => void; label?: string }) {
+  const pct = value > 0 ? ((value - 1) / 9) * 100 : 0
+  const getColor = (v: number) => {
+    if (v <= 0) return '#9ca3af'
+    const hue = Math.round(120 - ((v - 1) / 9) * 120)
+    return `hsl(${hue}, 100%, 45%)`
+  }
+  const color = getColor(value)
+  const emoji = value >= 9 ? '🤩' : value >= 7 ? '😊' : value >= 5 ? '😐' : value > 0 ? '😕' : '💫'
+  return (
+    <div className="w-full">
+      <style>{`
+        .slider-thumb-g::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 24px; height: 24px;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid ${color};
+          box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+          cursor: grab;
+          transition: transform 0.15s, border-color 0.2s;
+        }
+        .slider-thumb-g::-webkit-slider-thumb:active { transform: scale(1.25); cursor: grabbing; }
+        .slider-thumb-g::-moz-range-thumb {
+          width: 24px; height: 24px; border-radius: 50%;
+          background: white; border: 3px solid ${color};
+          box-shadow: 0 2px 10px rgba(0,0,0,0.25); cursor: grab;
+        }
+      `}</style>
+      <div className="flex items-center justify-between mb-2">
+        {label && <span className="text-xs font-bold text-gray-700">{label}</span>}
+        <div className="flex items-center gap-1 mr-auto">
+          <span className="text-base">{emoji}</span>
+          <span className="text-xl font-black transition-all duration-200" style={{color}}>{value > 0 ? value : '—'}</span>
+          <span className="text-xs text-gray-400 mt-1">/10</span>
+        </div>
+      </div>
+      <div className="relative h-5 rounded-full overflow-hidden" style={{
+        background: 'linear-gradient(to right, hsl(120,100%,40%), hsl(90,100%,42%), hsl(60,100%,45%), hsl(30,100%,45%), hsl(0,100%,45%))',
+        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.15)'
+      }}>
+        <div className="absolute inset-y-0 right-0 bg-gray-200/70 transition-all duration-150 rounded-r-full"
+          style={{width: `${100 - pct}%`}} />
+        <input type="range" min="1" max="10" value={value || 5}
+          onChange={e => onChange(Number(e.target.value))}
+          className="slider-thumb-g absolute inset-0 w-full h-full bg-transparent cursor-pointer"
+          style={{WebkitAppearance:'none', appearance:'none'}} />
+      </div>
+      <div className="flex justify-between text-xs mt-1.5 px-0.5 select-none">
+        {[1,2,3,4,5,6,7,8,9,10].map(n => (
+          <span key={n} style={{
+            color: value === n ? '#111827' : value >= n ? getColor(n) : '#9ca3af',
+            fontWeight: value === n ? '900' : '400',
+            fontSize: value === n ? '13px' : '11px',
+            transition: 'all 0.15s'
+          }}>{n}</span>
+        ))}
+      </div>
     </div>
   )
 }
@@ -131,7 +188,7 @@ export function GenericReviews({ entityId, table, foreignKey }: GenericReviewsPr
           <h3 className="font-semibold text-gray-900 mb-5">חוות הדעת שלך</h3>
           <div className="mb-5">
             <label className="block text-sm font-medium text-gray-700 mb-2">דירוג כללי *</label>
-            <StarRating value={rating} onChange={setRating} size="lg" />
+            <SliderRating value={rating} onChange={setRating} />
           </div>
           <div className="mb-5">
             <label className="block text-sm font-medium text-gray-700 mb-2">ספר על החוויה שלך</label>
@@ -184,7 +241,16 @@ export function GenericReviews({ entityId, table, foreignKey }: GenericReviewsPr
                     <p className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString('he-IL', {year:'numeric',month:'long',day:'numeric'})}</p>
                   </div>
                 </div>
-                <StarRating value={r.rating} size="sm" />
+<div className="flex items-center gap-1">
+                  {[1,2,3,4,5].map(i => (
+                    <svg key={i} viewBox="0 0 24 24" width="14" height="14"
+                      fill={i <= Math.round((r.rating/10)*5) ? "#FBBF24" : "none"}
+                      stroke={i <= Math.round((r.rating/10)*5) ? "#FBBF24" : "#D1D5DB"} strokeWidth="1.5">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  ))}
+                  <span className="text-xs font-bold text-gray-600">{r.rating}/10</span>
+                </div>
               </div>
               {getReviewText(r) && <p className="text-sm text-gray-700 leading-relaxed">{getReviewText(r)}</p>}
             </div>

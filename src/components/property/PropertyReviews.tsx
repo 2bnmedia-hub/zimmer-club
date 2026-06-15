@@ -9,6 +9,7 @@ type Review = {
   cleanliness: number | null
   service: number | null
   location: number | null
+  facilities: number | null
   text: string | null
   reviewer_name: string | null
   created_at: string
@@ -18,36 +19,104 @@ const CATEGORIES = [
   { key: 'cleanliness', label: 'ניקיון' },
   { key: 'service', label: 'שירות' },
   { key: 'location', label: 'מיקום' },
+  { key: 'facilities', label: 'מתקנים' },
 ]
 
-function StarRating({ value, onChange, size = 'md' }: {
+function StarRating({ value, size = 'md' }: {
   value: number
   onChange?: (v: number) => void
   size?: 'sm' | 'md' | 'lg'
 }) {
-  const [hovered, setHovered] = useState(0)
   const px = size === 'lg' ? 32 : size === 'md' ? 24 : 16
-
+  const stars = Math.round((value / 10) * 5)
   return (
     <div className="flex gap-1">
       {[1,2,3,4,5].map(i => (
-        <button key={i} type="button"
-          onClick={() => onChange?.(i)}
-          onMouseEnter={() => onChange && setHovered(i)}
-          onMouseLeave={() => onChange && setHovered(0)}
-          className={onChange ? 'cursor-pointer' : 'cursor-default'}
-        >
-          <svg width={px} height={px} viewBox="0 0 24 24"
-            fill={i <= (hovered || value) ? '#FBBF24' : 'none'}
-            stroke={i <= (hovered || value) ? '#FBBF24' : '#D1D5DB'}
-            strokeWidth="1.5">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </button>
+        <svg key={i} width={px} height={px} viewBox="0 0 24 24"
+          fill={i <= stars ? '#FBBF24' : 'none'}
+          stroke={i <= stars ? '#FBBF24' : '#D1D5DB'}
+          strokeWidth="1.5">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
       ))}
     </div>
   )
 }
+
+function SliderRating({ value, onChange, label }: { value: number; onChange: (v: number) => void; label?: string }) {
+  const pct = value > 0 ? ((value - 1) / 9) * 100 : 0
+  
+  // צבע אמיתי לפי HSL: ירוק=120 → צהוב=60 → כתום=30 → אדום=0
+  const getColor = (v: number) => {
+    if (v <= 0) return '#9ca3af'
+    const hue = Math.round(120 - ((v - 1) / 9) * 120)
+    return `hsl(${hue}, 100%, 45%)`
+  }
+  
+  const color = getColor(value)
+  const emoji = value >= 9 ? '🤩' : value >= 7 ? '😊' : value >= 5 ? '😐' : value > 0 ? '😕' : '💫'
+
+  return (
+    <div className="w-full">
+      <style>{`
+        .slider-thumb::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 24px; height: 24px;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid ${color};
+          box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+          cursor: grab;
+          transition: transform 0.15s, border-color 0.2s;
+        }
+        .slider-thumb::-webkit-slider-thumb:active {
+          transform: scale(1.25);
+          cursor: grabbing;
+        }
+        .slider-thumb::-moz-range-thumb {
+          width: 24px; height: 24px;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid ${color};
+          box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+          cursor: grab;
+        }
+      `}</style>
+      <div className="flex items-center justify-between mb-2">
+        {label && <span className="text-xs font-bold text-gray-700">{label}</span>}
+        <div className="flex items-center gap-1 mr-auto">
+          <span className="text-base">{emoji}</span>
+          <span className="text-xl font-black transition-all duration-200" style={{color}}>{value > 0 ? value : '—'}</span>
+          <span className="text-xs text-gray-400 mt-1">/10</span>
+        </div>
+      </div>
+      <div className="relative h-5 rounded-full overflow-hidden" style={{
+        background: 'linear-gradient(to right, hsl(120,100%,40%), hsl(90,100%,42%), hsl(60,100%,45%), hsl(30,100%,45%), hsl(0,100%,45%)',
+        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.15)'
+      }}>
+        <div className="absolute inset-y-0 right-0 bg-gray-200/70 transition-all duration-150 rounded-r-full"
+          style={{width: `${100 - pct}%`}} />
+        <input
+          type="range" min="1" max="10" value={value || 5}
+          onChange={e => onChange(Number(e.target.value))}
+          className="slider-thumb absolute inset-0 w-full h-full bg-transparent cursor-pointer"
+          style={{WebkitAppearance:'none', appearance:'none'}}
+        />
+      </div>
+      <div className="flex justify-between text-xs mt-1.5 px-0.5 select-none">
+        {[1,2,3,4,5,6,7,8,9,10].map(n => (
+          <span key={n} style={{
+            color: value === n ? '#111827' : value >= n ? getColor(n) : '#9ca3af',
+            fontWeight: value === n ? '900' : '400',
+            fontSize: value === n ? '13px' : '11px',
+            transition: 'all 0.15s'
+          }}>{n}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 
 function ReviewCard({ review }: { review: Review }) {
   const date = new Date(review.created_at).toLocaleDateString('he-IL', {
@@ -104,6 +173,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
     cleanliness: 0,
     service: 0,
     location: 0,
+    facilities: 0,
     text: '',
   })
 
@@ -155,6 +225,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
       cleanliness: form.cleanliness || null,
       service: form.service || null,
       location: form.location || null,
+      facilities: form.facilities || null,
       text: form.text || null,
       reviewer_name: user.name,
     })
@@ -204,18 +275,17 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
           {/* דירוג כללי */}
           <div className="mb-5">
             <label className="block text-sm font-medium text-gray-700 mb-2">דירוג כללי *</label>
-            <StarRating value={form.rating} onChange={v => setForm(p => ({...p, rating: v}))} size="lg" />
+            <SliderRating value={form.rating} onChange={v => setForm(p => ({...p, rating: v}))} />
           </div>
 
           {/* קטגוריות */}
-          <div className="grid grid-cols-3 gap-4 mb-5">
+          <div className="grid grid-cols-2 gap-4 mb-5">
             {CATEGORIES.map(cat => (
               <div key={cat.key}>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">{cat.label}</label>
-                <StarRating
+                <SliderRating
                   value={form[cat.key as keyof typeof form] as number}
                   onChange={v => setForm(p => ({...p, [cat.key]: v}))}
-                  size="sm"
+                  label={cat.label}
                 />
               </div>
             ))}

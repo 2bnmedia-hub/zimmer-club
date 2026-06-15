@@ -306,13 +306,15 @@ export default function PropertyPage() {
               </div>
               {property.short_description && <p className="text-sm font-bold text-gray-800 mb-2 leading-relaxed">{property.short_description}</p>}
               <p className="text-sm text-gray-500 mb-3">{categoryLabels[property.category?.[0]] || property.category?.[0]} · {property.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[property.region]}</p>
-              {property.avg_rating > 0 && (
-                <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
-                  <IconStar className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-bold text-gray-900">{property.avg_rating}</span>
-                  <span className="text-xs text-gray-500">({property.total_reviews})</span>
+              <div className="mb-4">
+                <div className="flex items-center gap-1 mb-1">
+                  {[1,2,3,4,5].map(i => (
+                    <svg key={i} viewBox="0 0 24 24" className="w-4 h-4" fill={i <= Math.round(property.avg_rating || 0) ? '#FBBF24' : '#E5E7EB'}><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                  ))}
+                  <span className="font-bold text-gray-900 text-sm mr-1">{property.avg_rating > 0 ? property.avg_rating : '—'}</span>
                 </div>
-              )}
+                <p className="text-xs text-gray-400">{property.total_reviews || 0} חוות דעת</p>
+              </div>
               <div className="flex flex-wrap gap-3 text-sm text-gray-600">
                 <div className="flex items-center gap-1.5"><IconUsers className="w-4 h-4 text-gray-400" />עד {property.max_guests} אורחים</div>
                 <div className="flex items-center gap-1.5"><IconBed className="w-4 h-4 text-gray-400" />{property.bedrooms} חדרי שינה</div>
@@ -380,9 +382,9 @@ export default function PropertyPage() {
                   ))}
                 </div>
                 {/* Desktop: original display */}
-                <div className="relative w-full hidden md:block">
+                <div className="relative w-full hidden md:block" style={{height:"55vh"}}>
                   {displayImages.map((url: string, i: number) => (
-                    <img key={i} src={url} alt={property.name} className="w-full h-auto block max-h-[55vh] object-contain" style={{ display: i === safeIndex ? 'block' : 'none' }} />
+                    <img key={i} src={url} alt={property.name} className="w-full h-full object-cover absolute inset-0" style={{ display: i === safeIndex ? 'block' : 'none' }} />
                   ))}
                 </div>
                 {images.length > 1 && (

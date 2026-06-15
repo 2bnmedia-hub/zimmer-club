@@ -24,7 +24,7 @@ type Property = {
   has_shelter?: boolean
 }
 
-export function LatestProperties() {
+export function NewProperties() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
@@ -35,6 +35,7 @@ export function LatestProperties() {
         .from('properties')
         .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
         .eq('status', 'active')
+        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
         .order('created_at', { ascending: false })
         .limit(4)
       setProperties(data || [])
@@ -50,7 +51,7 @@ export function LatestProperties() {
       <div className="page-container !max-w-[90rem] !px-2">
         <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="section-title shimmer-text" style={{fontSize: "170%"}}>הצימרים הנצפים ביותר</h2>
+            <h2 className="section-title" style={{fontSize: "170%"}}>נכסים חדשים באתר</h2>
           </div>
           <Link href="/search" className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block">
             כל הנכסים ←

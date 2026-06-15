@@ -4,6 +4,7 @@ import { Footer } from '@/components/layout/Footer'
 import { SearchBar } from '@/components/search/SearchBar'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
 import { LatestProperties } from '@/components/property/LatestProperties'
+import { NewProperties } from '@/components/property/NewProperties'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
 
 export default function HomePage() {
@@ -94,6 +95,7 @@ export default function HomePage() {
           </div>
         </section>
         <LatestProperties />
+        <NewProperties />
         {/* CATEGORIES */}
         <section className="section-padding bg-cream-50">
           <div className="page-container">

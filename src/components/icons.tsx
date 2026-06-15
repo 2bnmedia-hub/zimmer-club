@@ -133,10 +133,18 @@ export const IconArrowRight = ({ size = 20, className }: P) => (
   </svg>
 )
 
-export const IconZap = ({ size = 20, className }: P) => (
+export const IconZap = ({ size = 20, className, color }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    {grad('gz')}
-    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke={s('gz')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad('gz')}
+    {color === 'green' ? (
+      <defs>
+        <linearGradient id="gzgreen" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#00854E" />
+          <stop offset="100%" stopColor="#004d2e" />
+        </linearGradient>
+      </defs>
+    ) : null}
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke={color === 'green' ? 'url(#gzgreen)' : s('gz', color)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 

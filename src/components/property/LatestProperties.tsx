@@ -48,7 +48,7 @@ export function LatestProperties() {
       <div className="page-container !max-w-[90rem] !px-2">
         <div className="flex items-end justify-between mb-6">
           <div>
-                        <h2 className="section-title" style={{color: "#8B4513"}}>לקוחות ממש אהבו</h2>
+                        <h2 className="section-title" style={{color: "#8B4513", fontSize: "170%"}}>לקוחות ממש אהבו</h2>
           </div>
           <Link href="/search" className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block">
             כל הנכסים ←
@@ -68,8 +68,8 @@ export function LatestProperties() {
                   )}
                   {p.instant_book && (
                     <div className="absolute top-3 right-3">
-                      <span style={{background: "linear-gradient(135deg, #f5d078 0%, #d4a843 40%, #b8860b 100%)", boxShadow: "0 2px 8px rgba(212,168,67,0.6), 0 1px 3px rgba(0,0,0,0.2)"}} className="text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                        <IconZap className="w-3 h-3" />מיידי
+                      <span style={{background: "linear-gradient(135deg, #f5d078 0%, #d4a843 40%, #b8860b 100%)", boxShadow: "0 2px 8px rgba(212,168,67,0.6), 0 1px 3px rgba(0,0,0,0.2)"}} className="text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 animate__animated animate__headShake animate__infinite animate__slow">
+                        <IconZap className="w-3 h-3" color="green" />מיידי
                       </span>
                     </div>
                   )}

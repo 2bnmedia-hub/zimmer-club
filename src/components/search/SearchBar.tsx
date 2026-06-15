@@ -11,18 +11,18 @@ interface SearchBarProps {
 }
 
 const REGIONS = [
-  { value: 'north', label: 'צפון' },
-  { value: 'galil_west', label: 'גליל המערבי' },
+  { value: 'north', label: 'כל הצפון' },
+  { value: 'hermon', label: 'חרמון' },
+  { value: 'golan', label: 'רמת הגולן' },
   { value: 'galil_upper', label: 'גליל העליון' },
+  { value: 'galil_west', label: 'גליל המערבי' },
   { value: 'galil_lower', label: 'גליל התחתון' },
   { value: 'kinneret', label: 'כנרת' },
-  { value: 'hermon', label: 'חרמון' },
   { value: 'center', label: 'מרכז' },
   { value: 'jerusalem', label: 'ירושלים' },
   { value: 'dead_sea', label: 'ים המלח' },
   { value: 'negev', label: 'דרום' },
   { value: 'eilat', label: 'אילת' },
-  { value: 'golan', label: 'רמת הגולן' },
 ]
 
 const PROPERTY_TYPES = [
@@ -146,7 +146,7 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
       `}</style>
       <div className="bg-white rounded-2xl border border-sand-100 shadow-[0_8px_40px_rgba(61,47,32,0.12)]">
         <div className="text-center py-2 border-b border-sand-100">
-          <span className="text-xs font-semibold uppercase tracking-widest text-taupe">חיפוש לפי</span>
+          <span className="text-sm font-semibold uppercase tracking-widest text-taupe">חיפוש לפי</span>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-5">
 

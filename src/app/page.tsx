@@ -42,8 +42,9 @@ export default function HomePage() {
                 animation: 'warmGlow 4s ease-in-out infinite',
                 textShadow: 'none',
                 filter: 'drop-shadow(0 2px 8px rgba(139,69,19,0.3))',
+                fontSize: '0.85em',
               }}>
-                חוויית אירוח
+                לא מחפשים חופשה
               </span>
               <br />
               <span style={{
@@ -53,18 +54,18 @@ export default function HomePage() {
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
                 animation: 'warmGlow 4s ease-in-out infinite reverse',
-                fontSize: '1.1em',
+                fontSize: '1.265em', marginTop: '0.3em',
                 filter: 'drop-shadow(0 2px 12px rgba(212,168,67,0.4))',
               }}>
-                שלא תשכחו
+                מגלים אותה
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-sm lg:text-base text-taupe max-w-xl mx-auto mb-6 leading-relaxed">
-              צימרים רומנטיים - וילות יוקרה ובתי אירוח קסומים.
+              המקומות המיוחדים ביותר לחופשה בישראל.
               <br />
-              מחפשים את הבריחה המושלמת? מצאו אותה כאן
+              צימרים, וילות, בתי אירוח ואטרקציות – במקום אחד.
             </p>
 
             {/* Global Search */}

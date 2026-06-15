@@ -110,7 +110,7 @@ export function GlobalSearch() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
-          placeholder="חפשו נכס, עיר, אזור..."
+          placeholder="חיפוש חופשי - נכס, עיר, אזור..."
           className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400 text-right"
         />
         {loading && (

@@ -29,7 +29,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         )}
       >
         {/* Image */}
-        <div className="relative h-52 overflow-hidden bg-sand-100">
+        <div className="relative h-[295px] overflow-hidden bg-sand-100">
           {primaryImage ? (
             <Image
               src={primaryImage.url}
@@ -39,16 +39,16 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-sand-100 to-sand-200 flex items-center justify-center text-5xl opacity-40">
+            <div className="w-full h-full bg-gradient-to-br from-sand-100 to-sand-200 flex items-center justify-center text-7xl opacity-40">
               🏠
             </div>
           )}
 
           {/* Badges */}
-          <div className="absolute top-3 right-3 flex flex-col gap-1.5">
+          <div className="absolute top-3.5 right-3.5 flex flex-col gap-1.5">
             {property.instant_book && (
               <span className="badge badge-gold flex items-center gap-1">
-                <IconZap className="w-3 h-3" />
+                <IconZap className="w-3.5 h-3.5" />
                 הזמנה מיידית
               </span>
             )}
@@ -65,33 +65,33 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
               e.preventDefault()
               setIsFaved(!isFaved)
             }}
-            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center transition-transform hover:scale-110"
+            className="absolute top-3.5 left-3.5 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center transition-transform hover:scale-110"
             aria-label={isFaved ? 'הסר ממועדפים' : 'הוסף למועדפים'}
           >
             <IconHeart
               filled={isFaved}
-              className={cn('w-4 h-4 transition-colors', isFaved ? 'text-red-500' : 'text-taupe')}
+              className={cn('w-6 h-6 transition-colors', isFaved ? 'text-red-500' : 'text-taupe')}
             />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-6">
           {/* Location */}
-          <div className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-taupe mb-1.5">
-            <IconMapPin className="w-3 h-3" />
+          <div className="flex items-center gap-1 text-base font-semibold uppercase tracking-wider text-taupe mb-2.5">
+            <IconMapPin className="w-3.5 h-3.5" />
             {region?.label} • {property.city}
           </div>
 
           {/* Name */}
-          <h3 className="font-bold text-base text-charcoal leading-snug mb-2">
+          <h3 className="font-bold text-xl text-charcoal leading-snug mb-3">
             {truncate(property.name, 50)}
           </h3>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-1.5 mb-3 justify-end">
+          <div className="flex flex-wrap gap-1.5 mb-3.5 justify-end">
             {property.amenities?.slice(0, 3).map((amenity) => (
-              <span key={amenity.key} className="text-xs font-medium text-taupe bg-cream-100 border border-sand-100 px-2 py-0.5 rounded-full">
+              <span key={amenity.key} className="text-base font-medium text-taupe bg-cream-100 border border-sand-100 px-3 py-1.5 rounded-full">
                 {amenity.label_he}
               </span>
             ))}
@@ -101,17 +101,17 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <div className="flex items-center justify-between pt-3 border-t border-sand-100">
             {/* Rating */}
             <div className="flex items-center gap-1">
-              <IconStar className="w-3.5 h-3.5 fill-gold text-gold" />
-              <span className="text-sm font-bold text-charcoal">{property.avg_rating?.toFixed(1)}</span>
-              <span className="text-xs text-taupe">({property.total_reviews})</span>
+              <IconStar className="w-5 h-5 fill-gold text-gold" />
+              <span className="text-lg font-bold text-charcoal">{property.avg_rating?.toFixed(1)}</span>
+              <span className="text-base text-taupe">({property.total_reviews})</span>
             </div>
 
             {/* Price */}
             <div className="text-left ltr">
-              <span className="text-base font-bold text-charcoal">
+              <span className="text-xl font-bold text-charcoal">
                 החל מ: {formatPrice(property.price_per_night)}
               </span>
-              <span className="text-xs text-taupe"> / לילה</span>
+              <span className="text-base text-taupe"> / לילה</span>
             </div>
           </div>
         </div>

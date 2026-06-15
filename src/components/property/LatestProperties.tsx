@@ -19,6 +19,7 @@ type Property = {
   avg_rating: number
   instant_book: boolean
   property_images: { url: string }[]
+  reviews?: { id: string }[]
 }
 
 export function LatestProperties() {
@@ -30,7 +31,7 @@ export function LatestProperties() {
     async function load() {
       const { data } = await supabase
         .from('properties')
-        .select('*, property_images(url, "order")')
+        .select('*, property_images(url, "order"), reviews(id)')
         .eq('status', 'active')
         .order('created_at', { ascending: false })
         .limit(4)
@@ -77,9 +78,16 @@ export function LatestProperties() {
                   <div className="flex items-start justify-between mb-1">
                     <h3 className="font-bold text-charcoal text-base group-hover:text-gold-deep transition-colors line-clamp-1">{p.name}</h3>
                     {p.avg_rating > 0 && (
-                      <div className="flex items-center gap-0.5 shrink-0">
-                        <IconStar className="w-4 h-4 fill-gold text-gold" />
-                        <span className="text-sm text-taupe">{p.avg_rating}</span>
+                      <div className="flex flex-col items-end shrink-0">
+                        <div className="flex items-center gap-0.5">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <IconStar key={star} className="w-3.5 h-3.5" filled={p.avg_rating >= star} />
+                          ))}
+                          <span className="text-xs text-taupe mr-0.5">{p.avg_rating}</span>
+                        </div>
+                        {p.reviews && p.reviews.length > 0 && (
+                          <span className="text-xs text-taupe/60 mt-0.5">{p.reviews.length} חוות דעת</span>
+                        )}
                       </div>
                     )}
                   </div>

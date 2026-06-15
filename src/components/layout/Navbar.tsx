@@ -331,7 +331,7 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+                <Link href="/auth/login" className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
                   כניסה
                 </Link>
                 <Link href="/auth/register"

@@ -313,8 +313,7 @@ export function Navbar() {
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-3 py-1.5 text-xs font-bold text-white rounded-full whitespace-nowrap"
-                  style={{ backgroundColor: '#8B6914' }}>
+                  className="px-3 py-1.5 text-sm font-bold text-gray-700 hover:bg-gray-100 rounded-full whitespace-nowrap transition-colors">
                   הרשמה חינם
                 </Link>
               </div>

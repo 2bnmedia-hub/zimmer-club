@@ -48,7 +48,7 @@ export function LatestProperties() {
       <div className="page-container !max-w-[90rem] !px-2">
         <div className="flex items-end justify-between mb-6">
           <div>
-                        <h2 className="section-title" style={{color: "#8B4513", fontSize: "170%"}}>לקוחות ממש אהבו</h2>
+                        <h2 className="section-title shimmer-text" style={{fontSize: "170%"}}>הצימרים הנצפים ביותר</h2>
           </div>
           <Link href="/search" className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block">
             כל הנכסים ←
@@ -92,13 +92,25 @@ export function LatestProperties() {
                     )}
                   </div>
                   <p className="text-sm text-taupe mb-2.5">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
-                  {p.short_description && <p className="text-sm text-taupe/70 mb-3.5 line-clamp-2">{p.short_description}</p>}
+
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="font-bold text-charcoal text-base">החל מ: ₪{p.price_per_night}</span>
                       <span className="text-sm text-taupe"> / לילה</span>
                     </div>
                     <span className="text-sm text-taupe">עד {p.max_guests} אורחים</span>
+                  </div>
+                  <div className="flex gap-3 mt-3 justify-center mx-auto" style={{width: "85%"}}>
+                    <a href="tel:" onClick={e => e.stopPropagation()}
+                      className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold border border-gray-200 text-gray-700"
+                      style={{background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
+                      📞 התקשר
+                    </a>
+                    <a href={`https://wa.me/`} target="_blank" onClick={e => e.stopPropagation()}
+                      className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold text-white"
+                      style={{background: "linear-gradient(135deg, #25d366 0%, #128c3e 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
+                      💬 WhatsApp
+                    </a>
                   </div>
                 </div>
               </Link>

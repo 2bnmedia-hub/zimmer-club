@@ -14,11 +14,31 @@ export function PropertyQR({ slug, name, mode = 'view' }: {
 
   useEffect(() => {
     if (!canvasRef.current) return
+    const size = mode === 'edit' ? 200 : 160
     QRCode.toCanvas(canvasRef.current, url, {
-      width: mode === 'edit' ? 200 : 160,
+      width: size,
       margin: 2,
       color: { dark: '#1a1a1a', light: '#ffffff' },
       errorCorrectionLevel: 'H',
+    }, () => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      const logoSize = size * 0.32
+      const logoX = (size - logoSize) / 2
+      const logoY = (size - logoSize) / 2
+      const img = new Image()
+      img.src = '/favicon5-removebg-preview.png'
+      img.onload = () => {
+        ctx.save()
+        ctx.beginPath()
+        ctx.roundRect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8, 6)
+        ctx.fillStyle = '#ffffff'
+        ctx.fill()
+        ctx.drawImage(img, logoX, logoY, logoSize, logoSize)
+        ctx.restore()
+      }
     })
   }, [url, mode])
 

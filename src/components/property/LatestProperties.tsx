@@ -108,15 +108,22 @@ export function LatestProperties() {
                     <h3 className="font-bold text-gray-900 leading-tight text-base">{p.name}</h3>
                   </div>
                   <p className="text-sm text-gray-500 mb-2">{p.city}</p>
-                  <div className="flex items-center gap-1 mb-3">
-                    <span className="text-sm font-black" style={{color:'#111827'}}>{rating > 0 ? rating : '—'}</span>
-                    <span className="text-xs text-gray-400">/10</span>
-                    {rating > 0 && (
-                      <div className="flex-1 relative h-2 rounded-full overflow-hidden mx-1" style={{background:'linear-gradient(to right, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', border:'1px solid rgba(0,0,0,0.08)'}}>
-                        <div className="absolute inset-y-0 right-0 bg-white/80 rounded-r-full" style={{width:`${100 - ((rating-1)/9*100)}%`}} />
-                      </div>
-                    )}
-                    <span className="text-xs text-gray-400">{reviewCount} חוות דעת</span>
+                  <div className="flex items-center gap-1 mb-3" dir="ltr" style={{justifyContent:"flex-end"}}>
+                    {[1,2,3,4,5].map(i => {
+                      const stars = (rating/10)*5
+                      const full = i <= Math.floor(stars)
+                      const half = !full && i <= stars + 0.5
+                      return (
+                        <span key={i} style={{position:'relative', display:'inline-block', fontSize:'14px', color:'#d1d5db'}}>
+                          ★
+                          {(full || half) && (
+                            <span style={{position:'absolute', left:0, top:0, overflow:'hidden', width: full ? '100%' : '50%', color:'#f59e0b'}}>★</span>
+                          )}
+                        </span>
+                      )
+                    })}
+                    <span className="text-xs font-semibold text-gray-700 mr-1">{rating > 0 ? rating : '—'}</span>
+                    <span className="text-xs text-gray-400">({reviewCount})</span>
                   </div>
                   <div className="hidden">
                   </div>

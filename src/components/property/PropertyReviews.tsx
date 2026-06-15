@@ -36,8 +36,8 @@ function SliderRating({ value, onChange, label }: { value: number; onChange?: (v
     return (
       <div className="flex items-center gap-2">
         {label && <span className="text-xs text-gray-500">{label}</span>}
-        <div className="relative h-2 rounded-full overflow-hidden w-20" style={{background:'linear-gradient(to right, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', border:'1px solid rgba(0,0,0,0.08)'}}>
-          <div className="absolute inset-y-0 right-0 bg-gray-100 rounded-r-full" style={{width:`${100-pct}%`}} />
+        <div className="relative h-2 rounded-full overflow-hidden w-20" style={{background:'linear-gradient(to left, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', border:'1px solid rgba(0,0,0,0.08)'}}>
+
         </div>
         <span className="text-xs font-bold" style={{color}}>{value}/10</span>
       </div>
@@ -64,8 +64,8 @@ function SliderRating({ value, onChange, label }: { value: number; onChange?: (v
           <span className="text-xs text-gray-400">/10</span>
         </div>
       </div>
-      <div className="relative h-4 rounded-full overflow-hidden" style={{background:'linear-gradient(to right, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', boxShadow:'inset 0 2px 4px rgba(0,0,0,0.15)'}}>
-        <div className="absolute inset-y-0 right-0 bg-gray-200/70 rounded-r-full" style={{width:`${100-pct}%`}} />
+      <div className="relative h-4 rounded-full overflow-hidden" style={{background:'linear-gradient(to left, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', boxShadow:'inset 0 2px 4px rgba(0,0,0,0.15)'}}>
+
         <input type="range" min="1" max="10" value={value||5} onChange={e => onChange(Number(e.target.value))}
           className="srt absolute inset-0 w-full h-full bg-transparent cursor-pointer" style={{WebkitAppearance:'none', appearance:'none'}} />
       </div>

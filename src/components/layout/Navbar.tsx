@@ -56,42 +56,21 @@ function MegaMenu({ sections, onClose, isOpen }: {
       }}
     >
       <style>{`
-        @keyframes megaFadeIn {
-          from { opacity: 0; transform: translateY(-8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
         .mega-link {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 7px 12px;
-          border-radius: 10px;
-          font-size: 13.5px;
-          color: #3D2B1A;
-          transition: all 0.15s;
-          text-decoration: none;
-          position: relative;
+          display: flex; align-items: center; gap: 8px;
+          padding: 7px 12px; border-radius: 10px;
+          font-size: 13.5px; color: #3D2B1A;
+          transition: all 0.15s; text-decoration: none; position: relative;
         }
-        .mega-link:hover {
-          background: rgba(139,105,20,0.07);
-          color: #8B6914;
-          padding-right: 16px;
-        }
+        .mega-link:hover { background: rgba(139,105,20,0.07); color: #8B6914; padding-right: 16px; }
         .mega-link::before {
-          content: '';
-          position: absolute;
-          right: 6px;
-          top: 50%;
+          content: ''; position: absolute; right: 6px; top: 50%;
           transform: translateY(-50%) scaleY(0);
-          width: 2px;
-          height: 12px;
-          background: #C4956A;
-          border-radius: 2px;
-          transition: transform 0.15s;
+          width: 2px; height: 12px; background: #C4956A;
+          border-radius: 2px; transition: transform 0.15s;
         }
         .mega-link:hover::before { transform: translateY(-50%) scaleY(1); }
       `}</style>
-
       <div className="max-w-7xl mx-auto px-8 py-8" dir="rtl">
         <div className="grid grid-cols-3 gap-0 divide-x divide-x-reverse">
           {sections.map((section, i) => (
@@ -105,24 +84,18 @@ function MegaMenu({ sections, onClose, isOpen }: {
               <ul className="space-y-0.5">
                 {section.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} onClick={onClose} className="mega-link">
-                      {item.label}
-                    </Link>
+                    <Link href={item.href} onClick={onClose} className="mega-link">{item.label}</Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-
         <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(139,105,20,0.08)' }}>
           <p className="text-xs" style={{ color: '#C4A882' }}>מעל 1,000 נכסי תיירות בכל רחבי הארץ</p>
-          <Link
-            href="/search"
-            onClick={onClose}
+          <Link href="/search" onClick={onClose}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all hover:scale-105"
-            style={{ background: 'rgba(139,105,20,0.08)', color: '#8B6914', border: '1px solid rgba(139,105,20,0.18)' }}
-          >
+            style={{ background: 'rgba(139,105,20,0.08)', color: '#8B6914', border: '1px solid rgba(139,105,20,0.18)' }}>
             לכל החיפוש המתקדם ←
           </Link>
         </div>
@@ -144,10 +117,7 @@ export function Navbar() {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) return
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, role, avatar_url')
-        .eq('id', authUser.id)
-        .single()
+        .from('profiles').select('full_name, role, avatar_url').eq('id', authUser.id).single()
       setUser({
         name: profile?.full_name || authUser.email || '',
         role: profile?.role || 'guest',
@@ -162,9 +132,7 @@ export function Navbar() {
   }, [avatarUrl])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    window.location.href = '/'
+    await supabase.auth.signOut(); setUser(null); window.location.href = '/'
   }
 
   useEffect(() => {
@@ -199,15 +167,39 @@ export function Navbar() {
   ]
 
   return (
-    <header ref={navRef} className="sticky top-0 z-[99999] bg-white border-b border-gray-200 shadow-sm h-[64px] sm:h-[85px]" dir="rtl">
+    <header ref={navRef as React.RefObject<HTMLElement>} className="sticky top-0 z-[99999] bg-white border-b border-gray-200 shadow-sm" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-[64px] sm:h-[85px]">
+        {/* ─── שורה ראשית ─── */}
+        <div className="relative flex items-center h-[64px] sm:h-[85px]">
 
-          <Link href="/" className="shrink-0" onClick={() => setActiveMenu(null)}>
-            <img src="/logo.png" alt="Zimmer Club" className="h-10 sm:h-16 w-auto logo-shine" />
+          {/* מובייל: המבורגר — צד ימין (RTL) */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+            aria-label="תפריט"
+          >
+            {mobileOpen
+              ? <IconX className="w-6 h-6 text-gray-700" />
+              : <IconMenu className="w-6 h-6 text-gray-700" />
+            }
+          </button>
+
+          {/* לוגו — מרכז מוחלט במובייל, ימין בדסקטופ */}
+          <Link
+            href="/"
+            onClick={() => setActiveMenu(null)}
+            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:left-auto lg:mr-0 flex-shrink-0"
+          >
+            <img
+              src="/logo.png"
+              alt="Zimmer Club"
+              className="logo-shine"
+              style={{ height: 'clamp(48px, 8vw, 68px)', width: 'auto' }}
+            />
           </Link>
 
-          <ul className="hidden lg:flex items-center list-none w-full justify-evenly">
+          {/* ניווט דסקטופ — אמצע */}
+          <ul className="hidden lg:flex items-center list-none flex-1 justify-evenly mx-6">
             {[
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },
@@ -234,7 +226,7 @@ export function Navbar() {
                   href={item.href}
                   onClick={() => setActiveMenu(null)}
                   className={item.badge
-                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 hover:shadow-lg overflow-hidden'
+                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 overflow-hidden'
                     : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
                   }
                   style={item.badge ? {
@@ -250,7 +242,8 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden lg:flex items-center gap-1 shrink-0 flex-nowrap">
+          {/* אזור משתמש — שמאל בדסקטופ */}
+          <div className="hidden lg:flex items-center gap-1 flex-shrink-0 mr-auto">
             <button onClick={() => setActiveMenu(null)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <IconSearch className="w-5 h-5 text-gray-600" />
             </button>
@@ -278,40 +271,25 @@ export function Navbar() {
                         {user.role === 'admin' ? 'מנהל מערכת' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}
                       </p>
                     </div>
-                    <Link href="/dashboard/properties/new"
-                      onClick={() => setActiveMenu(null)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm font-bold">+</span>
-                      </div>
-                      הוספת צימר/וילה/בקתה
-                    </Link>
-                    <Link href="/dashboard/attractions/new"
-                      onClick={() => setActiveMenu(null)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm font-bold">🎯</span>
-                      </div>
-                      הוספת אטרקציה
-                    </Link>
-                    <Link href="/dashboard/caravans/new"
-                      onClick={() => setActiveMenu(null)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm font-bold">🚐</span>
-                      </div>
-                      הוספת קרוואן
-                    </Link>
-                    <Link href="/dashboard/profile"
-                      onClick={() => setActiveMenu(null)}
+                    {[
+                      { href: '/dashboard/properties/new', icon: '+', label: 'הוספת צימר/וילה/בקתה' },
+                      { href: '/dashboard/attractions/new', icon: '🎯', label: 'הוספת אטרקציה' },
+                      { href: '/dashboard/caravans/new', icon: '🚐', label: 'הוספת קרוואן' },
+                    ].map(item => (
+                      <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center text-sm font-bold">{item.icon}</div>
+                        {item.label}
+                      </Link>
+                    ))}
+                    <Link href="/dashboard/profile" onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
                         <IconSettings className="w-3.5 h-3.5 text-[#C4956A]" />
                       </div>
                       עריכת פרופיל
                     </Link>
-                    <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
-                      onClick={() => setActiveMenu(null)}
+                    <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'} onClick={() => setActiveMenu(null)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center">
                         <IconUser className="w-3.5 h-3.5 text-gray-500" />
@@ -335,7 +313,7 @@ export function Navbar() {
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-3 py-1.5 text-xs font-bold text-white rounded-full transition-colors whitespace-nowrap"
+                  className="px-3 py-1.5 text-xs font-bold text-white rounded-full whitespace-nowrap"
                   style={{ backgroundColor: '#8B6914' }}>
                   הרשמה חינם
                 </Link>
@@ -343,13 +321,8 @@ export function Navbar() {
             )}
           </div>
 
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="תפריט"
-          >
-            {mobileOpen ? <IconX className="w-5 h-5" /> : <IconMenu className="w-5 h-5" />}
-          </button>
+          {/* placeholder שמאל — לאיזון לוגו במרכז במובייל */}
+          <div className="lg:hidden w-10 flex-shrink-0" />
         </div>
       </nav>
 
@@ -358,34 +331,39 @@ export function Navbar() {
       <MegaMenu sections={attractionsSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'attractions'} />
       <MegaMenu sections={caravanSections} onClose={() => setActiveMenu(null)} isOpen={activeMenu === 'caravans'} />
 
+      {/* ─── תפריט מובייל ─── */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-200" dir="rtl">
-          <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+        <div className="lg:hidden bg-white border-t border-gray-100" dir="rtl">
+          <div className="max-w-7xl mx-auto px-4 py-3 space-y-1">
             {[
-              { name: 'zimmer', label: 'צימרים', items: [...ZIMMER_MENU.byRegion, ...ZIMMER_MENU.byAudience, ...ZIMMER_MENU.byAvailability] },
-              { name: 'villas', label: 'וילות ובקתות', items: [...VILLAS_MENU.byRegion, ...VILLAS_MENU.byAudience, ...VILLAS_MENU.byFeatures] },
-              { name: 'attractions', label: 'אטרקציות', items: [...ATTRACTIONS_MENU.byRegion, ...ATTRACTIONS_MENU.byAudience, ...ATTRACTIONS_MENU.popular] },
-              { name: 'caravans', label: 'קרוואנים', items: [...CARAVAN_MENU.byType, ...CARAVAN_MENU.byRegion, ...CARAVAN_MENU.byFeature] },
+              { name: 'zimmer',      label: 'צימרים',         items: [...ZIMMER_MENU.byRegion, ...ZIMMER_MENU.byAudience, ...ZIMMER_MENU.byAvailability] },
+              { name: 'villas',      label: 'וילות ובקתות',   items: [...VILLAS_MENU.byRegion, ...VILLAS_MENU.byAudience, ...VILLAS_MENU.byFeatures] },
+              { name: 'attractions', label: 'אטרקציות',        items: [...ATTRACTIONS_MENU.byRegion, ...ATTRACTIONS_MENU.byAudience, ...ATTRACTIONS_MENU.popular] },
+              { name: 'caravans',    label: 'קרוואנים',        items: [...CARAVAN_MENU.byType, ...CARAVAN_MENU.byRegion, ...CARAVAN_MENU.byFeature] },
             ].map((menu) => (
               <div key={menu.name} style={{ borderBottom: '1px solid rgba(139,105,20,0.06)' }}>
-                <button onClick={() => toggleMenu(menu.name)}
-                  className="flex items-center justify-between w-full px-4 py-3.5 text-sm font-medium rounded-xl transition-all"
+                <button
+                  onClick={() => toggleMenu(menu.name)}
+                  className="flex items-center justify-between w-full px-3 py-3.5 text-sm font-semibold rounded-xl transition-all"
                   style={{
                     color: activeMenu === menu.name ? '#8B6914' : '#374151',
                     background: activeMenu === menu.name ? 'rgba(139,105,20,0.04)' : 'transparent',
-                  }}>
-                  {menu.label}
+                  }}
+                >
+                  <span>{menu.label}</span>
                   <IconChevronDown className={cn('w-4 h-4 transition-transform duration-200', activeMenu === menu.name && 'rotate-180')} />
                 </button>
                 {activeMenu === menu.name && (
                   <div className="pb-3 px-2 grid grid-cols-2 gap-1">
                     {menu.items.map((item) => (
-                      <Link key={item.label} href={item.href}
+                      <Link
+                        key={item.label} href={item.href}
                         onClick={() => { setMobileOpen(false); setActiveMenu(null) }}
-                        className="block px-3 py-2 text-sm rounded-lg transition-all"
+                        className="block px-3 py-2.5 text-sm rounded-lg text-right transition-colors"
                         style={{ color: '#3D2B1A' }}
-                        onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(139,105,20,0.06)'; (e.target as HTMLElement).style.color = '#8B6914' }}
-                        onMouseLeave={e => { (e.target as HTMLElement).style.background = 'transparent'; (e.target as HTMLElement).style.color = '#3D2B1A' }}>
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(139,105,20,0.06)'; (e.currentTarget as HTMLElement).style.color = '#8B6914' }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#3D2B1A' }}
+                      >
                         {item.label}
                       </Link>
                     ))}
@@ -393,41 +371,50 @@ export function Navbar() {
                 )}
               </div>
             ))}
+
             {NAV_ITEMS.map((item) => (
               <Link key={item.href} href={item.href}
                 onClick={() => { setActiveMenu(null); setMobileOpen(false) }}
-                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+                className="block px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors text-right">
                 {item.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-gray-200 space-y-1">
+
+            <div className="pt-3 border-t border-gray-100 space-y-1">
               {user ? (
                 <>
-                  <div className="px-4 py-2">
-                    <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                    <p className="text-xs text-gray-400">{user.role === 'admin' ? 'מנהל' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}</p>
+                  <div className="px-3 py-2">
+                    <p className="text-sm font-semibold text-gray-900 text-right">{user.name}</p>
+                    <p className="text-xs text-gray-400 text-right">{user.role === 'admin' ? 'מנהל' : user.role === 'owner' ? 'בעל נכס' : 'גולש'}</p>
                   </div>
                   <Link href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
+                    className="block px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl text-right">
                     לוח בקרה
                   </Link>
-                  <Link href="/dashboard/profile"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#C4956A] hover:bg-[#C4956A]/5 rounded-xl">
-                    <IconSettings className="w-4 h-4" />
+                  <Link href="/dashboard/profile" onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 px-3 py-3 text-sm font-medium text-[#C4956A] hover:bg-[#C4956A]/5 rounded-xl">
+                    <IconSettings className="w-4 h-4 flex-shrink-0" />
                     עריכת פרופיל
                   </Link>
                   <button onClick={handleLogout}
-                    className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl">
-                    <IconLogOut className="w-4 h-4" />
+                    className="flex items-center gap-2 w-full px-3 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl">
+                    <IconLogOut className="w-4 h-4 flex-shrink-0" />
                     התנתק
                   </button>
                 </>
               ) : (
-                <Link href="/auth/login" className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl">
-                  כניסה / הרשמה
-                </Link>
+                <div className="flex gap-2 px-1 pb-2">
+                  <Link href="/auth/login" onClick={() => setMobileOpen(false)}
+                    className="flex-1 text-center py-3 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                    כניסה
+                  </Link>
+                  <Link href="/auth/register" onClick={() => setMobileOpen(false)}
+                    className="flex-1 text-center py-3 text-sm font-bold text-white rounded-xl transition-colors"
+                    style={{ background: 'linear-gradient(135deg, #C8960C, #8B6914)' }}>
+                    הרשמה חינם
+                  </Link>
+                </div>
               )}
             </div>
           </div>
@@ -440,11 +427,12 @@ export function Navbar() {
 export function NavbarAuth({ userName, role }: { userName: string; role: 'guest' | 'owner' | 'admin' }) {
   const dashboardHref = role === 'admin' ? '/dashboard/admin' : '/dashboard/owner'
   return (
-    <header className="sticky top-0 z-[99999] bg-white border-b border-gray-200 shadow-sm h-[64px] sm:h-[85px]" dir="rtl">
+    <header className="sticky top-0 z-[99999] bg-white border-b border-gray-200 shadow-sm" dir="rtl">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-[64px] sm:h-[85px]">
-          <Link href="/" className="shrink-0">
-            <img src="/logo.png" alt="Zimmer Club" className="h-10 sm:h-16 w-auto logo-shine" />
+        <div className="relative flex items-center h-[64px] sm:h-[85px]">
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
+            <img src="/logo.png" alt="Zimmer Club" className="logo-shine"
+              style={{ height: 'clamp(48px, 8vw, 68px)', width: 'auto' }} />
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_ITEMS.map((item) => (
@@ -454,7 +442,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
               </Link>
             ))}
           </div>
-          <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+          <Link href={dashboardHref} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap mr-auto">
             <IconUser className="w-4 h-4" />
             <span>{userName}</span>
           </Link>

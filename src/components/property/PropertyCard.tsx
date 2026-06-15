@@ -104,7 +104,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           {/* Footer: דירוג + מחיר */}
           <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-sand-100">
             <div className="flex items-center gap-1">
-              <IconStar className="w-4 h-4 fill-gold text-gold" />
+              
               <span className="text-sm sm:text-base font-bold text-charcoal">
                 {property.avg_rating?.toFixed(1)}
               </span>

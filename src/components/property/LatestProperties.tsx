@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
@@ -27,19 +27,38 @@ export function LatestProperties() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const scroll = (dir: 'left' | 'right') => {
+    scrollRef.current?.scrollBy({ left: dir === 'left' ? -320 : 320, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     async function load() {
+      const ts = Date.now()
+      supabase.from('properties') // no-cache
       const { data } = await supabase
         .from('properties')
         .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
         .eq('status', 'active')
         .order('created_at', { ascending: false })
-        .limit(4)
+        .limit(5)
+        .gt('created_at', '2000-01-01')
       setProperties(data || [])
       setLoading(false)
     }
     load()
+
+    const channel = supabase
+      .channel('properties-realtime-latest')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'properties' }, () => load())
+      .subscribe()
+
+    const channel2 = supabase
+      .channel('reviews-realtime-latest')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => load())
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel); supabase.removeChannel(channel2) }
   }, [])
 
   if (loading || properties.length === 0) return null
@@ -55,13 +74,20 @@ export function LatestProperties() {
             כל הנכסים ←
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="relative">
+          <button onClick={() => scroll('right')} className="absolute z-10 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95" style={{right:-20,top:'35%',width:56,height:56,borderRadius:16,background:'rgba(255,255,255,0.95)',boxShadow:'0 8px 32px rgba(0,0,0,0.12)',border:'1.5px solid rgba(212,168,67,0.25)',cursor:'pointer'}}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b8860b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button onClick={() => scroll('left')} className="absolute z-10 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95" style={{left:-20,top:'35%',width:56,height:56,borderRadius:16,background:'rgba(255,255,255,0.95)',boxShadow:'0 8px 32px rgba(0,0,0,0.12)',border:'1.5px solid rgba(212,168,67,0.25)',cursor:'pointer'}}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b8860b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" style={{scrollbarWidth:'none', msOverflowStyle:'none'}}>
           {properties.map((p) => {
             const firstImage = p.property_images?.[0]?.url
             const reviewCount = p.reviews?.length || 0
             const rating = p.avg_rating || 0
             return (
-              <div key={p.id} className="group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+              <div key={p.id} className="snap-start flex-shrink-0 w-[280px] sm:w-[300px] group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 flex flex-col">
                 <Link href={`/${p.slug || p.id}`} className="block" target="_blank" rel="noopener noreferrer">
                   <div className="aspect-[3/2] bg-gray-100 relative overflow-hidden">
                     {firstImage ? (
@@ -83,10 +109,16 @@ export function LatestProperties() {
                   </div>
                   <p className="text-sm text-gray-500 mb-2">{p.city}</p>
                   <div className="flex items-center gap-1 mb-3">
-                    {[1,2,3,4,5].map(i => (
-                      <span key={i} className={`text-sm ${i <= Math.round(rating) ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
-                    ))}
-                    <span className="text-xs text-gray-400 mr-1">{reviewCount} חוות דעת</span>
+                    <span className="text-sm font-black" style={{color:'#111827'}}>{rating > 0 ? rating : '—'}</span>
+                    <span className="text-xs text-gray-400">/10</span>
+                    {rating > 0 && (
+                      <div className="flex-1 relative h-2 rounded-full overflow-hidden mx-1" style={{background:'linear-gradient(to right, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', border:'1px solid rgba(0,0,0,0.08)'}}>
+                        <div className="absolute inset-y-0 right-0 bg-white/80 rounded-r-full" style={{width:`${100 - ((rating-1)/9*100)}%`}} />
+                      </div>
+                    )}
+                    <span className="text-xs text-gray-400">{reviewCount} חוות דעת</span>
+                  </div>
+                  <div className="hidden">
                   </div>
                   <div className="flex items-center gap-1 mb-3 flex-wrap">
                     {p.accepts_miluim && (
@@ -116,6 +148,7 @@ export function LatestProperties() {
               </div>
             )
           })}
+          </div>
         </div>
       </div>
     </section>

@@ -35,6 +35,8 @@ export function NewProperties() {
 
   useEffect(() => {
     async function load() {
+      const ts = Date.now()
+      supabase.from('properties') // no-cache
       const { data } = await supabase
         .from('properties')
         .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
@@ -46,6 +48,18 @@ export function NewProperties() {
       setLoading(false)
     }
     load()
+
+    const channel = supabase
+      .channel('properties-realtime-new')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'properties' }, () => load())
+      .subscribe()
+
+    const channel2 = supabase
+      .channel('reviews-realtime-new')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => load())
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel); supabase.removeChannel(channel2) }
   }, [])
 
   if (loading || properties.length === 0) return null
@@ -94,10 +108,16 @@ export function NewProperties() {
                     <h3 className="font-bold text-gray-900 text-base mb-1">{p.name}</h3>
                     <p className="text-sm text-gray-500 mb-2">{p.city}</p>
                     <div className="flex items-center gap-1 mb-3">
-                      {[1,2,3,4,5].map(i => (
-                        <span key={i} className={`text-sm ${i <= Math.round(rating) ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
-                      ))}
-                      <span className="text-xs text-gray-400 mr-1">{reviewCount} חוות דעת</span>
+                      <span className="text-sm font-black" style={{color:'#111827'}}>{rating > 0 ? rating : '—'}</span>
+                      <span className="text-xs text-gray-400">/10</span>
+                      {rating > 0 && (
+                        <div className="flex-1 relative h-2 rounded-full overflow-hidden mx-1" style={{background:'linear-gradient(to right, hsl(0,100%,45%), hsl(60,100%,45%), hsl(120,100%,40%))', border:'1px solid rgba(0,0,0,0.08)'}}>
+                          <div className="absolute inset-y-0 right-0 bg-white/80 rounded-r-full" style={{width:`${100 - ((rating-1)/9*100)}%`}} />
+                        </div>
+                      )}
+                      <span className="text-xs text-gray-400">{reviewCount} חוות דעת</span>
+                    </div>
+                    <div className="hidden">
                     </div>
                     <div className="flex items-center gap-1 mb-3 flex-wrap">
                       {p.accepts_miluim && (

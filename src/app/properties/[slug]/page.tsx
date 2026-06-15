@@ -155,6 +155,10 @@ export default function PropertyPage() {
   const [loading, setLoading] = useState(true)
   const [units, setUnits] = useState<{id:string;name:string;description:string;price_per_night:number;max_guests:number;bedrooms:number;bathrooms:number;images:{url:string}[]}[]>([])
   const [activeUnit, setActiveUnit] = useState<string|null>(null)
+
+  useEffect(() => {
+    setCurrentImage(0)
+  }, [activeUnit])
   const [checkIn, setCheckIn] = useState('')
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
@@ -235,6 +239,11 @@ export default function PropertyPage() {
     url: `https://zimmer.club/${property.slug || property.id}`,
   }
 
+  const categoryLabels: Record<string, string> = {
+    zimmer: 'צימר', complex: 'מתחם צימרים', villa: 'וילות ובקתות',
+    hotel: 'מלונות', camping: 'קמפינג',
+  }
+
   const regionLabels: Record<string, string> = {
     north: 'צפון', galil_west: 'גליל המערבי', galil_upper: 'גליל העליון',
     galil_lower: 'גליל התחתון', kinneret: 'כנרת', hermon: 'חרמון',
@@ -280,9 +289,23 @@ export default function PropertyPage() {
 
             {/* ימין — מידע */}
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
-              <p className="text-sm text-gray-500 mb-1">{property.category?.[0]} · {property.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[property.region]}</p>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{property.name}</h1>
-                {property.short_description && <p className="text-sm text-gray-600 mb-4 leading-relaxed">{property.short_description}</p>}
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{property.name}</h1>
+                <button
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({ title: property.name, url: window.location.href })
+                    } else {
+                      navigator.clipboard.writeText(window.location.href)
+                      alert('הקישור הועתק!')
+                    }
+                  }}
+                  className="shrink-0 p-2 rounded-full hover:bg-amber-50 transition-colors" style={{border:'1.5px solid rgba(212,168,67,0.4)'}}>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="#8B6914"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+                </button>
+              </div>
+              {property.short_description && <p className="text-sm font-bold text-gray-800 mb-2 leading-relaxed">{property.short_description}</p>}
+              <p className="text-sm text-gray-500 mb-3">{categoryLabels[property.category?.[0]] || property.category?.[0]} · {property.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[property.region]}</p>
               {property.avg_rating > 0 && (
                 <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-xl w-fit mb-4">
                   <IconStar className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -316,16 +339,20 @@ export default function PropertyPage() {
             {/* שמאל — תמונה */}
           <div>
             {units.length > 0 && (
-              <div className="flex overflow-x-auto gap-1 p-2 bg-white border border-gray-200 rounded-2xl mb-2" style={{scrollbarWidth:'none'}}>
+              <div className="flex overflow-x-auto gap-2 p-3 mb-2 rounded-2xl" style={{scrollbarWidth:'none', background:'white', border:'1px solid rgba(212,168,67,0.2)'}}>
                 <button onClick={() => { setActiveUnit('main'); setCurrentImage(0) }}
-                  className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-                  style={activeUnit === 'main' ? {background:'linear-gradient(135deg,#C8960C,#8B6914)',color:'white'} : {background:'#f3f4f6',color:'#374151'}}>
+                  className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                  style={activeUnit === 'main'
+                    ? {background:'linear-gradient(135deg,#f5d078 0%,#C8960C 50%,#8B6914 100%)',color:'white',boxShadow:'0 4px 12px rgba(184,134,11,0.35)'}
+                    : {background:'#f9f9f9',color:'#8B6914',border:'1px solid rgba(212,168,67,0.25)'}}>
                   גלריה כללית
                 </button>
                 {units.map(u => (
                   <button key={u.id} onClick={() => { setActiveUnit(u.id); setCurrentImage(0) }}
-                    className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-                    style={activeUnit === u.id ? {background:'linear-gradient(135deg,#C8960C,#8B6914)',color:'white'} : {background:'#f3f4f6',color:'#374151'}}>
+                    className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                    style={activeUnit === u.id
+                      ? {background:'linear-gradient(135deg,#f5d078 0%,#C8960C 50%,#8B6914 100%)',color:'white',boxShadow:'0 4px 12px rgba(184,134,11,0.35)'}
+                      : {background:'#f9f9f9',color:'#8B6914',border:'1px solid rgba(212,168,67,0.25)'}}>
                     {u.name}
                   </button>
                 ))}
@@ -335,6 +362,7 @@ export default function PropertyPage() {
             {(() => {
               const activeUnitData = activeUnit && activeUnit !== 'main' ? units.find(u => u.id === activeUnit) : null
               const displayImages: string[] = activeUnitData ? activeUnitData.images.map((i: any) => i.url) : images
+              const safeIndex = currentImage >= displayImages.length ? 0 : currentImage
               return displayImages.length > 0 ? (
               <>
                 {/* Mobile: horizontal scroll swipe */}
@@ -354,7 +382,7 @@ export default function PropertyPage() {
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block">
                   {displayImages.map((url: string, i: number) => (
-                    <img key={i} src={url} alt={property.name} className="w-full h-auto block max-h-[55vh] object-contain" style={{ display: i === currentImage ? 'block' : 'none' }} />
+                    <img key={i} src={url} alt={property.name} className="w-full h-auto block max-h-[55vh] object-contain" style={{ display: i === safeIndex ? 'block' : 'none' }} />
                   ))}
                 </div>
                 {images.length > 1 && (
@@ -368,9 +396,9 @@ export default function PropertyPage() {
                       <IconChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => setCurrentImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`} />)}
+                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => setCurrentImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
                     </div>
-                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{currentImage + 1} / {displayImages.length}</div>
+                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{safeIndex + 1} / {displayImages.length}</div>
                   </>
                 )}
               </>

@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 type Property = {
   slug?: string
@@ -27,7 +26,12 @@ type Property = {
 export function NewProperties() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+
+  const scroll = (dir: 'left' | 'right') => {
+    scrollRef.current?.scrollBy({ left: dir === 'left' ? -320 : 320, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     async function load() {
@@ -35,9 +39,9 @@ export function NewProperties() {
         .from('properties')
         .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
         .eq('status', 'active')
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-        .order('created_at', { ascending: false })
-        .limit(4)
+        .gte('created_at', new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString())
+        .order('created_at', { ascending: true })
+        .limit(8)
       setProperties(data || [])
       setLoading(false)
     }
@@ -50,83 +54,78 @@ export function NewProperties() {
     <section className="section-padding bg-white !pt-8">
       <div className="page-container !max-w-[90rem] !px-2">
         <div className="flex items-end justify-between mb-6">
-          <div>
-            <h2 className="section-title" style={{fontSize: "170%"}}>נכסים חדשים באתר</h2>
-          </div>
+          <h2 className="section-title shimmer-text" style={{fontSize: "170%"}}>נכסים חדשים באתר</h2>
           <Link href="/search" className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block">
             כל הנכסים ←
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {properties.map((p) => {
-            const firstImage = p.property_images?.[0]?.url
-            return (
-              <div key={p.id} className="group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <Link href={`/${p.slug || p.id}`} className="block">
-                  <div className="aspect-[3/2] bg-gray-100 relative overflow-hidden">
-                    {firstImage ? (
-                      <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 50vw,(max-width:1024px) 25vw,25vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
-                    )}
-                    {p.instant_book && (
-                      <div className="absolute top-3 right-3">
-                        <span style={{background: "linear-gradient(135deg, #f5d078 0%, #d4a843 40%, #b8860b 100%)", boxShadow: "0 2px 8px rgba(212,168,67,0.6), 0 1px 3px rgba(0,0,0,0.2)"}} className="text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center justify-center animate__animated animate__headShake animate__infinite animate__slow">
+
+        <div className="relative">
+          <button onClick={() => scroll('right')} className="absolute z-10 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95" style={{right:-20,top:'35%',width:56,height:56,borderRadius:16,background:'rgba(255,255,255,0.95)',boxShadow:'0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(184,134,11,0.15)',border:'1.5px solid rgba(212,168,67,0.25)',cursor:'pointer',backdropFilter:'blur(8px)'}}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b8860b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button onClick={() => scroll('left')} className="absolute z-10 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95" style={{left:-20,top:'35%',width:56,height:56,borderRadius:16,background:'rgba(255,255,255,0.95)',boxShadow:'0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(184,134,11,0.15)',border:'1.5px solid rgba(212,168,67,0.25)',cursor:'pointer',backdropFilter:'blur(8px)'}}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b8860b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+
+          <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" style={{scrollbarWidth:'none', msOverflowStyle:'none'}}>
+            {properties.map((p) => {
+              const firstImage = p.property_images?.[0]?.url
+              const reviewCount = p.reviews?.length || 0
+              const rating = p.avg_rating || 0
+              return (
+                <div key={p.id} className="snap-start flex-shrink-0 w-[280px] sm:w-[300px] group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 flex flex-col">
+                  <Link href={`/${p.slug || p.id}`} className="block">
+                    <div className="relative overflow-hidden bg-gray-100 aspect-[3/2]">
+                      {firstImage ? (
+                        <Image src={firstImage} alt={p.name} fill className="object-cover object-center group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-300 text-4xl">🏡</div>
+                      )}
+                      {p.instant_book && (
+                        <span className="absolute top-2 right-2 text-xs font-bold text-white px-2 py-1 rounded-lg shadow-md"
+                          style={{ background: 'linear-gradient(135deg, #f5d078 0%, #d4a843 40%, #b8860b 100%)', boxShadow: '0 2px 8px rgba(184,134,11,0.4)' }}>
                           מיידי
                         </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4 sm:p-5">
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="font-bold text-charcoal text-base group-hover:text-gold-deep transition-colors line-clamp-1">{p.name}</h3>
-                      {p.avg_rating > 0 && (
-                        <div className="flex flex-col items-end shrink-0">
-                          <div className="flex items-center gap-0.5">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <IconStar key={star} className="w-3.5 h-3.5" filled={p.avg_rating >= star} />
-                            ))}
-                            <span className="text-xs text-taupe mr-0.5">{p.avg_rating}</span>
-                          </div>
-                          {p.reviews && p.reviews.length > 0 && (
-                            <span className="text-xs text-taupe/60 mt-0.5">{p.reviews.length} חוות דעת</span>
-                          )}
-                        </div>
                       )}
                     </div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <p className="text-sm text-taupe">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
-                      {(p.accepts_miluim || p.has_shelter) && (
-                        <span className="flex gap-1">
-                          {p.accepts_miluim && <span className="text-xs font-bold text-gray-600 border border-gray-300 rounded px-1.5 py-0.5">מקבלים שובר מילואים</span>}
-                          {p.has_shelter && <span className="text-xs font-bold text-gray-600 border border-gray-300 rounded px-1.5 py-0.5">מרחב מוגן</span>}
-                        </span>
+                  </Link>
+                  <div className="p-4 flex flex-col flex-1">
+                    <h3 className="font-bold text-gray-900 text-base mb-1">{p.name}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{p.city}</p>
+                    <div className="flex items-center gap-1 mb-3">
+                      {[1,2,3,4,5].map(i => (
+                        <span key={i} className={`text-sm ${i <= Math.round(rating) ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
+                      ))}
+                      <span className="text-xs text-gray-400 mr-1">{reviewCount} חוות דעת</span>
+                    </div>
+                    <div className="flex items-center gap-1 mb-3 flex-wrap">
+                      {p.accepts_miluim && (
+                        <span className="text-xs px-2 py-0.5 rounded-full border" style={{background:'#faf7ed', borderColor:'#e8d9a0', color:'#6b5e3e'}}>מקבלים מילואים</span>
+                      )}
+                      {p.has_shelter && (
+                        <span className="text-xs px-2 py-0.5 rounded-full border" style={{background:'#faf7ed', borderColor:'#e8d9a0', color:'#6b5e3e'}}>מרחב מוגן</span>
                       )}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="font-bold text-charcoal text-base">החל מ: ₪{p.price_per_night}</span>
-                        <span className="text-sm text-taupe"> / לילה</span>
-                      </div>
-                      <span className="text-sm text-taupe">עד {p.max_guests} אורחים</span>
+                    <p className="text-sm font-semibold text-gray-800">עד {p.max_guests} אורחים</p>
+                    <p className="text-sm font-bold mt-1" style={{ color: '#8B6914' }}>
+                      החל מ: {p.price_per_night?.toLocaleString()}₪ / לילה
+                    </p>
+                    <div className="flex gap-2 mt-auto pt-3">
+                      <a href={`https://wa.me/?text=${encodeURIComponent(p.name)}`}
+                        className="flex-1 text-center text-xs py-2 rounded-lg bg-green-50 text-green-700 font-medium hover:bg-green-100 transition-colors">
+                        WhatsApp 💬
+                      </a>
+                      <Link href={`/${p.slug || p.id}`}
+                        className="flex-1 text-center text-xs py-2 rounded-lg bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 transition-colors">
+                        התקשר 📞
+                      </Link>
                     </div>
                   </div>
-                </Link>
-                <div className="flex gap-3 justify-center mx-auto px-4 pb-4" style={{width: "85%"}}>
-                  <a href="tel:" onClick={e => e.stopPropagation()}
-                    className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold border border-gray-200 text-gray-700"
-                    style={{background: "radial-gradient(circle at center, #ffffff 0%, #f8f4ee 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
-                    📞 התקשר
-                  </a>
-                  <a href={`https://wa.me/`} target="_blank" onClick={e => e.stopPropagation()}
-                    className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold text-gray-700"
-                    style={{background: "radial-gradient(circle at center, #ffffff 0%, #f8f4ee 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
-                    💬 WhatsApp
-                  </a>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>

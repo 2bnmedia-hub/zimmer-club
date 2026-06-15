@@ -244,9 +244,7 @@ export function Navbar() {
 
           {/* אזור משתמש — שמאל בדסקטופ */}
           <div className="hidden lg:flex items-center gap-1 flex-shrink-0 mr-auto">
-            <button onClick={() => setActiveMenu(null)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <IconSearch className="w-5 h-5 text-gray-600" />
-            </button>
+
             {user ? (
               <div className="relative">
                 <button

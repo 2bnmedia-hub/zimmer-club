@@ -61,7 +61,7 @@ export function LatestProperties() {
             const reviewCount = p.reviews?.length || 0
             const rating = p.avg_rating || 0
             return (
-              <div key={p.id} className="group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div key={p.id} className="group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
                 <Link href={`/${p.slug || p.id}`} className="block">
                   <div className="aspect-[3/2] bg-gray-100 relative overflow-hidden">
                     {firstImage ? (
@@ -77,7 +77,7 @@ export function LatestProperties() {
                     )}
                   </div>
                 </Link>
-                <div className="p-4 sm:p-5">
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <h3 className="font-bold text-gray-900 leading-tight text-base">{p.name}</h3>
                   </div>
@@ -90,10 +90,10 @@ export function LatestProperties() {
                   </div>
                   <div className="flex items-center gap-1 mb-3 flex-wrap">
                     {p.accepts_miluim && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">מקבלים מילואים</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-[#faf7ed] text-gray-700 border border-[#edeadf]">מקבלים מילואים</span>
                     )}
                     {p.has_shelter && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">מרחב מוגן</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-[#faf7ed] text-gray-700 border border-[#edeadf]">מרחב מוגן</span>
                     )}
                   </div>
                   <p className="text-sm font-semibold text-gray-800">
@@ -102,7 +102,7 @@ export function LatestProperties() {
                   <p className="text-sm font-bold mt-1" style={{ color: '#8B6914' }}>
                     החל מ: {p.price_per_night?.toLocaleString()}₪ / לילה
                   </p>
-                  <div className="flex gap-2 mt-3">
+                  <div className="flex gap-2 mt-auto pt-3">
                     <a href={`https://wa.me/?text=${encodeURIComponent(p.name)}`}
                       className="flex-1 text-center text-xs py-2 rounded-lg bg-green-50 text-green-700 font-medium hover:bg-green-100 transition-colors">
                       WhatsApp 💬

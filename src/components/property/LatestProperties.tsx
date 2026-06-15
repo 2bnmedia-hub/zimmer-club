@@ -103,12 +103,12 @@ export function LatestProperties() {
                   <div className="flex gap-3 mt-3 justify-center mx-auto" style={{width: "85%"}}>
                     <a href="tel:" onClick={e => e.stopPropagation()}
                       className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold border border-gray-200 text-gray-700"
-                      style={{background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
+                      style={{background: "radial-gradient(circle at center, #ffffff 0%, #f8f4ee 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
                       📞 התקשר
                     </a>
                     <a href={`https://wa.me/`} target="_blank" onClick={e => e.stopPropagation()}
-                      className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold text-white"
-                      style={{background: "linear-gradient(135deg, #25d366 0%, #128c3e 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
+                      className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs font-bold text-gray-700"
+                      style={{background: "radial-gradient(circle at center, #ffffff 0%, #f8f4ee 100%)", fontSize: "0.75rem", padding: "4px 0"}}>
                       💬 WhatsApp
                     </a>
                   </div>

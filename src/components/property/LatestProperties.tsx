@@ -62,7 +62,7 @@ export function LatestProperties() {
             const rating = p.avg_rating || 0
             return (
               <div key={p.id} className="group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
-                <Link href={`/${p.slug || p.id}`} className="block">
+                <Link href={`/${p.slug || p.id}`} className="block" target="_blank" rel="noopener noreferrer">
                   <div className="aspect-[3/2] bg-gray-100 relative overflow-hidden">
                     {firstImage ? (
                       <Image src={firstImage} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />

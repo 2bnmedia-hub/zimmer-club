@@ -52,6 +52,16 @@ const AMENITIES_LIST = [
   { key: 'shelter_nearby', label: 'מרחב מוגן קרוב' },
 ]
 
+type UnitForm = {
+  name: string
+  description: string
+  price_per_night: string
+  max_guests: string
+  bedrooms: string
+  bathrooms: string
+  images: ImagePreview[]
+}
+
 type ImagePreview = {
   file: File
   url: string
@@ -79,6 +89,8 @@ export default function NewPropertyPage() {
   const [videoPreview, setVideoPreview] = useState('')
   const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [slugPreview, setSlugPreview] = useState('')
+  const [units, setUnits] = useState<UnitForm[]>([])
+  const [hasUnits, setHasUnits] = useState(false)
   const [form, setForm] = useState({
     name: '',
     name_en: '',
@@ -108,6 +120,43 @@ export default function NewPropertyPage() {
     contact_via_email1: false,
     contact_via_email2: false,
   })
+
+  const addUnit = () => {
+    setUnits(prev => [...prev, { name: '', description: '', price_per_night: '', max_guests: '2', bedrooms: '1', bathrooms: '1', images: [] }])
+  }
+
+  const removeUnit = (idx: number) => setUnits(prev => prev.filter((_, i) => i !== idx))
+
+  const updateUnit = (idx: number, field: keyof UnitForm, value: string) => {
+    setUnits(prev => prev.map((u, i) => i === idx ? { ...u, [field]: value } : u))
+  }
+
+  const handleUnitImageSelect = (unitIdx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+    const toAdd = Array.from(files).slice(0, 8).map((file, i) => ({
+      file, url: URL.createObjectURL(file), isPrimary: i === 0
+    }))
+    setUnits(prev => prev.map((u, i) => i === unitIdx ? { ...u, images: [...u.images, ...toAdd].slice(0, 8) } : u))
+    e.target.value = ''
+  }
+
+  const removeUnitImage = (unitIdx: number, imgIdx: number) => {
+    setUnits(prev => prev.map((u, i) => i === unitIdx ? { ...u, images: u.images.filter((_, ii) => ii !== imgIdx) } : u))
+  }
+
+  const uploadUnitImages = async (unitId: string, images: ImagePreview[]) => {
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i]
+      const ext = img.file.name.split('.').pop()
+      const fileName = `units/${unitId}/${Date.now()}_${i}.${ext}`
+      const { error } = await supabase.storage.from('property-images').upload(fileName, img.file)
+      if (!error) {
+        const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
+        await supabase.from('property_unit_images').insert({ unit_id: unitId, url: data.publicUrl, order: i })
+      }
+    }
+  }
 
   async function geocodeAddress(city: string, address: string) {
     const query = [address, city, 'ישראל'].filter(Boolean).join(', ')
@@ -273,6 +322,26 @@ export default function NewPropertyPage() {
       }
     }
 
+    if (hasUnits && units.length > 0) {
+      for (let i = 0; i < units.length; i++) {
+        const u = units[i]
+        if (!u.name.trim()) continue
+        const { data: unitData } = await supabase.from('property_units').insert({
+          property_id: property.id,
+          name: u.name,
+          description: u.description,
+          price_per_night: parseInt(u.price_per_night) || null,
+          max_guests: parseInt(u.max_guests) || null,
+          bedrooms: parseInt(u.bedrooms) || null,
+          bathrooms: parseInt(u.bathrooms) || null,
+          sort_order: i,
+        }).select().single()
+        if (unitData && u.images.length > 0) {
+          await uploadUnitImages(unitData.id, u.images)
+        }
+      }
+    }
+
     setUploading(false)
     router.push('/dashboard/owner')
   }
@@ -280,7 +349,8 @@ export default function NewPropertyPage() {
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <div className="max-w-3xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">הוספת נכס חדש</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">הוספת נכס חדש</h1>
+        <p className="text-sm text-gray-400 mb-8">במידה ויש כמה יחידות/נכסים במתחם, ניתן להוסיף אותם בסוף הדף</p>
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* פרטי הנכס */}
@@ -498,6 +568,94 @@ export default function NewPropertyPage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* יחידות במתחם */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="font-bold text-gray-700 text-lg">להוספת נכס נוסף (למתחם מרובה נכסים)</h2>
+                <p className="text-xs text-gray-400 mt-0.5">לנכסים עם מספר סוויטות, בקתות או צימרים נפרדים</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="hasUnits" checked={hasUnits} onChange={e => setHasUnits(e.target.checked)} className="w-4 h-4 accent-yellow-600" />
+                <label htmlFor="hasUnits" className="text-sm font-medium text-gray-700">יש יחידות נפרדות</label>
+              </div>
+            </div>
+
+            {hasUnits && (
+              <div className="space-y-6">
+                {units.map((unit, idx) => (
+                  <div key={idx} className="border border-gray-200 rounded-2xl p-5 relative">
+                    <button type="button" onClick={() => removeUnit(idx)} className="absolute top-3 left-3 p-1.5 rounded-full bg-red-50 hover:bg-red-100 transition-colors">
+                      <IconX className="w-4 h-4 text-red-500" />
+                    </button>
+                    <p className="font-bold text-gray-700 mb-4">יחידה {idx + 1}</p>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">שם היחידה *</label>
+                        <input value={unit.name} onChange={e => updateUnit(idx, 'name', e.target.value)}
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"
+                          placeholder="סוויטה 1 / בקתה א'" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">מחיר החל מ (₪ ללילה)</label>
+                        <input type="number" value={unit.price_per_night} onChange={e => updateUnit(idx, 'price_per_night', e.target.value)}
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600"
+                          placeholder="500" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">אורחים</label>
+                        <input type="number" value={unit.max_guests} onChange={e => updateUnit(idx, 'max_guests', e.target.value)}
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600" min="1" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">חדרי שינה</label>
+                        <input type="number" value={unit.bedrooms} onChange={e => updateUnit(idx, 'bedrooms', e.target.value)}
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600" min="0" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">חדרי רחצה</label>
+                        <input type="number" value={unit.bathrooms} onChange={e => updateUnit(idx, 'bathrooms', e.target.value)}
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600" min="0" />
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">תיאור</label>
+                      <textarea value={unit.description} onChange={e => updateUnit(idx, 'description', e.target.value)} rows={2}
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-600 resize-none"
+                        placeholder="תיאור קצר של היחידה..." />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-2">תמונות היחידה (עד 8)</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {unit.images.map((img, imgIdx) => (
+                          <div key={imgIdx} className="relative aspect-video group">
+                            <img src={img.url} alt="" className="w-full h-full object-cover rounded-lg" />
+                            <button type="button" onClick={() => removeUnitImage(idx, imgIdx)}
+                              className="absolute top-1 right-1 bg-red-500 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <IconX className="w-3 h-3 text-white" />
+                            </button>
+                          </div>
+                        ))}
+                        {unit.images.length < 8 && (
+                          <label className="aspect-video border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                            <IconUpload className="w-5 h-5 text-gray-300" />
+                            <input type="file" accept="image/*" multiple onChange={e => handleUnitImageSelect(idx, e)} className="hidden" />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button type="button" onClick={addUnit}
+                  className="w-full py-3 border-2 border-dashed border-yellow-300 rounded-2xl text-sm font-bold text-yellow-700 hover:border-yellow-500 hover:bg-yellow-50 transition-colors flex items-center justify-center gap-2">
+                  <IconPlus className="w-4 h-4" /> הוסף יחידה
+                </button>
+              </div>
+            )}
           </div>
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}

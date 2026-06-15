@@ -153,6 +153,8 @@ export default function PropertyPage() {
   const [currentImage, setCurrentImage] = useState(0)
   const { toggle, isLiked } = useWishlist()
   const [loading, setLoading] = useState(true)
+  const [units, setUnits] = useState<{id:string;name:string;description:string;price_per_night:number;max_guests:number;bedrooms:number;bathrooms:number;images:{url:string}[]}[]>([])
+  const [activeUnit, setActiveUnit] = useState<string|null>(null)
   const [checkIn, setCheckIn] = useState('')
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
@@ -197,6 +199,11 @@ export default function PropertyPage() {
 
       const { data: imgData } = await supabase.from('property_images').select('url').eq('property_id', data.id).order('order')
       setImages(imgData?.map((i: any) => i.url) || [])
+      const { data: unitsData } = await supabase.from('property_units').select('*, property_unit_images(url, order)').eq('property_id', data.id).order('sort_order')
+      if (unitsData && unitsData.length > 0) {
+        setUnits(unitsData.map((u: any) => ({ ...u, images: (u.property_unit_images || []).sort((a: any, b: any) => a.order - b.order) })))
+        setActiveUnit('main')
+      }
       setLoading(false)
     }
     load()
@@ -307,8 +314,28 @@ export default function PropertyPage() {
             </div>
 
             {/* שמאל — תמונה */}
+          <div>
+            {units.length > 0 && (
+              <div className="flex overflow-x-auto gap-1 p-2 bg-white border border-gray-200 rounded-2xl mb-2" style={{scrollbarWidth:'none'}}>
+                <button onClick={() => { setActiveUnit('main'); setCurrentImage(0) }}
+                  className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                  style={activeUnit === 'main' ? {background:'linear-gradient(135deg,#C8960C,#8B6914)',color:'white'} : {background:'#f3f4f6',color:'#374151'}}>
+                  גלריה כללית
+                </button>
+                {units.map(u => (
+                  <button key={u.id} onClick={() => { setActiveUnit(u.id); setCurrentImage(0) }}
+                    className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                    style={activeUnit === u.id ? {background:'linear-gradient(135deg,#C8960C,#8B6914)',color:'white'} : {background:'#f3f4f6',color:'#374151'}}>
+                    {u.name}
+                  </button>
+                ))}
+              </div>
+            )}
           <div className="bg-gray-100 rounded-2xl relative overflow-hidden">
-            {images.length > 0 ? (
+            {(() => {
+              const activeUnitData = activeUnit && activeUnit !== 'main' ? units.find(u => u.id === activeUnit) : null
+              const displayImages: string[] = activeUnitData ? activeUnitData.images.map((i: any) => i.url) : images
+              return displayImages.length > 0 ? (
               <>
                 {/* Mobile: horizontal scroll swipe */}
                 <div className="flex overflow-x-auto gallery-container snap-x snap-mandatory md:block md:overflow-visible scrollbar-none"
@@ -318,7 +345,7 @@ export default function PropertyPage() {
                     const idx = Math.round(el.scrollLeft / el.offsetWidth)
                     setCurrentImage(idx)
                   }}>
-                  {images.map((url, i) => (
+                  {displayImages.map((url: string, i: number) => (
                     <div key={i} className="shrink-0 w-full snap-start gallery-item md:hidden">
                       <img src={url} alt={property.name} className="w-full h-64 object-cover" />
                     </div>
@@ -326,30 +353,31 @@ export default function PropertyPage() {
                 </div>
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block">
-                  {images.map((url, i) => (
+                  {displayImages.map((url: string, i: number) => (
                     <img key={i} src={url} alt={property.name} className="w-full h-auto block max-h-[55vh] object-contain" style={{ display: i === currentImage ? 'block' : 'none' }} />
                   ))}
                 </div>
                 {images.length > 1 && (
                   <>
-                    <button onClick={() => setCurrentImage(prev => (prev - 1 + images.length) % images.length)}
+                    <button onClick={() => setCurrentImage(prev => (prev - 1 + displayImages.length) % displayImages.length)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronRight className="w-5 h-5" />
                     </button>
-                    <button onClick={() => setCurrentImage(prev => (prev + 1) % images.length)}
+                    <button onClick={() => setCurrentImage(prev => (prev + 1) % displayImages.length)}
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                      {images.map((_, i) => <button key={i} onClick={() => setCurrentImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`} />)}
+                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => setCurrentImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`} />)}
                     </div>
-                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{currentImage + 1} / {images.length}</div>
+                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{currentImage + 1} / {displayImages.length}</div>
                   </>
                 )}
               </>
-            ) : (
-              <div className="h-64 flex items-center justify-center text-gray-400">אין תמונות עדיין</div>
-            )}
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray-400">אין תמונות עדיין</div>
+              )
+            })()}
             <button onClick={() => toggle(property!.id)} className="absolute top-4 left-4 z-10 bg-white/90 hover:bg-white p-2.5 rounded-full shadow-md transition-all hover:scale-110" aria-label="הוסף למועדפים">
               <IconHeart className={`w-5 h-5 transition-colors ${isLiked(property!.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
             </button>
@@ -383,6 +411,7 @@ export default function PropertyPage() {
                 </span>
               )}
             </div>
+          </div>
           </div>
 
           </div>{/* סוף grid תמונה+מידע */}

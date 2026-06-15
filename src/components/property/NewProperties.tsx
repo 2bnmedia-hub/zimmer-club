@@ -40,7 +40,7 @@ export function NewProperties() {
         .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
         .eq('status', 'active')
         .gte('created_at', new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString())
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: false })
         .limit(8)
       setProperties(data || [])
       setLoading(false)
@@ -75,7 +75,7 @@ export function NewProperties() {
               const rating = p.avg_rating || 0
               return (
                 <div key={p.id} className="snap-start flex-shrink-0 w-[280px] sm:w-[300px] group bg-white rounded-xl overflow-hidden border border-sand-100 hover:shadow-lg transition-all duration-300 flex flex-col">
-                  <Link href={`/${p.slug || p.id}`} className="block">
+                  <Link href={`/${p.slug || p.id}`} className="block" target="_blank" rel="noopener noreferrer">
                     <div className="relative overflow-hidden bg-gray-100 aspect-[3/2]">
                       {firstImage ? (
                         <Image src={firstImage} alt={p.name} fill className="object-cover object-center group-hover:scale-105 transition-transform duration-500" />
@@ -117,7 +117,7 @@ export function NewProperties() {
                         WhatsApp 💬
                       </a>
                       <Link href={`/${p.slug || p.id}`}
-                        className="flex-1 text-center text-xs py-2 rounded-lg bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 transition-colors">
+                        className="flex-1 text-center text-xs py-2 rounded-lg bg-gray-50 text-gray-700 font-medium hover:bg-gray-100 transition-colors" target="_blank" rel="noopener noreferrer">
                         התקשר 📞
                       </Link>
                     </div>

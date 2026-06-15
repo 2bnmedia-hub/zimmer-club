@@ -243,7 +243,7 @@ export default function NewPropertyPage() {
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
+    if (file.size > 50 * 1024 * 1024) { alert('הוידאו גדול מ-50MB'); return }
     setVideoFile(file)
     setVideoPreview(URL.createObjectURL(file))
     e.target.value = ''
@@ -424,12 +424,24 @@ export default function NewPropertyPage() {
             {/* שדה שם באנגלית — חדש */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                שם הנכס באנגלית * <span className="text-gray-400 font-normal">(ישמש ככתובת האתר)</span>
+                שם הנכס <span className="text-yellow-700 font-bold">באנגלית</span> * <span className="text-gray-400 font-normal">(ישמש ככתובת האתר)</span>
               </label>
-              <input name="name_en" value={form.name_en} onChange={handleChange} required
-                className="w-full border border-yellow-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 bg-yellow-50"
-                placeholder="galil-zimmer" dir="ltr" />
-              {slugPreview && (
+              <input name="name_en" value={form.name_en} onChange={e => {
+                const val = e.target.value
+                const hasHebrew = /[֐-׿]/.test(val)
+                if (hasHebrew) {
+                  setError('שם הנכס באנגלית חייב להכיל אותיות באנגלית בלבד')
+                } else {
+                  setError('')
+                  handleChange(e)
+                }
+              }} required
+                className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none bg-yellow-50 ${/[֐-׿]/.test(form.name_en) ? 'border-red-400 focus:border-red-500' : 'border-yellow-300 focus:border-yellow-600'}`}
+                placeholder="English letters only" dir="ltr" />
+              {/[֐-׿]/.test(form.name_en) && (
+                <p className="text-xs text-red-500 mt-1">יש להזין אותיות באנגלית בלבד</p>
+              )}
+              {slugPreview && !/[֐-׿]/.test(form.name_en) && (
                 <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
                   כתובת האתר שלך:
                   <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-green-700">
@@ -494,20 +506,21 @@ export default function NewPropertyPage() {
             <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת לקבלת הזמנות</h2>
             <p className="text-xs text-gray-400">סמן ✓ ליד האמצעים שדרכם תרצה לקבל הזמנות</p>
             {[
-              { checkName: 'contact_via_phone_landline', fieldName: 'phone_landline', label: 'טלפון קווי', placeholder: '03-1234567' },
-              { checkName: 'contact_via_whatsapp1', fieldName: 'whatsapp1', label: 'וואטסאפ עסקי 1', placeholder: '972501234567' },
+              { checkName: 'contact_via_phone_landline', fieldName: 'phone_landline', label: 'מספר טלפון', placeholder: '03-1234567', required: true as boolean },
+              { checkName: 'contact_via_whatsapp1', fieldName: 'whatsapp1', label: 'וואטסאפ עסקי 1', placeholder: '972501234567', required: true as boolean },
               { checkName: 'contact_via_whatsapp2', fieldName: 'whatsapp2', label: 'וואטסאפ עסקי 2', placeholder: '972501234567' },
               { checkName: 'contact_via_email1', fieldName: 'email1', label: 'אימייל עסקי 1', placeholder: 'business@example.com', type: 'email' },
               { checkName: 'contact_via_email2', fieldName: 'email2', label: 'אימייל עסקי 2', placeholder: 'business2@example.com', type: 'email' },
-            ].map(({ checkName, fieldName, label, placeholder, type }) => (
+            ].map(({ checkName, fieldName, label, placeholder, type, required }) => (
               <div key={fieldName} className="flex items-center gap-3">
                 <input type="checkbox" name={checkName} id={checkName}
                   checked={(form as any)[checkName]} onChange={handleChange}
                   className="w-4 h-4 accent-yellow-600 shrink-0" />
                 <div className="flex-1">
-                  <label htmlFor={checkName} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                  <label htmlFor={checkName} className="block text-sm font-medium text-gray-700 mb-1">{label}{required && <span className="text-red-500 mr-1">*</span>}</label>
                   <input name={fieldName} value={(form as any)[fieldName]} onChange={handleChange}
                     placeholder={placeholder} dir="ltr" type={type || 'text'}
+                    required={required === true}
                     className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
                 </div>
               </div>
@@ -547,7 +560,7 @@ export default function NewPropertyPage() {
             <div className="flex flex-col gap-3">
               <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
                 <span className="text-2xl">🎬</span>
-                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 50MB)'}</span>
                 <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
               </label>
               {videoPreview && <div className="relative">
@@ -620,13 +633,19 @@ export default function NewPropertyPage() {
                 </button>
               ))}
             </div>
+            <div className="mt-4 flex items-center gap-3">
+              <label className="text-sm font-medium text-gray-700 shrink-0">שירות אחר:</label>
+              <input name="custom_amenity" value={(form as any).custom_amenity || ''} onChange={handleChange}
+                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="לרשום סוג שירות" />
+            </div>
           </div>
 
           {/* יחידות במתחם */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="font-bold text-gray-700 text-lg">להוספת נכס נוסף (למתחם מרובה נכסים)</h2>
+                <h2 className="font-bold text-gray-700 text-lg">להוספת נכס נוסף (למתחמים מרובי נכסים)</h2>
                 <p className="text-xs text-gray-400 mt-0.5">לנכסים עם מספר סוויטות, בקתות או צימרים נפרדים</p>
               </div>
               <div className="flex items-center gap-2">
@@ -713,7 +732,7 @@ export default function NewPropertyPage() {
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
 
           <div className="flex gap-3">
-            <button type="submit" disabled={loading || uploading} className="flex-1 py-3 rounded-xl font-bold text-white text-sm" style={{ backgroundColor: '#8B6914' }}>
+            <button type="submit" disabled={loading || uploading} className="flex-1 py-3 rounded-xl font-bold text-white text-sm" style={{ background: 'linear-gradient(135deg, #C8960C, #8B6914)' }}>
               {uploading ? 'מעלה תמונות...' : loading ? 'שומר...' : 'הוסף נכס'}
             </button>
             <button type="button" onClick={() => router.back()} className="px-6 py-3 rounded-xl font-bold text-gray-700 text-sm border border-gray-200 hover:bg-gray-50">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
@@ -81,8 +81,57 @@ export default function NewAttractionPage() {
   const [images, setImages] = useState<ImagePreview[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [customActivity, setCustomActivity] = useState('')
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState('')
+  const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(defaultWeeklyHours())
   const [slugPreview, setSlugPreview] = useState('')
+  const addressInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const initAutocomplete = () => {
+      if (!addressInputRef.current || !window.google?.maps?.places) return
+      const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+        componentRestrictions: { country: 'il' },
+        fields: ['address_components', 'geometry', 'formatted_address'],
+        types: ['address'],
+      })
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace()
+        if (!place.address_components) return
+        let street = '', streetNumber = '', city = ''
+        for (const comp of place.address_components) {
+          if (comp.types.includes('route')) street = comp.long_name
+          if (comp.types.includes('street_number')) streetNumber = comp.long_name
+          if (comp.types.includes('locality')) city = comp.long_name
+          if (!city && comp.types.includes('sublocality')) city = comp.long_name
+        }
+        const address = [street, streetNumber].filter(Boolean).join(' ')
+        setForm(prev => ({ ...prev, address, city }))
+      })
+    }
+
+    if (window.google?.maps?.places) {
+      initAutocomplete()
+      return
+    }
+
+    if (!document.querySelector('script[src*="maps.googleapis.com"]')) {
+      const script = document.createElement('script')
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places&language=he`
+      script.async = true
+      script.onload = initAutocomplete
+      document.head.appendChild(script)
+    } else {
+      const interval = setInterval(() => {
+        if (window.google?.maps?.places) {
+          clearInterval(interval)
+          initAutocomplete()
+        }
+      }, 100)
+      return () => clearInterval(interval)
+    }
+  }, [])
   const [form, setForm] = useState({
     name: '',
     name_en: '',
@@ -118,6 +167,25 @@ export default function NewAttractionPage() {
 
   const updateDay = (day: string, field: keyof DayHours, value: any) => {
     setWeeklyHours(prev => ({ ...prev, [day]: { ...prev[day], [field]: value } }))
+  }
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 50 * 1024 * 1024) { alert('הוידאו גדול מ-50MB'); return }
+    setVideoFile(file)
+    setVideoPreview(URL.createObjectURL(file))
+    e.target.value = ''
+  }
+
+  const uploadVideo = async (attractionId: string): Promise<string | null> => {
+    if (!videoFile) return null
+    const ext = videoFile.name.split('.').pop()
+    const fileName = `${attractionId}/video_${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('attraction-images').upload(fileName, videoFile)
+    if (error) return null
+    const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
+    return data.publicUrl
   }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,6 +270,12 @@ export default function NewAttractionPage() {
         })
       }
     }
+    let finalVideoUrl = form.video_url || null
+    if (videoFile) {
+      const uploaded = await uploadVideo(attraction.id)
+      if (uploaded) finalVideoUrl = uploaded
+    }
+    if (finalVideoUrl) await supabase.from('attractions').update({ video_url: finalVideoUrl }).eq('id', attraction.id)
     setUploading(false)
     router.push('/dashboard/owner')
   }
@@ -266,17 +340,21 @@ export default function NewAttractionPage() {
                   {REGIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב</label>
-                <input name="city" value={form.city} onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
-              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">כתובת מדויקת</label>
-              <input name="address" value={form.address} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">כתובת *</label>
+                <input ref={addressInputRef} name="address" value={form.address} onChange={handleChange} required
+                  placeholder="התחל להקליד כתובת..."
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                <p className="text-xs text-gray-400 mt-1">בחר מהרשימה — העיר והכתובת יתמלאו אוטומטית</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב *</label>
+                <input name="city" value={form.city} onChange={handleChange} required readOnly
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 bg-gray-50" />
+              </div>
             </div>
           </div>
 
@@ -382,14 +460,14 @@ export default function NewAttractionPage() {
             <h2 className="font-bold text-gray-700 text-lg">אמצעי תקשורת</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">טלפון</label>
-                <input name="phone" value={form.phone} onChange={handleChange} dir="ltr"
+                <label className="block text-sm font-medium text-gray-700 mb-1">טלפון <span className="text-red-500">*</span></label>
+                <input name="phone" value={form.phone} onChange={handleChange} dir="ltr" required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
                   placeholder="03-1234567" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ</label>
-                <input name="whatsapp" value={form.whatsapp} onChange={handleChange} dir="ltr"
+                <label className="block text-sm font-medium text-gray-700 mb-1">וואטסאפ <span className="text-red-500">*</span></label>
+                <input name="whatsapp" value={form.whatsapp} onChange={handleChange} dir="ltr" required
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
                   placeholder="972501234567" />
               </div>
@@ -435,10 +513,25 @@ export default function NewAttractionPage() {
 
           {/* וידאו */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-2">וידאו</h2>
-            <input name="video_url" value={form.video_url} onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-              placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו</h2>
+            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 50MB) או הדבק קישור YouTube/Vimeo</p>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
+                <span className="text-2xl">🎬</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 50MB)'}</span>
+                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
+              </label>
+              {videoPreview && <div className="relative">
+                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
+                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
+              </div>}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <input name="video_url" value={form.video_url} onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            </div>
           </div>
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
@@ -446,7 +539,7 @@ export default function NewAttractionPage() {
           <div className="flex gap-3">
             <button type="submit" disabled={loading || uploading}
               className="flex-1 py-3 rounded-xl font-bold text-white text-sm"
-              style={{ backgroundColor: '#8B6914' }}>
+              style={{ background: 'linear-gradient(135deg, #C8960C, #8B6914)' }}>
               {uploading ? 'מעלה תמונות...' : loading ? 'שומר...' : 'הוסף אטרקציה'}
             </button>
             <button type="button" onClick={() => router.back()}

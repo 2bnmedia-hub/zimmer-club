@@ -284,9 +284,6 @@ export default function EditPropertyPage() {
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
 
-  const [videoFile, setVideoFile] = useState<File | null>(null)
-  const [videoPreview, setVideoPreview] = useState('')
-  const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [ownerItems, setOwnerItems] = useState<OwnerItem[]>([])
   const [units, setUnits] = useState<UnitForm[]>([])
   const [unitImages, setUnitImages] = useState<Record<string, UnitImage[]>>({})
@@ -476,10 +473,6 @@ export default function EditPropertyPage() {
         const amenityRows = (allAmenities || []).filter((a: any) => selectedAmenities.includes(a.key)).map((a: any) => ({ property_id: propertyId, amenity_id: a.id }))
         if (amenityRows.length > 0) await supabase.from('property_amenities').insert(amenityRows)
       }
-      if (videoFile) {
-        const uploadedUrl = await uploadVideo()
-        if (uploadedUrl) { await supabase.from('properties').update({ video_url: uploadedUrl }).eq('id', params.id); setForm(prev => ({ ...prev, video_url: uploadedUrl })) }
-      }
       setSuccess(true); setTimeout(() => setSuccess(false), 3000)
     }
 
@@ -553,19 +546,28 @@ export default function EditPropertyPage() {
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
-            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
-                <span className="text-2xl">🎬</span>
-                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
-                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
-              </label>
-              {videoPreview && <div className="relative"><video src={videoPreview} controls className="w-full rounded-xl max-h-48" /><button type="button" onClick={() => { setVideoAsPrimary(true) }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? 'bg-yellow-500' : 'bg-black/40 hover:bg-yellow-500'}`}><IconStar className="w-4 h-4 text-white fill-white" /></button></div>}
-              {form.video_url && !videoPreview && <div className="relative"><video src={form.video_url} controls className="w-full rounded-xl max-h-48" /><button type="button" onClick={() => { setVideoAsPrimary(true) }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? 'bg-yellow-500' : 'bg-black/40 hover:bg-yellow-500'}`}><IconStar className="w-4 h-4 text-white fill-white" /></button></div>}
-              <div className="flex items-center gap-2"><div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" /></div>
-              <input name="video_url" value={form.video_url} onChange={handleChange} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            <h2 className="font-bold text-gray-700 text-lg mb-1">סרטונים</h2>
+            <p className="text-xs text-gray-400 mb-4">עד 10 סרטונים, כל אחד עד 50MB (MP4, MOV)</p>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {videos.map(v => (
+                <div key={v.id} className="relative group rounded-xl overflow-hidden bg-black aspect-video">
+                  <video src={v.url} controls className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => handleVideoDelete(v.id)}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconX className="w-3.5 h-3.5 text-white" />
+                  </button>
+                </div>
+              ))}
+              {videos.length < 10 && (
+                <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                  <span className="text-2xl mb-1">🎬</span>
+                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון'}</span>
+                  <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
+                </label>
+              )}
             </div>
+            <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
+          </div>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">

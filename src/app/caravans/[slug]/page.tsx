@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Footer } from '@/components/layout/Footer'
 import { GenericReviews } from '@/components/GenericReviews'
 import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
@@ -289,7 +288,6 @@ export default function CaravanPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   )
 }

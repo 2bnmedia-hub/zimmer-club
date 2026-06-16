@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { Footer } from '@/components/layout/Footer'
 import { CARAVAN_TYPES } from '@/lib/constants'
 
 type Caravan = {
@@ -281,7 +280,6 @@ function CaravansContent() {
           )}
         </div>
       </main>
-      <Footer />
     </>
   )
 }

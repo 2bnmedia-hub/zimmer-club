@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Assistant } from 'next/font/google'
 import '@/styles/globals.css'
 import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { ProfileProvider } from '@/contexts/ProfileContext'
 import Script from 'next/script'
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
       <ScrollToTop />
           {children}
+          <Footer />
         </ProfileProvider>
         <Script
           src="https://cdn.userway.org/widget.js"

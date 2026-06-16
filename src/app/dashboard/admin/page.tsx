@@ -204,8 +204,8 @@ function UsersTable({ users }: { users: any[] }) {
       return matchSearch && matchRole && matchStatus
     })
     .sort((a, b) => {
-      const av = a[sortKey] || ''
-      const bv = b[sortKey] || ''
+      const av = String(a[sortKey] ?? '')
+      const bv = String(b[sortKey] ?? '')
       return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av)
     })
 
@@ -296,7 +296,7 @@ function UsersTable({ users }: { users: any[] }) {
                 { label:'שם מלא', key:'full_name' },
                 { label:'אימייל', key:'email' },
                 { label:'טלפון', key:'phone' },
-                { label:'תפקיד', key:'role' },
+                { label:'תפקיד', key:'role', cls:'w-px whitespace-nowrap' },
                 { label:'נכסים בבעלות החשבון', key:'listings' },
                 { label:'תאריך הרשמה', key:'created_at' },
                 { label:'סטטוס', key:'status' },

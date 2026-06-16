@@ -538,6 +538,24 @@ export default function NewAttractionPage() {
               )}
             </div>
             <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
+            <div className="flex items-center gap-2 mt-4">
+              <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או הדבק קישור</span><div className="flex-1 h-px bg-gray-200" />
+            </div>
+            <input
+              className="w-full mt-3 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+              placeholder="https://www.youtube.com/watch?v=..." dir="ltr"
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  const url = (e.target as HTMLInputElement).value.trim()
+                  if (url && videos.length < 10) {
+                    setVideos(prev => [...prev, { id: `url-${Date.now()}`, url, order: prev.length }])
+                    ;(e.target as HTMLInputElement).value = ''
+                  }
+                }
+              }}
+            />
+            <p className="text-xs text-gray-400 mt-1">הקלד קישור ולחץ Enter להוספה</p>
           </div>
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}

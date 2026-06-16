@@ -213,12 +213,13 @@ function StatusBadge({ status }: { status: string }) {
 
 function Actions({ viewHref, editHref }: { viewHref: string; editHref: string }) {
   return (
-    <span className="inline-flex items-center gap-1">
+    <span className="inline-flex items-center gap-2">
       <Link href={viewHref} target="_blank" className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="צפה">
         <IconEye className="w-4 h-4 text-gray-300 hover:text-gray-500" />
       </Link>
-      <Link href={editHref} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="עריכה">
-        <IconEdit className="w-4 h-4 text-gray-300 hover:text-gray-500" />
+      <Link href={editHref} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, #C8960C, #8B6914)' }} title="עריכה">
+        <IconEdit className="w-3.5 h-3.5" />
+        עריכה
       </Link>
     </span>
   )

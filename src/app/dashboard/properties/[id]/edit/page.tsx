@@ -568,7 +568,6 @@ export default function EditPropertyPage() {
             </div>
             <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
           </div>
-          </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">פרטי הנכס</h2>

@@ -326,43 +326,31 @@ export default function NewCaravanPage() {
             </div>
           </div>
 
-
-          {/* Section: וידאו */}
+          {/* Section: סרטונים */}
           <div className="rounded-2xl p-6 space-y-4" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
-            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>וידאו (אופציונלי)</h2>
-            <div className="space-y-3">
-              <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>קישור YouTube / Vimeo</label>
-                <input value={form.video_url || ''} onChange={e => set('video_url', e.target.value)}
-                  className={inputClass} placeholder="https://youtube.com/watch?v=..."
-                  style={{ borderColor: '#e5e7eb' }} />
-              </div>
-              <div>
-                <label className={labelClass} style={{ color: '#8B6914' }}>או העלה קובץ וידאו</label>
-                <label className="flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer transition-all"
-                  style={{ border: '2px dashed rgba(139,105,20,0.25)', background: 'rgba(139,105,20,0.03)' }}>
-                  <span className="text-xl mb-1">🎬</span>
-                  <span className="text-sm font-medium" style={{ color: '#8B6914' }}>בחר קובץ וידאו</span>
-                  <span className="text-xs text-gray-400 mt-0.5">MP4, MOV עד 50MB</span>
-                  <input type="file" accept="video/*" className="hidden" onChange={async e => {
-                    const file = e.target.files?.[0]
-                    if (!file) return
-                    const ext = file.name.split('.').pop()
-                    const path = `videos/${Date.now()}.${ext}`
-                    const { error } = await supabase.storage.from('caravan-images').upload(path, file)
-                    if (!error) {
-                      const { data } = supabase.storage.from('caravan-images').getPublicUrl(path)
-                      set('video_url', data.publicUrl)
-                    }
-                  }} />
+            <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>סרטונים (עד 10)</h2>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {videos.map(v => (
+                <div key={v.id} className="relative group rounded-xl overflow-hidden bg-black aspect-video">
+                  <video src={v.url} controls className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => handleVideoDelete(v.id)}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconX className="w-3.5 h-3.5 text-white" />
+                  </button>
+                </div>
+              ))}
+              {videos.length < 10 && (
+                <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                  <span className="text-2xl mb-1">🎬</span>
+                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון (עד 50MB)'}</span>
+                  <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
                 </label>
-                {form.video_url && form.video_url.startsWith('http') && !form.video_url.includes('youtube') && !form.video_url.includes('vimeo') && (
-                  <p className="text-xs mt-1" style={{ color: '#8B6914' }}>✅ וידאו הועלה בהצלחה</p>
-                )}
-              </div>
+              )}
             </div>
+            <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
           </div>
-          {/* Section: מיקום */}
+
+          {/* Section: מיקום{/* Section: מיקום */}
           <div className="rounded-2xl p-6 space-y-4" style={{ background: '#fff', border: '1px solid rgba(139,105,20,0.08)' }}>
             <h2 className="text-xs font-bold uppercase tracking-widest pb-3" style={{ color: '#B8964A', borderBottom: '1px solid rgba(139,105,20,0.08)', letterSpacing: '0.14em' }}>מיקום האיסוף/השכרה</h2>
             <label className="flex items-center gap-2 cursor-pointer mb-2">

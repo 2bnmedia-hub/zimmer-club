@@ -459,7 +459,7 @@ export default function EditPropertyPage() {
           await supabase.from('property_units').delete().eq('id', unit.id)
         } else if (unit.isNew && unit.name.trim()) {
           await supabase.from('property_units').insert({
-            property_id: propertyId,
+            property_id: String(params.id),
             name: unit.name,
             description: unit.description,
             price_per_night: parseInt(unit.price_per_night) || null,

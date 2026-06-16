@@ -88,19 +88,22 @@ export default function OwnerDashboard() {
             <h1 className="text-xl font-bold text-gray-900">לוח בקרה</h1>
             <p className="text-sm text-gray-500">שלום, {userName}</p>
           </div>
-          <div className="flex gap-2">
-            <Link href="/dashboard/properties/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
-              <IconPlus className="w-4 h-4" />
-              הוסף נכס
-            </Link>
-            <Link href="/dashboard/caravans/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-amber-700 hover:bg-amber-800">
-              <IconPlus className="w-4 h-4" />
-              הוסף קרוואן
-            </Link>
-            <Link href="/dashboard/attractions/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600">
-              <IconPlus className="w-4 h-4" />
-              הוסף אטרקציה
-            </Link>
+          <div className="bg-white border rounded-2xl px-5 py-4 shadow-sm" style={{ borderColor:'rgba(139,105,20,0.15)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color:'#8B6914' }}>הוספת עסקים ידנית</p>
+            <div className="flex gap-2">
+              <Link href="/dashboard/properties/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90" style={{ background:'linear-gradient(135deg, #C8960C, #8B6914)' }}>
+                <IconPlus className="w-4 h-4" />
+                צימר / וילה / בקתה
+              </Link>
+              <Link href="/dashboard/caravans/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90" style={{ background:'linear-gradient(135deg, #C8960C, #8B6914)' }}>
+                <IconPlus className="w-4 h-4" />
+                קרוואן
+              </Link>
+              <Link href="/dashboard/attractions/new" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90" style={{ background:'linear-gradient(135deg, #C8960C, #8B6914)' }}>
+                <IconPlus className="w-4 h-4" />
+                אטרקציה
+              </Link>
+            </div>
           </div>
         </div>
       </header>

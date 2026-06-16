@@ -1,6 +1,7 @@
 'use client'
+import React from 'react'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { CARAVAN_TYPES } from '@/lib/constants'
@@ -118,6 +119,7 @@ export default function NewCaravanPage() {
   const [uploading, setUploading] = useState(false)
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
+  const newCaravanIdRef = React.useRef<string|null>(null)
 
   const [images, setImages] = useState<string[]>([])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
@@ -198,8 +200,8 @@ export default function NewCaravanPage() {
       const { error } = await supabase.storage.from('caravan-images').upload(fileName, file)
       if (!error) {
         const { data } = supabase.storage.from('caravan-images').getPublicUrl(fileName)
-        if (newCaravanId) {
-          const { data: newVid } = await supabase.from('caravan_videos').insert({ caravan_id: newCaravanId, url: data.publicUrl, order: videos.length }).select().single()
+        if (newCaravanIdRef.current) {
+          const { data: newVid } = await supabase.from('caravan_videos').insert({ caravan_id: newCaravanIdRef.current, url: data.publicUrl, order: videos.length }).select().single()
           if (newVid) setVideos(prev => [...prev, newVid])
         }
       }

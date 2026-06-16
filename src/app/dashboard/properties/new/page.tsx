@@ -92,9 +92,6 @@ export default function NewPropertyPage() {
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
 
-  const [videoFile, setVideoFile] = useState<File | null>(null)
-  const [videoPreview, setVideoPreview] = useState('')
-  const [videoAsPrimary, setVideoAsPrimary] = useState(false)
   const [slugPreview, setSlugPreview] = useState('')
   const addressInputRef = useRef<HTMLInputElement>(null)
 
@@ -243,14 +240,6 @@ export default function NewPropertyPage() {
     setSelectedAmenities(prev => prev.includes(key) ? prev.filter(a => a !== key) : [...prev, key])
   }
 
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 50 * 1024 * 1024) { alert('הוידאו גדול מ-50MB'); return }
-    setVideoFile(file)
-    setVideoPreview(URL.createObjectURL(file))
-    e.target.value = ''
-  }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -280,15 +269,6 @@ export default function NewPropertyPage() {
     setVideoAsPrimary(false); setImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === idx })))
   }
 
-  const uploadVideo = async (propertyId: string): Promise<string | null> => {
-    if (!videoFile) return null
-    const ext = videoFile.name.split('.').pop()
-    const fileName = `${propertyId}/video_${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('property-images').upload(fileName, videoFile)
-    if (error) return null
-    const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
-    return data.publicUrl
-  }
 
   const uploadImages = async (propertyId: string) => {
     for (let i = 0; i < images.length; i++) {
@@ -386,12 +366,6 @@ export default function NewPropertyPage() {
 
     setUploading(true)
     if (images.length > 0) await uploadImages(property.id)
-    let finalVideoUrl = form.video_url || null
-    if (videoFile) {
-      const uploaded = await uploadVideo(property.id)
-      if (uploaded) finalVideoUrl = uploaded
-    }
-    if (finalVideoUrl) await supabase.from('properties').update({ video_url: finalVideoUrl }).eq('id', property.id)
 
     if (selectedAmenities.length > 0) {
       const { data: amenityRows } = await supabase.from('amenities').select('id, key').in('key', selectedAmenities)
@@ -581,27 +555,29 @@ export default function NewPropertyPage() {
             <p className="text-xs text-gray-400">{images.length}/14 תמונות · התמונה הראשית מסומנת בכוכב זהב</p>
           </div>
 
-          {/* וידאו */}
+          {/* סרטונים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו הנכס</h2>
-            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
-                <span className="text-2xl">🎬</span>
-                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 50MB)'}</span>
-                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
-              </label>
-              {videoPreview && <div className="relative">
-                <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />
-                <button type="button" onClick={() => { setVideoAsPrimary(true); setImages(prev => prev.map(img => ({...img, isPrimary: false}))); }} className={`absolute top-2 right-2 rounded-full p-1.5 transition-colors ${videoAsPrimary ? "bg-yellow-500" : "bg-black/40 hover:bg-yellow-500"}`}><IconStar className="w-4 h-4 text-white fill-white" /></button>
-              </div>}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />
-              </div>
-              <input name="video_url" value={form.video_url} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            <h2 className="font-bold text-gray-700 text-lg mb-1">סרטונים</h2>
+            <p className="text-xs text-gray-400 mb-4">עד 10 סרטונים, כל אחד עד 50MB (MP4, MOV)</p>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {videos.map(v => (
+                <div key={v.id} className="relative group rounded-xl overflow-hidden bg-black aspect-video">
+                  <video src={v.url} controls className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => handleVideoDelete(v.id)}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconX className="w-3.5 h-3.5 text-white" />
+                  </button>
+                </div>
+              ))}
+              {videos.length < 10 && (
+                <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                  <span className="text-2xl mb-1">🎬</span>
+                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון'}</span>
+                  <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
+                </label>
+              )}
             </div>
+            <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
           </div>
 
           {/* תמחור */}

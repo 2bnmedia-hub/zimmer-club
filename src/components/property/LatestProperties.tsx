@@ -30,13 +30,32 @@ export function LatestProperties() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
-        .from('properties')
-        .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(5)
-      setProperties(data || [])
+      const { data: featured } = await supabase
+        .from('homepage_featured')
+        .select('item_id, slot')
+        .eq('section', 'latest')
+        .eq('item_type', 'property')
+        .order('slot')
+
+      if (featured && featured.length > 0) {
+        const ids = featured.map((f: any) => f.item_id)
+        const { data } = await supabase
+          .from('properties')
+          .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
+          .in('id', ids)
+        const sorted = featured
+          .map((f: any) => data?.find((p: any) => p.id === f.item_id))
+          .filter(Boolean) as Property[]
+        setProperties(sorted)
+      } else {
+        const { data } = await supabase
+          .from('properties')
+          .select('*, property_images(url, "order"), reviews(id), accepts_miluim, has_shelter')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(5)
+        setProperties(data || [])
+      }
       setLoading(false)
     }
     load()
@@ -45,7 +64,6 @@ export function LatestProperties() {
   if (loading || properties.length === 0) return null
 
   const [main, ...rest] = properties
-
   const mainImg = main?.property_images?.[0]?.url
   const getImg = (p: Property) => p.property_images?.[0]?.url
 
@@ -60,7 +78,6 @@ export function LatestProperties() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {/* כרטיס ראשי גדול */}
           {main && (
             <Link href={`/${main.slug || main.id}`}
               className="group relative rounded-3xl overflow-hidden cursor-pointer lg:col-span-2 lg:row-span-2"
@@ -87,7 +104,6 @@ export function LatestProperties() {
             </Link>
           )}
 
-          {/* 4 כרטיסים קטנים */}
           {rest.slice(0, 4).map((p) => {
             const img = getImg(p)
             return (

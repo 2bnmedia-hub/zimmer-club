@@ -4,6 +4,7 @@ import { SearchBar } from '@/components/search/SearchBar'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
 import { LatestProperties } from '@/components/property/LatestProperties'
 import { NewProperties } from '@/components/property/NewProperties'
+import { FeaturedAttractions } from '@/components/FeaturedAttractions'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
 
 export default function HomePage() {
@@ -96,42 +97,7 @@ export default function HomePage() {
         <LatestProperties />
         <NewProperties />
 
-        {/* ATTRACTIONS GRID */}
-        <section className="py-20 bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: '#B8964A' }}>חדש באתר</p>
-                <h2 className="text-3xl font-bold mt-2" style={{ color: '#1a1a1a' }}>אטרקציות מומלצות</h2>
-              </div>
-              <Link href="/attractions" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל האטרקציות ←</Link>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { name: 'טיול ג׳יפים בגולן', location: 'רמת הגולן', price: 280, emoji: '🚙', tag: 'אדרנלין', img: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=600&q=80' },
-                { name: 'שיט בכנרת', location: 'כנרת', price: 180, emoji: '⛵', tag: 'רומנטי', img: 'https://images.unsplash.com/photo-1500514966906-fe245eea9344?w=600&q=80' },
-                { name: 'סדנת בישול איטלקי', location: 'תל אביב', price: 320, emoji: '👨‍🍳', tag: 'תרבות', img: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80' },
-              ].map((item, i) => (
-                <div key={i} className="group relative rounded-3xl overflow-hidden cursor-pointer"
-                  style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-                  <div className="relative h-64 overflow-hidden">
-                    <img src={item.img} alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)' }} />
-                    <span className="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm" style={{ color: '#8B6914' }}>{item.tag}</span>
-                  </div>
-                  <div className="p-5 bg-white">
-                    <h3 className="font-bold text-gray-900 text-lg mb-1">{item.name}</h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-400 flex items-center gap-1">📍 {item.location}</p>
-                      <p className="font-bold text-sm" style={{ color: '#8B6914' }}>החל מ ₪{item.price}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <FeaturedAttractions />
 
         {/* CARAVANS GRID */}
         <section className="py-20 overflow-hidden" className="bg-white">

@@ -297,12 +297,12 @@ function UsersTable({ users }: { users: any[] }) {
                 { label:'אימייל', key:'email' },
                 { label:'טלפון', key:'phone' },
                 { label:'תפקיד', key:'role' },
-                { label:'נכסים', key:'listings' },
+                { label:'נכסים בבעלות החשבון', key:'listings' },
                 { label:'תאריך הרשמה', key:'created_at' },
                 { label:'סטטוס', key:'status' },
               ].map(({ label, key }) => (
                 <th key={key} onClick={() => toggleSort(key)}
-                  className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider cursor-pointer select-none hover:opacity-70"
+                  className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider cursor-pointer select-none hover:opacity-70 whitespace-nowrap"
                   style={{ color:'#8B6914' }}>
                   <SortIcon k={key} />{label}
                 </th>
@@ -315,9 +315,9 @@ function UsersTable({ users }: { users: any[] }) {
             )}
             {filtered.map(u => (
               <tr key={u.id} className="border-t hover:bg-amber-50/20 transition-colors" style={{ borderColor:'#f5f0e8' }}>
-                <td className="px-4 py-3 text-sm font-medium" style={{ color:'#111827' }}>{u.full_name || '—'}</td>
-                <td className="px-4 py-3 text-sm" style={{ color:'#111827' }}>{u.email || '—'}</td>
-                <td className="px-4 py-3 text-sm" style={{ color:'#111827' }}>{u.phone || '—'}</td>
+                <td className="px-4 py-3 text-sm font-medium text-center" style={{ color:'#111827' }}>{u.full_name || '—'}</td>
+                <td className="px-4 py-3 text-sm text-center" style={{ color:'#111827' }}>{u.email || '—'}</td>
+                <td className="px-4 py-3 text-sm text-center" style={{ color:'#111827' }}>{u.phone || '—'}</td>
                 <td className="px-4 py-3 text-sm">
                   {u.listings && u.listings.length > 0 ? (
                     <div className="flex flex-wrap gap-1">

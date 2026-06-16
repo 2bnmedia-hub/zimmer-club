@@ -198,7 +198,7 @@ export default function EditProfilePage() {
       {/* Top bar */}
       <div className="bg-white/80 backdrop-blur-xl border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-6 h-14 flex items-center gap-3">
-          <Link href="/dashboard/owner" className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors">
+          <Link href="/" className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors">
             <IconArrowRight className="w-3.5 h-3.5" />חזרה
           </Link>
           <span className="text-gray-200">/</span>

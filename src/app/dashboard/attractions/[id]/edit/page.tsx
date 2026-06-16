@@ -1,5 +1,7 @@
 'use client'
 
+// attraction_videos: id, attraction_id, url, order
+
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -86,8 +88,8 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
   const [pageLoading, setPageLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [videoFile, setVideoFile] = useState<File | null>(null)
-  const [videoPreview, setVideoPreview] = useState('')
+  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videoUploading, setVideoUploading] = useState(false)
   const [error, setError] = useState('')
   const [notFound, setNotFound] = useState(false)
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([])
@@ -202,21 +204,29 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
   const allTypes = [...selectedTypes, ...(customActivity.trim() ? [customActivity.trim()] : [])]
   const totalImages = existingImages.length + newImages.length
 
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
-    setVideoFile(file); setVideoPreview(URL.createObjectURL(file)); e.target.value = ''
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
+    setVideoUploading(true)
+    for (const file of Array.from(files)) {
+      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
+      const ext = file.name.split('.').pop()
+      const fileName = `${String(params.id)}/video_${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('attraction-images').upload(fileName, file)
+      if (!error) {
+        const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
+        const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: params.id, url: data.publicUrl, order: videos.length }).select().single()
+        if (newVid) setVideos(prev => [...prev, newVid])
+      }
+    }
+    setVideoUploading(false)
+    e.target.value = ''
   }
 
-  const uploadVideo = async (): Promise<string | null> => {
-    if (!videoFile) return null
-    const ext = videoFile.name.split('.').pop()
-    const fileName = `${String(params.id)}/video_${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('attraction-images').upload(fileName, videoFile)
-    if (error) return null
-    const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
-    return data.publicUrl
+  const handleVideoDelete = async (id: string) => {
+    await supabase.from('attraction_videos').delete().eq('id', id)
+    setVideos(prev => prev.filter(v => v.id !== id))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -476,23 +486,27 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו האטרקציה</h2>
-            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
-                <span className="text-2xl">🎬</span>
-                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
-                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
-              </label>
-              {videoPreview && <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />}
-              {form.video_url && !videoPreview && <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />
-              </div>
-              <input name="video_url" value={form.video_url} onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            <h2 className="font-bold text-gray-700 text-lg mb-1">סרטוני האטרקציה</h2>
+            <p className="text-xs text-gray-400 mb-4">עד 10 סרטונים, כל אחד עד 50MB (MP4, MOV)</p>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {videos.map(v => (
+                <div key={v.id} className="relative group rounded-xl overflow-hidden bg-black aspect-video">
+                  <video src={v.url} controls className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => handleVideoDelete(v.id)}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconX className="w-3.5 h-3.5 text-white" />
+                  </button>
+                </div>
+              ))}
+              {videos.length < 10 && (
+                <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
+                  <span className="text-2xl mb-1">🎬</span>
+                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון'}</span>
+                  <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
+                </label>
+              )}
             </div>
+            <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
           </div>
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}

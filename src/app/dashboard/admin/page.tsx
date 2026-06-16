@@ -364,7 +364,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [adminName, setAdminName] = useState('')
   const [adminAvatar, setAdminAvatar] = useState('')
-  const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'|'users'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'|'users'|'featured'>('overview')
   const [users, setUsers] = useState<any[]>([])
 
   useEffect(() => {

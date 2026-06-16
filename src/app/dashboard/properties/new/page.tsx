@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -91,6 +92,7 @@ export default function NewPropertyPage() {
   const [uploading, setUploading] = useState(false)
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
+  const newPropertyIdRef = React.useRef<string|null>(null)
 
   const [slugPreview, setSlugPreview] = useState('')
   const addressInputRef = useRef<HTMLInputElement>(null)
@@ -294,11 +296,11 @@ export default function NewPropertyPage() {
     for (const file of Array.from(files)) {
       if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
       const ext = file.name.split('.').pop()
-      const fileName = `property-images/${String(property.id)}/video_${Date.now()}.${ext}`
+      const fileName = `property-images/${String(newPropertyIdRef.current || Date.now())}/video_${Date.now()}.${ext}`
       const { error } = await supabase.storage.from('property-images').upload(fileName, file)
       if (!error) {
         const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
-        const { data: newVid } = await supabase.from('property_videos').insert({ property_id: property.id, url: data.publicUrl, order: videos.length }).select().single()
+        const { data: newVid } = await supabase.from('property_videos').insert({ property_id: newPropertyIdRef.current!, url: data.publicUrl, order: videos.length }).select().single()
         if (newVid) setVideos(prev => [...prev, newVid])
       }
     }
@@ -363,6 +365,7 @@ export default function NewPropertyPage() {
     }).select().single()
 
     if (insertError) { setError(insertError.message); setLoading(false); return }
+    newPropertyIdRef.current = property.id
 
     setUploading(true)
     if (images.length > 0) await uploadImages(property.id)
@@ -370,7 +373,7 @@ export default function NewPropertyPage() {
     if (selectedAmenities.length > 0) {
       const { data: amenityRows } = await supabase.from('amenities').select('id, key').in('key', selectedAmenities)
       if (amenityRows) {
-        await supabase.from('property_amenities').insert(amenityRows.map(a => ({ property_id: property.id, amenity_id: a.id })))
+        await supabase.from('property_amenities').insert(amenityRows.map(a => ({ property_id: newPropertyIdRef.current!, amenity_id: a.id })))
       }
     }
 
@@ -379,7 +382,7 @@ export default function NewPropertyPage() {
         const u = units[i]
         if (!u.name.trim()) continue
         const { data: unitData } = await supabase.from('property_units').insert({
-          property_id: property.id,
+          property_id: newPropertyIdRef.current!,
           name: u.name,
           description: u.description,
           price_per_night: parseInt(u.price_per_night) || null,

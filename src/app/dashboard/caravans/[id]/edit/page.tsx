@@ -90,7 +90,7 @@ export default function EditCaravanPage({ params }: { params: Promise<{ id: stri
       setSelectedAmenities(data.amenities || [])
       const sorted = (data.caravan_images || []).sort((a: any, b: any) => a.order - b.order)
       setImages(sorted.map((i: any) => i.url))
-      const { data: vids } = await supabase.from('caravan_videos').select('*').eq('caravan_id', params.id).order('order')
+      const { data: vids } = await supabase.from('caravan_videos').select('*').eq('caravan_id', id).order('order')
       setVideos(vids || [])
       setLoading(false)
     }

@@ -319,6 +319,12 @@ function UsersTable({ users }: { users: any[] }) {
                 <td className="px-4 py-3 text-sm text-center" style={{ color:'#111827' }}>{u.email || '—'}</td>
                 <td className="px-4 py-3 text-sm text-center" style={{ color:'#111827' }}>{u.phone || '—'}</td>
                 <td className="px-4 py-3 text-sm">
+                  <span className="px-2 py-1 rounded-full text-xs font-bold"
+                    style={{ background: u.role==='admin' ? '#fef3c7' : u.role==='owner' ? '#f0fdf4' : '#f3f4f6', color: u.role==='admin' ? '#92400e' : u.role==='owner' ? '#166534' : '#374151' }}>
+                    {u.role==='admin' ? 'מנהל' : u.role==='owner' ? 'בעל נכס' : 'גולש'}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-sm">
                   {u.listings && u.listings.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {u.listings.map((name: string, i: number) => (
@@ -326,12 +332,6 @@ function UsersTable({ users }: { users: any[] }) {
                       ))}
                     </div>
                   ) : <span className="text-gray-300">—</span>}
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  <span className="px-2 py-1 rounded-full text-xs font-bold"
-                    style={{ background: u.role==='admin' ? '#fef3c7' : u.role==='owner' ? '#f0fdf4' : '#f3f4f6', color: u.role==='admin' ? '#92400e' : u.role==='owner' ? '#166534' : '#374151' }}>
-                    {u.role==='admin' ? 'מנהל' : u.role==='owner' ? 'בעל נכס' : 'גולש'}
-                  </span>
                 </td>
                 <td className="px-4 py-3 text-sm" style={{ color:'#6b7280' }}>
                   {u.created_at ? new Date(u.created_at).toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit', year:'2-digit' }) : '—'}

@@ -105,7 +105,7 @@ export default function HomePage() {
             <div className="flex items-end justify-between mb-12">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: '#B8964A' }}>חוויה ייחודית</p>
-                <h2 className="text-3xl font-bold mt-2" style={{ color: '#1a1a1a' }}>קרוואנים ומסעות</h2>
+                <h2 className="section-title shimmer-text" style={{ fontSize: '170%' }}>קרוואנים ומסעות</h2>
               </div>
               <Link href="/caravans" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הקרוואנים ←</Link>
             </div>

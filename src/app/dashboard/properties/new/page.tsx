@@ -89,6 +89,9 @@ export default function NewPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [images, setImages] = useState<ImagePreview[]>([])
   const [uploading, setUploading] = useState(false)
+  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videoUploading, setVideoUploading] = useState(false)
+
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [videoPreview, setVideoPreview] = useState('')
   const [videoAsPrimary, setVideoAsPrimary] = useState(false)
@@ -302,6 +305,31 @@ export default function NewPropertyPage() {
     }
   }
 
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
+    setVideoUploading(true)
+    for (const file of Array.from(files)) {
+      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
+      const ext = file.name.split('.').pop()
+      const fileName = `property-images/${String(property.id)}/video_${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('property-images').upload(fileName, file)
+      if (!error) {
+        const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
+        const { data: newVid } = await supabase.from('property_videos').insert({ property_id: property.id, url: data.publicUrl, order: videos.length }).select().single()
+        if (newVid) setVideos(prev => [...prev, newVid])
+      }
+    }
+    setVideoUploading(false)
+    e.target.value = ''
+  }
+
+  const handleVideoDelete = async (id: string) => {
+    await supabase.from('property_videos').delete().eq('id', id)
+    setVideos(prev => prev.filter(v => v.id !== id))
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name_en.trim()) { setError('יש להזין שם נכס באנגלית'); return }

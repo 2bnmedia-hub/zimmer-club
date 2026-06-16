@@ -116,6 +116,9 @@ export default function NewCaravanPage() {
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videoUploading, setVideoUploading] = useState(false)
+
   const [images, setImages] = useState<string[]>([])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [customAmenities, setCustomAmenities] = useState<string[]>([''])

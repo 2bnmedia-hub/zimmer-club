@@ -40,6 +40,9 @@ export default function EditCaravanPage({ params }: { params: Promise<{ id: stri
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videoUploading, setVideoUploading] = useState(false)
+
   const [loading, setLoading] = useState(true)
   const [images, setImages] = useState<string[]>([])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
@@ -87,6 +90,8 @@ export default function EditCaravanPage({ params }: { params: Promise<{ id: stri
       setSelectedAmenities(data.amenities || [])
       const sorted = (data.caravan_images || []).sort((a: any, b: any) => a.order - b.order)
       setImages(sorted.map((i: any) => i.url))
+      const { data: vids } = await supabase.from('caravan_videos').select('*').eq('caravan_id', params.id).order('order')
+      setVideos(vids || [])
       setLoading(false)
     }
     load()

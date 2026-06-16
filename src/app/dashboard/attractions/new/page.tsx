@@ -77,6 +77,9 @@ export default function NewAttractionPage() {
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videoUploading, setVideoUploading] = useState(false)
+
   const [error, setError] = useState('')
   const [images, setImages] = useState<ImagePreview[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
@@ -216,6 +219,31 @@ export default function NewAttractionPage() {
     ...(customActivity.trim() ? [customActivity.trim()] : []),
   ]
 
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
+    setVideoUploading(true)
+    for (const file of Array.from(files)) {
+      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
+      const ext = file.name.split('.').pop()
+      const fileName = `attraction-images/${String(attraction.id)}/video_${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('attraction-images').upload(fileName, file)
+      if (!error) {
+        const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
+        const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: attraction.id, url: data.publicUrl, order: videos.length }).select().single()
+        if (newVid) setVideos(prev => [...prev, newVid])
+      }
+    }
+    setVideoUploading(false)
+    e.target.value = ''
+  }
+
+  const handleVideoDelete = async (id: string) => {
+    await supabase.from('attraction_videos').delete().eq('id', id)
+    setVideos(prev => prev.filter(v => v.id !== id))
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name_en.trim()) { setError('יש להזין שם באנגלית'); return }

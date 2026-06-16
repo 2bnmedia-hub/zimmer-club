@@ -281,6 +281,9 @@ export default function EditPropertyPage() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [images, setImages] = useState<PropertyImage[]>([])
   const [uploading, setUploading] = useState(false)
+  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videoUploading, setVideoUploading] = useState(false)
+
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [videoPreview, setVideoPreview] = useState('')
   const [videoAsPrimary, setVideoAsPrimary] = useState(false)
@@ -369,11 +372,38 @@ export default function EditPropertyPage() {
         setUnitImages(imgMap)
       }
 
+      const { data: vids } = await supabase.from('property_videos').select('*').eq('property_id', params.id).order('order')
+      setVideos(vids || [])
       setLoading(false)
     }
     load()
   }, [])
 
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
+    setVideoUploading(true)
+    for (const file of Array.from(files)) {
+      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
+      const ext = file.name.split('.').pop()
+      const fileName = `property-images/${String(params.id)}/video_${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('property-images').upload(fileName, file)
+      if (!error) {
+        const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
+        const { data: newVid } = await supabase.from('property_videos').insert({ property_id: params.id, url: data.publicUrl, order: videos.length }).select().single()
+        if (newVid) setVideos(prev => [...prev, newVid])
+      }
+    }
+    setVideoUploading(false)
+    e.target.value = ''
+  }
+
+  const handleVideoDelete = async (id: string) => {
+    await supabase.from('property_videos').delete().eq('id', id)
+    setVideos(prev => prev.filter(v => v.id !== id))
+  }
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }))

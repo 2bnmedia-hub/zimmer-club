@@ -230,10 +230,8 @@ export function Navbar() {
                     : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
                   }
                   style={item.badge ? {
-                    background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 50%, #C8960C 100%)',
-                    backgroundSize: '200% auto',
-                    animation: 'shimmer 2s linear infinite',
-                    boxShadow: '0 0 12px rgba(200,150,12,0.5)',
+                    background: 'linear-gradient(135deg, #C8960C, #8B6914)',
+                    boxShadow: '0 2px 8px rgba(139,105,20,0.3)',
                   } : {}}
                 >
                   {item.label}

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX, IconEye } from '@/components/icons'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
+import { HomepageFeaturedManager } from '@/components/HomepageFeaturedManager'
 import dynamic from 'next/dynamic'
 const IsraelMap = dynamic(() => import('@/components/map/IsraelMap'), { ssr: false, loading: () => <div style={{ height: '300px', background: '#f9f5ef', borderRadius: '16px' }} className="animate-pulse" /> })
 
@@ -448,6 +449,7 @@ export default function AdminDashboard() {
     { key:'hotels', label:'מלונות', icon:'🏨' },
     { key:'camping', label:'קמפינג', icon:'⛺' },
     { key:'users', label:'משתמשים', icon:'👥' },
+    { key:'featured', label:'ניהול דף הבית', icon:'✨' },
   ]
 
   return (
@@ -695,6 +697,8 @@ export default function AdminDashboard() {
           typeLabel={()=>'קמפינג'} />}
 
         {activeTab === 'users' && <UsersTable users={users} />}
+
+        {activeTab === 'featured' && <HomepageFeaturedManager />}
 
       </main>
     </div>

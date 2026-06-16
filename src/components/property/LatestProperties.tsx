@@ -54,7 +54,7 @@ export function LatestProperties() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <h2 className="text-3xl font-bold mt-2" style={{ color: '#1a1a1a' }}>הנכסים הנצפים ביותר</h2>
+            <h2 className="section-title shimmer-text" style={{ fontSize: '170%' }}>הנכסים הנצפים ביותר</h2>
           </div>
           <Link href="/search" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הנכסים ←</Link>
         </div>

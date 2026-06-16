@@ -134,7 +134,7 @@ export default function HomePage() {
         </section>
 
         {/* CARAVANS GRID */}
-        <section className="py-20 overflow-hidden" style={{ background: 'linear-gradient(135deg, #faf7f2 0%, #f5ede0 100%)' }}>
+        <section className="py-20 overflow-hidden" className="bg-white">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-end justify-between mb-12">
               <div>
@@ -169,7 +169,7 @@ export default function HomePage() {
         </section>
 
         {/* CATEGORIES */}
-        <section className="section-padding bg-cream-50">
+        <section className="section-padding bg-white">
           <div className="page-container">
             <div className="flex items-end justify-between mb-10">
               <div>

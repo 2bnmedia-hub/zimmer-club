@@ -47,7 +47,7 @@ export function NewProperties() {
   const [p0, p1, p2, p3, p4] = properties
 
   return (
-    <section className="py-20 overflow-hidden" style={{ background: 'linear-gradient(160deg, #faf7f2 0%, #f0e8d8 100%)' }}>
+    <section className="py-20 overflow-hidden" className="bg-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-12">
           <h2 className="section-title shimmer-text" style={{ fontSize: '170%' }}>נכסים חדשים באתר</h2>

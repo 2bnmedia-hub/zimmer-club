@@ -226,7 +226,7 @@ export function Navbar() {
                   href={item.href}
                   onClick={() => setActiveMenu(null)}
                   className={item.badge
-                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:scale-105 overflow-hidden'
+                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:opacity-90'
                     : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
                   }
                   style={item.badge ? {

@@ -100,7 +100,7 @@ export default function HomePage() {
         <FeaturedAttractions />
 
         {/* CARAVANS GRID */}
-        <section className="py-20 overflow-hidden" className="bg-white">
+        <section className="py-20 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-end justify-between mb-12">
               <div>

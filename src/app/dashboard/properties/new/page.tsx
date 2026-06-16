@@ -266,7 +266,7 @@ export default function NewPropertyPage() {
   }
 
   const setPrimary = (idx: number) => {
-    setVideoAsPrimary(false); setImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === idx })))
+    setImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === idx })))
   }
 
 

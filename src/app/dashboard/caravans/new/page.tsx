@@ -4,6 +4,7 @@ import React from 'react'
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { IconX, IconUpload, IconPlus, IconTrash, IconCheck } from '@/components/icons'
 import { CARAVAN_TYPES } from '@/lib/constants'
 
 const REGIONS = [

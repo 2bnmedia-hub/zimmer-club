@@ -406,21 +406,6 @@ export default function EditPropertyPage() {
     setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }))
   }
   const toggleAmenity = (key: string) => setSelectedAmenities(prev => prev.includes(key) ? prev.filter(a => a !== key) : [...prev, key])
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
-    setVideoFile(file); setVideoPreview(URL.createObjectURL(file)); e.target.value = ''
-  }
-  const uploadVideo = async (): Promise<string | null> => {
-    if (!videoFile) return null
-    const ext = videoFile.name.split('.').pop()
-    const fileName = `${String(params.id)}/video_${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('property-images').upload(fileName, videoFile)
-    if (error) return null
-    const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
-    return data.publicUrl
-  }
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return

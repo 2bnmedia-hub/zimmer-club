@@ -54,10 +54,10 @@ export function NewProperties() {
           <Link href="/search" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הנכסים ←</Link>
         </div>
 
-        {/* Bento Grid */}
+        {/* Bento Grid: 5 + 4 + 3 = 12 */}
         <div className="grid grid-cols-12 grid-rows-2 gap-4 h-[620px]">
 
-          {/* תא ראשי — שמאל גדול */}
+          {/* תא ראשי גדול — col 1-5, rows 1-2 */}
           {p0 && (
             <Link href={`/${p0.slug || p0.id}`}
               className="col-span-12 md:col-span-5 row-span-2 group relative rounded-3xl overflow-hidden"
@@ -82,7 +82,7 @@ export function NewProperties() {
             </Link>
           )}
 
-          {/* תא עליון אמצע */}
+          {/* תא עליון אמצע — col 6-9, row 1 */}
           {p1 && (
             <Link href={`/${p1.slug || p1.id}`}
               className="col-span-12 md:col-span-4 row-span-1 group relative rounded-3xl overflow-hidden"
@@ -101,7 +101,23 @@ export function NewProperties() {
             </Link>
           )}
 
-          {/* תא תחתון אמצע */}
+          {/* תא ימני עליון — col 10-12, row 1 */}
+          {p3 && (
+            <Link href={`/${p3.slug || p3.id}`}
+              className="col-span-12 md:col-span-3 row-span-1 group relative rounded-3xl overflow-hidden"
+              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+              {p3.property_images?.[0]?.url ? (
+                <Image src={p3.property_images[0].url} alt={p3.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+              ) : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-4xl">🏡</div>}
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%)' }} />
+              <div className="absolute bottom-0 right-0 left-0 p-4 text-white">
+                <h3 className="font-bold text-sm mb-1">{p3.name}</h3>
+                <p className="font-bold text-xs" style={{ color: '#F5C842' }}>₪{p3.price_per_night?.toLocaleString()}</p>
+              </div>
+            </Link>
+          )}
+
+          {/* תא תחתון אמצע — col 6-9, row 2 */}
           {p2 && (
             <Link href={`/${p2.slug || p2.id}`}
               className="col-span-12 md:col-span-4 row-span-1 group relative rounded-3xl overflow-hidden"
@@ -121,23 +137,7 @@ export function NewProperties() {
             </Link>
           )}
 
-          {/* תא ימני עליון — כרטיס עם רקע בהיר */}
-          {p3 && (
-            <Link href={`/${p3.slug || p3.id}`}
-              className="col-span-12 md:col-span-3 row-span-1 group relative rounded-3xl overflow-hidden"
-              style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-              {p3.property_images?.[0]?.url ? (
-                <Image src={p3.property_images[0].url} alt={p3.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-              ) : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-4xl">🏡</div>}
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%)' }} />
-              <div className="absolute bottom-0 right-0 left-0 p-4 text-white">
-                <h3 className="font-bold text-sm mb-1">{p3.name}</h3>
-                <p className="font-bold text-xs" style={{ color: '#F5C842' }}>₪{p3.price_per_night?.toLocaleString()}</p>
-              </div>
-            </Link>
-          )}
-
-          {/* תא ימני תחתון */}
+          {/* תא ימני תחתון — col 10-12, row 2 */}
           {p4 && (
             <Link href={`/${p4.slug || p4.id}`}
               className="col-span-12 md:col-span-3 row-span-1 group relative rounded-3xl overflow-hidden"

@@ -187,6 +187,163 @@ function FullTable({ title, items, onApprove, onReject, onDelete, editPath, view
   )
 }
 
+
+function UsersTable({ users }: { users: any[] }) {
+  const [search, setSearch] = React.useState('')
+  const [roleFilter, setRoleFilter] = React.useState('all')
+  const [statusFilter, setStatusFilter] = React.useState('all')
+  const [sortKey, setSortKey] = React.useState('created_at')
+  const [sortDir, setSortDir] = React.useState<'asc'|'desc'>('desc')
+
+  const filtered = users
+    .filter(u => {
+      const q = search.toLowerCase()
+      const matchSearch = !q || (u.full_name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q) || (u.phone||'').includes(q)
+      const matchRole = roleFilter === 'all' || u.role === roleFilter
+      const matchStatus = statusFilter === 'all' || u.status === statusFilter
+      return matchSearch && matchRole && matchStatus
+    })
+    .sort((a, b) => {
+      const av = a[sortKey] || ''
+      const bv = b[sortKey] || ''
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av)
+    })
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortKey(key); setSortDir('asc') }
+  }
+
+  const SortIcon = ({ k }: { k: string }) => (
+    <span className="inline-flex flex-col ml-2" style={{ lineHeight:'1', gap:'2px', verticalAlign:'middle' }}>
+      <span style={{ fontSize:'8px', color: sortKey===k && sortDir==='asc' ? '#8B6914' : '#6b7280', fontWeight:'900', display:'block' }}>▲</span>
+      <span style={{ fontSize:'8px', color: sortKey===k && sortDir==='desc' ? '#8B6914' : '#6b7280', fontWeight:'900', display:'block' }}>▼</span>
+    </span>
+  )
+
+  const exportData = (type: 'csv' | 'xlsx') => {
+    const headers = ['שם מלא', 'אימייל', 'טלפון', 'תפקיד', 'תאריך הרשמה', 'סטטוס']
+    const rows = filtered.map(u => [
+      u.full_name || '',
+      u.email || '',
+      u.phone || '',
+      u.role === 'admin' ? 'מנהל' : u.role === 'owner' ? 'בעל נכס' : 'גולש',
+      u.created_at ? new Date(u.created_at).toLocaleDateString('he-IL') : '',
+      u.status === 'active' ? 'פעיל' : u.status === 'pending' ? 'ממתין' : 'לא פעיל',
+    ])
+    if (type === 'csv') {
+      const bom = '\uFEFF'
+      const csv = bom + [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n')
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a'); a.href = url; a.download = 'users.csv'; a.click()
+      URL.revokeObjectURL(url)
+    } else {
+      let xml = '<?xml version="1.0"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="משתמשים"><Table>'
+      ;[headers, ...rows].forEach(row => {
+        xml += '<Row>' + row.map(cell => `<Cell><Data ss:Type="String">${String(cell).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</Data></Cell>`).join('') + '</Row>'
+      })
+      xml += '</Table></Worksheet></Workbook>'
+      const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a'); a.href = url; a.download = 'users.xlsx'; a.click()
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ background:'#fff', border:'1px solid rgba(139,105,20,0.1)' }}>
+      <div className="px-6 py-4 border-b space-y-3" style={{ borderColor:'rgba(139,105,20,0.1)' }}>
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-lg" style={{ color:'#2D1E0F' }}>משתמשים רשומים ({filtered.length}/{users.length})</h2>
+          <div className="flex items-center gap-2">
+            <button onClick={() => exportData('csv')}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all hover:opacity-80"
+              style={{ background:'linear-gradient(135deg, #25D366, #128C7E)' }}>⬇ CSV</button>
+            <button onClick={() => exportData('xlsx')}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all hover:opacity-80"
+              style={{ background:'linear-gradient(135deg, #25D366, #128C7E)' }}>⬇ Excel</button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="🔍 חיפוש לפי שם, אימייל, טלפון..."
+            className="flex-1 min-w-48 border rounded-xl px-4 py-2 text-sm outline-none"
+            style={{ borderColor:'rgba(139,105,20,0.2)' }} />
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
+            className="border rounded-xl px-3 py-2 text-sm outline-none"
+            style={{ borderColor:'rgba(139,105,20,0.2)' }}>
+            <option value="all">כל התפקידים</option>
+            <option value="admin">מנהל</option>
+            <option value="owner">בעל נכס</option>
+            <option value="guest">גולש</option>
+          </select>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+            className="border rounded-xl px-3 py-2 text-sm outline-none"
+            style={{ borderColor:'rgba(139,105,20,0.2)' }}>
+            <option value="all">כל הסטטוסים</option>
+            <option value="active">פעיל</option>
+            <option value="pending">ממתין</option>
+            <option value="inactive">לא פעיל</option>
+          </select>
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr style={{ background:'#faf7f2' }}>
+              {[
+                { label:'שם מלא', key:'full_name' },
+                { label:'אימייל', key:'email' },
+                { label:'טלפון', key:'phone' },
+                { label:'תפקיד', key:'role' },
+                { label:'תאריך הרשמה', key:'created_at' },
+                { label:'סטטוס', key:'status' },
+              ].map(({ label, key }) => (
+                <th key={key} onClick={() => toggleSort(key)}
+                  className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider cursor-pointer select-none hover:opacity-70"
+                  style={{ color:'#8B6914' }}>
+                  <SortIcon k={key} />{label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 && (
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-sm" style={{ color:'#9A7C5E' }}>לא נמצאו משתמשים</td></tr>
+            )}
+            {filtered.map(u => (
+              <tr key={u.id} className="border-t hover:bg-amber-50/20 transition-colors" style={{ borderColor:'#f5f0e8' }}>
+                <td className="px-4 py-3 text-sm font-medium" style={{ color:'#111827' }}>{u.full_name || '—'}</td>
+                <td className="px-4 py-3 text-sm" style={{ color:'#111827' }}>{u.email || '—'}</td>
+                <td className="px-4 py-3 text-sm" style={{ color:'#111827' }}>{u.phone || '—'}</td>
+                <td className="px-4 py-3 text-sm">
+                  <span className="px-2 py-1 rounded-full text-xs font-bold"
+                    style={{ background: u.role==='admin' ? '#fef3c7' : u.role==='owner' ? '#f0fdf4' : '#f3f4f6', color: u.role==='admin' ? '#92400e' : u.role==='owner' ? '#166534' : '#374151' }}>
+                    {u.role==='admin' ? 'מנהל' : u.role==='owner' ? 'בעל נכס' : 'גולש'}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-sm" style={{ color:'#6b7280' }}>
+                  {u.created_at ? new Date(u.created_at).toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit', year:'2-digit' }) : '—'}
+                </td>
+                <td className="px-4 py-3">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full"
+                      style={{ background: u.status==='active' ? '#22c55e' : u.status==='pending' ? '#eab308' : '#ef4444' }} />
+                    <span className="text-xs" style={{ color:'#6b7280' }}>
+                      {u.status==='active' ? 'פעיל' : u.status==='pending' ? 'ממתין' : 'לא פעיל'}
+                    </span>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminDashboard() {
   const router = useRouter()
   const supabase = createClient()
@@ -196,7 +353,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [adminName, setAdminName] = useState('')
   const [adminAvatar, setAdminAvatar] = useState('')
-  const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'|'users'>('overview')
+  const [users, setUsers] = useState<any[]>([])
 
   useEffect(() => {
     async function load() {
@@ -212,7 +370,22 @@ export default function AdminDashboard() {
         supabase.from('caravans').select('*').order('created_at', { ascending: false }),
       ])
       setProperties(p||[]); setAttractions(a||[]); setCaravans(c||[])
-      setLoading(false)
+      const { data: usersData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
+    if (usersData) {
+      const { data: props } = await supabase.from('properties').select('owner_id, status')
+      const { data: caravs } = await supabase.from('caravans').select('owner_id, status')
+      const { data: attrs } = await supabase.from('attractions').select('owner_id, status')
+      const allListings = [...(props||[]), ...(caravs||[]), ...(attrs||[])]
+      const enriched = usersData.map(u => {
+        const myListings = allListings.filter(l => l.owner_id === u.id)
+        const status = myListings.some(l => l.status === 'active') ? 'active'
+          : myListings.some(l => l.status === 'pending') ? 'pending'
+          : 'inactive'
+        return { ...u, status }
+      })
+      setUsers(enriched)
+    }
+    setLoading(false)
     }
     load()
   }, [])
@@ -263,6 +436,7 @@ export default function AdminDashboard() {
     { key:'caravans', label:'קרוואנים', icon:'🚐' },
     { key:'hotels', label:'מלונות', icon:'🏨' },
     { key:'camping', label:'קמפינג', icon:'⛺' },
+    { key:'users', label:'משתמשים', icon:'👥' },
   ]
 
   return (
@@ -508,6 +682,8 @@ export default function AdminDashboard() {
           onDelete={(id:string)=>remove('properties',id,setProperties)} editPath={(id:string)=>`/dashboard/properties/${id}/edit`}
           priceLabel={(item:Item)=>item.price_per_night?`₪${item.price_per_night}`:'—'}
           typeLabel={()=>'קמפינג'} />}
+
+        {activeTab === 'users' && <UsersTable users={users} />}
 
       </main>
     </div>

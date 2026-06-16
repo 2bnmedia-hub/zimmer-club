@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const RESERVED_PATHS = [
-  'search', 'hotels', 'camping', 'deals', 'advertise', 'find',
+  'search', 'hotels', 'camping', 'deals', 'advertise', 'find', 'accessibility', 'privacy', 'terms', 'about', 'contact', 'help', 'blog', 'owners',
   'wishlist', 'auth', 'dashboard', 'properties', 'attractions', 'caravans', 'api', 'delete-data',
   '_next', 'favicon.ico', 'logo.png', 'robots.txt', 'sitemap.xml',
 ]

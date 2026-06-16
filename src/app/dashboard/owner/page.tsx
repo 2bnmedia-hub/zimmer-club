@@ -108,41 +108,25 @@ export default function OwnerDashboard() {
         </div>
       </header>
       <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-gray-500 mb-1">סה״כ נכסים</p>
-            <p className="text-3xl font-bold text-gray-900">{properties.length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-gray-500 mb-1">נכסים פעילים</p>
-            <p className="text-3xl font-bold text-green-600">{properties.filter(p => p.status === 'active').length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-gray-500 mb-1">אטרקציות</p>
-            <p className="text-3xl font-bold text-amber-600">{attractions.length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-gray-500 mb-1">קרוואנים</p>
-            <p className="text-3xl font-bold text-amber-800">{caravans.length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-gray-500 mb-1">ממתינים לאישור</p>
-            <p className="text-3xl font-bold text-yellow-600">{properties.filter(p => p.status === 'pending').length + attractions.filter(a => a.status === 'pending').length}</p>
-          </div>
+        <div className="bg-white rounded-2xl shadow-sm mb-6 px-4 py-4 flex items-center justify-center gap-0 divide-x divide-x-reverse divide-gray-100">
+          {[
+            { label: 'סה״כ נכסים', value: properties.length, color: '#111827' },
+            { label: 'נכסים פעילים', value: properties.filter(p => p.status === 'active').length, color: '#16a34a' },
+            { label: 'אטרקציות', value: attractions.length, color: '#d97706' },
+            { label: 'קרוואנים', value: caravans.length, color: '#92400e' },
+            { label: 'ממתינים לאישור', value: properties.filter(p => p.status === 'pending').length + attractions.filter(a => a.status === 'pending').length, color: '#ca8a04' },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="flex-1 text-center px-4 py-1">
+              <p className="text-2xl font-bold" style={{ color }}>{value}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{label}</p>
+            </div>
+          ))}
         </div>
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-bold text-gray-900">הנכסים שלי</h2>
           </div>
-          {properties.length === 0 ? (
-            <div className="px-6 py-16 text-center">
-              <p className="text-gray-400 mb-4">אין לך נכסים עדיין</p>
-              <Link href="/dashboard/properties/new" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#8B6914' }}>
-                <IconPlus className="w-4 h-4" />
-                הוסף את הנכס הראשון שלך
-              </Link>
-            </div>
-          ) : (
+          {properties.length > 0 && (
             <table className="w-full">
               <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
                 <tr>
@@ -224,7 +208,7 @@ export default function OwnerDashboard() {
         )}
 
         {/* קרוואנים */}
-        {caravans.length > 0 ? (
+        {caravans.length > 0 && (
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden mt-6">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-bold text-gray-900">הקרוואנים שלי</h2>
@@ -266,22 +250,6 @@ export default function OwnerDashboard() {
                 })}
               </tbody>
             </table>
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl shadow-sm p-8 mt-6 text-center">
-            <p className="text-gray-400 mb-4">אין לך קרוואנים עדיין</p>
-            <Link href="/dashboard/caravans/new" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-700">
-              <IconPlus className="w-4 h-4" />הוסף קרוואן ראשון
-            </Link>
-          </div>
-        )}
-
-        {attractions.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-8 mt-6 text-center">
-            <p className="text-gray-400 mb-4">אין לך אטרקציות עדיין</p>
-            <Link href="/dashboard/attractions/new" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600">
-              <IconPlus className="w-4 h-4" />הוסף אטרקציה ראשונה
-            </Link>
           </div>
         )}
       </main>

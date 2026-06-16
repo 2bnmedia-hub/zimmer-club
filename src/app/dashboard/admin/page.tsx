@@ -297,6 +297,7 @@ function UsersTable({ users }: { users: any[] }) {
                 { label:'אימייל', key:'email' },
                 { label:'טלפון', key:'phone' },
                 { label:'תפקיד', key:'role' },
+                { label:'נכסים', key:'listings' },
                 { label:'תאריך הרשמה', key:'created_at' },
                 { label:'סטטוס', key:'status' },
               ].map(({ label, key }) => (
@@ -310,13 +311,22 @@ function UsersTable({ users }: { users: any[] }) {
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-sm" style={{ color:'#9A7C5E' }}>לא נמצאו משתמשים</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-sm" style={{ color:'#9A7C5E' }}>לא נמצאו משתמשים</td></tr>
             )}
             {filtered.map(u => (
               <tr key={u.id} className="border-t hover:bg-amber-50/20 transition-colors" style={{ borderColor:'#f5f0e8' }}>
                 <td className="px-4 py-3 text-sm font-medium" style={{ color:'#111827' }}>{u.full_name || '—'}</td>
                 <td className="px-4 py-3 text-sm" style={{ color:'#111827' }}>{u.email || '—'}</td>
                 <td className="px-4 py-3 text-sm" style={{ color:'#111827' }}>{u.phone || '—'}</td>
+                <td className="px-4 py-3 text-sm">
+                  {u.listings && u.listings.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {u.listings.map((name: string, i: number) => (
+                        <span key={i} className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background:'#fef3c7', color:'#92400e' }}>{name}</span>
+                      ))}
+                    </div>
+                  ) : <span className="text-gray-300">—</span>}
+                </td>
                 <td className="px-4 py-3 text-sm">
                   <span className="px-2 py-1 rounded-full text-xs font-bold"
                     style={{ background: u.role==='admin' ? '#fef3c7' : u.role==='owner' ? '#f0fdf4' : '#f3f4f6', color: u.role==='admin' ? '#92400e' : u.role==='owner' ? '#166534' : '#374151' }}>
@@ -372,16 +382,17 @@ export default function AdminDashboard() {
       setProperties(p||[]); setAttractions(a||[]); setCaravans(c||[])
       const { data: usersData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
     if (usersData) {
-      const { data: props } = await supabase.from('properties').select('owner_id, status')
-      const { data: caravs } = await supabase.from('caravans').select('owner_id, status')
-      const { data: attrs } = await supabase.from('attractions').select('owner_id, status')
+      const { data: props } = await supabase.from('properties').select('owner_id, status, name')
+      const { data: caravs } = await supabase.from('caravans').select('owner_id, status, name')
+      const { data: attrs } = await supabase.from('attractions').select('owner_id, status, name')
       const allListings = [...(props||[]), ...(caravs||[]), ...(attrs||[])]
       const enriched = usersData.map(u => {
         const myListings = allListings.filter(l => l.owner_id === u.id)
         const status = myListings.some(l => l.status === 'active') ? 'active'
           : myListings.some(l => l.status === 'pending') ? 'pending'
           : 'inactive'
-        return { ...u, status }
+        const listingNames = myListings.map((l: any) => l.name).filter(Boolean)
+        return { ...u, status, listings: listingNames }
       })
       setUsers(enriched)
     }

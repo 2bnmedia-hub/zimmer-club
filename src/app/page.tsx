@@ -109,7 +109,7 @@ export default function HomePage() {
               </div>
               <Link href="/caravans" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הקרוואנים ←</Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 h-[560px]">
               {[
                 { name: 'קרוואן יוקרה גולן', location: 'רמת הגולן', price: 890, nights: 'ללילה', img: 'https://images.unsplash.com/photo-1561361058-c12e02b4c1a5?w=600&q=80', wide: true },
                 { name: 'אוטו קרוואן צפון', location: 'גליל עליון', price: 650, nights: 'ללילה', img: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=600&q=80', wide: false },
@@ -135,9 +135,9 @@ export default function HomePage() {
         </section>
 
         {/* CATEGORIES */}
-        <section className="section-padding bg-white">
-          <div className="page-container">
-            <div className="flex items-end justify-between mb-10">
+        <section className="py-20 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-12">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-taupe mb-2">
                   קטגוריות פופולריות

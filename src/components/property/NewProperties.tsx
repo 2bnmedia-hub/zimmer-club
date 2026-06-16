@@ -55,7 +55,7 @@ export function NewProperties() {
         </div>
 
         {/* Bento Grid: 5 + 4 + 3 = 12 */}
-        <div className="grid grid-cols-12 grid-rows-2 gap-4 h-[620px]">
+        <div className="grid grid-cols-12 grid-rows-2 gap-5 h-[560px]">
 
           {/* תא ראשי גדול — col 1-5, rows 1-2 */}
           {p0 && (

@@ -86,6 +86,8 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
   const [pageLoading, setPageLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState('')
   const [error, setError] = useState('')
   const [notFound, setNotFound] = useState(false)
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([])
@@ -199,6 +201,23 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
 
   const allTypes = [...selectedTypes, ...(customActivity.trim() ? [customActivity.trim()] : [])]
   const totalImages = existingImages.length + newImages.length
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 25 * 1024 * 1024) { alert('הוידאו גדול מ-25MB'); return }
+    setVideoFile(file); setVideoPreview(URL.createObjectURL(file)); e.target.value = ''
+  }
+
+  const uploadVideo = async (): Promise<string | null> => {
+    if (!videoFile) return null
+    const ext = videoFile.name.split('.').pop()
+    const fileName = `${String(params.id)}/video_${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('attraction-images').upload(fileName, videoFile)
+    if (error) return null
+    const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
+    return data.publicUrl
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -457,10 +476,23 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <h2 className="font-bold text-gray-700 text-lg mb-2">וידאו</h2>
-            <input name="video_url" value={form.video_url} onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-              placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            <h2 className="font-bold text-gray-700 text-lg mb-1">וידאו האטרקציה</h2>
+            <p className="text-xs text-gray-400 mb-4">העלה וידאו (עד 25MB) או הדבק קישור YouTube/Vimeo</p>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-4 cursor-pointer hover:border-yellow-600 transition-colors">
+                <span className="text-2xl">🎬</span>
+                <span className="text-sm text-gray-500">{videoFile ? videoFile.name : 'לחץ להעלאת וידאו (MP4, MOV — עד 25MB)'}</span>
+                <input type="file" accept="video/*" onChange={handleVideoSelect} className="hidden" />
+              </label>
+              {videoPreview && <video src={videoPreview} controls className="w-full rounded-xl max-h-48" />}
+              {form.video_url && !videoPreview && <video src={form.video_url} controls className="w-full rounded-xl max-h-48" />}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או</span><div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <input name="video_url" value={form.video_url} onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
+                placeholder="https://www.youtube.com/watch?v=..." dir="ltr" />
+            </div>
           </div>
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}

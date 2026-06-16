@@ -79,6 +79,7 @@ export default function NewAttractionPage() {
   const [uploading, setUploading] = useState(false)
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
+  const [newAttractionId, setNewAttractionId] = useState<string|null>(null)
 
   const [error, setError] = useState('')
   const [images, setImages] = useState<ImagePreview[]>([])
@@ -208,11 +209,11 @@ export default function NewAttractionPage() {
     for (const file of Array.from(files)) {
       if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
       const ext = file.name.split('.').pop()
-      const fileName = `attraction-images/${String(attraction.id)}/video_${Date.now()}.${ext}`
+      const fileName = `attraction-images/${String(newAttractionId || Date.now())}/video_${Date.now()}.${ext}`
       const { error } = await supabase.storage.from('attraction-images').upload(fileName, file)
       if (!error) {
         const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
-        const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: attraction.id, url: data.publicUrl, order: videos.length }).select().single()
+        const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: newAttractionId!, url: data.publicUrl, order: videos.length }).select().single()
         if (newVid) setVideos(prev => [...prev, newVid])
       }
     }
@@ -264,6 +265,7 @@ export default function NewAttractionPage() {
     }).select().single()
 
     if (insertError) { setError(insertError.message); setLoading(false); return }
+    setNewAttractionId(attraction.id)
 
     setUploading(true)
     for (let i = 0; i < images.length; i++) {

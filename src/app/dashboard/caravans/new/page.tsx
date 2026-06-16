@@ -186,6 +186,33 @@ export default function NewCaravanPage() {
     return null
   }
 
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
+    setVideoUploading(true)
+    for (const file of Array.from(files)) {
+      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
+      const ext = file.name.split('.').pop()
+      const fileName = `caravan-images/${String(Date.now())}/video_${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('caravan-images').upload(fileName, file)
+      if (!error) {
+        const { data } = supabase.storage.from('caravan-images').getPublicUrl(fileName)
+        if (newCaravanId) {
+          const { data: newVid } = await supabase.from('caravan_videos').insert({ caravan_id: newCaravanId, url: data.publicUrl, order: videos.length }).select().single()
+          if (newVid) setVideos(prev => [...prev, newVid])
+        }
+      }
+    }
+    setVideoUploading(false)
+    e.target.value = ''
+  }
+
+  const handleVideoDelete = async (id: string) => {
+    await supabase.from('caravan_videos').delete().eq('id', id)
+    setVideos(prev => prev.filter(v => v.id !== id))
+  }
+
   async function handleSubmit() {
     if (!form.name || !form.price_per_night) return alert('נא למלא שם ומחיר')
     if (!form.phone || !form.whatsapp) return alert('נא למלא טלפון 1 ווואטסאפ')

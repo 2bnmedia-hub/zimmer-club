@@ -4,39 +4,33 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 type FeaturedItem = {
-  id: string
-  section: string
-  item_id: string
-  item_type: string
-  slot: number
-  name?: string
-  city?: string
+  id: string; section: string; item_id: string; item_type: string; slot: number; name?: string; city?: string
 }
-
-type Property = { id: string; name: string; city: string }
-type Attraction = { id: string; name: string; city: string }
+type Item = { id: string; name: string; city: string }
 
 export function HomepageFeaturedManager() {
   const supabase = createClient()
   const [featured, setFeatured] = useState<FeaturedItem[]>([])
-  const [properties, setProperties] = useState<Property[]>([])
-  const [attractions, setAttractions] = useState<Attraction[]>([])
+  const [properties, setProperties] = useState<Item[]>([])
+  const [attractions, setAttractions] = useState<Item[]>([])
+  const [caravans, setCaravans] = useState<Item[]>([])
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
-  useEffect(() => {
-    loadAll()
-  }, [])
+  useEffect(() => { loadAll() }, [])
 
   async function loadAll() {
-    const [{ data: feat }, { data: props }, { data: attrs }] = await Promise.all([
+    const [{ data: feat }, { data: props }, { data: attrs }, { data: cars }] = await Promise.all([
       supabase.from('homepage_featured').select('*').order('section').order('slot'),
       supabase.from('properties').select('id, name, city').eq('status', 'active').order('name'),
       supabase.from('attractions').select('id, name, city').eq('status', 'active').order('name'),
+      supabase.from('caravans').select('id, name, city').eq('status', 'active').order('name'),
     ])
 
     const featWithNames = (feat || []).map((f: FeaturedItem) => {
-      const source = f.item_type === 'property' ? props || [] : attrs || []
+      const source = f.item_type === 'property' ? props || []
+        : f.item_type === 'attraction' ? attrs || []
+        : cars || []
       const found = (source as any[]).find((x: any) => x.id === f.item_id)
       return { ...f, name: found?.name || '—', city: found?.city || '' }
     })
@@ -44,6 +38,7 @@ export function HomepageFeaturedManager() {
     setFeatured(featWithNames)
     setProperties(props || [])
     setAttractions(attrs || [])
+    setCaravans(cars || [])
   }
 
   function getSlot(section: string, slot: number) {
@@ -54,11 +49,8 @@ export function HomepageFeaturedManager() {
     setSaving(true)
     setMsg('')
     const existing = getSlot(section, slot)
-
     if (item_id === '') {
-      if (existing) {
-        await supabase.from('homepage_featured').delete().eq('id', existing.id)
-      }
+      if (existing) await supabase.from('homepage_featured').delete().eq('id', existing.id)
     } else {
       if (existing) {
         await supabase.from('homepage_featured').update({ item_id, item_type }).eq('id', existing.id)
@@ -66,7 +58,6 @@ export function HomepageFeaturedManager() {
         await supabase.from('homepage_featured').insert({ section, slot, item_id, item_type })
       }
     }
-
     await loadAll()
     setSaving(false)
     setMsg('נשמר ✓')
@@ -74,9 +65,16 @@ export function HomepageFeaturedManager() {
   }
 
   const sections = [
-    { key: 'latest', label: 'הנכסים הנצפים ביותר', slots: 5, type: 'property' as const },
-    { key: 'attractions', label: 'אטרקציות חמות', slots: 3, type: 'attraction' as const },
+    { key: 'latest', label: 'הנכסים הנצפים ביותר', slots: 5, type: 'property' as const, icon: '🏠' },
+    { key: 'attractions', label: 'אטרקציות חמות', slots: 3, type: 'attraction' as const, icon: '🎯' },
+    { key: 'caravans', label: 'קרוואנים ומסעות', slots: 3, type: 'caravan' as const, icon: '🚐' },
   ]
+
+  function getOptions(type: string) {
+    if (type === 'property') return properties
+    if (type === 'attraction') return attractions
+    return caravans
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto" dir="rtl">
@@ -86,16 +84,14 @@ export function HomepageFeaturedManager() {
         {saving && <span className="text-sm text-gray-400">שומר...</span>}
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         {sections.map(sec => (
           <div key={sec.key} className="rounded-2xl p-6" style={{ background: '#fff', border: '1.5px solid #f0ece4', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            <h3 className="text-lg font-bold mb-5" style={{ color: '#8B6914' }}>
-              {sec.key === 'latest' ? '🏠' : '🎯'} {sec.label}
-            </h3>
+            <h3 className="text-lg font-bold mb-5" style={{ color: '#8B6914' }}>{sec.icon} {sec.label}</h3>
             <div className="space-y-3">
               {Array.from({ length: sec.slots }, (_, i) => i + 1).map(slot => {
                 const current = getSlot(sec.key, slot)
-                const options = sec.type === 'property' ? properties : attractions
+                const options = getOptions(sec.type)
                 return (
                   <div key={slot} className="flex items-center gap-4">
                     <span className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"

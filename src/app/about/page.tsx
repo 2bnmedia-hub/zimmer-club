@@ -2,37 +2,27 @@ export default function AboutPage() {
   return (
     <main dir="rtl" style={{ fontFamily: 'Heebo, sans-serif', background: '#FDFAF4', color: '#2C2418', overflowX: 'hidden' }}>
       <style>{`
+        /* ─── MOBILE ONLY — לא נוגע בדסקטופ ─── */
         @media (max-width: 768px) {
-          .about-hero { padding: 60px 20px !important; min-height: 380px !important; }
-          .about-hero h1 { font-size: 32px !important; }
-          .about-hero p { font-size: 16px !important; }
-          .about-story-grid { grid-template-columns: 1fr !important; gap: 40px !important; padding: 48px 20px !important; }
-          .about-stat-box { padding: 32px 20px !important; }
-          .about-big-stat { font-size: 56px !important; }
-          .about-values-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
-          .about-categories-grid { grid-template-columns: 1fr 1fr !important; gap: 14px !important; }
-          .about-ai-grid { grid-template-columns: 1fr !important; gap: 36px !important; padding: 56px 20px !important; }
-          .about-pricing-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-          .about-cta-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-          .about-section { padding: 56px 20px !important; }
-          .about-section-inner { padding: 56px 20px !important; }
-          .about-cta-card { padding: 32px 24px !important; }
-          .about-values-card { padding: 28px 20px !important; }
-          .about-quote p { font-size: 18px !important; }
-          .about-tagline p { font-size: 17px !important; }
+          .ab-story   { grid-template-columns: 1fr !important; gap: 32px !important; padding: 40px 16px !important; }
+          .ab-cats    { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+          .ab-vals    { grid-template-columns: 1fr !important; gap: 14px !important; }
+          .ab-price   { grid-template-columns: 1fr !important; gap: 16px !important; }
+          .ab-cta     { grid-template-columns: 1fr !important; gap: 16px !important; }
+          .ab-ai      { grid-template-columns: 1fr !important; gap: 28px !important; padding: 48px 16px !important; }
+          .ab-wrap    { padding: 48px 16px !important; }
+          .ab-hero    { padding: 56px 16px !important; min-height: 360px !important; }
         }
         @media (max-width: 480px) {
-          .about-categories-grid { grid-template-columns: 1fr !important; }
-          .about-stats-mini { grid-template-columns: 1fr 1fr !important; }
+          .ab-cats    { grid-template-columns: 1fr !important; }
         }
-        .about-value-card:hover { border-color: rgba(139,105,20,0.3) !important; }
       `}</style>
 
       {/* HERO */}
-      <section className="about-hero" style={{ minHeight: 480, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #2C1A08 0%, #4A2E10 40%, #6B3D14 100%)', textAlign: 'center', padding: '80px 24px' }}>
+      <section className="ab-hero" style={{ minHeight: 480, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #2C1A08 0%, #4A2E10 40%, #6B3D14 100%)', textAlign: 'center', padding: '80px 24px' }}>
         <div style={{ maxWidth: 780, width: '100%' }}>
           <span style={{ fontSize: 12, fontWeight: 500, letterSpacing: 3, color: '#C9A84C', textTransform: 'uppercase', display: 'block', marginBottom: 20 }}>הסיפור שלנו</span>
-          <h1 style={{ fontSize: 'clamp(30px,5vw,52px)', fontWeight: 300, color: '#F5EDD6', lineHeight: 1.3, marginBottom: 16 }}>
+          <h1 style={{ fontSize: 'clamp(28px,5vw,52px)', fontWeight: 300, color: '#F5EDD6', lineHeight: 1.3, marginBottom: 16 }}>
             נולדנו מתוך<br /><strong style={{ fontWeight: 700, color: '#C9A84C' }}>אכזבה אחת מדי</strong>
           </h1>
           <p style={{ fontSize: 'clamp(15px,2vw,19px)', color: 'rgba(245,237,214,0.75)', fontWeight: 300, maxWidth: 580, margin: '0 auto 36px', lineHeight: 1.75 }}>
@@ -43,12 +33,12 @@ export default function AboutPage() {
       </section>
 
       {/* CATEGORIES */}
-      <div className="about-section-inner" style={{ maxWidth: 1100, margin: '0 auto', padding: '64px 24px 32px' }}>
+      <div className="ab-wrap" style={{ maxWidth: 1100, margin: '0 auto', padding: '64px 24px 32px' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 3, color: '#8B6914', textTransform: 'uppercase', marginBottom: 12 }}>מה תמצאו אצלנו</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,36px)', fontWeight: 700, color: '#2C2418' }}>כל סוגי האירוח בישראל — מקום אחד</h2>
         </div>
-        <div className="about-categories-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>
+        <div className="ab-cats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>
           {[
             { icon: '🏡', title: 'צימרים', text: 'בקתות וחדרים רומנטיים בטבע, מהגליל ועד הנגב' },
             { icon: '🏰', title: 'וילות יוקרה', text: "וילות פרטיות עם בריכה, ג'קוזי ונוף פנורמי" },
@@ -65,7 +55,7 @@ export default function AboutPage() {
       </div>
 
       {/* STORY */}
-      <div className="about-story-grid" style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 72px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
+      <div className="ab-story" style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 72px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
         <div>
           <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 3, color: '#8B6914', textTransform: 'uppercase', marginBottom: 12 }}>איך הכל התחיל</p>
           <h2 style={{ fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: '#2C2418', lineHeight: 1.25, marginBottom: 22 }}>שנים של חיפוש.<br />רגע אחד של החלטה.</h2>
@@ -73,10 +63,10 @@ export default function AboutPage() {
           <p style={{ fontSize: 16, color: '#5C4A28', lineHeight: 1.85, marginBottom: 18 }}>פלטפורמה שמכבדת הן את האורח והן את בעל הנכס, ומחברת ביניהם ישירות — <strong style={{ color: '#2C2418' }}>ללא תיווך, ללא הפתעות, ללא עמלות.</strong></p>
           <p style={{ fontSize: 16, color: '#5C4A28', lineHeight: 1.85 }}>ב-2024 החלטנו לבנות אותה בעצמנו. היום zimmer.club הוא הבית הדיגיטלי של מעל 1,000 נכסים — צימרים, וילות, קרוואנים ואטרקציות ברחבי ישראל.</p>
         </div>
-        <div className="about-stat-box" style={{ background: '#F5EDD6', borderRadius: 20, padding: '44px 36px', textAlign: 'center', border: '1px solid rgba(139,105,20,0.15)' }}>
-          <div className="about-big-stat" style={{ fontSize: 68, fontWeight: 700, color: '#8B6914', lineHeight: 1 }}>1,000+</div>
+        <div style={{ background: '#F5EDD6', borderRadius: 20, padding: '44px 36px', textAlign: 'center', border: '1px solid rgba(139,105,20,0.15)' }}>
+          <div style={{ fontSize: 'clamp(48px,6vw,68px)', fontWeight: 700, color: '#8B6914', lineHeight: 1 }}>1,000+</div>
           <div style={{ fontSize: 15, color: '#9A8060', marginBottom: 28 }}>נכסים ברחבי ישראל</div>
-          <div className="about-stats-mini" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             {[{ num: '₪0', label: 'עמלת הזמנה' }, { num: '100%', label: 'קשר ישיר' }, { num: '4', label: 'סוגי אירוח' }, { num: '24/7', label: 'סוכן AI זמין' }].map((s) => (
               <div key={s.label} style={{ background: 'white', borderRadius: 12, padding: '16px 12px', border: '1px solid rgba(139,105,20,0.12)' }}>
                 <span style={{ fontSize: 26, fontWeight: 700, color: '#8B6914', display: 'block' }}>{s.num}</span>
@@ -88,9 +78,9 @@ export default function AboutPage() {
       </div>
 
       {/* AI AGENT */}
-      <div className="about-ai-grid" style={{ background: 'linear-gradient(135deg, #1A3A2A 0%, #0F2518 100%)', padding: '72px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center', maxWidth: '100%' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'contents' }}>
-          <div style={{ maxWidth: 500 }}>
+      <div style={{ background: 'linear-gradient(135deg, #1A3A2A 0%, #0F2518 100%)', padding: '72px 24px' }}>
+        <div className="ab-ai" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
+          <div>
             <span style={{ display: 'inline-block', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 50, padding: '6px 18px', fontSize: 12, fontWeight: 500, letterSpacing: 2, color: '#C9A84C', textTransform: 'uppercase', marginBottom: 20 }}>חדש</span>
             <h2 style={{ fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: '#F5EDD6', lineHeight: 1.3, marginBottom: 18 }}>סוכן AI אישי —<br />החופשה שלך מתחילה כאן</h2>
             <p style={{ fontSize: 16, color: 'rgba(245,237,214,0.75)', lineHeight: 1.85, marginBottom: 18 }}>לא יודעים מה אתם מחפשים? הסוכן החכם שלנו מנתח את ההעדפות שלכם — תקציב, אזור, סגנון, מספר אורחים — ומציע את הנכס המושלם עבורכם.</p>
@@ -121,19 +111,19 @@ export default function AboutPage() {
       </div>
 
       {/* VALUES */}
-      <div className="about-section" style={{ background: 'white', padding: '72px 24px' }}>
+      <div style={{ background: 'white', padding: '72px 24px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 3, color: '#8B6914', textTransform: 'uppercase', marginBottom: 12 }}>מה שמניע אותנו</p>
             <h2 style={{ fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: '#2C2418' }}>שלושה ערכים. פלטפורמה אחת.</h2>
           </div>
-          <div className="about-values-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
+          <div className="ab-vals" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
             {[
               { icon: '🔍', title: 'שקיפות מוחלטת', text: 'אנחנו לא גובים עמלות הזמנה מהאורח. אפס. כשאתם מזמינים דרך zimmer.club — כל שקל הולך לבעל הנכס, ואתם יודעים בדיוק על מה אתם משלמים.' },
               { icon: '🤝', title: 'קשר ישיר ואמיתי', text: 'zimmer.club מאפשר קשר ישיר בין האורח לבין בעל הצימר, הוילה, הקרוואן או האטרקציה — כי אתם ראויים לתשובה מאדם, לא מבוט.' },
               { icon: '⭐', title: 'איכות שאפשר לסמוך עליה', text: 'כל נכס עובר תהליך אימות. הדירוגים שלנו אמיתיים, הביקורות — מאורחים שהיו שם. אנחנו לא מאפשרים לרושם ראשוני לרמות אף אחד.' },
             ].map((v) => (
-              <div className="about-values-card" key={v.title} style={{ background: '#FDFAF4', borderRadius: 16, padding: '32px 24px', border: '1px solid rgba(139,105,20,0.12)', transition: 'border-color 0.2s' }}>
+              <div key={v.title} style={{ background: '#FDFAF4', borderRadius: 16, padding: '32px 24px', border: '1px solid rgba(139,105,20,0.12)' }}>
                 <div style={{ width: 48, height: 48, background: '#F5EDD6', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, marginBottom: 18 }}>{v.icon}</div>
                 <h3 style={{ fontSize: 17, fontWeight: 700, color: '#2C2418', marginBottom: 10 }}>{v.title}</h3>
                 <p style={{ fontSize: 14, color: '#5C4A28', lineHeight: 1.8 }}>{v.text}</p>
@@ -144,14 +134,14 @@ export default function AboutPage() {
       </div>
 
       {/* PRICING */}
-      <div className="about-section" style={{ background: '#F5EDD6', padding: '72px 24px', borderTop: '1px solid rgba(139,105,20,0.15)' }}>
+      <div style={{ background: '#F5EDD6', padding: '72px 24px', borderTop: '1px solid rgba(139,105,20,0.15)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 3, color: '#8B6914', textTransform: 'uppercase', marginBottom: 12 }}>לבעלי נכסים</p>
             <h2 style={{ fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: '#2C2418', marginBottom: 14 }}>תמחור פשוט. ללא הפתעות.</h2>
             <p style={{ fontSize: 16, color: '#5C4A28', maxWidth: 520, margin: '0 auto' }}>פרסמו את הנכס שלכם ושמרו 100% מהתשלום מהאורח — בכל התוכניות</p>
           </div>
-          <div className="about-pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
+          <div className="ab-price" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
             {[
               { plan: 'בסיסי', price: 'חינם', sub: 'ללא עלות, לתמיד', highlight: false, features: ['נכס אחד פעיל', 'עד 10 תמונות', 'דף נכס סטנדרטי', 'קשר ישיר עם אורחים'] },
               { plan: 'מקצועי', price: '₪99', sub: 'לחודש', highlight: true, features: ['עד 5 נכסים פעילים', 'תמונות + וידאו ללא הגבלה', 'הופעה בולטת בחיפוש', 'לוח שנה זמינות', 'סטטיסטיקות וצפיות'] },
@@ -160,9 +150,7 @@ export default function AboutPage() {
               <div key={p.plan} style={{ background: p.highlight ? '#2C2418' : 'white', borderRadius: 20, padding: '32px 28px', border: p.highlight ? 'none' : '1px solid rgba(139,105,20,0.15)', position: 'relative' }}>
                 {p.highlight && <div style={{ position: 'absolute', top: -14, right: '50%', transform: 'translateX(50%)', background: '#8B6914', color: 'white', fontSize: 12, fontWeight: 600, padding: '5px 18px', borderRadius: 50, whiteSpace: 'nowrap' }}>הכי פופולרי</div>}
                 <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase', color: p.highlight ? '#C9A84C' : '#9A8060', marginBottom: 10 }}>{p.plan}</p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
-                  <span style={{ fontSize: 44, fontWeight: 700, color: p.highlight ? '#F5EDD6' : '#2C2418', lineHeight: 1 }}>{p.price}</span>
-                </div>
+                <span style={{ fontSize: 44, fontWeight: 700, color: p.highlight ? '#F5EDD6' : '#2C2418', lineHeight: 1, display: 'block', marginBottom: 4 }}>{p.price}</span>
                 <p style={{ fontSize: 13, color: p.highlight ? 'rgba(245,237,214,0.55)' : '#9A8060', marginBottom: 0 }}>{p.sub}</p>
                 <div style={{ height: 1, background: p.highlight ? 'rgba(255,255,255,0.1)' : 'rgba(139,105,20,0.12)', margin: '18px 0' }} />
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px' }}>
@@ -183,7 +171,7 @@ export default function AboutPage() {
       </div>
 
       {/* QUOTE */}
-      <div className="about-quote" style={{ background: 'white', padding: '64px 24px', borderTop: '1px solid rgba(139,105,20,0.15)' }}>
+      <div style={{ background: 'white', padding: '64px 24px', borderTop: '1px solid rgba(139,105,20,0.15)' }}>
         <div style={{ maxWidth: 780, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: 'clamp(18px,2.5vw,26px)', fontWeight: 300, color: '#2C2418', lineHeight: 1.65, marginBottom: 20, fontStyle: 'italic' }}>
             &ldquo;ישראל יפה מדי מכדי לבלות אותה בצימר הלא נכון.<br />
@@ -194,19 +182,19 @@ export default function AboutPage() {
       </div>
 
       {/* CTA */}
-      <div className="about-section" style={{ maxWidth: 1100, margin: '0 auto', padding: '72px 24px' }}>
+      <div className="ab-wrap" style={{ maxWidth: 1100, margin: '0 auto', padding: '72px 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 3, color: '#8B6914', textTransform: 'uppercase', marginBottom: 12 }}>הצטרפו אלינו</p>
           <h2 style={{ fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: '#2C2418' }}>יותר מאתר הזמנות.<br />קהילה של אוהבי ארץ ישראל.</h2>
         </div>
-        <div className="about-cta-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-          <div className="about-cta-card" style={{ background: '#1A3A2A', borderRadius: 20, padding: '40px 36px' }}>
+        <div className="ab-cta" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <div style={{ background: '#1A3A2A', borderRadius: 20, padding: '40px 36px' }}>
             <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 12 }}>לאורחים</p>
             <h3 style={{ fontSize: 22, fontWeight: 700, color: '#F5EDD6', marginBottom: 12, lineHeight: 1.3 }}>מצאו את החופשה שתזכרו לתמיד</h3>
             <p style={{ fontSize: 15, color: 'rgba(245,237,214,0.7)', lineHeight: 1.7, marginBottom: 24 }}>צימרים, וילות, קרוואנים ואטרקציות — מעל 1,000 נכסים מאומתים, ללא עמלות, עם סוכן AI שיעזור לכם למצוא בדיוק מה שחיפשתם.</p>
             <a href="/properties" style={{ display: 'inline-block', padding: '14px 28px', borderRadius: 50, background: '#8B6914', color: 'white', fontWeight: 600, fontSize: 15, textDecoration: 'none', minHeight: 44 }}>גלו נכסים ←</a>
           </div>
-          <div className="about-cta-card" style={{ background: '#F5EDD6', borderRadius: 20, padding: '40px 36px', border: '1px solid rgba(139,105,20,0.2)' }}>
+          <div style={{ background: '#F5EDD6', borderRadius: 20, padding: '40px 36px', border: '1px solid rgba(139,105,20,0.2)' }}>
             <p style={{ fontSize: 12, fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase', color: '#9A8060', marginBottom: 12 }}>לבעלי נכסים</p>
             <h3 style={{ fontSize: 22, fontWeight: 700, color: '#2C2418', marginBottom: 12, lineHeight: 1.3 }}>הנכס שלכם ראוי לקהל שיעריך אותו</h3>
             <p style={{ fontSize: 15, color: '#5C4A28', lineHeight: 1.7, marginBottom: 24 }}>צימר, וילה, קרוואן או אטרקציה — פרסמו, קבלו הזמנות ישירות, ושמרו 100% מהתשלום. מתחילים חינם.</p>
@@ -216,7 +204,7 @@ export default function AboutPage() {
       </div>
 
       {/* TAGLINE */}
-      <div className="about-tagline" style={{ background: '#1A3A2A', padding: '52px 24px', textAlign: 'center' }}>
+      <div style={{ background: '#1A3A2A', padding: '52px 24px', textAlign: 'center' }}>
         <p style={{ fontSize: 'clamp(16px,2.5vw,24px)', fontWeight: 300, color: 'rgba(245,237,214,0.9)', maxWidth: 580, margin: '0 auto', lineHeight: 1.65 }}>
           zimmer.club נולדה מתוך אמונה פשוטה:<br />
           <strong style={{ fontWeight: 700, color: '#C9A84C' }}>ישראלים ראויים לחופשה שמתחילה ברגע שמוצאים אותה</strong> — לא רק כשמגיעים.

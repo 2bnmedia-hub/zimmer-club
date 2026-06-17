@@ -79,7 +79,8 @@ export function HomepageFeaturedManager() {
   return (
     <div className="p-6 max-w-4xl mx-auto" dir="rtl">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold" style={{ color: '#111827' }}>✨ ניהול דף הבית</h2>
+        <h2 className="text-2xl font-bold" style={{ color: "#111827" }}>✨ ניהול דף הבית</h2>
+        <p className="text-sm mt-1" style={{ color: "#6b7280" }}>השינויים נשמרים אוטומטית עם כל בחירה</p>
         {msg && <span className="text-sm font-bold px-4 py-2 rounded-full" style={{ background: '#f0fdf4', color: '#16a34a' }}>{msg}</span>}
         {saving && <span className="text-sm text-gray-400">שומר...</span>}
       </div>

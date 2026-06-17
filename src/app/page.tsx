@@ -98,35 +98,29 @@ export default function HomePage() {
         <NewProperties />
 
         <FeaturedAttractions />
-
         {/* CARAVANS GRID */}
-        <section className="py-20 bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-end justify-between mb-12">
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-end justify-between mb-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: '#B8964A' }}>חוויה ייחודית</p>
-                <h2 className="section-title shimmer-text" style={{ fontSize: '170%' }}>קרוואנים ומסעות</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-1" style={{ color: '#B8964A' }}>חוויה ייחודית</p>
+                <h2 className="section-title shimmer-text" style={{ fontSize: '2rem' }}>קרוואנים ומסעות</h2>
               </div>
-              <Link href="/caravans" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הקרוואנים ←</Link>
+              <a href="/caravans" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הקרוואנים ←</a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 h-[560px]">
+            <div className="grid grid-cols-3 gap-3" style={{ height: '520px' }}>
               {[
-                { name: 'קרוואן יוקרה גולן', location: 'רמת הגולן', price: 890, nights: 'ללילה', img: 'https://images.unsplash.com/photo-1561361058-c12e02b4c1a5?w=600&q=80', wide: true },
-                { name: 'אוטו קרוואן צפון', location: 'גליל עליון', price: 650, nights: 'ללילה', img: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=600&q=80', wide: false },
-                { name: 'קרוואן מוצב ים המלח', location: 'ים המלח', price: 750, nights: 'ללילה', img: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80', wide: false },
-                { name: 'נגרר בסגנון וינטג׳', location: 'נגב', price: 580, nights: 'ללילה', img: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&q=80', wide: false },
+                { name: 'קרוואן יוקרה גולן', location: 'רמת הגולן', price: 890, img: 'https://images.unsplash.com/photo-1561361058-c12e02b4c1a5?w=800&q=80' },
+                { name: 'אוטו קרוואן צפון', location: 'גליל עליון', price: 650, img: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800&q=80' },
+                { name: 'קרוואן מוצב ים המלח', location: 'ים המלח', price: 750, img: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80' },
               ].map((item, i) => (
-                <div key={i} className={`group relative rounded-3xl overflow-hidden cursor-pointer ${item.wide ? 'md:col-span-2 md:row-span-2' : ''}`}
-                  style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)', minHeight: item.wide ? '380px' : '220px' }}>
-                  <img src={item.img} alt={item.name}
-                    className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)' }} />
+                <div key={i} className="group relative rounded-2xl overflow-hidden cursor-pointer" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.09)' }}>
+                  <img src={item.img} alt={item.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 55%)' }} />
                   <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
-                    <h3 className="font-bold text-lg mb-0.5">{item.name}</h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-white/70">📍 {item.location}</p>
-                      <p className="font-bold text-sm" style={{ color: '#F5C842' }}>₪{item.price} {item.nights}</p>
-                    </div>
+                    <p className="text-xs text-white/50 mb-1">📍 {item.location}</p>
+                    <h3 className="font-bold text-base mb-1">{item.name}</h3>
+                    <p className="font-bold text-sm" style={{ color: '#F5C842' }}>₪{item.price} ללילה</p>
                   </div>
                 </div>
               ))}

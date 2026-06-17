@@ -8,8 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 type Property = {
   slug?: string; id: string; name: string; short_description: string
   city: string; price_per_night: number; max_guests: number
-  instant_book: boolean; property_images: { url: string }[]
-  accepts_miluim?: boolean
+  instant_book: boolean; property_images: { url: string }[]; accepts_miluim?: boolean
 }
 
 export function NewProperties() {
@@ -34,34 +33,16 @@ export function NewProperties() {
   const [p0, p1, p2, p3, p4] = properties
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end justify-between mb-6">
           <h2 className="section-title shimmer-text" style={{ fontSize: '2rem' }}>נכסים חדשים באתר</h2>
           <Link href="/search" className="text-sm font-medium hover:underline" style={{ color: '#8B6914' }}>כל הנכסים ←</Link>
         </div>
-        <div className="grid grid-cols-12 grid-rows-2 gap-4" style={{ height: '560px' }}>
-          {p0 && (
-            <Link href={`/${p0.slug || p0.id}`} className="col-span-6 row-span-2 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 32px rgba(0,0,0,0.10)' }}>
-              {p0.property_images?.[0]?.url ? <Image src={p0.property_images[0].url} alt={p0.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" /> : <div className="absolute inset-0 bg-stone-100 flex items-center justify-center text-6xl">🏡</div>}
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 55%)' }} />
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
-                {p0.instant_book && <span className="text-xs font-semibold px-3 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}>הזמנה מיידית</span>}
-                {p0.accepts_miluim && <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm" style={{ color: '#8B6914' }}>מילואים</span>}
-              </div>
-              <div className="absolute bottom-0 right-0 left-0 p-6 text-white">
-                <span className="text-xs text-white/40 uppercase tracking-widest">חדש</span>
-                <h3 className="font-bold text-xl mt-1 mb-2">{p0.name}</h3>
-                <p className="text-sm text-white/60 mb-3 line-clamp-2">{p0.short_description}</p>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-white/50">📍 {p0.city} · עד {p0.max_guests} אורחים</p>
-                  <p className="font-bold" style={{ color: '#F5C842' }}>₪{p0.price_per_night?.toLocaleString()}</p>
-                </div>
-              </div>
-            </Link>
-          )}
+        {/* 2x2 שמאל + גדול ימין — הפוך מהסקשן הקודם */}
+        <div className="grid grid-cols-3 grid-rows-2 gap-3" style={{ height: '520px' }}>
           {[p1, p2, p3, p4].filter(Boolean).map((p) => p && (
-            <Link key={p.id} href={`/${p.slug || p.id}`} className="col-span-3 row-span-1 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+            <Link key={p.id} href={`/${p.slug || p.id}`} className="col-span-1 row-span-1 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
               {p.property_images?.[0]?.url ? <Image src={p.property_images[0].url} alt={p.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" /> : <div className="absolute inset-0 bg-stone-100 flex items-center justify-center text-4xl">🏡</div>}
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%)' }} />
               <div className="absolute bottom-0 right-0 left-0 p-4 text-white">
@@ -71,6 +52,22 @@ export function NewProperties() {
               </div>
             </Link>
           ))}
+          {p0 && (
+            <Link href={`/${p0.slug || p0.id}`} className="col-span-1 row-span-2 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 32px rgba(0,0,0,0.10)', gridColumn: '3', gridRow: '1 / span 2' }}>
+              {p0.property_images?.[0]?.url ? <Image src={p0.property_images[0].url} alt={p0.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" /> : <div className="absolute inset-0 bg-stone-100 flex items-center justify-center text-6xl">🏡</div>}
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 60%)' }} />
+              <div className="absolute top-4 right-4 flex flex-col gap-2">
+                {p0.instant_book && <span className="text-xs font-semibold px-3 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}>הזמנה מיידית</span>}
+                {p0.accepts_miluim && <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/90" style={{ color: '#8B6914' }}>מילואים</span>}
+              </div>
+              <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
+                <span className="text-xs text-white/40 uppercase tracking-widest">חדש</span>
+                <h3 className="font-bold text-lg mt-1 mb-1">{p0.name}</h3>
+                <p className="text-sm text-white/60 mb-2 line-clamp-2">{p0.short_description}</p>
+                <p className="font-bold text-sm" style={{ color: '#F5C842' }}>₪{p0.price_per_night?.toLocaleString()} / לילה</p>
+              </div>
+            </Link>
+          )}
         </div>
       </div>
     </section>

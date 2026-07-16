@@ -664,7 +664,7 @@ function SearchContent() {
                 const firstImage = p.property_images?.[0]?.url
                 return (
                   <div key={p.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group relative">
-                    <Link href={`/${p.slug || p.id}`}>
+                    <Link href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`}>
                       <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
                         {firstImage ? (
                           <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />

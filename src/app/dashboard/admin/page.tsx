@@ -669,8 +669,8 @@ export default function AdminDashboard() {
                       <div key={item.id} className="flex items-center justify-between p-3 rounded-xl"
                         style={{ background:'#fffbeb', border:'1px solid #fde68a' }}>
                         <Link href={
-                            group.table === 'properties' 
-                              ? `/${(item as any).slug || item.id}?from=dashboard`
+                            group.table === 'properties'
+                              ? `/properties/${(item as any).slug || item.id}?from=dashboard`
                               : `/${group.table}/${(item as any).slug || item.id}?from=dashboard`
                           } target="_blank"
                           className="min-w-0 flex-1 hover:opacity-70 transition-opacity cursor-pointer">

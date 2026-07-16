@@ -59,7 +59,7 @@ export function LatestProperties() {
         </div>
         <div className="grid grid-cols-3 grid-rows-2 gap-3" style={{ height: '520px' }}>
           {p0 && (
-            <Link href={`/${p0.slug || p0.id}`} className="col-span-1 row-span-2 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 32px rgba(0,0,0,0.10)' }}>
+            <Link href={p0.slug ? `/properties/${p0.slug}` : `/property/${p0.id}`} className="col-span-1 row-span-2 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 32px rgba(0,0,0,0.10)' }}>
               {p0.property_images?.[0]?.url ? <Image src={p0.property_images[0].url} alt={p0.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" /> : <div className="absolute inset-0 bg-stone-100 flex items-center justify-center text-6xl">🏡</div>}
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 60%)' }} />
               <div className="absolute top-4 right-4 flex flex-col gap-1.5">
@@ -76,7 +76,7 @@ export function LatestProperties() {
             </Link>
           )}
           {[p1, p2, p3, p4].filter(Boolean).map((p) => p && (
-            <Link key={p.id} href={`/${p.slug || p.id}`} className="col-span-1 row-span-1 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+            <Link key={p.id} href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`} className="col-span-1 row-span-1 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
               {p.property_images?.[0]?.url ? <Image src={p.property_images[0].url} alt={p.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" /> : <div className="absolute inset-0 bg-stone-100 flex items-center justify-center text-4xl">🏡</div>}
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%)' }} />
               {p.avg_rating && <span className="absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.45)', color: '#F5C842' }}>★ {p.avg_rating.toFixed(1)}</span>}

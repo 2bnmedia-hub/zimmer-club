@@ -246,7 +246,7 @@ export default function FindPage() {
         {done && results.length > 0 && (
           <div className="space-y-3 mb-8">
             {results.map((p, idx) => (
-              <Link key={p.id} href={`/${p.slug || p.id}`}
+              <Link key={p.id} href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`}
                 className="block rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl group"
                 style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
                 <div className="flex">

@@ -80,6 +80,13 @@ CREATE TABLE properties (
   contact_via_whatsapp2       BOOLEAN DEFAULT FALSE,
   avg_rating        DECIMAL(3,2) DEFAULT 0,
   total_reviews     INTEGER DEFAULT 0,
+  -- Admin-only fields (hidden from owners/guests)
+  admin_join_date        DATE,
+  admin_payment_start    DATE,
+  admin_monthly_price    INTEGER,
+  admin_contract_end     DATE,
+  admin_contract_url     TEXT,
+  admin_reminder_date    DATE,
   created_at        TIMESTAMPTZ DEFAULT NOW(),
   updated_at        TIMESTAMPTZ DEFAULT NOW()
 );
@@ -95,6 +102,12 @@ CREATE TABLE properties (
 -- ALTER TABLE properties ADD COLUMN IF NOT EXISTS contact_via_phone_landline BOOLEAN DEFAULT FALSE;
 -- ALTER TABLE properties ADD COLUMN IF NOT EXISTS contact_via_whatsapp1 BOOLEAN DEFAULT FALSE;
 -- ALTER TABLE properties ADD COLUMN IF NOT EXISTS contact_via_whatsapp2 BOOLEAN DEFAULT FALSE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS admin_join_date DATE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS admin_payment_start DATE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS admin_monthly_price INTEGER;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS admin_contract_end DATE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS admin_contract_url TEXT;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS admin_reminder_date DATE;
 
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 

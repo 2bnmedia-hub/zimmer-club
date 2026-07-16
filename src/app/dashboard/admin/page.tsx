@@ -366,6 +366,7 @@ export default function AdminDashboard() {
   const [adminAvatar, setAdminAvatar] = useState('')
   const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'|'users'|'featured'>('overview')
   const [users, setUsers] = useState<any[]>([])
+  const [contractAlerts, setContractAlerts] = useState<{id:string;name:string;admin_contract_end:string;days:number}[]>([])
 
   useEffect(() => {
     async function load() {
@@ -381,6 +382,20 @@ export default function AdminDashboard() {
         supabase.from('caravans').select('*').order('created_at', { ascending: false }),
       ])
       setProperties(p||[]); setAttractions(a||[]); setCaravans(c||[])
+
+      // בדוק חוזים שמסתיימים תוך 60 יום או עברו את תאריך התזכורת
+      const today = new Date()
+      const alerts = (p || [])
+        .filter((prop: any) => prop.admin_contract_end)
+        .map((prop: any) => ({
+          id: prop.id,
+          name: prop.name,
+          admin_contract_end: prop.admin_contract_end,
+          days: Math.ceil((new Date(prop.admin_contract_end).getTime() - today.getTime()) / 86400000),
+        }))
+        .filter((a: any) => a.days <= 60)
+        .sort((a: any, b: any) => a.days - b.days)
+      setContractAlerts(alerts)
       const { data: usersData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
     if (usersData) {
       const { data: props } = await supabase.from('properties').select('owner_id, status, name')
@@ -454,6 +469,26 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen" dir="rtl" style={{ background:'#f8f6f2' }}>
+
+      {/* Contract Alerts Banner */}
+      {contractAlerts.length > 0 && (
+        <div className="bg-red-600 text-white px-4 py-2.5">
+          <div className="max-w-7xl mx-auto flex items-center gap-3 flex-wrap">
+            <span className="text-base">⚠️</span>
+            <span className="font-bold text-sm">התראות חוזים:</span>
+            {contractAlerts.map(a => (
+              <Link
+                key={a.id}
+                href={`/dashboard/properties/${a.id}/edit`}
+                className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full font-medium transition-colors"
+              >
+                {a.name} —{' '}
+                {a.days <= 0 ? '⛔ פג!' : a.days === 1 ? 'מחר!' : `עוד ${a.days} ימים`}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <header style={{ background:'#fff', borderBottom:'1.5px solid #f0ece4', boxShadow:'0 2px 12px rgba(139,105,20,0.08)' }}>

@@ -246,7 +246,7 @@ export default function CaravanPage() {
               {images.map((url, i) => (
                 <button key={i} onClick={() => setCurrentImage(i)}
                   className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                  <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  <img src={url} alt={`${caravan.name} — תמונה ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
                 </button>
               ))}
             </div>

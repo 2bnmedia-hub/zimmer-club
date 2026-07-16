@@ -52,6 +52,7 @@ CREATE TRIGGER on_auth_user_created
 CREATE TABLE properties (
   id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   owner_id          UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  slug              TEXT UNIQUE,
   name              TEXT NOT NULL,
   description       TEXT,
   short_description TEXT,
@@ -62,17 +63,38 @@ CREATE TABLE properties (
   lat               DECIMAL(9,6),
   lng               DECIMAL(9,6),
   price_per_night   INTEGER NOT NULL CHECK (price_per_night > 0),
+  price_weekend     INTEGER,
   min_nights        INTEGER DEFAULT 1,
   max_guests        INTEGER DEFAULT 2,
   bedrooms          INTEGER DEFAULT 1,
   bathrooms         INTEGER DEFAULT 1,
   status            TEXT DEFAULT 'pending' CHECK (status IN ('active','pending','inactive','rejected')),
   instant_book      BOOLEAN DEFAULT FALSE,
+  accepts_miluim    BOOLEAN DEFAULT FALSE,
+  has_shelter       BOOLEAN DEFAULT FALSE,
+  phone_landline    TEXT,
+  whatsapp1         TEXT,
+  whatsapp2         TEXT,
+  contact_via_phone_landline  BOOLEAN DEFAULT FALSE,
+  contact_via_whatsapp1       BOOLEAN DEFAULT FALSE,
+  contact_via_whatsapp2       BOOLEAN DEFAULT FALSE,
   avg_rating        DECIMAL(3,2) DEFAULT 0,
   total_reviews     INTEGER DEFAULT 0,
   created_at        TIMESTAMPTZ DEFAULT NOW(),
   updated_at        TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migration (run once on existing DB):
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS price_weekend INTEGER;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS accepts_miluim BOOLEAN DEFAULT FALSE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS has_shelter BOOLEAN DEFAULT FALSE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS phone_landline TEXT;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS whatsapp1 TEXT;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS whatsapp2 TEXT;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS contact_via_phone_landline BOOLEAN DEFAULT FALSE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS contact_via_whatsapp1 BOOLEAN DEFAULT FALSE;
+-- ALTER TABLE properties ADD COLUMN IF NOT EXISTS contact_via_whatsapp2 BOOLEAN DEFAULT FALSE;
 
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 

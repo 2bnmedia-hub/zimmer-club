@@ -20,7 +20,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   const region = REGIONS[property.region]
 
   return (
-    <Link href={`/property/${property.id}`}>
+    <Link href={property.slug ? `/properties/${property.slug}` : `/property/${property.id}`}>
       <article
         dir="rtl"
         className={cn(
@@ -104,20 +104,30 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           {/* Footer: דירוג + מחיר */}
           <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-sand-100">
             <div className="flex items-center gap-1">
-              
+              <IconStar filled className="w-3.5 h-3.5 text-amber-400" />
               <span className="text-sm sm:text-base font-bold text-charcoal">
-                {property.avg_rating?.toFixed(1)}
+                {property.avg_rating?.toFixed(1) || '—'}
               </span>
-              <span className="text-xs sm:text-sm text-taupe hidden sm:inline">
-                ({property.total_reviews})
-              </span>
+              {property.total_reviews ? (
+                <span className="text-xs text-taupe">({property.total_reviews})</span>
+              ) : null}
             </div>
 
             <div className="text-right">
-              <span className="text-sm sm:text-lg font-bold text-charcoal">
-                החל מ: {formatPrice(property.price_per_night)}
-              </span>
-              <span className="text-xs sm:text-sm text-taupe"> / לילה</span>
+              {property.price_weekend ? (
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-xs text-taupe">אמצ"ש:</span>
+                  <span className="text-sm font-bold text-charcoal">{formatPrice(property.price_per_night)}</span>
+                  <span className="text-xs text-amber-600 font-semibold">ס"ש: {formatPrice(property.price_weekend)}</span>
+                </div>
+              ) : (
+                <>
+                  <span className="text-sm sm:text-lg font-bold text-charcoal">
+                    החל מ: {formatPrice(property.price_per_night)}
+                  </span>
+                  <span className="text-xs sm:text-sm text-taupe"> / לילה</span>
+                </>
+              )}
             </div>
           </div>
         </div>

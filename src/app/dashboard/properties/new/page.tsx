@@ -153,6 +153,7 @@ export default function NewPropertyPage() {
     city: '',
     address: '',
     price_per_night: '',
+    price_weekend: '',
     min_nights: '1',
     max_guests: '2',
     bedrooms: '1',
@@ -341,6 +342,7 @@ export default function NewPropertyPage() {
       city: form.city,
       address: form.address,
       price_per_night: parseInt(form.price_per_night) || 0,
+      price_weekend: form.price_weekend ? parseInt(form.price_weekend) : null,
       min_nights: parseInt(form.min_nights),
       max_guests: parseInt(form.max_guests),
       bedrooms: parseInt(form.bedrooms),
@@ -606,15 +608,20 @@ export default function NewPropertyPage() {
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר ללילה (₪)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ"ש (₪)</label>
                 <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="0"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">מינימום לילות</label>
-                <input name="min_nights" type="number" value={form.min_nights} onChange={handleChange} min="1"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">מחיר סוף שבוע (₪) <span className="text-gray-400 font-normal text-xs">אופציונלי</span></label>
+                <input name="price_weekend" type="number" value={form.price_weekend} onChange={handleChange} min="0"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="כברירת מחדל — מחיר אמצ׳ש" />
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">מינימום לילות</label>
+              <input name="min_nights" type="number" value={form.min_nights} onChange={handleChange} min="1"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>

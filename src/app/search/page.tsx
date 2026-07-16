@@ -18,12 +18,17 @@ type Property = {
   region: string
   city: string
   price_per_night: number
+  price_weekend?: number
   max_guests: number
   avg_rating: number
   total_reviews: number
   instant_book: boolean
   accepts_miluim?: boolean
   has_shelter?: boolean
+  phone_landline?: string
+  whatsapp1?: string
+  contact_via_phone_landline?: boolean
+  contact_via_whatsapp1?: boolean
   property_images: { url: string }[]
 }
 
@@ -118,6 +123,7 @@ function SearchContent() {
   const [showAudience, setShowAudience] = useState(false)
   const [priceRange, setPriceRange] = useState<[number, number]>([200, 35000])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState<'rating' | 'price_asc' | 'price_desc' | 'newest'>('rating')
   const [filters, setFilters] = useState({
     category: searchParams.get('available') || searchParams.get('category') || '',
     region: searchParams.get('region') || '',
@@ -145,7 +151,7 @@ function SearchContent() {
     })
   }, [searchParams])
 
-  useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities, textSearch])
+  useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities, textSearch, sortBy])
 
   // סגור הצעות בלחיצה מחוץ
   useEffect(() => {
@@ -219,7 +225,7 @@ function SearchContent() {
     // מיפוי קטגוריות דף הבית למפתחות amenities
     const categoryMap: Record<string, string> = { family: 'families', pet_friendly: 'pets' }
     const mappedCategory = filters.category ? (categoryMap[filters.category] || filters.category) : ''
-    const SPECIAL_KEYS = ['weekend', 'last']
+    const SPECIAL_KEYS = ['weekend', 'last', 'today', 'thursday', 'friday']
     const isAudienceCategory = filters.category && AUDIENCE_KEYS.includes(filters.category)
     const isSpecialCategory = filters.category && SPECIAL_KEYS.includes(filters.category)
 
@@ -319,6 +325,39 @@ function SearchContent() {
       results = results.filter(p => !blockedIds.has(p.id))
     }
 
+    // פנוי להיום
+    if (filters.category === 'today') {
+      const todayStr = new Date().toISOString().split('T')[0]
+      const { data: blockedToday } = await supabase
+        .from('blocked_dates').select('property_id').eq('date', todayStr).eq('status', 'blocked')
+      const blockedIds = new Set((blockedToday || []).map((b: any) => b.property_id))
+      results = results.filter(p => !blockedIds.has(p.id))
+    }
+
+    // חמישי הקרוב
+    if (filters.category === 'thursday') {
+      const today = new Date()
+      const daysUntilThu = (4 - today.getDay() + 7) % 7 || 7
+      const thu = new Date(today); thu.setDate(today.getDate() + daysUntilThu)
+      const thuStr = thu.toISOString().split('T')[0]
+      const { data: blockedThu } = await supabase
+        .from('blocked_dates').select('property_id').eq('date', thuStr).eq('status', 'blocked')
+      const blockedIds = new Set((blockedThu || []).map((b: any) => b.property_id))
+      results = results.filter(p => !blockedIds.has(p.id))
+    }
+
+    // שישי הקרוב
+    if (filters.category === 'friday') {
+      const today = new Date()
+      const daysUntilFri = (5 - today.getDay() + 7) % 7 || 7
+      const fri = new Date(today); fri.setDate(today.getDate() + daysUntilFri)
+      const friStr = fri.toISOString().split('T')[0]
+      const { data: blockedFri } = await supabase
+        .from('blocked_dates').select('property_id').eq('date', friStr).eq('status', 'blocked')
+      const blockedIds = new Set((blockedFri || []).map((b: any) => b.property_id))
+      results = results.filter(p => !blockedIds.has(p.id))
+    }
+
     // ברגע אחרון — שבוע קדימה, לפחות לילה אחד פנוי
     if (filters.category === 'last') {
       const now = new Date()
@@ -352,6 +391,12 @@ function SearchContent() {
         p.short_description?.toLowerCase().includes(q)
       )
     }
+
+    // Sort
+    if (sortBy === 'price_asc') results = [...results].sort((a, b) => a.price_per_night - b.price_per_night)
+    else if (sortBy === 'price_desc') results = [...results].sort((a, b) => b.price_per_night - a.price_per_night)
+    else if (sortBy === 'newest') results = [...results] // already ordered by created_at desc from DB
+    // default 'rating' is ordered by avg_rating from DB
 
     setProperties(results)
     setLoading(false)
@@ -418,9 +463,19 @@ function SearchContent() {
               חיפוש מתקדם
               {activeCount > 0 && <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{activeCount}</span>}
             </button>
-            <span className="text-sm text-gray-400 mr-auto">
+            <span className="text-sm text-gray-400 mr-auto whitespace-nowrap">
               {loading ? 'מחפש...' : `${properties.length} נכסים`}
             </span>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as typeof sortBy)}
+              className="text-sm border border-gray-200 rounded-xl px-3 py-2 text-gray-600 outline-none focus:border-amber-400 bg-white whitespace-nowrap"
+            >
+              <option value="rating">מיין: דירוג</option>
+              <option value="price_asc">מחיר: נמוך לגבוה</option>
+              <option value="price_desc">מחיר: גבוה לנמוך</option>
+              <option value="newest">חדש ביותר</option>
+            </select>
           </div>
         </div>
 
@@ -624,24 +679,60 @@ function SearchContent() {
                       </div>
                       <div className="p-4">
                         <div className="flex items-start justify-between mb-1.5">
-                          <div>
+                          <div className="flex-1 min-w-0">
                             <p className="text-xs text-gray-400 mb-0.5">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
-                            <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-amber-800 transition-colors">{p.name}</h3>
+                            <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-amber-800 transition-colors truncate">{p.name}</h3>
                           </div>
                           {p.avg_rating > 0 && (
-                            <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg shrink-0">
-                              <IconStar className="w-3 h-3 fill-amber-400 text-amber-400" />
-                              <span className="text-xs font-bold text-amber-800">{p.avg_rating}</span>
+                            <div className="flex flex-col items-end gap-0.5 shrink-0 mr-2">
+                              <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
+                                <IconStar className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                <span className="text-xs font-bold text-amber-800">{p.avg_rating}</span>
+                              </div>
+                              {p.total_reviews > 0 && (
+                                <span className="text-[10px] text-gray-400">{p.total_reviews} המלצות</span>
+                              )}
                             </div>
                           )}
                         </div>
                         {p.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">{p.short_description}</p>}
-                        <div className="flex items-center justify-between pt-3 border-t border-gray-50">
-                          <div>
-                            <span className="font-bold text-gray-900 text-base">₪{p.price_per_night.toLocaleString()}</span>
-                            <span className="text-xs text-gray-400 mr-1">/ לילה</span>
+
+                        {/* מחיר אמצ"ש / סוף"ש */}
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center">
+                            <p className="text-[10px] text-gray-400 mb-0.5">אמצ"ש</p>
+                            <p className="text-sm font-bold text-gray-800">₪{p.price_per_night.toLocaleString()}</p>
                           </div>
+                          <div className="bg-amber-50 rounded-lg px-2.5 py-1.5 text-center border border-amber-100">
+                            <p className="text-[10px] text-amber-500 mb-0.5">סוף שבוע</p>
+                            <p className="text-sm font-bold text-amber-700">₪{(p.price_weekend || p.price_per_night).toLocaleString()}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2.5 border-t border-gray-50">
                           <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">עד {p.max_guests} אורחים</span>
+                          {(p.contact_via_phone_landline && p.phone_landline) ? (
+                            <a
+                              href={`tel:${p.phone_landline}`}
+                              onClick={e => e.stopPropagation()}
+                              className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"
+                              style={{ backgroundColor: '#4B5563' }}
+                            >
+                              <IconPhone className="w-3 h-3" />
+                              חייג
+                            </a>
+                          ) : (p.contact_via_whatsapp1 && p.whatsapp1) ? (
+                            <a
+                              href={`https://wa.me/972${p.whatsapp1.replace(/\D/g,'').replace(/^0/,'')}`}
+                              target="_blank" rel="noopener noreferrer"
+                              onClick={e => e.stopPropagation()}
+                              className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"
+                              style={{ backgroundColor: '#25D366' }}
+                            >
+                              <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.826L.057 23.886l6.232-1.638A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.893 9.893 0 01-5.032-1.37l-.361-.214-3.741.981.999-3.648-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106c5.42 0 9.894 4.474 9.894 9.894 0 5.42-4.474 9.894-9.894 9.894z"/></svg>
+                              וואטסאפ
+                            </a>
+                          ) : null}
                         </div>
                       </div>
                     </Link>

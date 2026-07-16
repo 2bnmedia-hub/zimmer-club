@@ -55,6 +55,7 @@ export interface PropertyAmenity {
 
 export interface Property {
   id: string
+  slug?: string
   owner_id: string
   name: string
   description: string
@@ -66,6 +67,7 @@ export interface Property {
   lat: number
   lng: number
   price_per_night: number
+  price_weekend?: number
   min_nights: number
   max_guests: number
   bedrooms: number
@@ -78,6 +80,12 @@ export interface Property {
   instant_book: boolean
   accepts_miluim?: boolean
   has_shelter?: boolean
+  phone_landline?: string
+  whatsapp1?: string
+  whatsapp2?: string
+  contact_via_phone_landline?: boolean
+  contact_via_whatsapp1?: boolean
+  contact_via_whatsapp2?: boolean
   created_at: string
   updated_at: string
 }

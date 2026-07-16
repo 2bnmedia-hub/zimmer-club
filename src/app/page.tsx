@@ -76,6 +76,31 @@ export default function HomePage() {
             {/* Search */}
             <SearchBar />
 
+            {/* Quick Availability Filters */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+              {[
+                { href: '/search?available=today',    label: 'פנוי להיום',        icon: '📅' },
+                { href: '/search?available=weekend',  label: 'סוף"ש הקרוב',       icon: '🌅' },
+                { href: '/search?available=thursday', label: 'חמישי הקרוב',       icon: '🗓️' },
+                { href: '/search?available=friday',   label: 'שישי הקרוב',        icon: '✨' },
+              ].map(item => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105"
+                  style={{
+                    background: 'rgba(255,255,255,0.18)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.35)',
+                    color: 'rgba(255,255,255,0.9)',
+                  }}
+                >
+                  <span>{item.icon}</span>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">
               {[
@@ -142,6 +167,46 @@ export default function HomePage() {
                     {cat.description}
                   </p>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SEO Content Section */}
+        <section className="py-16 bg-amber-50/40 border-t border-amber-100">
+          <div className="max-w-5xl mx-auto px-4" dir="rtl">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
+              צימרים ובתי הארחה ברחבי ישראל
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm text-gray-600 leading-relaxed">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-base">צימרים בצפון</h3>
+                <p>הגליל העליון, הגולן והכנרת מציעים מגוון עצום של צימרים רומנטיים עם נוף מרהיב. מושלם לזוגות ומשפחות המחפשים שקט ואוויר הרים נקי.</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-base">צימרים בדרום</h3>
+                <p>אילת, הנגב ומדבר יהודה מציעים חוויה שונה לגמרי — שמי לילה מלאי כוכבים, חופי ים אדום ותרבות בדואית אותנטית. הכניסו רומנטיקה למדבר.</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-base">מה לקחת לצימר?</h3>
+                <p>בגדים נוחים, נעלי בית, שמנים ארומטיים ומוזיקה אהובה — כי הצימר הוא הבית שלכם לסוף שבוע. רוב הצימרים כוללים מגבות, שמפו וסבון.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-10">
+              {[
+                { href: '/search?region=galil', label: 'צימרים בגליל' },
+                { href: '/search?region=golan', label: 'צימרים בגולן' },
+                { href: '/search?region=dead_sea', label: 'ים המלח' },
+                { href: '/search?region=negev', label: 'צימרים בנגב' },
+                { href: '/guide', label: '📋 מה לקחת לצימר?' },
+              ].map(link => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-center py-3 px-4 rounded-xl bg-white border border-amber-200 text-amber-800 text-sm font-medium hover:bg-amber-50 transition-colors"
+                >
+                  {link.label}
+                </a>
               ))}
             </div>
           </div>

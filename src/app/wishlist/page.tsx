@@ -16,6 +16,7 @@ type Property = {
   city: string
   region: string
   price_per_night: number
+  price_weekend?: number
   bedrooms: number
   max_guests: number
   category: string[]
@@ -35,7 +36,7 @@ export default function WishlistPage() {
 
       const { data } = await supabase
         .from('properties')
-        .select('id, name, city, region, price_per_night, bedrooms, max_guests, category')
+        .select('id, slug, name, city, region, price_per_night, price_weekend, bedrooms, max_guests, category')
         .in('id', likedIds)
 
       setProperties(data || [])
@@ -108,7 +109,7 @@ export default function WishlistPage() {
                       <IconTrash className="w-4 h-4 text-red-500" />
                     </button>
                   </div>
-                  <Link href={`/${p.slug || p.id}`} className="block p-4">
+                  <Link href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`} className="block p-4">
                     <p className="text-xs text-gray-400 mb-1">{p.category?.[0]}</p>
                     <h2 className="font-bold text-gray-900 mb-2 truncate">{p.name}</h2>
                     <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-3">
@@ -116,7 +117,13 @@ export default function WishlistPage() {
                       <span className="flex items-center gap-1"><IconBed className="w-3 h-3" />{p.bedrooms} חד׳</span>
                       <span className="flex items-center gap-1"><IconUsers className="w-3 h-3" />עד {p.max_guests}</span>
                     </div>
-                    {p.price_per_night > 0 ? <p className="font-bold text-gray-900">החל מ ₪{p.price_per_night} <span className="font-normal text-xs text-gray-400">/ לילה</span></p> : <p className="text-sm text-gray-400">מחיר בתיאום</p>}
+                    {p.price_per_night > 0 ? (
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-bold text-gray-900">₪{p.price_per_night}</span>
+                        {p.price_weekend && <span className="text-xs text-amber-600 font-semibold">ס"ש: ₪{p.price_weekend}</span>}
+                        <span className="font-normal text-xs text-gray-400">/ לילה</span>
+                      </div>
+                    ) : <p className="text-sm text-gray-400">מחיר בתיאום</p>}
                   </Link>
                 </div>
               ))}

@@ -1,15 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { REGIONS } from '@/lib/constants'
 import { useWishlist } from '@/hooks/useWishlist'
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
 import { PropertyQR } from '@/components/property/PropertyQR'
 import { PropertyReviews } from '@/components/property/PropertyReviews'
 import { AdminBackButton } from '@/components/AdminBackButton'
+import { Breadcrumb } from '@/components/layout/Breadcrumb'
 
 type Property = {
   id: string
@@ -21,6 +24,7 @@ type Property = {
   city: string
   address: string
   price_per_night: number
+  price_weekend?: number
   video_url?: string
   min_nights: number
   max_guests: number
@@ -150,7 +154,9 @@ export default function PropertyPage() {
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
   const { toggle, isLiked } = useWishlist()
+  const { addItem: addRecentItem } = useRecentlyViewed()
   const [loading, setLoading] = useState(true)
+  const [neighbors, setNeighbors] = useState<{ prev?: { id: string; slug?: string; name: string }; next?: { id: string; slug?: string; name: string } }>({})
   const [units, setUnits] = useState<{id:string;name:string;description:string;price_per_night:number;max_guests:number;bedrooms:number;bathrooms:number;images:{url:string}[]}[]>([])
   const [activeUnit, setActiveUnit] = useState<string|null>(null)
 
@@ -190,6 +196,17 @@ export default function PropertyPage() {
 
       setProperty(data)
 
+      // שמירה ב-Recently Viewed
+      const { data: firstImg } = await supabase.from('property_images').select('url').eq('property_id', data.id).order('order').limit(1).single()
+      addRecentItem({
+        id: data.id,
+        slug: data.slug,
+        name: data.name,
+        city: data.city,
+        price_per_night: data.price_per_night,
+        imageUrl: firstImg?.url,
+      })
+
       const { data: amenityData } = await supabase.from('property_amenities').select('amenity_id').eq('property_id', data.id)
       if (amenityData && amenityData.length > 0) {
         const ids = amenityData.map((a: any) => a.amenity_id)
@@ -206,6 +223,14 @@ export default function PropertyPage() {
         setUnits(unitsData.map((u: any) => ({ ...u, images: (u.property_unit_images || []).sort((a: any, b: any) => a.order - b.order) })))
         setActiveUnit('main')
       }
+
+      // Prev/Next navigation within same region
+      const [{ data: prevData }, { data: nextData }] = await Promise.all([
+        supabase.from('properties').select('id, slug, name').eq('region', data.region).eq('status', 'active').lt('created_at', data.created_at).order('created_at', { ascending: false }).limit(1).single(),
+        supabase.from('properties').select('id, slug, name').eq('region', data.region).eq('status', 'active').gt('created_at', data.created_at).order('created_at', { ascending: true }).limit(1).single(),
+      ])
+      setNeighbors({ prev: prevData || undefined, next: nextData || undefined })
+
       setLoading(false)
     }
     load()
@@ -280,7 +305,13 @@ export default function PropertyPage() {
 
       <main className="min-h-screen bg-white pt-4 property-content-mobile lg:pb-0" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
-          <div className="flex justify-start mb-6"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><IconArrowRight className="w-4 h-4" />חזרה</button></div>
+          <Breadcrumb items={[
+            { label: 'דף הבית', href: '/' },
+            { label: regionLabels[property.region] || 'נכסים', href: `/search?region=${property.region}` },
+            { label: property.city || '', href: property.city ? `/search?region=${property.region}` : undefined },
+            { label: property.name },
+          ].filter(item => item.label)} />
+          <div className="flex justify-start mb-4"><button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"><IconArrowRight className="w-4 h-4" />חזרה</button></div>
 
           {/* תמונות + מידע בשורה אחת */}
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4 md:gap-6 mb-6 md:mb-8 items-start">
@@ -490,11 +521,24 @@ export default function PropertyPage() {
 
             <div className="lg:col-span-1">
               <div id="booking-form" className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
-                <p className="text-lg font-bold text-center mb-4" style={{color:'#8B6914'}}>אשמח לבצע הזמנה 😊</p>
+                <p className="text-lg font-bold text-center mb-3" style={{color:'#8B6914'}}>אשמח לבצע הזמנה 😊</p>
+                <div className="flex items-center justify-center gap-1.5 mb-4">
+                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 font-medium">✓ מחיר ישיר מהמארח</span>
+                  {property.instant_book && <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-1 font-medium">⚡ מיידי</span>}
+                </div>
                 {property.price_per_night > 0 && (
-                  <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-2xl font-bold text-gray-900">החל מ: ₪{property.price_per_night}</span>
-                    <span className="text-sm text-gray-500">/ לילה</span>
+                  <div className="mb-4">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <p className="text-xs text-gray-400 mb-1">אמצ"ש</p>
+                        <p className="text-lg font-bold text-gray-900">₪{property.price_per_night.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-amber-50 rounded-xl p-3 text-center border border-amber-100">
+                        <p className="text-xs text-amber-600 mb-1">סוף שבוע</p>
+                        <p className="text-lg font-bold text-amber-800">₪{(property.price_weekend || property.price_per_night).toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 text-center mt-1.5">מחיר ללילה</p>
                   </div>
                 )}
                 <div className="space-y-3 mb-4">
@@ -592,6 +636,31 @@ export default function PropertyPage() {
             </div>
           </div>
         </div>
+      {/* Prev / Next navigation */}
+      {(neighbors.prev || neighbors.next) && (
+        <div className="border-t border-gray-100 bg-gray-50 py-4 px-4" dir="rtl">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            {neighbors.next ? (
+              <Link
+                href={neighbors.next.slug ? `/properties/${neighbors.next.slug}` : `/property/${neighbors.next.id}`}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-amber-700 transition-colors"
+              >
+                <span className="text-gray-300">‹</span>
+                <span className="truncate max-w-[180px]">הנכס הבא: {neighbors.next.name}</span>
+              </Link>
+            ) : <span />}
+            {neighbors.prev ? (
+              <Link
+                href={neighbors.prev.slug ? `/properties/${neighbors.prev.slug}` : `/property/${neighbors.prev.id}`}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-amber-700 transition-colors"
+              >
+                <span className="truncate max-w-[180px]">הנכס הקודם: {neighbors.prev.name}</span>
+                <span className="text-gray-300">›</span>
+              </Link>
+            ) : <span />}
+          </div>
+        </div>
+      )}
       </main>
     </>
   )

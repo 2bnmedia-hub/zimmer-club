@@ -2,11 +2,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings } from '@/components/icons'
+import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings, IconClock } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU, CARAVAN_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
 import { useProfile } from '@/contexts/ProfileContext'
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
@@ -111,6 +112,7 @@ export function Navbar() {
   const navRef = useRef<HTMLElement>(null)
   const supabase = createClient()
   const { avatarUrl, refreshKey } = useProfile()
+  const { items: recentItems, count: recentCount, clear: clearRecent } = useRecentlyViewed()
 
   useEffect(() => {
     async function loadUser() {
@@ -242,6 +244,50 @@ export function Navbar() {
 
           {/* אזור משתמש — שמאל בדסקטופ */}
           <div className="hidden lg:flex items-center gap-1 flex-shrink-0 mr-auto">
+
+            {/* מקומות שראיתי */}
+            {recentCount > 0 && (
+              <div className="relative">
+                <button
+                  onClick={() => toggleMenu('recent')}
+                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
+                >
+                  <IconClock className="w-4 h-4" />
+                  <span className="hidden xl:inline">שראיתי</span>
+                  <span className="text-xs bg-amber-100 text-amber-700 font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {recentCount}
+                  </span>
+                </button>
+                {activeMenu === 'recent' && (
+                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 w-72 py-2 overflow-hidden" dir="rtl">
+                    <div className="px-4 py-2.5 border-b border-gray-100 flex items-center justify-between">
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">מקומות שראיתי</p>
+                      <button onClick={clearRecent} className="text-xs text-gray-400 hover:text-red-500 transition-colors">נקה</button>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {recentItems.map(item => (
+                        <Link
+                          key={item.id}
+                          href={item.slug ? `/properties/${item.slug}` : `/property/${item.id}`}
+                          onClick={() => setActiveMenu(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                        >
+                          {item.imageUrl ? (
+                            <img src={item.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-lg flex-shrink-0">🏡</div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
+                            <p className="text-xs text-gray-400">{item.city || ''}{item.price_per_night ? ` · החל מ-₪${item.price_per_night}` : ''}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {user ? (
               <div className="relative">

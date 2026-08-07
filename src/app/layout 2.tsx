@@ -43,9 +43,9 @@ export const metadata: Metadata = {
     description: 'מצאו צימרים רומנטיים, וילות יוקרה ובתי אירוח ייחודיים ברחבי ישראל.',
     images: [
       {
-        url: 'https://www.zimmer.club/opengraph-image',
-        width: 1200,
-        height: 630,
+        url: 'https://www.zimmer.club/logo.png',
+        width: 1024,
+        height: 1024,
         alt: 'zimmer.club — צימרים ווילות יוקרה בישראל',
       },
     ],
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'zimmer.club',
     description: 'צימרים ווילות יוקרה בישראל',
-    images: ['https://www.zimmer.club/opengraph-image'],
+    images: ['https://www.zimmer.club/logo.png'],
   },
   icons: { icon: '/favicon.ico' },
   robots: {
@@ -69,15 +69,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${assistant.className} antialiased`}>
         <ProfileProvider>
           <WishlistProvider>
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[999999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-white focus:text-gray-900 focus:font-bold focus:shadow-lg focus:border focus:border-gray-300"
-            >
-              דלג לתוכן הראשי
-            </a>
             <Navbar />
             <ScrollToTop />
-            <div id="main-content">{children}</div>
+            {children}
             <Footer />
             <ZimiWidget />
           </WishlistProvider>

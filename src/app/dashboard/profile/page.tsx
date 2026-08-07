@@ -55,6 +55,9 @@ export default function EditProfilePage() {
   const [newValue, setNewValue] = useState('')
   const [newLabel, setNewLabel] = useState('')
   const [savingContact, setSavingContact] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => { loadProfile() }, [])
 
@@ -146,6 +149,20 @@ export default function EditProfilePage() {
     setSavingContact(false)
   }
 
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'מחק') return
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/delete-account', { method: 'POST' })
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error); }
+      await supabase.auth.signOut()
+      router.push('/')
+    } catch (err: any) {
+      showToast('error', err?.message || 'שגיאה במחיקת החשבון')
+      setDeleting(false)
+    }
+  }
+
   const initials = formData.full_name?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?'
   const roleLabel: Record<string, string> = { admin: 'מנהל', owner: 'בעל עסק', guest: 'גולש' }
 
@@ -162,6 +179,45 @@ export default function EditProfilePage() {
         <div className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-2xl shadow-xl text-sm font-medium backdrop-blur-xl ${toast.type === 'success' ? 'bg-black text-white' : 'bg-red-500 text-white'}`}>
           {toast.type === 'success' ? <IconCheckCircle className="w-4 h-4" /> : <IconAlertCircle className="w-4 h-4" />}
           {toast.message}
+        </div>
+      )}
+
+      {/* Delete account confirmation modal */}
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" dir="rtl">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mb-4">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">מחיקת חשבון</h3>
+              <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+                פעולה זו <strong className="text-gray-800">בלתי הפיכה</strong>. כל הנתונים, הנכסים וההיסטוריה שלך יימחקו לצמיתות.
+              </p>
+              <p className="text-xs text-gray-400 mb-2">הקלד <strong className="text-red-500">מחק</strong> כדי לאשר:</p>
+              <input
+                type="text" value={deleteConfirmText}
+                onChange={e => setDeleteConfirmText(e.target.value)}
+                placeholder="מחק"
+                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm outline-none focus:border-red-300 mb-4"
+              />
+              <div className="flex gap-3">
+                <button onClick={() => { setDeleteModal(false); setDeleteConfirmText('') }}
+                  className="flex-1 py-2.5 rounded-xl bg-gray-100 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
+                  ביטול
+                </button>
+                <button onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'מחק' || deleting}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-40 flex items-center justify-center gap-1.5"
+                  style={{ backgroundColor: '#ef4444' }}>
+                  {deleting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/> : null}
+                  {deleting ? 'מוחק...' : 'מחק חשבון'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -351,6 +407,29 @@ export default function EditProfilePage() {
           {saving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
           {saving ? 'שומר...' : 'שמור שינויים'}
         </button>
+
+        {/* Danger Zone */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-red-100">
+          <h2 className="text-base font-semibold text-red-600 mb-1">אזור מסוכן</h2>
+          <p className="text-xs text-gray-400 mb-4">פעולות אלו אינן הפיכות. יש לנקוט זהירות.</p>
+          <button
+            onClick={() => { setDeleteModal(true); setDeleteConfirmText('') }}
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-2xl border border-red-200 hover:bg-red-50 transition-all text-right group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0 group-hover:bg-red-100 transition-colors">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-600">מחק חשבון</p>
+              <p className="text-xs text-gray-400 mt-0.5">מחיקה מלאה של כל הנתונים, הנכסים וההיסטוריה</p>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+        </div>
 
       </div>
     </div>

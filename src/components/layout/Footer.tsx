@@ -9,18 +9,24 @@ const footerLinks = {
     { href: '/search?category=pet_friendly', label: 'ידידותי לבעלי חיים' },
   ],
   'בעלי נכסים': [
-    { href: '/owners', label: 'פרסמו את הנכס שלכם' },
-    { href: '/owners/how-it-works', label: 'איך זה עובד' },
+    { href: '/advertise', label: 'פרסמו את הנכס שלכם' },
+    { href: '/advertise', label: 'איך זה עובד' },
     { href: '/dashboard/owner', label: 'לוח בקרה' },
-    { href: '/owners/pricing', label: 'תמחור ועמלות' },
+    { href: '/about', label: 'תמחור ועמלות' },
   ],
   'zimmer.club': [
     { href: '/about', label: 'אודות' },
-    { href: '/blog', label: 'בלוג' },
-    { href: '/contact', label: 'צור קשר' },
-    { href: '/help', label: 'מרכז עזרה' },
+    { href: '/guide', label: 'מדריך נסיעות' },
+    { href: '/advertise#form', label: 'צור קשר' },
+    { href: '/accessibility', label: 'נגישות' },
   ],
 }
+
+const SOCIAL_LINKS = [
+  { icon: '📘', label: 'פייסבוק', href: 'https://facebook.com/zimmerclub' },
+  { icon: '📸', label: 'אינסטגרם', href: 'https://instagram.com/zimmerclub' },
+  { icon: '🎵', label: 'טיקטוק', href: 'https://tiktok.com/@zimmerclub' },
+]
 
 export function Footer() {
   return (
@@ -37,13 +43,17 @@ export function Footer() {
               חוויות אירוח בלתי נשכחות ברחבי ישראל — גלו את חופשת היוקרה המושלמת שלכם.
             </p>
             <div className="flex gap-3">
-              {['📘', '📸', '🎵'].map((icon, i) => (
-                <button
-                  key={i}
+              {SOCIAL_LINKS.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
                   className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-sm"
                 >
-                  {icon}
-                </button>
+                  <span aria-hidden="true">{s.icon}</span>
+                </a>
               ))}
             </div>
           </div>
@@ -56,7 +66,7 @@ export function Footer() {
               </h3>
               <ul className="space-y-2.5">
                 {links.map((link) => (
-                  <li key={link.href}>
+                  <li key={`${link.href}-${link.label}`}>
                     <Link
                       href={link.href}
                       className="text-sm hover:text-cream-50 transition-colors duration-200"
@@ -72,7 +82,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 py-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-between text-xs text-cream-50/50">
-          <p>© 2025 zimmer.club — כל הזכויות שמורות</p>
+          <p>© {new Date().getFullYear()} zimmer.club — כל הזכויות שמורות</p>
           <p className="text-xs text-cream-50/40">מבית <a href="https://2bnmedia.com" target="_blank" rel="noopener noreferrer" className="hover:text-cream-50 transition-colors">2bnmedia.com</a></p>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-cream-50 transition-colors">פרטיות</Link>

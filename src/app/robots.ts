@@ -7,6 +7,6 @@ export default function robots() {
         disallow: ['/dashboard/', '/auth/'],
       },
     ],
-    sitemap: 'https://zimmer.club/sitemap.xml',
+    sitemap: 'https://www.zimmer.club/sitemap.xml',
   }
 }

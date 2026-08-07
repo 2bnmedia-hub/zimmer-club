@@ -74,10 +74,10 @@ function AvailabilityCalendar({ propertyId, supabase }: { propertyId: string; su
   useEffect(() => {
     async function loadDates() {
       setLoadingDates(true)
-      const { data } = await supabase.from('blocked_dates').select('date, status').eq('property_id', propertyId)
+      const { data } = await supabase.from('blocked_dates').select('date').eq('property_id', propertyId)
       if (data) {
         const map: Record<string, DateStatus> = {}
-        data.forEach((d: any) => { map[d.date] = d.status })
+        data.forEach((d: any) => { map[d.date] = 'blocked' })
         setDateMap(map)
       }
       setLoadingDates(false)
@@ -242,26 +242,6 @@ export default function PropertyPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
   if (!property) return null
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'LodgingBusiness',
-    name: property.name,
-    description: property.short_description || property.description,
-    image: images[0] || '',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: property.city || '',
-      addressCountry: 'IL',
-    },
-    priceRange: property.price_per_night ? `₪${property.price_per_night}` : '',
-    aggregateRating: property.avg_rating > 0 ? {
-      '@type': 'AggregateRating',
-      ratingValue: property.avg_rating,
-      reviewCount: property.total_reviews,
-    } : undefined,
-    url: `https://zimmer.club/${property.slug || property.id}`,
-  }
-
   const categoryLabels: Record<string, string> = {
     zimmer: 'צימר', complex: 'מתחם צימרים', villa: 'וילות ובקתות',
     hotel: 'מלונות', camping: 'קמפינג',
@@ -276,7 +256,6 @@ export default function PropertyPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AdminBackButton />
       {/* Mobile sticky booking bar */}
       <div className="lg:hidden mobile-booking-bar">
@@ -354,14 +333,15 @@ export default function PropertyPage() {
                 <div className="mt-auto pt-4">
                   <a href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל")}
                     target="_blank" rel="noopener noreferrer"
-                    className="relative block rounded-xl overflow-hidden border border-gray-100" style={{height:"140px"}}>
-                    <iframe width="100%" height="140" style={{border:0, pointerEvents:"none", filter:"grayscale(100%) brightness(1.1) sepia(10%)", opacity:0.85}} loading="lazy"
-                      src={"https://maps.google.com/maps?q=" + encodeURIComponent((property.address ? property.address + ", " : "") + (property.city || "") + ", ישראל") + "&output=embed&z=15&hl=iw"} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold px-4 py-2 rounded-full shadow-lg" style={{backgroundColor:"#fdfdff", color:"#8B6914"}}>
-                        📍 להצגת הנכס על המפה
-                      </span>
+                    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-100 hover:border-amber-200 transition-colors"
+                    style={{height:"140px", background:"linear-gradient(135deg,#f0f4f0 0%,#e8f0e8 50%,#ddeedd 100%)"}}>
+                    <div className="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center">
+                      <IconMapPin className="w-5 h-5" style={{color:'#8B6914'}} />
                     </div>
+                    <p className="text-xs font-bold text-gray-700">{property.address || property.city}</p>
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full shadow" style={{backgroundColor:"#fff", color:"#8B6914"}}>
+                      📍 פתח בגוגל מפות
+                    </span>
                   </a>
                 </div>
               )}
@@ -493,15 +473,34 @@ export default function PropertyPage() {
               <div className="border-t border-gray-100 pt-6 mb-6">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">{property.description || property.short_description}</p>
               </div>
-              {property.video_url && (
-                <div className="border-t border-gray-100 pt-6 mb-6">
-                  <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון הנכס</h2>
-                  <div className="relative w-full" style={{paddingBottom:'56.25%'}}>
-                    <iframe src={property.video_url.replace('watch?v=','embed/').replace('youtu.be/','www.youtube.com/embed/').replace('vimeo.com/','player.vimeo.com/video/')}
-                      className="absolute inset-0 w-full h-full rounded-xl" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
+              {property.video_url && (() => {
+                const vid = property.video_url
+                const isYT = vid.includes('youtube.com') || vid.includes('youtu.be')
+                const isVimeo = vid.includes('vimeo.com')
+                const embedSrc = isYT
+                  ? vid.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')
+                  : isVimeo
+                  ? vid.replace('vimeo.com/', 'player.vimeo.com/video/')
+                  : null
+                return (
+                  <div className="border-t border-gray-100 pt-6 mb-6">
+                    <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון הנכס</h2>
+                    {embedSrc ? (
+                      <div className="relative w-full" style={{paddingBottom:'56.25%'}}>
+                        <iframe src={embedSrc} className="absolute inset-0 w-full h-full rounded-xl"
+                          allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
+                      </div>
+                    ) : (
+                      <a href={vid} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-3 py-6 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-red-500"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 1.77-.13 3.08-.44 3.83-.28.66-.73 1.11-1.39 1.39-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 17c-3.19 0-5.17-.13-5.83-.44-.66-.28-1.11-.73-1.39-1.39-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L4 12c0-1.77.13-3.08.44-3.83.28-.66.73-1.11 1.39-1.39.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 7c3.19 0 5.17.13 5.83.44.66.28 1.11.73 1.39 1.39z"/></svg>
+                        <span className="font-bold text-gray-700">לצפייה בסרטון הנכס</span>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-gray-400"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59L7.76 14.83l1.41 1.41L19 5.41V9h2V3h-7z"/></svg>
+                      </a>
+                    )}
                   </div>
-                </div>
-              )}
+                )
+              })()}
               {amenities.length > 0 && (
                 <div className="border-t border-gray-100 pt-6">
                   <h2 className="font-bold text-gray-900 text-lg mb-4">מה יש בנכס</h2>
@@ -584,12 +583,14 @@ export default function PropertyPage() {
                     : null
                   const nights = checkIn && checkOut ? Math.max(0, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)) : 0
                   const msgParts = [
-                    `שלום, אני מעוניין להזמין את ${property.name}`,
-                    checkIn && checkOut ? `לתאריכים ${checkIn} עד ${checkOut}` : '',
-                    nights > 0 ? `(${nights} לילות)` : '',
-                    guests > 0 ? `עבור ${guests} אורחים` : '',
-                    guestName ? `שמי: ${guestName}` : '',
-                  ].filter(Boolean).join(' ')
+                    `שלום! אני מעוניין להזמין את *${property.name}* 🏡`,
+                    checkIn && checkOut ? `📅 תאריכים: ${checkIn} עד ${checkOut}` : '',
+                    nights > 0 ? `🌙 ${nights} לילות` : '',
+                    guests > 0 ? `👥 ${guests} אורחים` : '',
+                    guestName ? `👤 שם: ${guestName}` : '',
+                    guestPhone ? `📞 טלפון: ${guestPhone}` : '',
+                    `\nאנא אשרו זמינות ומחיר 🙏`,
+                  ].filter(Boolean).join('\n')
                   const waUrl = waNumber
                     ? `https://wa.me/972${waNumber.replace(/^0/, '')}?text=${encodeURIComponent(msgParts)}`
                     : null
@@ -621,13 +622,23 @@ export default function PropertyPage() {
                 {(property.address || property.city) && (
                   <div className="mt-5 pt-5 border-t border-gray-100">
                     <h3 className="font-bold text-gray-800 text-sm mb-3 flex items-center gap-1.5"><IconMapPin className="w-4 h-4" style={{color:'#8B6914'}} />מיקום הנכס</h3>
-                    <div className="rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-                      <iframe width="100%" height="200" style={{border:0}} loading="lazy"
-                        src={`https://maps.google.com/maps?q=${encodeURIComponent((property.address?property.address+', ':'')+( property.city||'')+', ישראל')}&output=embed&z=15&hl=iw`} />
-                    </div>
                     <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address?property.address+', ':'')+(property.city||'')+', ישראל')}`}
                       target="_blank" rel="noopener noreferrer"
-                      className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-white transition-colors" style={{background:'linear-gradient(135deg, #F8F4EE 0%, #DDD5C8 100%)', color:'#3D2F20', boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}}>
+                      className="flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-100 hover:border-amber-200 transition-colors mb-2"
+                      style={{height:"180px", background:"linear-gradient(135deg,#f0f4f0 0%,#e8f0e8 50%,#ddeedd 100%)"}}>
+                      <div className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center">
+                        <IconMapPin className="w-6 h-6" style={{color:'#8B6914'}} />
+                      </div>
+                      <div className="text-center px-3">
+                        <p className="text-xs font-bold text-gray-700 mb-1">{property.address || property.city}</p>
+                        <span className="text-xs font-semibold px-3 py-1 rounded-full" style={{backgroundColor:"#fff", color:"#8B6914", boxShadow:'0 2px 6px rgba(0,0,0,0.08)'}}>
+                          לחץ לפתיחה בגוגל מפות
+                        </span>
+                      </div>
+                    </a>
+                    <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((property.address?property.address+', ':'')+(property.city||'')+', ישראל')}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold transition-colors" style={{background:'linear-gradient(135deg, #F8F4EE 0%, #DDD5C8 100%)', color:'#3D2F20', boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}}>
                       <IconNavigation className="w-3.5 h-3.5" />נווט
                     </a>
                   </div>

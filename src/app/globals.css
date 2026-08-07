@@ -1,5 +1,22 @@
 
 /* ===========================
+   LUCI CHARACTER ANIMATIONS
+   =========================== */
+@keyframes luci-float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+@keyframes luci-nod      { 0%,100%{transform:translateY(0) rotate(0deg)} 30%{transform:translateY(-3px) rotate(-1deg)} 70%{transform:translateY(2px) rotate(0.8deg)} }
+@keyframes luci-blink-kf { 0%,82%,100%{opacity:0} 86%,96%{opacity:1} }
+@keyframes luci-wave     { 0%,100%{transform:rotate(0deg)} 20%{transform:rotate(-8deg)} 60%{transform:rotate(6deg)} }
+@keyframes luci-entrance { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes bubble-pop    { 0%{opacity:0;transform:scale(0.7) translateY(8px)} 70%{transform:scale(1.05) translateY(-2px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
+
+.luci-float    { animation: luci-float 4s ease-in-out infinite; }
+.luci-nod      { animation: luci-nod 0.7s ease-in-out infinite; }
+.luci-wave     { animation: luci-wave 1s ease-in-out 2; }
+.luci-entrance { animation: luci-entrance 0.6s cubic-bezier(.22,.68,0,1.3) both; }
+.luci-bubble   { animation: bubble-pop 0.5s cubic-bezier(.22,.68,0,1.3) 0.3s both; }
+.luci-blink-lid{ animation: luci-blink-kf 6s ease-in-out infinite 1s; opacity: 0; }
+
+/* ===========================
    MOBILE OPTIMIZATIONS
    =========================== */
 
@@ -154,4 +171,17 @@ input[type="date"] {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   background: linear-gradient(90deg, #f0ece6 25%, #e8e2db 50%, #f0ece6 75%);
   background-size: 200% 100%;
+}
+
+/* Respect user's motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .luci-float, .luci-nod, .luci-wave, .luci-entrance, .luci-bubble, .luci-blink-lid, .skeleton {
+    animation: none !important;
+  }
 }

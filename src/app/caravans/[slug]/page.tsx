@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { GenericReviews } from '@/components/GenericReviews'
 import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
-import { IconMapPin, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone } from '@/components/icons'
+import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone } from '@/components/icons'
 import Image from 'next/image'
 
 const REGION_LABELS: Record<string, string> = {
@@ -107,7 +107,7 @@ export default function CaravanPage() {
       ratingValue: caravan.avg_rating,
       reviewCount: caravan.total_reviews,
     } : undefined,
-    url: `https://zimmer.club/caravans/${caravan.id}`,
+    url: `https://www.zimmer.club/caravans/${caravan.id}`,
   }
 
   const waLink = caravan.whatsapp ? `https://wa.me/972${caravan.whatsapp.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`שלום, אני מעוניין בקרוואן ${caravan.name}`)}` : null
@@ -178,12 +178,13 @@ export default function CaravanPage() {
               {caravan.city && (
                 <div className="mt-4">
                   <a href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`} target="_blank" rel="noopener noreferrer"
-                    className="relative block rounded-xl overflow-hidden border border-gray-100" style={{height:'140px'}}>
-                    <iframe width="100%" height="140" style={{border:0, pointerEvents:'none', filter:'grayscale(100%) brightness(1.1)', opacity:0.85}}
-                      loading="lazy" src={`https://maps.google.com/maps?q=${mapsQuery}&output=embed&z=15&hl=iw`} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold px-4 py-2 rounded-full shadow-lg" style={{backgroundColor:'#fdfdff', color:'#8B6914'}}>📍 הצג על המפה</span>
+                    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-100 hover:border-amber-200 transition-colors"
+                    style={{height:'140px', background:'linear-gradient(135deg,#f0f4f0 0%,#e8f0e8 50%,#ddeedd 100%)'}}>
+                    <div className="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center">
+                      <IconNavigation className="w-5 h-5" style={{color:'#8B6914'}} />
                     </div>
+                    <p className="text-xs font-bold text-gray-700">{caravan.city}</p>
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full shadow" style={{backgroundColor:'#fff', color:'#8B6914'}}>📍 פתח בגוגל מפות</span>
                   </a>
                 </div>
               )}
@@ -273,15 +274,31 @@ export default function CaravanPage() {
             )}
 
             {/* וידאו */}
-            {caravan.video_url && (
-              <div className="border-t border-gray-100 pt-6 mb-6">
-                <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון</h2>
-                <div className="relative w-full" style={{paddingBottom:'56.25%'}}>
-                  <iframe src={caravan.video_url.replace('watch?v=','embed/').replace('youtu.be/','www.youtube.com/embed/')}
-                    className="absolute inset-0 w-full h-full rounded-xl" allowFullScreen />
+            {caravan.video_url && (() => {
+              const vid = caravan.video_url
+              const isYT = vid.includes('youtube.com') || vid.includes('youtu.be')
+              const isVimeo = vid.includes('vimeo.com')
+              const embedSrc = isYT
+                ? vid.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')
+                : isVimeo ? vid.replace('vimeo.com/', 'player.vimeo.com/video/') : null
+              return (
+                <div className="border-t border-gray-100 pt-6 mb-6">
+                  <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון</h2>
+                  {embedSrc ? (
+                    <div className="relative w-full" style={{paddingBottom:'56.25%'}}>
+                      <iframe src={embedSrc} className="absolute inset-0 w-full h-full rounded-xl" allowFullScreen />
+                    </div>
+                  ) : (
+                    <a href={vid} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 py-6 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8 fill-red-500"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 1.77-.13 3.08-.44 3.83-.28.66-.73 1.11-1.39 1.39-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 17c-3.19 0-5.17-.13-5.83-.44-.66-.28-1.11-.73-1.39-1.39-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L4 12c0-1.77.13-3.08.44-3.83.28-.66.73-1.11 1.39-1.39.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 7c3.19 0 5.17.13 5.83.44.66.28 1.11.73 1.39 1.39z"/></svg>
+                      <span className="font-bold text-gray-700">לצפייה בסרטון</span>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-gray-400"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59L7.76 14.83l1.41 1.41L19 5.41V9h2V3h-7z"/></svg>
+                    </a>
+                  )}
                 </div>
-              </div>
-            )}
+              )
+            })()}
 
             <GenericReviews entityId={caravan.id} table="caravan_reviews" foreignKey="caravan_id" />
               <AdminGenericReviews entityId={caravan.id} table="caravan_reviews" foreignKey="caravan_id" />

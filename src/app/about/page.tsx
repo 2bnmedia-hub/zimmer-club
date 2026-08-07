@@ -1,3 +1,18 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'אודות zimmer.club — הסיפור שלנו',
+  description: 'zimmer.club נוצרה מתוך אמונה שישראלים ראויים לחופשה שמתחילה ברגע שמוצאים אותה. צימרים, וילות, קרוואנים ואטרקציות — במקום אחד, ללא עמלות.',
+  alternates: { canonical: 'https://www.zimmer.club/about' },
+  openGraph: {
+    title: 'אודות zimmer.club',
+    description: 'הסיפור מאחורי פלטפורמת האירוח המובילה בישראל.',
+    url: 'https://www.zimmer.club/about',
+    locale: 'he_IL',
+    type: 'website',
+  },
+}
+
 export default function AboutPage() {
   const cats = [
     { icon: '🏡', title: 'צימרים', text: 'בקתות וחדרים רומנטיים בטבע, מהגליל ועד הנגב' },
@@ -192,7 +207,7 @@ export default function AboutPage() {
             <p className="text-[10px] font-medium tracking-[2px] uppercase text-white/50 mb-2">לאורחים</p>
             <h3 className="text-lg md:text-xl font-bold text-[#F5EDD6] mb-3 leading-snug">מצאו את החופשה שתזכרו לתמיד</h3>
             <p className="text-sm text-[#F5EDD6]/70 leading-relaxed mb-5">צימרים, וילות, קרוואנים ואטרקציות — מעל 1,000 נכסים מאומתים, ללא עמלות, עם סוכן AI שיעזור לכם למצוא בדיוק מה שחיפשתם.</p>
-            <a href="/properties" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים ←</a>
+            <a href="/search" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים ←</a>
           </div>
           <div className="bg-[#F5EDD6] rounded-2xl p-6 md:p-8 border border-[#8B6914]/20">
             <p className="text-[10px] font-medium tracking-[2px] uppercase text-[#9A8060] mb-2">לבעלי נכסים</p>

@@ -116,6 +116,10 @@ function SearchContent() {
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
   const [textSearch, setTextSearch] = useState(searchParams.get('q') || '')
+
+  useEffect(() => {
+    setShowFilters(window.innerWidth >= 768)
+  }, [])
   const [suggestions, setSuggestions] = useState<{id:string, name:string, city:string, category:string[]}[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
@@ -294,9 +298,8 @@ function SearchContent() {
       if (dates.length > 0) {
         const { data: blockedData } = await supabase
           .from('blocked_dates')
-          .select('property_id, date')
+          .select('property_id')
           .in('date', dates)
-          .eq('status', 'blocked')
         const blockedPropertyIds = new Set((blockedData || []).map((b: any) => b.property_id))
         results = results.filter(p => !blockedPropertyIds.has(p.id))
       }
@@ -320,7 +323,6 @@ function SearchContent() {
         .from('blocked_dates')
         .select('property_id')
         .in('date', [thuStr, friStr, satStr])
-        .eq('status', 'blocked')
       const blockedIds = new Set((blockedWeekend || []).map((b: any) => b.property_id))
       results = results.filter(p => !blockedIds.has(p.id))
     }
@@ -329,7 +331,7 @@ function SearchContent() {
     if (filters.category === 'today') {
       const todayStr = new Date().toISOString().split('T')[0]
       const { data: blockedToday } = await supabase
-        .from('blocked_dates').select('property_id').eq('date', todayStr).eq('status', 'blocked')
+        .from('blocked_dates').select('property_id').eq('date', todayStr)
       const blockedIds = new Set((blockedToday || []).map((b: any) => b.property_id))
       results = results.filter(p => !blockedIds.has(p.id))
     }
@@ -341,7 +343,7 @@ function SearchContent() {
       const thu = new Date(today); thu.setDate(today.getDate() + daysUntilThu)
       const thuStr = thu.toISOString().split('T')[0]
       const { data: blockedThu } = await supabase
-        .from('blocked_dates').select('property_id').eq('date', thuStr).eq('status', 'blocked')
+        .from('blocked_dates').select('property_id').eq('date', thuStr)
       const blockedIds = new Set((blockedThu || []).map((b: any) => b.property_id))
       results = results.filter(p => !blockedIds.has(p.id))
     }
@@ -353,7 +355,7 @@ function SearchContent() {
       const fri = new Date(today); fri.setDate(today.getDate() + daysUntilFri)
       const friStr = fri.toISOString().split('T')[0]
       const { data: blockedFri } = await supabase
-        .from('blocked_dates').select('property_id').eq('date', friStr).eq('status', 'blocked')
+        .from('blocked_dates').select('property_id').eq('date', friStr)
       const blockedIds = new Set((blockedFri || []).map((b: any) => b.property_id))
       results = results.filter(p => !blockedIds.has(p.id))
     }
@@ -367,18 +369,14 @@ function SearchContent() {
       for (let d = new Date(now); d <= in7days; d.setDate(d.getDate() + 1)) {
         dates.push(d.toISOString().split('T')[0])
       }
-      // מצא נכסים שחסומים בכל הלילות בשבוע הקרוב
       const { data: blockedLast } = await supabase
         .from('blocked_dates')
         .select('property_id, date')
         .in('date', dates)
-        .eq('status', 'blocked')
-      // ספור כמה לילות חסום כל נכס
       const blockedCount: Record<string, number> = {}
       ;(blockedLast || []).forEach((b: any) => {
         blockedCount[b.property_id] = (blockedCount[b.property_id] || 0) + 1
       })
-      // שמור רק נכסים שיש להם לפחות לילה אחד פנוי (לא חסום בכל הלילות)
       results = results.filter(p => (blockedCount[p.id] || 0) < dates.length)
     }
 
@@ -463,7 +461,7 @@ function SearchContent() {
               חיפוש מתקדם
               {activeCount > 0 && <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{activeCount}</span>}
             </button>
-            <span className="text-sm text-gray-400 mr-auto whitespace-nowrap">
+            <span aria-live="polite" aria-atomic="true" className="text-sm text-gray-400 mr-auto whitespace-nowrap">
               {loading ? 'מחפש...' : `${properties.length} נכסים`}
             </span>
             <select
@@ -481,149 +479,199 @@ function SearchContent() {
 
         {/* פאנל פילטרים */}
         {showFilters && (
-          <div className="bg-white border-b border-gray-100 shadow-sm">
-            <div className="max-w-7xl mx-auto px-6 py-6 space-y-6" dir="rtl">
+          <div style={{ background: 'linear-gradient(to bottom, #faf7f2, #f5f0e8)', borderBottom: '1px solid #e8dcc8' }}>
+            <div className="max-w-7xl mx-auto px-4 py-5 space-y-3" dir="rtl">
 
-              {/* שורה 1 */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className={labelClass} style={{fontSize:"13px"}}>סוג נכס</label>
+              {/* שורה 1: 4 קוביות ראשיות */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+                {/* קוביה 1 — סוג נכס */}
+                <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4" style={{gridColumn: 'span 1'}}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">🏡</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">סוג נכס</span>
+                    {filters.category && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                  </div>
                   <div className="flex flex-wrap gap-1.5">
                     {PROPERTY_TYPES.map(t => (
                       <button key={t.value} onClick={() => setFilters(p => ({ ...p, category: t.value }))}
-                        className="px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
+                        className="px-2.5 py-1 rounded-xl text-xs font-semibold border transition-all"
                         style={{
-                          background: filters.category === t.value ? '#8B6914' : '#fff',
+                          background: filters.category === t.value ? 'linear-gradient(135deg,#C8960C,#8B6914)' : '#faf7f2',
                           color: filters.category === t.value ? '#fff' : '#6b7280',
-                          borderColor: filters.category === t.value ? '#8B6914' : '#e5e7eb',
+                          borderColor: filters.category === t.value ? '#8B6914' : '#e8dcc8',
+                          boxShadow: filters.category === t.value ? '0 2px 6px rgba(139,105,20,0.25)' : 'none',
                         }}>
                         {t.label}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <label className={labelClass} style={{fontSize:"13px"}}>אזור בארץ</label>
-                  <select value={filters.region} onChange={e => setFilters(p => ({ ...p, region: e.target.value }))} className={selectClass}>
+
+                {/* קוביה 2 — אזור */}
+                <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">📍</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">אזור בארץ</span>
+                    {filters.region && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                  </div>
+                  <select value={filters.region} onChange={e => setFilters(p => ({ ...p, region: e.target.value }))}
+                    className="w-full rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none transition-all cursor-pointer"
+                    style={{ border: '1.5px solid #e8dcc8', background: '#faf7f2' }}>
                     <option value="">כל הארץ</option>
                     {[
-                      { value: 'north', label: 'צפון' },
+                      { value: 'north', label: '🌲 צפון' },
                       { value: 'galil_west', label: 'גליל המערבי' },
                       { value: 'galil_upper', label: 'גליל העליון' },
                       { value: 'galil_lower', label: 'גליל התחתון' },
-                      { value: 'kinneret', label: 'כנרת' },
-                      { value: 'hermon', label: 'חרמון' },
-                      { value: 'center', label: 'מרכז' },
-                      { value: 'jerusalem', label: 'ירושלים' },
-                      { value: 'dead_sea', label: 'ים המלח' },
-                      { value: 'negev', label: 'דרום' },
-                      { value: 'eilat', label: 'אילת' },
+                      { value: 'kinneret', label: '🌊 כנרת' },
+                      { value: 'hermon', label: '⛷️ חרמון' },
                       { value: 'golan', label: 'רמת הגולן' },
-                    ].map(r => (
-                      <option key={r.value} value={r.value}>{r.label}</option>
-                    ))}
+                      { value: 'center', label: '🏙️ מרכז' },
+                      { value: 'jerusalem', label: '🕌 ירושלים' },
+                      { value: 'dead_sea', label: '🧂 ים המלח' },
+                      { value: 'negev', label: '🏜️ דרום' },
+                      { value: 'eilat', label: '🌴 אילת' },
+                    ].map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                   </select>
                 </div>
-                <div>
-                  <label className={labelClass} style={{fontSize:"13px"}}>מספר אורחים</label>
-                  <select value={filters.guests} onChange={e => setFilters(p => ({ ...p, guests: e.target.value }))} className={selectClass}>
-                    <option value="">כל הגדלים</option>
-                    {[1,2,3,4,5,6,8,10,12,15,20].map(n => <option key={n} value={n}>{n}+ אורחים</option>)}
-                  </select>
-                </div>
-              </div>
 
-              {/* מחיר */}
-              <div>
-                <label className={labelClass} style={{fontSize:"13px"}}>מחיר ללילה</label>
-                <PriceRangeSlider min={200} max={35000} value={priceRange} onChange={setPriceRange} />
-              </div>
-
-              {/* מה יש בנכס */}
-              <div className="rounded-2xl border border-gray-100 overflow-hidden">
-                <button onClick={() => setShowAmenities(!showAmenities)}
-                  className="w-full flex items-center justify-between px-5 py-3.5 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                    מה יש בנכס
-                    {selectedAmenities.filter(k => FEATURE_AMENITIES.includes(k)).length > 0 &&
-                      <span className="bg-amber-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5">
-                        {selectedAmenities.filter(k => FEATURE_AMENITIES.includes(k)).length}
-                      </span>}
-                  </span>
-                  {showAmenities ? <IconChevronUp className="w-4 h-4 text-gray-400" /> : <IconChevronDown className="w-4 h-4 text-gray-400" />}
-                </button>
-                {showAmenities && (
-                  <div className="p-4 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-2">
-                    {FEATURE_AMENITIES.map(key => (
-                      <button key={key} onClick={() => toggleAmenity(key)}
-                        className="py-2 px-2 rounded-xl text-xs font-medium border transition-all text-center"
+                {/* קוביה 3 — אורחים */}
+                <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">👥</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מספר אורחים</span>
+                    {filters.guests && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { v: '', l: 'הכל' }, { v: '2', l: '2' }, { v: '3', l: '3' },
+                      { v: '4', l: '4' }, { v: '6', l: '6' }, { v: '8', l: '8' },
+                      { v: '10', l: '10' }, { v: '12', l: '12+' },
+                    ].map(({ v, l }) => (
+                      <button key={v} onClick={() => setFilters(p => ({ ...p, guests: v }))}
+                        className="w-10 h-10 rounded-xl text-sm font-bold border transition-all"
                         style={{
-                          background: selectedAmenities.includes(key) ? '#FEF3C7' : '#fff',
-                          borderColor: selectedAmenities.includes(key) ? '#D97706' : '#e5e7eb',
-                          color: selectedAmenities.includes(key) ? '#92400E' : '#6b7280',
+                          background: filters.guests === v ? 'linear-gradient(135deg,#C8960C,#8B6914)' : '#faf7f2',
+                          color: filters.guests === v ? '#fff' : '#6b7280',
+                          borderColor: filters.guests === v ? '#8B6914' : '#e8dcc8',
+                          boxShadow: filters.guests === v ? '0 2px 6px rgba(139,105,20,0.25)' : 'none',
                         }}>
-                        {AMENITY_LABELS[key]}
+                        {l}
                       </button>
                     ))}
                   </div>
-                )}
+                </div>
+
+                {/* קוביה 4 — מחיר */}
+                <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">💰</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מחיר ללילה</span>
+                    {(priceRange[0] > 200 || priceRange[1] < 35000) && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                  </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{background:'#FEF3C7', color:'#92400E'}}>
+                      ₪{priceRange[0].toLocaleString()}
+                    </span>
+                    <span className="text-gray-300 text-xs mx-1">—</span>
+                    <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{background:'#FEF3C7', color:'#92400E'}}>
+                      ₪{priceRange[1].toLocaleString()}
+                    </span>
+                  </div>
+                  <PriceRangeSlider min={200} max={35000} value={priceRange} onChange={setPriceRange} />
+                </div>
               </div>
 
-              {/* קהל יעד */}
-              <div className="rounded-2xl border border-gray-100 overflow-hidden">
-                <button onClick={() => setShowAudience(!showAudience)}
-                  className="w-full flex items-center justify-between px-5 py-3.5 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                    קהל יעד
-                    {selectedAmenities.filter(k => Object.keys(AUDIENCE_AMENITIES).includes(k)).length > 0 &&
-                      <span className="bg-amber-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5">
-                        {selectedAmenities.filter(k => Object.keys(AUDIENCE_AMENITIES).includes(k)).length}
-                      </span>}
-                  </span>
-                  {showAudience ? <IconChevronUp className="w-4 h-4 text-gray-400" /> : <IconChevronDown className="w-4 h-4 text-gray-400" />}
-                </button>
-                {showAudience && (
-                  <div className="p-4 flex flex-wrap gap-2">
+              {/* שורה 2: מה יש בנכס — קוביה רחבה */}
+              <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-base">✨</span>
+                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מה יש בנכס</span>
+                  {selectedAmenities.filter(k => FEATURE_AMENITIES.includes(k)).length > 0 && (
+                    <span className="mr-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'#FEF3C7', color:'#92400E'}}>
+                      {selectedAmenities.filter(k => FEATURE_AMENITIES.includes(k)).length} נבחרו
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {FEATURE_AMENITIES.map(key => (
+                    <button key={key} onClick={() => toggleAmenity(key)}
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
+                      style={{
+                        background: selectedAmenities.includes(key) ? '#FEF3C7' : '#faf7f2',
+                        borderColor: selectedAmenities.includes(key) ? '#D97706' : '#e8dcc8',
+                        color: selectedAmenities.includes(key) ? '#92400E' : '#9ca3af',
+                        boxShadow: selectedAmenities.includes(key) ? '0 1px 4px rgba(217,119,6,0.2)' : 'none',
+                      }}>
+                      {AMENITY_LABELS[key]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* שורה 3: קהל יעד + הגדרות מיוחדות */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                {/* קהל יעד */}
+                <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">🎯</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">קהל יעד</span>
+                    {selectedAmenities.filter(k => Object.keys(AUDIENCE_AMENITIES).includes(k)).length > 0 && (
+                      <span className="mr-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'#FEF3C7', color:'#92400E'}}>
+                        {selectedAmenities.filter(k => Object.keys(AUDIENCE_AMENITIES).includes(k)).length} נבחרו
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     {Object.entries(AUDIENCE_AMENITIES).map(([key, label]) => (
                       <button key={key} onClick={() => toggleAmenity(key)}
-                        className="px-4 py-2 rounded-full text-sm font-medium border transition-all"
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
                         style={{
-                          background: selectedAmenities.includes(key) ? '#FEF3C7' : '#fff',
-                          borderColor: selectedAmenities.includes(key) ? '#D97706' : '#e5e7eb',
-                          color: selectedAmenities.includes(key) ? '#92400E' : '#6b7280',
+                          background: selectedAmenities.includes(key) ? '#FEF3C7' : '#faf7f2',
+                          borderColor: selectedAmenities.includes(key) ? '#D97706' : '#e8dcc8',
+                          color: selectedAmenities.includes(key) ? '#92400E' : '#9ca3af',
+                          boxShadow: selectedAmenities.includes(key) ? '0 1px 4px rgba(217,119,6,0.2)' : 'none',
                         }}>
                         {label}
                       </button>
                     ))}
                   </div>
-                )}
-              </div>
-
-              {/* checkboxes + נקה */}
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-100">
-                <div className="flex flex-wrap gap-6">
-                  {[
-                    { key: 'instant_book', label: '⚡ הזמנה מיידית' },
-                    { key: 'accepts_miluim', label: '🪖 שובר מילואים' },
-                    { key: 'has_shelter', label: '🛡️ מרחב מוגן' },
-                  ].map(({ key, label }) => (
-                    <label key={key} className="flex items-center gap-2 cursor-pointer group">
-                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${(filters as any)[key] ? 'bg-amber-600 border-amber-600' : 'border-gray-300 group-hover:border-amber-400'}`}>
-                        {(filters as any)[key] && <span className="text-white text-xs">✓</span>}
-                      </div>
-                      <input type="checkbox" checked={(filters as any)[key]}
-                        onChange={e => setFilters(p => ({ ...p, [key]: e.target.checked }))}
-                        className="sr-only" />
-                      <span className="text-sm text-gray-700 font-medium">{label}</span>
-                    </label>
-                  ))}
                 </div>
-                {activeCount > 0 && (
-                  <button onClick={clearFilters}
-                    className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-600 font-medium transition-colors">
-                    <IconX className="w-4 h-4" /> נקה הכל
-                  </button>
-                )}
+
+                {/* הגדרות מיוחדות */}
+                <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">⚙️</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">הגדרות מיוחדות</span>
+                    {activeCount > 0 && (
+                      <button onClick={clearFilters}
+                        className="mr-auto flex items-center gap-1 text-xs text-red-400 hover:text-red-600 font-medium transition-colors">
+                        <IconX className="w-3 h-3" /> נקה הכל
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { key: 'instant_book', label: 'הזמנה מיידית', icon: '⚡' },
+                      { key: 'accepts_miluim', label: 'שובר מילואים', icon: '🪖' },
+                      { key: 'has_shelter', label: 'מרחב מוגן', icon: '🛡️' },
+                    ].map(({ key, label, icon }) => (
+                      <button key={key}
+                        onClick={() => setFilters(p => ({ ...p, [key]: !(p as any)[key] }))}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
+                        style={{
+                          background: (filters as any)[key] ? 'linear-gradient(135deg,#C8960C,#8B6914)' : '#faf7f2',
+                          color: (filters as any)[key] ? '#fff' : '#6b7280',
+                          borderColor: (filters as any)[key] ? '#8B6914' : '#e8dcc8',
+                          boxShadow: (filters as any)[key] ? '0 2px 6px rgba(139,105,20,0.25)' : 'none',
+                        }}>
+                        <span>{icon}</span> {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
             </div>

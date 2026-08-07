@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 
 export default async function sitemap() {
-  const baseUrl = 'https://zimmer.club'
+  const baseUrl = 'https://www.zimmer.club'
 
   const staticPages = [
     { url: baseUrl,                        lastModified: new Date(), changeFrequency: 'daily'  as const, priority: 1.0 },

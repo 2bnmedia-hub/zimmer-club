@@ -2,12 +2,14 @@
 
 import Image from 'next/image'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { createClient } from '@/lib/supabase/client'
 
-function PasswordInput({ name, value, onChange, placeholder }: {
+function PasswordInput({ id, name, value, onChange, placeholder }: {
+  id?: string
   name: string
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -29,6 +31,7 @@ function PasswordInput({ name, value, onChange, placeholder }: {
   return (
     <div className="relative">
       <input
+        id={id}
         name={name}
         type={show ? 'text' : 'password'}
         value={value}
@@ -36,21 +39,35 @@ function PasswordInput({ name, value, onChange, placeholder }: {
         required
         placeholder={placeholder}
         dir="ltr"
+        autoComplete={name === 'password' ? 'current-password' : 'new-password'}
         className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 pr-10"
       />
       <button
         type="button"
         onClick={handleToggle}
+        aria-label={show ? 'הסתר סיסמה' : 'הצג סיסמה'}
         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
       >
-        {show ? <IconEyeOff className="w-4 h-4" /> : <IconEye className="w-4 h-4" />}
+        {show ? <IconEyeOff className="w-4 h-4" aria-hidden="true" /> : <IconEye className="w-4 h-4" aria-hidden="true" />}
       </button>
     </div>
   )
 }
 
-export default function LoginPage() {
+function LoginContent() {
   const supabase = createClient()
+  const searchParams = useSearchParams()
+
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [notice, setNotice] = useState('')
+
+  useEffect(() => {
+    if (searchParams.get('notice') === 'already_registered') {
+      setNotice('האימייל הזה כבר רשום במערכת. אנא כנסו עם הפרטים שלכם.')
+    }
+  }, [searchParams])
   const handleFacebookSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'facebook',
@@ -67,10 +84,6 @@ export default function LoginPage() {
       options: { redirectTo: `${window.location.origin}/auth/callback` }
     })
   }
-
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
 
   const [form, setForm] = useState({ email: '', password: '' })
 
@@ -97,15 +110,6 @@ export default function LoginPage() {
 
     setSuccess('מתחבר... מיד תועבר לחשבונך')
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setLoading(false); return }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
     window.location.href = '/'
   }
 
@@ -127,24 +131,25 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">אימייל</label>
-            <input name="email" type="email" value={form.email} onChange={handleChange} required
+            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">אימייל</label>
+            <input id="login-email" name="email" type="email" value={form.email} onChange={handleChange} required
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600"
-              placeholder="israel@example.com" dir="ltr" />
+              placeholder="israel@example.com" dir="ltr" autoComplete="email" />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium text-gray-700">סיסמה</label>
+              <label htmlFor="login-password" className="block text-sm font-medium text-gray-700">סיסמה</label>
               <button type="button" onClick={handleForgotPassword} className="text-xs text-yellow-700 hover:underline">
                 שכחת סיסמה?
               </button>
             </div>
-            <PasswordInput name="password" value={form.password} onChange={handleChange} placeholder="הכנס סיסמה" />
+            <PasswordInput id="login-password" name="password" value={form.password} onChange={handleChange} placeholder="הכנס סיסמה" />
           </div>
 
-          {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
-          {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">{success}</div>}
+          {notice && <div role="status" className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">{notice}</div>}
+          {error && <div role="alert" aria-live="assertive" className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
+          {success && <div role="status" aria-live="polite" className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700">{success}</div>}
 
           <button type="submit" disabled={loading}
             className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-start justify-center gap-2"
@@ -185,5 +190,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+      <LoginContent />
+    </Suspense>
   )
 }

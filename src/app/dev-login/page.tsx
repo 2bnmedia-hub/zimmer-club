@@ -6,13 +6,23 @@ export default function DevLogin() {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    if (password === 'zimmer2024') {
-      document.cookie = 'dev-auth=zimmer2024; path=/; max-age=86400'
-      window.location.href = '/'
-    } else {
+    setError(false)
+    try {
+      const res = await fetch('/api/dev-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      if (res.ok) {
+        window.location.href = '/'
+      } else {
+        setError(true)
+        setLoading(false)
+      }
+    } catch {
       setError(true)
       setLoading(false)
     }
@@ -33,6 +43,9 @@ export default function DevLogin() {
             onChange={(e) => { setPassword(e.target.value); setError(false) }}
             dir="rtl"
             autoFocus
+            aria-label="סיסמת גישה"
+            aria-invalid={error}
+            aria-describedby={error ? 'dev-login-error' : undefined}
             style={{
               width: '100%',
               padding: '15px 18px',
@@ -48,7 +61,7 @@ export default function DevLogin() {
             }}
           />
           {error && (
-            <p style={{ color: '#E24B4A', fontSize: 13, margin: 0 }}>סיסמה שגויה — נסה שוב</p>
+            <p id="dev-login-error" role="alert" style={{ color: '#E24B4A', fontSize: 13, margin: 0 }}>סיסמה שגויה — נסה שוב</p>
           )}
           <button
             type="submit"

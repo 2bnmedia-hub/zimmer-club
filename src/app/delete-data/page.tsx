@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function DeleteDataPage() {
   return (
     <div
@@ -27,14 +29,8 @@ export default function DeleteDataPage() {
           border: '1px solid rgba(139,105,20,0.10)',
         }}
       >
-        <div
-          className="px-8 pt-8 pb-6"
-          style={{ borderBottom: '1px solid rgba(139,105,20,0.08)' }}
-        >
-          <h1
-            className="text-2xl font-bold mb-2"
-            style={{ color: '#2D1E0F', letterSpacing: '-0.01em' }}
-          >
+        <div className="px-8 pt-8 pb-6" style={{ borderBottom: '1px solid rgba(139,105,20,0.08)' }}>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: '#2D1E0F', letterSpacing: '-0.01em' }}>
             מחיקת נתונים אישיים
           </h1>
           <p className="text-sm leading-relaxed" style={{ color: '#7A6652' }}>
@@ -43,15 +39,33 @@ export default function DeleteDataPage() {
         </div>
 
         <div className="px-8 py-7">
+          {/* Quick action for logged-in users */}
+          <Link href="/dashboard/profile"
+            className="flex items-center gap-4 w-full p-4 rounded-2xl mb-6 transition-all hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg,#fdf3dd,#f5e8bf)', border: '1px solid rgba(139,105,20,0.2)' }}>
+            <div className="w-10 h-10 rounded-xl bg-white/70 flex items-center justify-center shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B6914" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div className="flex-1 text-right">
+              <p className="text-sm font-semibold" style={{ color: '#6B4C0E' }}>מחק חשבון ישירות מהפרופיל</p>
+              <p className="text-xs mt-0.5" style={{ color: '#9A7C5E' }}>משתמשים רשומים — לחצו כאן למחיקה מידית</p>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8964A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </Link>
+
           <p className="text-xs font-semibold mb-5 tracking-widest uppercase" style={{ color: '#B8964A', letterSpacing: '0.14em' }}>
-            שלבים למחיקת החשבון
+            לא מחוברים? שלבים למחיקה ידנית
           </p>
 
           <ol className="space-y-5">
             {[
-              { n: '01', text: 'כנס לחשבונך באתר zimmer.club' },
-              { n: '02', text: 'עבור לעמוד הפרופיל שלך' },
-              { n: '03', text: 'לחץ על "מחק חשבון" — כל הנתונים שלך יימחקו לצמיתות' },
+              { n: '01', text: 'כנסו לחשבונכם באתר zimmer.club' },
+              { n: '02', text: 'עברו לדף הפרופיל דרך התפריט העליון' },
+              { n: '03', text: 'גללו למטה לאזור "אזור מסוכן" ולחצו על "מחק חשבון" — כל הנתונים יימחקו לצמיתות' },
             ].map(({ n, text }) => (
               <li key={n} className="flex items-start gap-4">
                 <span
@@ -60,9 +74,7 @@ export default function DeleteDataPage() {
                 >
                   {n}
                 </span>
-                <span className="text-sm leading-relaxed pt-1.5" style={{ color: '#3D2B1A' }}>
-                  {text}
-                </span>
+                <span className="text-sm leading-relaxed pt-1.5" style={{ color: '#3D2B1A' }}>{text}</span>
               </li>
             ))}
           </ol>
@@ -71,22 +83,12 @@ export default function DeleteDataPage() {
         <div style={{ height: '1px', background: 'rgba(139,105,20,0.08)', margin: '0 2rem' }} />
 
         <div className="px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <p className="text-xs" style={{ color: '#9A7C5E' }}>
-            לא מצאת את מה שחיפשת?
-          </p>
-          
+          <p className="text-xs" style={{ color: '#9A7C5E' }}>צריכים עזרה נוספת?</p>
           <a href="mailto:info@zimmer.club"
             className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all"
-            style={{
-              background: 'rgba(139,105,20,0.08)',
-              color: '#8B6914',
-              border: '1px solid rgba(139,105,20,0.18)',
-              textDecoration: 'none',
-            }}
-          >
+            style={{ background: 'rgba(139,105,20,0.08)', color: '#8B6914', border: '1px solid rgba(139,105,20,0.18)', textDecoration: 'none' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2"/>
-              <polyline points="2,4 12,13 22,4"/>
+              <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/>
             </svg>
             info@zimmer.club
           </a>
@@ -94,7 +96,7 @@ export default function DeleteDataPage() {
       </div>
 
       <p className="mt-8 text-xs text-center" style={{ color: '#C4A882' }}>
-        בקשות מחיקה מטופלות תוך 30 יום · zimmer.club מחויבת לפרטיותך
+        בקשות מחיקה מטופלות מידית · zimmer.club מחויבת לפרטיותך
       </p>
     </div>
   )

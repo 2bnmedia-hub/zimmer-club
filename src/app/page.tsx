@@ -8,10 +8,33 @@ import { FeaturedAttractions } from '@/components/FeaturedAttractions'
 import { FeaturedCaravans } from '@/components/FeaturedCaravans'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
 
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'zimmer.club',
+  url: 'https://www.zimmer.club',
+  logo: 'https://www.zimmer.club/logo.png',
+  description: 'פלטפורמת הנופש הגדולה בישראל — צימרים, וילות, קרוואנים ואטרקציות',
+  sameAs: ['https://www.facebook.com/zimmerclub', 'https://www.instagram.com/zimmerclub'],
+}
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'zimmer.club',
+  url: 'https://www.zimmer.club',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: 'https://www.zimmer.club/search?q={search_term_string}' },
+    'query-input': 'required name=search_term_string',
+  },
+}
+
 export default function HomePage() {
   return (
     <>
-      
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
 
       <main>
         {/* HERO */}
@@ -127,45 +150,43 @@ export default function HomePage() {
         <FeaturedCaravans />
 
         {/* CATEGORIES */}
-        <section className="py-20 bg-white overflow-hidden">
+        <section className="py-14 overflow-hidden" style={{ background: 'linear-gradient(180deg, #fafaf8 0%, #f5f0e8 100%)' }}>
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-end justify-between mb-12">
+            <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-taupe mb-2">
-                  קטגוריות פופולריות
-                </p>
-
-                <h2 className="section-title">
-                  חפשו לפי סגנון
-                </h2>
+                <p className="font-bold uppercase tracking-widest mb-1.5" style={{ color: '#B8964A', fontSize: '10px' }}>◈ קטגוריות פופולריות</p>
+                <h2 className="section-title">חפשו לפי סגנון</h2>
               </div>
-
-              <Link
-                href="/search"
-                className="text-sm font-semibold text-gold-deep hover:underline hidden sm:block"
-              >
-                כל הנכסים ←
-              </Link>
+              <Link href="/search" className="text-sm font-semibold hover:underline hidden sm:block" style={{ color: '#8B6914' }}>כל הנכסים ←</Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {CATEGORIES.map((cat) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" style={{ gridAutoRows: '130px' }}>
+              {[
+                { key: 'couples',  href: '/search?amenity=couples',        label: 'רומנטי',              emoji: '💑', desc: 'נכסים מושלמים לזוגות',       from: '#5a1a35', to: '#9c3060' },
+                { key: 'families', href: '/search?amenity=families',       label: 'מתאים למשפחות',       emoji: '👨‍👩‍👧‍👦', desc: 'מרחב ונוחות לכל המשפחה',   from: '#0f2d5c', to: '#1a4d9c' },
+                { key: 'villa',    href: '/search?category=villa',         label: 'וילות יוקרה',         emoji: '🏰', desc: 'חוויה יוקרתית ומפנקת',     from: '#5c3a14', to: '#a06b20' },
+                { key: 'pets',     href: '/search?amenity=pets',           label: 'ידידותי לבעלי חיים',  emoji: '🐾', desc: 'גם הכלב מוזמן',            from: '#1a4020', to: '#2d6e38' },
+                { key: 'pool',     href: '/search?amenity=pool',           label: 'עם בריכה',            emoji: '🏊', desc: 'קירור וכיף במים',           from: '#0a2840', to: '#0a4a72' },
+                { key: 'jacuzzi',  href: '/search?amenity=jacuzzi',        label: "עם ג'קוזי",           emoji: '🛁', desc: 'רגיעה מוחלטת',             from: '#2e0f5c', to: '#5a20a0' },
+                { key: 'shelter',  href: '/search?amenity=shelter_nearby', label: 'עם מרחב מוגן',        emoji: '🛡️', desc: 'בטחון ורוגע',              from: '#1e2030', to: '#303450' },
+              ].map((cat) => (
                 <Link
                   key={cat.key}
                   href={cat.href}
-                  className="card p-5 hover:border-gold transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+                  className="group relative rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl"
+                  style={{ boxShadow: '0 4px 18px rgba(0,0,0,0.14)' }}
                 >
-                  <div className="w-11 h-11 rounded-xl bg-cream-100 flex items-center justify-center text-2xl mb-4">
-                    {cat.emoji}
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(145deg, ${cat.from}, ${cat.to})` }} />
+                  <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1), transparent 55%)' }} />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 60%)' }} />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className="opacity-20 group-hover:opacity-30 transition-opacity duration-300" style={{ fontSize: 52 }}>{cat.emoji}</span>
                   </div>
-
-                  <p className="font-bold text-charcoal text-base mb-1">
-                    {cat.label}
-                  </p>
-
-                  <p className="text-xs text-taupe">
-                    {cat.description}
-                  </p>
+                  <div className="absolute bottom-0 right-0 left-0 p-3.5 text-white">
+                    <p className="font-bold leading-tight" style={{ fontSize: '13px' }}>{cat.label}</p>
+                    <p className="text-white/60 mt-0.5" style={{ fontSize: '10px' }}>{cat.desc}</p>
+                  </div>
+                  <div className="absolute top-3 right-3 text-lg leading-none">{cat.emoji}</div>
                 </Link>
               ))}
             </div>

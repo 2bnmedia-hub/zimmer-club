@@ -2,19 +2,21 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings, IconClock } from '@/components/icons'
+import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings, IconClock, IconHeart } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU, CARAVAN_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
 import { useProfile } from '@/contexts/ProfileContext'
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
+import { useWishlist } from '@/hooks/useWishlist'
 
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
   { href: '/camping', label: 'קמפינג' },
+  { href: '/miluim', label: '🎖️ מילואים' },
   { href: '/deals', label: 'מבצעים', badge: true },
   { href: '/advertise', label: 'פרסמו באתר' },
-  { href: '/find', label: 'אתרו צימר' },
+  { href: '/find', label: 'סוכן Ai' },
 ]
 
 type MenuItem = { href: string; label: string }
@@ -113,6 +115,7 @@ export function Navbar() {
   const supabase = createClient()
   const { avatarUrl, refreshKey } = useProfile()
   const { items: recentItems, count: recentCount, clear: clearRecent } = useRecentlyViewed()
+  const { totalCount: wishlistCount } = useWishlist()
 
   useEffect(() => {
     async function loadUser() {
@@ -141,8 +144,15 @@ export function Navbar() {
     function handleClick(e: MouseEvent) {
       if (navRef.current && !navRef.current.contains(e.target as Node)) setActiveMenu(null)
     }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setActiveMenu(null)
+    }
     document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
   }, [])
 
   const toggleMenu = (name: string) => setActiveMenu(prev => prev === name ? null : name)
@@ -178,7 +188,9 @@ export function Navbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
-            aria-label="תפריט"
+            aria-label={mobileOpen ? 'סגור תפריט' : 'פתח תפריט'}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             {mobileOpen
               ? <IconX className="w-6 h-6 text-gray-700" />
@@ -192,44 +204,50 @@ export function Navbar() {
             onClick={() => setActiveMenu(null)}
             className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:left-auto lg:mr-0 flex-shrink-0"
           >
-            <img
+            <Image
               src="/logo.png"
-              alt="Zimmer Club"
+              alt="zimmer.club"
+              width={1408}
+              height={542}
+              priority
               className="logo-shine"
               style={{ height: 'clamp(48px, 8vw, 68px)', width: 'auto' }}
             />
           </Link>
 
           {/* ניווט דסקטופ — אמצע */}
-          <ul className="hidden lg:flex items-center list-none flex-1 justify-evenly mx-6">
+          <ul className="hidden lg:flex items-center list-none flex-1 justify-center gap-0.5 mx-2 overflow-hidden">
             {[
               { name: 'zimmer', label: 'צימרים' },
               { name: 'villas', label: 'וילות ובקתות' },
               { name: 'attractions', label: 'אטרקציות' },
               { name: 'caravans', label: 'קרוואנים' },
             ].map((item) => (
-              <li key={item.name}>
+              <li key={item.name} className="shrink-0">
                 <button
                   onClick={() => toggleMenu(item.name)}
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all"
+                  aria-expanded={activeMenu === item.name}
+                  aria-haspopup="true"
+                  aria-controls={`menu-${item.name}`}
+                  className="flex items-center gap-0.5 px-2 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap"
                   style={{
                     color: activeMenu === item.name ? '#8B6914' : '#374151',
                     background: activeMenu === item.name ? 'rgba(139,105,20,0.07)' : 'transparent',
                   }}
                 >
                   {item.label}
-                  <IconChevronDown className={cn('w-4 h-4 transition-transform duration-200', activeMenu === item.name && 'rotate-180')} />
+                  <IconChevronDown className={cn('w-3.5 h-3.5 transition-transform duration-200 shrink-0', activeMenu === item.name && 'rotate-180')} aria-hidden="true" />
                 </button>
               </li>
             ))}
             {NAV_ITEMS.map((item) => (
-              <li key={item.href}>
+              <li key={item.href} className="shrink-0">
                 <Link
                   href={item.href}
                   onClick={() => setActiveMenu(null)}
                   className={item.badge
-                    ? 'relative px-4 py-2 text-sm font-bold text-white rounded-full transition-all hover:opacity-90'
-                    : 'px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors'
+                    ? 'relative px-3 py-1.5 text-sm font-bold text-white rounded-full transition-all hover:opacity-90 whitespace-nowrap'
+                    : 'px-2 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap'
                   }
                   style={item.badge ? {
                     background: 'linear-gradient(135deg, #C8960C, #8B6914)',
@@ -243,14 +261,28 @@ export function Navbar() {
           </ul>
 
           {/* אזור משתמש — שמאל בדסקטופ */}
-          <div className="hidden lg:flex items-center gap-1 flex-shrink-0 mr-auto">
+          <div className="hidden lg:flex items-center gap-0.5 flex-shrink-0 mr-auto">
+
+            {/* מועדפים */}
+            <Link href="/wishlist" title="המועדפים שלי"
+              className="relative flex items-center gap-1 px-2 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+              <IconHeart className={cn('w-4 h-4 transition-colors', wishlistCount > 0 ? 'fill-red-500 text-red-500' : 'text-gray-500')} />
+              {wishlistCount > 0 && (
+                <span className="text-xs bg-red-100 text-red-600 font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{fontSize:10}}>
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
 
             {/* מקומות שראיתי */}
             {recentCount > 0 && (
               <div className="relative">
                 <button
                   onClick={() => toggleMenu('recent')}
-                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
+                  aria-expanded={activeMenu === 'recent'}
+                  aria-haspopup="true"
+                  aria-label="מקומות שצפיתי בהם"
+                  className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
                 >
                   <IconClock className="w-4 h-4" />
                   <span className="hidden xl:inline">שראיתי</span>
@@ -293,7 +325,10 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => toggleMenu('user')}
-                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
+                  aria-expanded={activeMenu === 'user'}
+                  aria-haspopup="true"
+                  aria-label="תפריט חשבון משתמש"
+                  className="flex items-center gap-1.5 px-2 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
                 >
                   {user.avatar ? (
                     <Image src={user.avatar} alt="" width={28} height={28} className="w-7 h-7 rounded-full object-cover border border-[#C4956A]/30" />
@@ -350,12 +385,12 @@ export function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
+              <div className="flex items-center gap-1">
+                <Link href="/auth/login" className="px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap">
                   כניסה
                 </Link>
                 <Link href="/auth/register"
-                  className="px-3 py-1.5 text-sm font-bold text-gray-700 hover:bg-gray-100 rounded-full whitespace-nowrap transition-colors">
+                  className="px-2 py-1.5 text-sm font-bold text-gray-700 hover:bg-gray-100 rounded-full whitespace-nowrap transition-colors">
                   הרשמה חינם
                 </Link>
               </div>
@@ -374,7 +409,7 @@ export function Navbar() {
 
       {/* ─── תפריט מובייל ─── */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100" dir="rtl">
+        <div id="mobile-menu" className="lg:hidden bg-white border-t border-gray-100" dir="rtl" role="navigation" aria-label="תפריט ראשי">
           <div className="max-w-7xl mx-auto px-4 py-3 space-y-1">
             {[
               { name: 'zimmer',      label: 'צימרים',         items: [...ZIMMER_MENU.byRegion, ...ZIMMER_MENU.byAudience, ...ZIMMER_MENU.byAvailability] },
@@ -420,6 +455,11 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
+            <Link href="/wishlist" onClick={() => { setActiveMenu(null); setMobileOpen(false) }}
+              className="flex items-center gap-2 px-3 py-3 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+              <IconHeart className={cn('w-4 h-4', wishlistCount > 0 ? 'fill-red-500' : '')} />
+              המועדפים שלי {wishlistCount > 0 && `(${wishlistCount})`}
+            </Link>
 
             <div className="pt-3 border-t border-gray-100 space-y-1">
               {user ? (
@@ -472,7 +512,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
       <nav className="max-w-7xl mx-auto px-4">
         <div className="relative flex items-center h-[64px] sm:h-[85px]">
           <Link href="/" className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
-            <img src="/logo.png" alt="Zimmer Club" className="logo-shine"
+            <Image src="/logo.png" alt="zimmer.club" width={1408} height={542} priority className="logo-shine"
               style={{ height: 'clamp(48px, 8vw, 68px)', width: 'auto' }} />
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">

@@ -109,10 +109,10 @@ function Calendar({ propertyId, supabase }: { propertyId: string; supabase: Retu
   useEffect(() => {
     async function loadDates() {
       setLoadingDates(true)
-      const { data } = await supabase.from('blocked_dates').select('date, status').eq('property_id', propertyId)
+      const { data } = await supabase.from('blocked_dates').select('date').eq('property_id', propertyId)
       if (data) {
         const map: Record<string, DateStatus> = {}
-        data.forEach((d: any) => { map[d.date] = d.status })
+        data.forEach((d: any) => { map[d.date] = 'blocked' })
         setDateMap(map)
       }
       setLoadingDates(false)
@@ -131,7 +131,7 @@ function Calendar({ propertyId, supabase }: { propertyId: string; supabase: Retu
     const dateStr = formatDate(day)
     const current = dateMap[dateStr]
     if (!current) {
-      const { error } = await supabase.from('blocked_dates').upsert({ property_id: propertyId, date: dateStr, status: 'blocked' }, { onConflict: 'property_id,date' })
+      const { error } = await supabase.from('blocked_dates').upsert({ property_id: propertyId, date: dateStr }, { onConflict: 'property_id,date' })
       if (!error) setDateMap(prev => ({ ...prev, [dateStr]: 'blocked' }))
     } else {
       const { error } = await supabase.from('blocked_dates').delete().eq('property_id', propertyId).eq('date', dateStr)
@@ -279,15 +279,6 @@ export default function EditPropertyPage() {
   const [success, setSuccess] = useState(false)
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [isAdmin, setIsAdmin] = useState(false)
-  const [adminForm, setAdminForm] = useState({
-    admin_join_date: '',
-    admin_payment_start: '',
-    admin_monthly_price: '',
-    admin_contract_end: '',
-    admin_contract_url: '',
-    admin_reminder_date: '',
-  })
-  const [contractUploading, setContractUploading] = useState(false)
   const [images, setImages] = useState<PropertyImage[]>([])
   const [uploading, setUploading] = useState(false)
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
@@ -334,16 +325,6 @@ export default function EditPropertyPage() {
         contact_via_email1: property.contact_via_email1 || false,
         contact_via_email2: property.contact_via_email2 || false,
       })
-      if (profile?.role === 'admin') {
-        setAdminForm({
-          admin_join_date: property.admin_join_date || '',
-          admin_payment_start: property.admin_payment_start || '',
-          admin_monthly_price: property.admin_monthly_price?.toString() || '',
-          admin_contract_end: property.admin_contract_end || '',
-          admin_contract_url: property.admin_contract_url || '',
-          admin_reminder_date: property.admin_reminder_date || '',
-        })
-      }
       const { data: imgData } = await supabase.from('property_images').select('*').eq('property_id', params.id).order('order')
       setImages(imgData || [])
       const { data: amenityData } = await supabase.from('property_amenities').select('amenity_id').eq('property_id', params.id)
@@ -461,15 +442,7 @@ export default function EditPropertyPage() {
       min_nights: parseInt(form.min_nights), max_guests: parseInt(form.max_guests),
       bedrooms: parseInt(form.bedrooms), bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book, accepts_miluim: form.accepts_miluim, has_shelter: form.has_shelter,
-      ...(isAdmin && {
-        status: form.status,
-        admin_join_date: adminForm.admin_join_date || null,
-        admin_payment_start: adminForm.admin_payment_start || null,
-        admin_monthly_price: adminForm.admin_monthly_price ? parseInt(adminForm.admin_monthly_price) : null,
-        admin_contract_end: adminForm.admin_contract_end || null,
-        admin_contract_url: adminForm.admin_contract_url || null,
-        admin_reminder_date: adminForm.admin_reminder_date || null,
-      }),
+      ...(isAdmin && { status: form.status }),
       video_url: form.video_url || null,
       phone_landline: form.phone_landline || null, whatsapp1: form.whatsapp1 || null,
       whatsapp2: form.whatsapp2 || null, email1: form.email1 || null, email2: form.email2 || null,
@@ -520,34 +493,6 @@ export default function EditPropertyPage() {
     setSaving(false)
   }
 
-  const handleContractUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setContractUploading(true)
-    const ext = file.name.split('.').pop()
-    const path = `contracts/${params.id}/contract_${Date.now()}.${ext}`
-    const { data, error } = await supabase.storage.from('contracts').upload(path, file, { upsert: true })
-    if (!error && data) {
-      const { data: urlData } = supabase.storage.from('contracts').getPublicUrl(data.path)
-      setAdminForm(prev => ({ ...prev, admin_contract_url: urlData.publicUrl }))
-    }
-    setContractUploading(false)
-  }
-
-  const setReminder = () => {
-    if (!adminForm.admin_contract_end) return
-    const end = new Date(adminForm.admin_contract_end)
-    end.setDate(end.getDate() - 45)
-    setAdminForm(prev => ({ ...prev, admin_reminder_date: end.toISOString().split('T')[0] }))
-  }
-
-  const daysToEnd = adminForm.admin_contract_end
-    ? Math.ceil((new Date(adminForm.admin_contract_end).getTime() - Date.now()) / 86400000)
-    : null
-
-  const reminderPassed = adminForm.admin_reminder_date
-    ? new Date(adminForm.admin_reminder_date) <= new Date()
-    : false
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-500">טוען...</div></div>
 
@@ -703,139 +648,6 @@ export default function EditPropertyPage() {
             </div>
           )}
 
-          {isAdmin && (
-            <div className="rounded-2xl p-6 shadow-sm border-2 border-dashed border-red-200 bg-red-50/40" dir="rtl">
-              <div className="flex items-center gap-2 mb-5">
-                <span className="text-lg">🔐</span>
-                <h2 className="font-bold text-red-800 text-lg">ניהול התקשרות — אדמין בלבד</h2>
-              </div>
-
-              {/* התראת תזכורת */}
-              {reminderPassed && adminForm.admin_contract_end && (
-                <div className="mb-5 flex items-start gap-3 bg-red-100 border border-red-300 rounded-xl px-4 py-3">
-                  <span className="text-xl">⚠️</span>
-                  <div>
-                    <p className="font-bold text-red-800 text-sm">תזכורת חידוש — עברה!</p>
-                    <p className="text-red-700 text-xs mt-0.5">
-                      חוזה מסתיים ב-{adminForm.admin_contract_end}
-                      {daysToEnd !== null && daysToEnd > 0 && ` (עוד ${daysToEnd} ימים)`}
-                      {daysToEnd !== null && daysToEnd <= 0 && ' — הסתיים!'}
-                    </p>
-                  </div>
-                </div>
-              )}
-              {!reminderPassed && daysToEnd !== null && daysToEnd <= 45 && daysToEnd > 0 && (
-                <div className="mb-5 flex items-start gap-3 bg-amber-50 border border-amber-300 rounded-xl px-4 py-3">
-                  <span className="text-xl">🔔</span>
-                  <p className="text-amber-800 text-sm font-medium">עוד {daysToEnd} ימים לסיום החוזה</p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1.5">תאריך הצטרפות</label>
-                  <input
-                    type="date"
-                    value={adminForm.admin_join_date}
-                    onChange={e => setAdminForm(p => ({ ...p, admin_join_date: e.target.value }))}
-                    className="w-full border border-red-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-red-400 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1.5">תאריך תחילת תשלום</label>
-                  <input
-                    type="date"
-                    value={adminForm.admin_payment_start}
-                    onChange={e => setAdminForm(p => ({ ...p, admin_payment_start: e.target.value }))}
-                    className="w-full border border-red-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-red-400 bg-white"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1.5">מחיר לחודש (₪)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={adminForm.admin_monthly_price}
-                    onChange={e => setAdminForm(p => ({ ...p, admin_monthly_price: e.target.value }))}
-                    placeholder="0"
-                    className="w-full border border-red-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-red-400 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1.5">תאריך סיום התקשרות</label>
-                  <input
-                    type="date"
-                    value={adminForm.admin_contract_end}
-                    onChange={e => setAdminForm(p => ({ ...p, admin_contract_end: e.target.value }))}
-                    className="w-full border border-red-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-red-400 bg-white"
-                  />
-                </div>
-              </div>
-
-              {/* חוזה חתום */}
-              <div className="mb-4">
-                <label className="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1.5">חוזה חתום</label>
-                <div className="flex items-center gap-3">
-                  <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${contractUploading ? 'opacity-50 cursor-not-allowed' : 'border-red-200 hover:bg-red-50'} bg-white`}>
-                    <span>📎</span>
-                    {contractUploading ? 'מעלה...' : 'העלה חוזה (PDF/DOC)'}
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx,.jpg,.png"
-                      className="hidden"
-                      disabled={contractUploading}
-                      onChange={handleContractUpload}
-                    />
-                  </label>
-                  {adminForm.admin_contract_url && (
-                    <a
-                      href={adminForm.admin_contract_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-sm text-red-700 font-medium hover:underline"
-                    >
-                      <span>📄</span> צפה בחוזה
-                    </a>
-                  )}
-                </div>
-                {adminForm.admin_contract_url && (
-                  <p className="text-xs text-gray-400 mt-1 truncate">{adminForm.admin_contract_url}</p>
-                )}
-              </div>
-
-              {/* תזכורת */}
-              <div className="border-t border-red-100 pt-4">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1.5">תאריך תזכורת לחידוש</label>
-                    <input
-                      type="date"
-                      value={adminForm.admin_reminder_date}
-                      onChange={e => setAdminForm(p => ({ ...p, admin_reminder_date: e.target.value }))}
-                      className="w-full border border-red-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-red-400 bg-white"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={setReminder}
-                    disabled={!adminForm.admin_contract_end}
-                    title={adminForm.admin_contract_end ? 'קבע תזכורת 45 ימים לפני סיום' : 'הזן תאריך סיום תחילה'}
-                    className="mt-5 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-red-300 text-red-700 hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
-                  >
-                    🔔 קבע תזכורת (45 יום לפני)
-                  </button>
-                </div>
-                {adminForm.admin_reminder_date && (
-                  <p className="text-xs text-gray-500 mt-1.5">
-                    תזכורת קבועה ל: {new Date(adminForm.admin_reminder_date).toLocaleDateString('he-IL')}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-4">מאפיינים ושירותים</h2>

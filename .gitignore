@@ -37,3 +37,6 @@ yarn-error.log*
 next-env.d.ts
 VSCode-darwin-universal.dmg
 Client Secret.rtf
+
+# local working files, not site assets
+/My Files/

@@ -178,8 +178,8 @@ function DateRangePicker({ checkIn, checkOut, onChange, onClear }: {
         popRef.current && !popRef.current.contains(e.target as Node)
       ) setOpen(false)
     }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
   }, [])
 
   useEffect(() => {
@@ -369,8 +369,8 @@ export function SearchBar({ variant = 'hero', initialValues = {} }: SearchBarPro
     function close(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpenDrop(null)
     }
-    document.addEventListener('mousedown', close)
-    return () => document.removeEventListener('mousedown', close)
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
   }, [])
 
   const today = new Date().toISOString().split('T')[0]

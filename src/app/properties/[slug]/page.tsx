@@ -156,6 +156,7 @@ export default function PropertyPage() {
   const [amenities, setAmenities] = useState<string[]>([])
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
+  const [galleryExpanded, setGalleryExpanded] = useState(false)
   const mobileGalleryRef = useRef<HTMLDivElement>(null)
   const { toggle, isLiked } = useWishlist()
   const { addItem: addRecentItem } = useRecentlyViewed()
@@ -385,20 +386,53 @@ export default function PropertyPage() {
               }
               return displayImages.length > 0 ? (
               <>
-                {/* Mobile: horizontal scroll swipe */}
-                <div ref={mobileGalleryRef} className="flex overflow-x-auto gallery-container snap-x snap-mandatory md:block md:overflow-visible scrollbar-none"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                  onScroll={(e) => {
-                    const el = e.currentTarget
-                    const idx = Math.round(el.scrollLeft / el.offsetWidth)
-                    setCurrentImage(idx)
-                  }}>
-                  {displayImages.map((url: string, i: number) => (
-                    <div key={i} className="shrink-0 w-full h-64 relative snap-start gallery-item md:hidden">
-                      <Image src={url} alt={property.name} fill sizes="100vw" className="object-contain" />
-                    </div>
-                  ))}
-                </div>
+                {/* Mobile: collapsed grid (Booking.com-style), tap to expand into swipeable gallery */}
+                {!galleryExpanded && (
+                  <div className="md:hidden grid grid-cols-3 grid-rows-2 gap-1 p-1" style={{ height: 280 }}>
+                    <button type="button" onClick={() => { setCurrentImage(0); setGalleryExpanded(true) }}
+                      className="col-span-2 row-span-2 relative rounded-r-xl overflow-hidden">
+                      <Image src={displayImages[0]} alt={property.name} fill sizes="66vw" className="object-cover" priority />
+                    </button>
+                    {displayImages.slice(1, 4).map((url: string, i: number) => {
+                      const idx = i + 1
+                      const remaining = displayImages.length - 4
+                      const isLastSlot = i === 2
+                      return (
+                        <button key={idx} type="button" onClick={() => { setCurrentImage(idx); setGalleryExpanded(true) }}
+                          className={`relative overflow-hidden ${i === 0 ? 'rounded-tl-xl' : ''} ${isLastSlot ? 'rounded-bl-xl' : ''}`}>
+                          <Image src={url} alt={property.name} fill sizes="33vw" className="object-cover" />
+                          {isLastSlot && remaining > 0 && (
+                            <div className="absolute inset-0 bg-black/55 flex items-center justify-center text-white font-bold text-sm">
+                              +{remaining}
+                            </div>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+                {/* Mobile: expanded horizontal scroll swipe */}
+                {galleryExpanded && (
+                  <div ref={mobileGalleryRef} className="md:hidden flex overflow-x-auto gallery-container snap-x snap-mandatory scrollbar-none"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    onScroll={(e) => {
+                      const el = e.currentTarget
+                      const idx = Math.round(el.scrollLeft / el.offsetWidth)
+                      setCurrentImage(idx)
+                    }}>
+                    {displayImages.map((url: string, i: number) => (
+                      <div key={i} className="shrink-0 w-full h-64 relative snap-start gallery-item">
+                        <Image src={url} alt={property.name} fill sizes="100vw" className="object-contain" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {galleryExpanded && (
+                  <button type="button" onClick={() => setGalleryExpanded(false)}
+                    className="md:hidden absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full z-10">
+                    <IconX className="w-4 h-4" />
+                  </button>
+                )}
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block" style={{height:"55vh"}}>
                   {displayImages.map((url: string, i: number) => (
@@ -406,7 +440,7 @@ export default function PropertyPage() {
                   ))}
                 </div>
                 {images.length > 1 && (
-                  <>
+                  <div className="hidden md:block">
                     <button onClick={() => goToImage((safeIndex - 1 + displayImages.length) % displayImages.length)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronRight className="w-5 h-5" />
@@ -419,7 +453,15 @@ export default function PropertyPage() {
                       {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
                     </div>
                     <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{safeIndex + 1} / {displayImages.length}</div>
-                  </>
+                  </div>
+                )}
+                {galleryExpanded && images.length > 1 && (
+                  <div className="md:hidden">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
+                    </div>
+                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{safeIndex + 1} / {displayImages.length}</div>
+                  </div>
                 )}
               </>
               ) : (

@@ -364,9 +364,6 @@ html, body {
 }
 
 /* Better tap targets — minimum 44px (Apple HIG) */
-button, a, select, input[type="date"] {
-  min-height: 44px;
-}
 input[type="date"] {
   min-height: 36px;
 }

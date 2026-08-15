@@ -6,6 +6,7 @@ import { GenericReviews } from '@/components/GenericReviews'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { buildWhatsAppLink } from '@/lib/utils'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 
 const DAYS_LABELS: Record<string, string> = {
@@ -220,7 +221,7 @@ export default function AttractionPage() {
     url: `https://www.zimmer.club/attractions/${attraction.slug || attraction.id}`,
   }
 
-  const waLink = attraction.whatsapp ? `https://wa.me/${attraction.whatsapp.replace(/\D/g, '')}` : null
+  const waLink = attraction.whatsapp ? buildWhatsAppLink(attraction.whatsapp) : null
   const mapsQuery = encodeURIComponent((attraction.address ? attraction.address + ', ' : '') + (attraction.city || '') + ', ישראל')
 
   return (

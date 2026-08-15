@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { Heart } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
+import { buildWhatsAppLink } from '@/lib/utils'
 
 type Property = {
   slug?: string
@@ -771,7 +772,7 @@ function SearchContent() {
                             </a>
                           ) : (p.contact_via_whatsapp1 && p.whatsapp1) ? (
                             <a
-                              href={`https://wa.me/972${p.whatsapp1.replace(/\D/g,'').replace(/^0/,'')}`}
+                              href={buildWhatsAppLink(p.whatsapp1)}
                               target="_blank" rel="noopener noreferrer"
                               onClick={e => e.stopPropagation()}
                               className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"

@@ -8,6 +8,7 @@ import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone } from '@/components/icons'
 import Image from 'next/image'
+import { buildWhatsAppLink } from '@/lib/utils'
 
 const REGION_LABELS: Record<string, string> = {
   north: 'צפון', galil_upper: 'גליל עליון', galil_lower: 'גליל תחתון',
@@ -110,7 +111,7 @@ export default function CaravanPage() {
     url: `https://www.zimmer.club/caravans/${caravan.id}`,
   }
 
-  const waLink = caravan.whatsapp ? `https://wa.me/972${caravan.whatsapp.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`שלום, אני מעוניין בקרוואן ${caravan.name}`)}` : null
+  const waLink = caravan.whatsapp ? buildWhatsAppLink(caravan.whatsapp, `שלום, אני מעוניין בקרוואן ${caravan.name}`) : null
   const mapsQuery = encodeURIComponent((caravan.city || '') + ', ישראל')
 
   return (

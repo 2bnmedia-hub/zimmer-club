@@ -95,6 +95,15 @@ export function isValidIsraeliPhone(phone: string): boolean {
   return /^(05[0-9]|02|03|04|08|09)\d{7}$/.test(cleaned)
 }
 
+// Build a wa.me link from any Israeli phone format (local "05...", "+972...", or "972..." already)
+export function buildWhatsAppLink(phone: string, text?: string): string {
+  let digits = phone.replace(/\D/g, '')
+  if (digits.startsWith('972')) digits = digits.slice(3)
+  else if (digits.startsWith('0')) digits = digits.slice(1)
+  const url = `https://wa.me/972${digits}`
+  return text ? `${url}?text=${encodeURIComponent(text)}` : url
+}
+
 // Build query string from filters
 export function buildQueryString(params: Record<string, string | number | boolean | undefined>): string {
   const filtered = Object.entries(params)

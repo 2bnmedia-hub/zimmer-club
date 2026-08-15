@@ -8,6 +8,7 @@ import { ProfileProvider } from '@/contexts/ProfileContext'
 import { WishlistProvider } from '@/hooks/useWishlist'
 import Script from 'next/script'
 import ZimiWidget from '@/components/ZimiWidget'
+import { CookieConsent } from '@/components/CookieConsent'
 
 const assistant = Assistant({
   subsets: ['hebrew', 'latin'],
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div id="main-content">{children}</div>
             <Footer />
             <ZimiWidget />
+            <CookieConsent />
           </WishlistProvider>
         </ProfileProvider>
         <Script

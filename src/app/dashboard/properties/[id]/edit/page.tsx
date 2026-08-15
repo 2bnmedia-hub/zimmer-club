@@ -283,6 +283,7 @@ export default function EditPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [isAdmin, setIsAdmin] = useState(false)
   const [images, setImages] = useState<PropertyImage[]>([])
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [uploading, setUploading] = useState(false)
   const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
@@ -434,11 +435,11 @@ export default function EditPropertyPage() {
     await supabase.from('property_images').update({ is_primary: true }).eq('id', id)
     setImages(prev => prev.map(i => ({ ...i, is_primary: i.id === id })))
   }
-  const handleMoveImage = async (index: number, direction: -1 | 1) => {
-    const targetIndex = index + direction
-    if (targetIndex < 0 || targetIndex >= images.length) return
+  const handleReorderImages = async (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return
     const reordered = [...images]
-    ;[reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]]
+    const [moved] = reordered.splice(fromIndex, 1)
+    reordered.splice(toIndex, 0, moved)
     setImages(reordered)
     await Promise.all(reordered.map((img, i) =>
       supabase.from('property_images').update({ order: i }).eq('id', img.id)
@@ -524,28 +525,23 @@ export default function EditPropertyPage() {
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-2">גלריית תמונות</h2>
-            <p className="text-xs text-gray-400 mb-4">לחץ על כוכב להגדרת תמונה ראשית. לחץ X למחיקה. השתמש בחיצים לשינוי סדר התצוגה בגלריה.</p>
+            <p className="text-xs text-gray-400 mb-4">לחץ על כוכב להגדרת תמונה ראשית. לחץ X למחיקה. גרור תמונה כדי לשנות את סדר התצוגה בגלריה.</p>
             <div className="grid grid-cols-3 gap-3 mb-4">
               {images.map((img, idx) => (
-                <div key={img.id} className="relative group aspect-video">
-                  <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
+                <div key={img.id}
+                  className="relative group aspect-video cursor-move"
+                  draggable
+                  onDragStart={() => setDragIndex(idx)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => { if (dragIndex !== null) handleReorderImages(dragIndex, idx); setDragIndex(null) }}
+                  onDragEnd={() => setDragIndex(null)}
+                  style={{ opacity: dragIndex === idx ? 0.4 : 1 }}>
+                  <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl pointer-events-none" />
                   <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">{idx + 1}</div>
                   {img.is_primary && <div className="absolute top-2 right-2 bg-yellow-500 rounded-full p-1"><IconStar className="w-3 h-3 text-white fill-white" /></div>}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex flex-col items-center justify-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => handleSetPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full"><IconStar className="w-3.5 h-3.5 text-white" /></button>
-                      <button type="button" onClick={() => handleDeleteImage(img.id)} className="p-1.5 bg-red-500 rounded-full"><IconX className="w-3.5 h-3.5 text-white" /></button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => handleMoveImage(idx, -1)} disabled={idx === 0}
-                        className="p-1.5 bg-white rounded-full disabled:opacity-30 disabled:cursor-not-allowed">
-                        <IconChevronRight className="w-3.5 h-3.5 text-gray-700" />
-                      </button>
-                      <button type="button" onClick={() => handleMoveImage(idx, 1)} disabled={idx === images.length - 1}
-                        className="p-1.5 bg-white rounded-full disabled:opacity-30 disabled:cursor-not-allowed">
-                        <IconChevronLeft className="w-3.5 h-3.5 text-gray-700" />
-                      </button>
-                    </div>
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => handleSetPrimary(img.id)} className="p-1.5 bg-yellow-500 rounded-full"><IconStar className="w-3.5 h-3.5 text-white" /></button>
+                    <button type="button" onClick={() => handleDeleteImage(img.id)} className="p-1.5 bg-red-500 rounded-full"><IconX className="w-3.5 h-3.5 text-white" /></button>
                   </div>
                 </div>
               ))}

@@ -197,15 +197,16 @@ export default function CaravanPage() {
                 <>
                   <div className="flex overflow-x-auto snap-x snap-mandatory md:block" style={{scrollbarWidth:'none'}}>
                     {images.map((url, i) => (
-                      <div key={i} className="shrink-0 w-full snap-start md:hidden">
-                        <img src={url} alt={caravan.name} className="w-full h-64 object-contain" />
+                      <div key={i} className="shrink-0 w-full h-64 relative snap-start md:hidden">
+                        <Image src={url} alt={caravan.name} fill sizes="100vw" className="object-contain" />
                       </div>
                     ))}
                   </div>
-                  <div className="hidden md:block">
+                  <div className="hidden md:block relative w-full" style={{height:'55vh'}}>
                     {images.map((url, i) => (
-                      <img key={i} src={url} alt={caravan.name} loading={i === 0 ? 'eager' : 'lazy'}
-                        className="w-full h-auto block max-h-[55vh] object-contain"
+                      <Image key={i} src={url} alt={caravan.name} fill priority={i === 0}
+                        sizes="(max-width: 768px) 100vw, 70vw"
+                        className="object-contain"
                         style={{display: i === currentImage ? 'block' : 'none'}} />
                     ))}
                     {images.length > 1 && (
@@ -247,8 +248,8 @@ export default function CaravanPage() {
             <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
               {images.map((url, i) => (
                 <button key={i} onClick={() => setCurrentImage(i)}
-                  className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                  <img src={url} alt={`${caravan.name} — תמונה ${i + 1}`} className="w-full h-full object-contain bg-gray-100" loading="lazy" />
+                  className={`shrink-0 w-20 h-16 relative rounded-xl overflow-hidden border-2 ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
+                  <Image src={url} alt={`${caravan.name} — תמונה ${i + 1}`} fill sizes="80px" className="object-contain bg-gray-100" />
                 </button>
               ))}
             </div>

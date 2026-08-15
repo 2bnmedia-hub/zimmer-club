@@ -388,15 +388,15 @@ export default function PropertyPage() {
                     setCurrentImage(idx)
                   }}>
                   {displayImages.map((url: string, i: number) => (
-                    <div key={i} className="shrink-0 w-full snap-start gallery-item md:hidden">
-                      <img src={url} alt={property.name} className="w-full h-64 object-contain" />
+                    <div key={i} className="shrink-0 w-full h-64 relative snap-start gallery-item md:hidden">
+                      <Image src={url} alt={property.name} fill sizes="100vw" className="object-contain" />
                     </div>
                   ))}
                 </div>
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block" style={{height:"55vh"}}>
                   {displayImages.map((url: string, i: number) => (
-                    <img key={i} src={url} alt={property.name} className="w-full h-full object-contain absolute inset-0" style={{ display: i === safeIndex ? 'block' : 'none' }} />
+                    <Image key={i} src={url} alt={property.name} fill sizes="(max-width: 1024px) 100vw, 66vw" className="object-contain" style={{ display: i === safeIndex ? 'block' : 'none' }} priority={i === 0} />
                   ))}
                 </div>
                 {images.length > 1 && (
@@ -462,8 +462,8 @@ export default function PropertyPage() {
           {images.length > 1 && (
             <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
               {images.map((url, i) => (
-                <button key={i} onClick={() => setCurrentImage(i)} className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-colors ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                  <img src={url} alt={`${property.name} — תמונה ${i + 1}`} className="w-full h-full object-contain bg-gray-100" />
+                <button key={i} onClick={() => setCurrentImage(i)} className={`shrink-0 w-20 h-16 relative rounded-xl overflow-hidden border-2 transition-colors ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
+                  <Image src={url} alt={`${property.name} — תמונה ${i + 1}`} fill sizes="80px" className="object-contain bg-gray-100" />
                 </button>
               ))}
             </div>

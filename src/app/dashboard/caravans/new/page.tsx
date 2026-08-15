@@ -195,7 +195,6 @@ export default function NewCaravanPage() {
     if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
     setVideoUploading(true)
     for (const file of Array.from(files)) {
-      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
       const ext = file.name.split('.').pop()
       const fileName = `caravan-images/${String(Date.now())}/video_${Date.now()}.${ext}`
       const { error } = await supabase.storage.from('caravan-images').upload(fileName, file)
@@ -372,7 +371,7 @@ export default function NewCaravanPage() {
               {videos.length < 10 && (
                 <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
                   <span className="text-2xl mb-1">🎬</span>
-                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון (עד 50MB)'}</span>
+                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון'}</span>
                   <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
                 </label>
               )}

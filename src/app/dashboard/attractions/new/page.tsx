@@ -207,7 +207,6 @@ export default function NewAttractionPage() {
     if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
     setVideoUploading(true)
     for (const file of Array.from(files)) {
-      if (file.size > 50 * 1024 * 1024) { alert(`${file.name} גדול מ-50MB`); continue }
       const ext = file.name.split('.').pop()
       const fileName = `attraction-images/${String(newAttractionId || Date.now())}/video_${Date.now()}.${ext}`
       const { error } = await supabase.storage.from('attraction-images').upload(fileName, file)
@@ -518,7 +517,7 @@ export default function NewAttractionPage() {
           {/* סרטונים */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-1">סרטונים</h2>
-            <p className="text-xs text-gray-400 mb-4">עד 10 סרטונים, כל אחד עד 50MB (MP4, MOV)</p>
+            <p className="text-xs text-gray-400 mb-4">עד 10 סרטונים (MP4, MOV)</p>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {videos.map(v => (
                 <div key={v.id} className="relative group rounded-xl overflow-hidden bg-black aspect-video">

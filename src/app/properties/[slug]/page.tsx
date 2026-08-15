@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -156,6 +156,7 @@ export default function PropertyPage() {
   const [amenities, setAmenities] = useState<string[]>([])
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
+  const mobileGalleryRef = useRef<HTMLDivElement>(null)
   const { toggle, isLiked } = useWishlist()
   const { addItem: addRecentItem } = useRecentlyViewed()
   const [loading, setLoading] = useState(true)
@@ -377,10 +378,15 @@ export default function PropertyPage() {
               const activeUnitData = activeUnit && activeUnit !== 'main' ? units.find(u => u.id === activeUnit) : null
               const displayImages: string[] = activeUnitData ? activeUnitData.images.map((i: any) => i.url) : images
               const safeIndex = currentImage >= displayImages.length ? 0 : currentImage
+              const goToImage = (index: number) => {
+                setCurrentImage(index)
+                const el = mobileGalleryRef.current
+                if (el) el.scrollTo({ left: index * el.offsetWidth, behavior: 'smooth' })
+              }
               return displayImages.length > 0 ? (
               <>
                 {/* Mobile: horizontal scroll swipe */}
-                <div className="flex overflow-x-auto gallery-container snap-x snap-mandatory md:block md:overflow-visible scrollbar-none"
+                <div ref={mobileGalleryRef} className="flex overflow-x-auto gallery-container snap-x snap-mandatory md:block md:overflow-visible scrollbar-none"
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   onScroll={(e) => {
                     const el = e.currentTarget
@@ -401,16 +407,16 @@ export default function PropertyPage() {
                 </div>
                 {images.length > 1 && (
                   <>
-                    <button onClick={() => setCurrentImage(prev => (prev - 1 + displayImages.length) % displayImages.length)}
+                    <button onClick={() => goToImage((safeIndex - 1 + displayImages.length) % displayImages.length)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronRight className="w-5 h-5" />
                     </button>
-                    <button onClick={() => setCurrentImage(prev => (prev + 1) % displayImages.length)}
+                    <button onClick={() => goToImage((safeIndex + 1) % displayImages.length)}
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => setCurrentImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
+                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
                     </div>
                     <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{safeIndex + 1} / {displayImages.length}</div>
                   </>
@@ -472,7 +478,7 @@ export default function PropertyPage() {
 
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
-            <div className="lg:col-span-2 order-2 lg:order-none">
+            <div className="lg:col-span-2">
               <div className="border-t border-gray-100 pt-6 mb-6">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">{property.description || property.short_description}</p>
               </div>
@@ -521,7 +527,7 @@ export default function PropertyPage() {
               <PropertyReviews propertyId={property.id} />
             </div>
 
-            <div className="lg:col-span-1 order-1 lg:order-none">
+            <div className="lg:col-span-1">
               <div id="booking-form" className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
                 <p className="text-lg font-bold text-center mb-3" style={{color:'#8B6914'}}>אשמח לבצע הזמנה 😊</p>
                 <div className="flex items-center justify-center gap-1.5 mb-4">

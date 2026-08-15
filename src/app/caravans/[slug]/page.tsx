@@ -198,7 +198,7 @@ export default function CaravanPage() {
                   <div className="flex overflow-x-auto snap-x snap-mandatory md:block" style={{scrollbarWidth:'none'}}>
                     {images.map((url, i) => (
                       <div key={i} className="shrink-0 w-full snap-start md:hidden">
-                        <img src={url} alt={caravan.name} className="w-full h-64 object-cover" />
+                        <img src={url} alt={caravan.name} className="w-full h-64 object-contain" />
                       </div>
                     ))}
                   </div>
@@ -248,7 +248,7 @@ export default function CaravanPage() {
               {images.map((url, i) => (
                 <button key={i} onClick={() => setCurrentImage(i)}
                   className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                  <img src={url} alt={`${caravan.name} — תמונה ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={url} alt={`${caravan.name} — תמונה ${i + 1}`} className="w-full h-full object-contain bg-gray-100" loading="lazy" />
                 </button>
               ))}
             </div>

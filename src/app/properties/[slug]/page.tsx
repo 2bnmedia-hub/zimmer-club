@@ -50,11 +50,13 @@ type DateStatus = 'blocked' | 'approved'
 
 const AMENITY_LABELS: Record<string, string> = {
   pool: 'בריכה', jacuzzi: "ג'קוזי", wifi: 'WiFi', parking: 'חניה', bbq: 'ברביקיו',
-  ac: 'מיזוג אוויר', kitchen: 'מטבח', fireplace: 'קמין', garden: 'גינה',
+  ac: 'מיזוג אוויר', kitchen: 'מטבח', outdoor_kitchen: 'מטבח חוץ', dining_room: 'חדר אוכל',
+  fireplace: 'קמין', garden: 'גינה',
   sea_view: 'נוף לים', mountain_view: 'נוף להרים', sauna: 'סאונה', gym: 'חדר כושר',
   baby_cot: 'עריסה לתינוק', wheelchair: 'נגיש לנכים', shelter: 'מרחב מוגן',
   heated_pool: 'בריכה מחוממת', pets: 'ידידותי לכלבים', spa: 'ספא צמוד',
-  private_pool: 'בריכה פרטית', snooker: 'שולחן סנוקר', private_jacuzzi: "ג'קוזי פרטי",
+  private_pool: 'בריכה פרטית', snooker: 'שולחן סנוקר', ping_pong: 'שולחן פינג-פונג',
+  private_jacuzzi: "ג'קוזי פרטי",
   accessible: 'צימר עם נגישות', couples: 'מתאים לזוגות', families: 'מתאים למשפחות',
   groups: 'מתאים לקבוצות', animals: 'מקבלים בעלי חיים', guests: 'מתאים לאורועים',
   religious: 'מתאים לציבור הדתי', suite: 'סוויטה', treehouse: 'בקתת עץ',
@@ -387,14 +389,14 @@ export default function PropertyPage() {
                   }}>
                   {displayImages.map((url: string, i: number) => (
                     <div key={i} className="shrink-0 w-full snap-start gallery-item md:hidden">
-                      <img src={url} alt={property.name} className="w-full h-64 object-cover" />
+                      <img src={url} alt={property.name} className="w-full h-64 object-contain" />
                     </div>
                   ))}
                 </div>
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block" style={{height:"55vh"}}>
                   {displayImages.map((url: string, i: number) => (
-                    <img key={i} src={url} alt={property.name} className="w-full h-full object-cover absolute inset-0" style={{ display: i === safeIndex ? 'block' : 'none' }} />
+                    <img key={i} src={url} alt={property.name} className="w-full h-full object-contain absolute inset-0" style={{ display: i === safeIndex ? 'block' : 'none' }} />
                   ))}
                 </div>
                 {images.length > 1 && (
@@ -461,7 +463,7 @@ export default function PropertyPage() {
             <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
               {images.map((url, i) => (
                 <button key={i} onClick={() => setCurrentImage(i)} className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-colors ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                  <img src={url} alt={`${property.name} — תמונה ${i + 1}`} className="w-full h-full object-cover" />
+                  <img src={url} alt={`${property.name} — תמונה ${i + 1}`} className="w-full h-full object-contain bg-gray-100" />
                 </button>
               ))}
             </div>
@@ -583,15 +585,7 @@ export default function PropertyPage() {
                     ? property.phone_landline
                     : null
                   const nights = checkIn && checkOut ? Math.max(0, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)) : 0
-                  const msgParts = [
-                    `שלום! אני מעוניין להזמין את *${property.name}* 🏡`,
-                    checkIn && checkOut ? `📅 תאריכים: ${checkIn} עד ${checkOut}` : '',
-                    nights > 0 ? `🌙 ${nights} לילות` : '',
-                    guests > 0 ? `👥 ${guests} אורחים` : '',
-                    guestName ? `👤 שם: ${guestName}` : '',
-                    guestPhone ? `📞 טלפון: ${guestPhone}` : '',
-                    `\nאנא אשרו זמינות ומחיר 🙏`,
-                  ].filter(Boolean).join('\n')
+                  const msgParts = 'שלום, הגעתי דרך האתר zimmer.club ואשמח לקבל עזרה בהזמנה'
                   const waUrl = waNumber ? buildWhatsAppLink(waNumber, msgParts) : null
                   return (
                     <div className="flex gap-2">

@@ -333,7 +333,7 @@ export default function AttractionPage() {
                 <div className="flex overflow-x-auto snap-x snap-mandatory md:block" style={{ scrollbarWidth: 'none' }}>
                   {images.map((url, i) => (
                     <div key={i} className="shrink-0 w-full snap-start md:hidden">
-                      <img src={url} alt={attraction.name} className="w-full h-64 object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
+                      <img src={url} alt={attraction.name} className="w-full h-64 object-contain" loading={i === 0 ? 'eager' : 'lazy'} />
                     </div>
                   ))}
                 </div>
@@ -379,7 +379,7 @@ export default function AttractionPage() {
             {images.map((url, i) => (
               <button key={i} onClick={() => setCurrentImage(i)}
                 className={`shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-colors ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
-                <img src={url} alt={`${attraction.name} — תמונה ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                <img src={url} alt={`${attraction.name} — תמונה ${i + 1}`} className="w-full h-full object-contain bg-gray-100" loading="lazy" />
               </button>
             ))}
           </div>

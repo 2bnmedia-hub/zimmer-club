@@ -4,15 +4,12 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
+import { coverImage } from '@/lib/utils'
 
 type Property = {
   slug?: string; id: string; name: string; short_description: string
   city: string; price_per_night: number; max_guests: number
   instant_book: boolean; property_images: { url: string; is_primary?: boolean }[]; accepts_miluim?: boolean; has_shelter?: boolean; avg_rating?: number
-}
-
-function coverImage(images: { url: string; is_primary?: boolean }[] | undefined): string | undefined {
-  return images?.find((img) => img.is_primary)?.url || images?.[0]?.url
 }
 
 const TARGET = 7

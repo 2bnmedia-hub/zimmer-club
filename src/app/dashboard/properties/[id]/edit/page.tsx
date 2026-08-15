@@ -394,6 +394,8 @@ export default function EditPropertyPage() {
         const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
         const { data: newVid } = await supabase.from('property_videos').insert({ property_id: params.id, url: data.publicUrl, order: videos.length }).select().single()
         if (newVid) setVideos(prev => [...prev, newVid])
+      } else {
+        alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
     }
     setVideoUploading(false)
@@ -422,6 +424,8 @@ export default function EditPropertyPage() {
         const isPrimary = images.length === 0
         const { data: newImg } = await supabase.from('property_images').insert({ property_id: params.id, url: urlData.publicUrl, 'order': images.length, is_primary: isPrimary }).select().single()
         if (newImg) setImages(prev => [...prev, newImg])
+      } else {
+        alert(`העלאת התמונה "${file.name}" נכשלה, נסו שוב`)
       }
     }
     setUploading(false); e.target.value = ''
@@ -441,9 +445,12 @@ export default function EditPropertyPage() {
     const [moved] = reordered.splice(fromIndex, 1)
     reordered.splice(toIndex, 0, moved)
     setImages(reordered)
-    await Promise.all(reordered.map((img, i) =>
+    const results = await Promise.all(reordered.map((img, i) =>
       supabase.from('property_images').update({ order: i }).eq('id', img.id)
     ))
+    if (results.some(r => r.error)) {
+      alert('שינוי סדר התמונות לא נשמר במלואו, נסו לגרור שוב')
+    }
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setSaving(true); setError('')
@@ -713,6 +720,8 @@ export default function EditPropertyPage() {
                       const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(fileName)
                       const { data: newImg } = await supabase.from('property_unit_images').insert({ unit_id: unit.id, url: urlData.publicUrl, order: imgs.length }).select().single()
                       if (newImg) setUnitImages(prev => ({ ...prev, [unit.id!]: [...(prev[unit.id!] || []), newImg] }))
+                    } else {
+                      alert(`העלאת התמונה "${file.name}" נכשלה, נסו שוב`)
                     }
                   }
                   setUnitUploading(prev => ({ ...prev, [unit.id!]: false }))

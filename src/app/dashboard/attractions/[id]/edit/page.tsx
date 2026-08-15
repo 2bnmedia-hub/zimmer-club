@@ -217,6 +217,8 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
         const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
         const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: params.id, url: data.publicUrl, order: videos.length }).select().single()
         if (newVid) setVideos(prev => [...prev, newVid])
+      } else {
+        alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
     }
     setVideoUploading(false)
@@ -252,6 +254,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
 
     if (newImages.length > 0) {
       setUploading(true)
+      let failedImageCount = 0
       for (let i = 0; i < newImages.length; i++) {
         const img = newImages[i]
         const ext = img.file.name.split('.').pop()
@@ -260,8 +263,11 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
         if (!uploadError) {
           const { data: urlData } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
           await supabase.from('attraction_images').insert({ attraction_id: id, url: urlData.publicUrl, order: existingImages.length + i, is_primary: img.isPrimary })
+        } else {
+          failedImageCount++
         }
       }
+      if (failedImageCount > 0) alert(`${failedImageCount} תמונות לא הועלו בהצלחה. נסו שוב.`)
       setUploading(false)
     }
     router.push('/dashboard/owner')

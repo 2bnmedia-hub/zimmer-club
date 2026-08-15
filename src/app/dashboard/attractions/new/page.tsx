@@ -214,6 +214,8 @@ export default function NewAttractionPage() {
         const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
         const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: newAttractionId!, url: data.publicUrl, order: videos.length }).select().single()
         if (newVid) setVideos(prev => [...prev, newVid])
+      } else {
+        alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
     }
     setVideoUploading(false)
@@ -267,6 +269,7 @@ export default function NewAttractionPage() {
     setNewAttractionId(attraction.id)
 
     setUploading(true)
+    let failedImageCount = 0
     for (let i = 0; i < images.length; i++) {
       const img = images[i]
       const ext = img.file.name.split('.').pop()
@@ -277,8 +280,11 @@ export default function NewAttractionPage() {
         await supabase.from('attraction_images').insert({
           attraction_id: attraction.id, url: urlData.publicUrl, order: i, is_primary: img.isPrimary,
         })
+      } else {
+        failedImageCount++
       }
     }
+    if (failedImageCount > 0) alert(`${failedImageCount} תמונות לא הועלו בהצלחה. אפשר לנסות להוסיף אותן שוב מדף העריכה.`)
     setUploading(false)
     router.push('/dashboard/owner')
   }

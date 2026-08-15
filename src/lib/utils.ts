@@ -111,3 +111,8 @@ export function buildQueryString(params: Record<string, string | number | boolea
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
   return filtered.length ? '?' + filtered.join('&') : ''
 }
+
+// Pick a listing's cover photo: the one flagged is_primary, falling back to the first
+export function coverImage(images: { url: string; is_primary?: boolean }[] | undefined): string | undefined {
+  return images?.find((img) => img.is_primary)?.url || images?.[0]?.url
+}

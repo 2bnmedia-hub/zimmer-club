@@ -454,7 +454,7 @@ export default function PropertyPage() {
                     <Image key={i} src={url} alt={property.name} fill sizes="(max-width: 1024px) 100vw, 66vw" className="object-contain" style={{ display: i === safeIndex ? 'block' : 'none' }} priority={i === 0} />
                   ))}
                 </div>
-                {images.length > 1 && (
+                {displayImages.length > 1 && (
                   <div className="hidden md:block">
                     <button onClick={() => goToImage((safeIndex - 1 + displayImages.length) % displayImages.length)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
@@ -639,7 +639,6 @@ export default function PropertyPage() {
                   const phoneNumber = property.contact_via_phone_landline && property.phone_landline
                     ? property.phone_landline
                     : null
-                  const nights = checkIn && checkOut ? Math.max(0, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)) : 0
                   const msgParts = 'שלום, הגעתי דרך האתר zimmer.club ואשמח לקבל עזרה בהזמנה'
                   const waUrl = waNumber ? buildWhatsAppLink(waNumber, msgParts) : null
                   return (

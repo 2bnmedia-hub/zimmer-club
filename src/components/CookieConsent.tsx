@@ -22,7 +22,7 @@ export function CookieConsent() {
   return (
     <div
       dir="rtl"
-      className="fixed inset-x-0 z-[999998] p-4 md:p-5 bottom-24 lg:bottom-0"
+      className="fixed inset-x-0 z-[999996] p-4 md:p-5 bottom-24 lg:bottom-0"
       role="dialog"
       aria-live="polite"
       aria-label="הודעה על שימוש בעוגיות"

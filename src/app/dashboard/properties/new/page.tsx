@@ -210,6 +210,8 @@ export default function NewPropertyPage() {
       if (!error) {
         const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
         await supabase.from('property_unit_images').insert({ unit_id: unitId, url: data.publicUrl, order: i })
+      } else {
+        alert(`העלאת התמונה "${img.file.name}" נכשלה, נסו שוב`)
       }
     }
   }
@@ -273,6 +275,7 @@ export default function NewPropertyPage() {
 
 
   const uploadImages = async (propertyId: string) => {
+    let failedCount = 0
     for (let i = 0; i < images.length; i++) {
       const img = images[i]
       const ext = img.file.name.split('.').pop()
@@ -283,8 +286,11 @@ export default function NewPropertyPage() {
         await supabase.from('property_images').insert({
           property_id: propertyId, url: urlData.publicUrl, order: i, is_primary: img.isPrimary,
         })
+      } else {
+        failedCount++
       }
     }
+    if (failedCount > 0) alert(`${failedCount} תמונות לא הועלו בהצלחה. אפשר לנסות להוסיף אותן שוב מדף העריכה.`)
   }
 
 
@@ -301,6 +307,8 @@ export default function NewPropertyPage() {
         const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
         const { data: newVid } = await supabase.from('property_videos').insert({ property_id: newPropertyIdRef.current!, url: data.publicUrl, order: videos.length }).select().single()
         if (newVid) setVideos(prev => [...prev, newVid])
+      } else {
+        alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
     }
     setVideoUploading(false)

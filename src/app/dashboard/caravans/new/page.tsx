@@ -157,23 +157,28 @@ export default function NewCaravanPage() {
     // הצג preview מיידי
     const previews = fileArray.map(f => URL.createObjectURL(f))
     setImages(p => [...p, ...previews])
-    // העלה לסופאבייס והחלף preview ב-URL אמיתי
-    const urls: string[] = []
+    // העלה לסופאבייס והחלף preview ב-URL אמיתי (null = העלאה נכשלה)
+    const results: (string | null)[] = []
     for (const file of fileArray) {
       const ext = file.name.split('.').pop()
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
       const { error } = await supabase.storage.from('caravan-images').upload(path, file)
       if (!error) {
         const { data } = supabase.storage.from('caravan-images').getPublicUrl(path)
-        urls.push(data.publicUrl)
+        results.push(data.publicUrl)
+      } else {
+        results.push(null)
       }
     }
     setImages(p => {
       const newImages = [...p]
       const startIdx = newImages.length - previews.length
-      urls.forEach((url, i) => { newImages[startIdx + i] = url })
+      const successUrls = results.filter((r): r is string => r !== null)
+      newImages.splice(startIdx, previews.length, ...successUrls)
       return newImages
     })
+    const failedCount = results.filter(r => r === null).length
+    if (failedCount > 0) alert(`${failedCount} תמונות לא הועלו בהצלחה. נסו שוב.`)
     setUploading(false)
   }
 
@@ -204,6 +209,8 @@ export default function NewCaravanPage() {
           const { data: newVid } = await supabase.from('caravan_videos').insert({ caravan_id: newCaravanIdRef.current, url: data.publicUrl, order: videos.length }).select().single()
           if (newVid) setVideos(prev => [...prev, newVid])
         }
+      } else {
+        alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
     }
     setVideoUploading(false)

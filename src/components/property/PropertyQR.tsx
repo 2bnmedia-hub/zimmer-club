@@ -42,12 +42,34 @@ export function PropertyQR({ slug, name, mode = 'view' }: {
     })
   }, [url, mode])
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const canvas = canvasRef.current
     if (!canvas) return
+    const dataUrl = canvas.toDataURL('image/png')
+
+    // Mobile Safari (and several mobile browsers) ignore the <a download>
+    // attribute for data URLs — it just opens the image instead of saving
+    // it. Use the Web Share API when available so users get a native
+    // save/share sheet instead.
+    const [header, base64] = dataUrl.split(',')
+    const mime = header.match(/:(.*?);/)?.[1] || 'image/png'
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const file = new File([bytes], `qr-${slug}.png`, { type: mime })
+
+    if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: name })
+        return
+      } catch {
+        // user cancelled the share sheet, or share failed — fall back below
+      }
+    }
+
     const link = document.createElement('a')
     link.download = `qr-${slug}.png`
-    link.href = canvas.toDataURL('image/png')
+    link.href = dataUrl
     link.click()
   }
 

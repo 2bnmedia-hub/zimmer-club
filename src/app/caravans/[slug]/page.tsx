@@ -128,7 +128,7 @@ export default function CaravanPage() {
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4 md:gap-6 mb-6 items-start">
 
             {/* מידע */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+            <div className="order-2 md:order-1 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
               <p className="text-sm text-gray-500 mb-1">{TYPE_LABELS[caravan.caravan_type]} · {caravan.city || REGION_LABELS[caravan.region]}</p>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">{caravan.name}</h1>
               {caravan.short_description && <p className="text-sm text-gray-600 mb-4">{caravan.short_description}</p>}
@@ -192,7 +192,7 @@ export default function CaravanPage() {
             </div>
 
             {/* תמונות */}
-            <div className="bg-gray-100 rounded-2xl relative overflow-hidden">
+            <div className="order-1 md:order-2 bg-gray-100 rounded-2xl relative overflow-hidden">
               {images.length > 0 ? (
                 <>
                   <div className="flex overflow-x-auto snap-x snap-mandatory md:block" style={{scrollbarWidth:'none'}}>

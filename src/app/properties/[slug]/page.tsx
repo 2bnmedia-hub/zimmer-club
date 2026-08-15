@@ -472,7 +472,7 @@ export default function PropertyPage() {
 
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 order-2 lg:order-none">
               <div className="border-t border-gray-100 pt-6 mb-6">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">{property.description || property.short_description}</p>
               </div>
@@ -521,7 +521,7 @@ export default function PropertyPage() {
               <PropertyReviews propertyId={property.id} />
             </div>
 
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 order-1 lg:order-none">
               <div id="booking-form" className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
                 <p className="text-lg font-bold text-center mb-3" style={{color:'#8B6914'}}>אשמח לבצע הזמנה 😊</p>
                 <div className="flex items-center justify-center gap-1.5 mb-4">

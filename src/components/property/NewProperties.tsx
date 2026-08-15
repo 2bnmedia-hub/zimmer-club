@@ -8,7 +8,11 @@ import { createClient } from '@/lib/supabase/client'
 type Property = {
   slug?: string; id: string; name: string; short_description: string
   city: string; price_per_night: number; max_guests: number
-  instant_book: boolean; property_images: { url: string }[]; accepts_miluim?: boolean; has_shelter?: boolean; avg_rating?: number
+  instant_book: boolean; property_images: { url: string; is_primary?: boolean }[]; accepts_miluim?: boolean; has_shelter?: boolean; avg_rating?: number
+}
+
+function coverImage(images: { url: string; is_primary?: boolean }[] | undefined): string | undefined {
+  return images?.find((img) => img.is_primary)?.url || images?.[0]?.url
 }
 
 const TARGET = 7
@@ -80,7 +84,7 @@ export function NewProperties() {
   useEffect(() => {
     async function load() {
       const { data } = await supabase.from('properties')
-        .select('*, property_images(url, "order"), accepts_miluim, has_shelter')
+        .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter')
         .eq('status', 'active')
         .gte('created_at', new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString())
         .order('created_at', { ascending: false }).limit(TARGET)
@@ -113,8 +117,8 @@ export function NewProperties() {
               className="col-span-2 row-span-2 group relative rounded-2xl overflow-hidden"
               style={{ boxShadow: '0 6px 24px rgba(0,0,0,0.14)' }}>
               <div className="absolute inset-0">
-                {p0.property_images?.[0]?.url
-                  ? <Image src={p0.property_images[0].url} alt={p0.name} fill sizes="(max-width:768px) 100vw, 40vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                {coverImage(p0.property_images)
+                  ? <Image src={coverImage(p0.property_images)!} alt={p0.name} fill sizes="(max-width:768px) 100vw, 40vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
                   : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-6xl">🏡</div>}
               </div>
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,5,0,0.88) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)' }} />
@@ -137,8 +141,8 @@ export function NewProperties() {
               className="group relative rounded-xl overflow-hidden"
               style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.09)' }}>
               <div className="absolute inset-0">
-                {p.property_images?.[0]?.url
-                  ? <Image src={p.property_images[0].url} alt={p.name} fill sizes="(max-width:768px) 50vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                {coverImage(p.property_images)
+                  ? <Image src={coverImage(p.property_images)!} alt={p.name} fill sizes="(max-width:768px) 50vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                   : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-3xl">🏡</div>}
               </div>
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%)' }} />

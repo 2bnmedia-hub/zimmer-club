@@ -299,7 +299,7 @@ export default function PropertyPage() {
           <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4 md:gap-6 mb-6 md:mb-8 items-start">
 
             {/* ימין — מידע */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
+            <div className="order-2 md:order-1 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-start">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{property.name}</h1>
                 <button
@@ -351,7 +351,7 @@ export default function PropertyPage() {
             </div>
 
             {/* שמאל — תמונה */}
-          <div>
+          <div className="order-1 md:order-2">
             {units.length > 0 && (
               <div className="flex overflow-x-auto gap-2 p-3 mb-2 rounded-2xl" style={{scrollbarWidth:'none', background:'white', border:'1px solid rgba(212,168,67,0.2)'}}>
                 <button onClick={() => { setActiveUnit('main'); setCurrentImage(0) }}

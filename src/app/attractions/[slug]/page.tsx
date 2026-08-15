@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { AdminBackButton } from '@/components/AdminBackButton'
 import { GenericReviews } from '@/components/GenericReviews'
@@ -175,14 +175,26 @@ export default function AttractionPage() {
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
   const [galleryExpanded, setGalleryExpanded] = useState(false)
+  const lightboxRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
 
   useEffect(() => {
-    if (images.length <= 1) return
+    if (images.length <= 1 || galleryExpanded) return
     const interval = setInterval(() => setCurrentImage(prev => (prev + 1) % images.length), 3000)
     return () => clearInterval(interval)
-  }, [images])
+  }, [images, galleryExpanded])
+
+  useEffect(() => {
+    document.body.style.overflow = galleryExpanded ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [galleryExpanded])
+
+  const goToImage = (index: number) => {
+    setCurrentImage(index)
+    const el = lightboxRef.current
+    if (el) el.scrollTo({ left: index * el.offsetWidth, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     async function load() {
@@ -357,19 +369,35 @@ export default function AttractionPage() {
                   </div>
                 )}
                 {galleryExpanded && (
-                  <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
-                    {images.map((url, i) => (
-                      <div key={i} className="shrink-0 w-full h-64 relative snap-start">
-                        <Image src={url} alt={attraction.name} fill sizes="100vw" className="object-contain" />
+                  <div className="md:hidden fixed inset-0 z-[999997] bg-black flex flex-col" role="dialog" aria-modal="true">
+                    <button type="button" onClick={() => setGalleryExpanded(false)}
+                      className="absolute top-4 right-4 z-10 bg-white/15 text-white p-2.5 rounded-full">
+                      <IconX className="w-5 h-5" />
+                    </button>
+                    {images.length > 1 && (
+                      <div className="absolute top-4 left-4 z-10 bg-white/15 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                        {currentImage + 1} / {images.length}
                       </div>
-                    ))}
+                    )}
+                    <div ref={lightboxRef} className="flex-1 flex overflow-x-auto snap-x snap-mandatory scrollbar-none"
+                      style={{ scrollbarWidth: 'none' }}
+                      onScroll={(e) => {
+                        const el = e.currentTarget
+                        const idx = Math.round(el.scrollLeft / el.offsetWidth)
+                        setCurrentImage(idx)
+                      }}>
+                      {images.map((url, i) => (
+                        <div key={i} className="shrink-0 w-full h-full relative snap-start">
+                          <Image src={url} alt={attraction.name} fill sizes="100vw" className="object-contain" />
+                        </div>
+                      ))}
+                    </div>
+                    {images.length > 1 && (
+                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                        {images.map((_, i) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/40'}`} />)}
+                      </div>
+                    )}
                   </div>
-                )}
-                {galleryExpanded && (
-                  <button type="button" onClick={() => setGalleryExpanded(false)}
-                    className="md:hidden absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full z-10">
-                    <IconX className="w-4 h-4" />
-                  </button>
                 )}
                 <div className="hidden md:block relative w-full" style={{ height: '55vh' }}>
                   {images.map((url, i) => (

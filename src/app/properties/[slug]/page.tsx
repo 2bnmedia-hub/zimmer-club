@@ -168,6 +168,11 @@ export default function PropertyPage() {
   useEffect(() => {
     setCurrentImage(0)
   }, [activeUnit])
+
+  useEffect(() => {
+    document.body.style.overflow = galleryExpanded ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [galleryExpanded])
   const [checkIn, setCheckIn] = useState('')
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
@@ -411,27 +416,37 @@ export default function PropertyPage() {
                     })}
                   </div>
                 )}
-                {/* Mobile: expanded horizontal scroll swipe */}
+                {/* Mobile: full-screen lightbox */}
                 {galleryExpanded && (
-                  <div ref={mobileGalleryRef} className="md:hidden flex overflow-x-auto gallery-container snap-x snap-mandatory scrollbar-none"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                    onScroll={(e) => {
-                      const el = e.currentTarget
-                      const idx = Math.round(el.scrollLeft / el.offsetWidth)
-                      setCurrentImage(idx)
-                    }}>
-                    {displayImages.map((url: string, i: number) => (
-                      <div key={i} className="shrink-0 w-full h-64 relative snap-start gallery-item">
-                        <Image src={url} alt={property.name} fill sizes="100vw" className="object-contain" />
+                  <div className="md:hidden fixed inset-0 z-[999997] bg-black flex flex-col" role="dialog" aria-modal="true">
+                    <button type="button" onClick={() => setGalleryExpanded(false)}
+                      className="absolute top-4 right-4 z-10 bg-white/15 text-white p-2.5 rounded-full">
+                      <IconX className="w-5 h-5" />
+                    </button>
+                    {displayImages.length > 1 && (
+                      <div className="absolute top-4 left-4 z-10 bg-white/15 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                        {safeIndex + 1} / {displayImages.length}
                       </div>
-                    ))}
+                    )}
+                    <div ref={mobileGalleryRef} className="flex-1 flex overflow-x-auto gallery-container snap-x snap-mandatory scrollbar-none"
+                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                      onScroll={(e) => {
+                        const el = e.currentTarget
+                        const idx = Math.round(el.scrollLeft / el.offsetWidth)
+                        setCurrentImage(idx)
+                      }}>
+                      {displayImages.map((url: string, i: number) => (
+                        <div key={i} className="shrink-0 w-full h-full relative snap-start gallery-item">
+                          <Image src={url} alt={property.name} fill sizes="100vw" className="object-contain" />
+                        </div>
+                      ))}
+                    </div>
+                    {displayImages.length > 1 && (
+                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                        {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/40'}`} />)}
+                      </div>
+                    )}
                   </div>
-                )}
-                {galleryExpanded && (
-                  <button type="button" onClick={() => setGalleryExpanded(false)}
-                    className="md:hidden absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full z-10">
-                    <IconX className="w-4 h-4" />
-                  </button>
                 )}
                 {/* Desktop: original display */}
                 <div className="relative w-full hidden md:block" style={{height:"55vh"}}>
@@ -449,14 +464,6 @@ export default function PropertyPage() {
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronLeft className="w-5 h-5" />
                     </button>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
-                    </div>
-                    <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{safeIndex + 1} / {displayImages.length}</div>
-                  </div>
-                )}
-                {galleryExpanded && images.length > 1 && (
-                  <div className="md:hidden">
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                       {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
                     </div>

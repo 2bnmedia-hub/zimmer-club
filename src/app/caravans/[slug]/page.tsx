@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { GenericReviews } from '@/components/GenericReviews'
 import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
-import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone } from '@/components/icons'
+import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone, IconX } from '@/components/icons'
 import Image from 'next/image'
 import { buildWhatsAppLink } from '@/lib/utils'
 
@@ -57,6 +57,7 @@ export default function CaravanPage() {
   const [caravan, setCaravan] = useState<Caravan | null>(null)
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
+  const [galleryExpanded, setGalleryExpanded] = useState(false)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
 
@@ -195,13 +196,45 @@ export default function CaravanPage() {
             <div className="order-1 md:order-2 bg-gray-100 rounded-2xl relative overflow-hidden">
               {images.length > 0 ? (
                 <>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory md:block" style={{scrollbarWidth:'none'}}>
-                    {images.map((url, i) => (
-                      <div key={i} className="shrink-0 w-full h-64 relative snap-start md:hidden">
-                        <Image src={url} alt={caravan.name} fill sizes="100vw" className="object-contain" />
-                      </div>
-                    ))}
-                  </div>
+                  {!galleryExpanded && (
+                    <div className="md:hidden grid grid-cols-3 grid-rows-2 gap-1 p-1" style={{ height: 280 }}>
+                      <button type="button" onClick={() => { setCurrentImage(0); setGalleryExpanded(true) }}
+                        className="col-span-2 row-span-2 relative rounded-r-xl overflow-hidden">
+                        <Image src={images[0]} alt={caravan.name} fill sizes="66vw" className="object-cover" priority />
+                      </button>
+                      {images.slice(1, 4).map((url, i) => {
+                        const idx = i + 1
+                        const remaining = images.length - 4
+                        const isLastSlot = i === 2
+                        return (
+                          <button key={idx} type="button" onClick={() => { setCurrentImage(idx); setGalleryExpanded(true) }}
+                            className={`relative overflow-hidden ${i === 0 ? 'rounded-tl-xl' : ''} ${isLastSlot ? 'rounded-bl-xl' : ''}`}>
+                            <Image src={url} alt={caravan.name} fill sizes="33vw" className="object-cover" />
+                            {isLastSlot && remaining > 0 && (
+                              <div className="absolute inset-0 bg-black/55 flex items-center justify-center text-white font-bold text-sm">
+                                +{remaining}
+                              </div>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                  {galleryExpanded && (
+                    <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory" style={{scrollbarWidth:'none'}}>
+                      {images.map((url, i) => (
+                        <div key={i} className="shrink-0 w-full h-64 relative snap-start">
+                          <Image src={url} alt={caravan.name} fill sizes="100vw" className="object-contain" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {galleryExpanded && (
+                    <button type="button" onClick={() => setGalleryExpanded(false)}
+                      className="md:hidden absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full z-10">
+                      <IconX className="w-4 h-4" />
+                    </button>
+                  )}
                   <div className="hidden md:block relative w-full" style={{height:'55vh'}}>
                     {images.map((url, i) => (
                       <Image key={i} src={url} alt={caravan.name} fill priority={i === 0}

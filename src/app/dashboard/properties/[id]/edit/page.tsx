@@ -420,6 +420,7 @@ export default function EditPropertyPage() {
   }
 
   const handleVideoDelete = async (id: string) => {
+    if (!confirm('למחוק את הסרטון? לא ניתן לשחזר.')) return
     await supabase.from('property_videos').delete().eq('id', id)
     setVideos(prev => prev.filter(v => v.id !== id))
   }
@@ -448,6 +449,7 @@ export default function EditPropertyPage() {
     setUploading(false); e.target.value = ''
   }
   const handleDeleteImage = async (id: string) => {
+    if (!confirm('למחוק את התמונה? לא ניתן לשחזר.')) return
     await supabase.from('property_images').delete().eq('id', id)
     setImages(prev => prev.filter(i => i.id !== id))
   }
@@ -756,13 +758,14 @@ export default function EditPropertyPage() {
 
                 const handleUnitImageDelete = async (imgId: string) => {
                   if (!unit.id) return
+                  if (!confirm('למחוק את התמונה? לא ניתן לשחזר.')) return
                   await supabase.from('property_unit_images').delete().eq('id', imgId)
                   setUnitImages(prev => ({ ...prev, [unit.id!]: (prev[unit.id!] || []).filter(i => i.id !== imgId) }))
                 }
 
                 return (
                   <div key={unitId} className="border border-gray-200 rounded-2xl p-5 relative">
-                    <button type="button" onClick={() => setUnits(prev => prev.map((u, i) => i === idx ? { ...u, toDelete: true } : u))}
+                    <button type="button" onClick={() => { if (confirm('למחוק את היחידה? לא ניתן לשחזר.')) setUnits(prev => prev.map((u, i) => i === idx ? { ...u, toDelete: true } : u)) }}
                       className="absolute top-3 left-3 p-1.5 rounded-full bg-red-50 hover:bg-red-100 transition-colors">
                       <IconX className="w-4 h-4 text-red-500" />
                     </button>

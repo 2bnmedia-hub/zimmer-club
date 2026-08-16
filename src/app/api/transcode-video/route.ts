@@ -48,15 +48,28 @@ export async function POST(req: Request) {
       throw new Error(`source download failed: ${await download.stderr()}`)
     }
 
-    // Re-encode to H.264/AAC (broad browser support, unlike source HEVC), cap at 1080p, fast-start for streaming
-    const transcode = await sandbox.runCommand('/tmp/ffmpeg', [
-      '-i', '/tmp/input',
-      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23',
-      '-vf', "scale='min(1920,iw)':-2",
-      '-c:a', 'aac', '-b:a', '128k',
-      '-movflags', '+faststart',
-      '-y', '/tmp/output.mp4',
-    ])
+    const logoDownload = await sandbox.runCommand('curl', ['-sL', '-o', '/tmp/logo.png', 'https://www.zimmer.club/logo.png'])
+    const hasLogo = logoDownload.exitCode === 0
+
+    // Re-encode to H.264/AAC (broad browser support, unlike source HEVC), cap at 1080p, fast-start
+    // for streaming, and burn in the zimmer.club logo (top-right) as a copyright watermark.
+    const transcode = hasLogo
+      ? await sandbox.runCommand('/tmp/ffmpeg', [
+          '-i', '/tmp/input', '-i', '/tmp/logo.png',
+          '-filter_complex', "[0:v]scale='min(1920,iw)':-2[base];[1:v]scale=180:-1[wm];[base][wm]overlay=W-w-24:24",
+          '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23',
+          '-c:a', 'aac', '-b:a', '128k',
+          '-movflags', '+faststart',
+          '-y', '/tmp/output.mp4',
+        ])
+      : await sandbox.runCommand('/tmp/ffmpeg', [
+          '-i', '/tmp/input',
+          '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23',
+          '-vf', "scale='min(1920,iw)':-2",
+          '-c:a', 'aac', '-b:a', '128k',
+          '-movflags', '+faststart',
+          '-y', '/tmp/output.mp4',
+        ])
     if (transcode.exitCode !== 0) {
       throw new Error(`transcode failed: ${await transcode.stderr()}`)
     }

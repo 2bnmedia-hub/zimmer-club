@@ -164,6 +164,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
   }
 
   const removeExistingImage = (imgId: string) => {
+    if (!confirm('למחוק את התמונה? לא ניתן לשחזר.')) return
     setRemovedImageIds(prev => [...prev, imgId])
     setExistingImages(prev => {
       const next = prev.filter(img => img.id !== imgId)
@@ -239,6 +240,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
   }
 
   const handleVideoDelete = async (id: string) => {
+    if (!confirm('למחוק את הסרטון? לא ניתן לשחזר.')) return
     await supabase.from('attraction_videos').delete().eq('id', id)
     setVideos(prev => prev.filter(v => v.id !== id))
   }

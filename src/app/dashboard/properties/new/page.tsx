@@ -328,7 +328,18 @@ export default function NewPropertyPage() {
       const { error: upErr } = await supabase.storage.from('property-images').upload(fileName, v.file)
       if (!upErr) {
         const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
-        await supabase.from('property_videos').insert({ property_id: propertyId, url: data.publicUrl, order: i })
+        const { data: newVid } = await supabase.from('property_videos').insert({ property_id: propertyId, url: data.publicUrl, order: i }).select().single()
+        if (newVid) {
+          try {
+            await fetch('/api/transcode-video', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ table: 'property_videos', id: newVid.id, url: data.publicUrl, bucket: 'property-images', storagePath: fileName }),
+            })
+          } catch {
+            // transcode failed — original video stays; not fatal
+          }
+        }
       } else {
         failedCount++
       }

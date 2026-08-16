@@ -397,7 +397,20 @@ export default function EditPropertyPage() {
       if (!error) {
         const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
         const { data: newVid } = await supabase.from('property_videos').insert({ property_id: params.id, url: data.publicUrl, order: videos.length }).select().single()
-        if (newVid) setVideos(prev => [...prev, newVid])
+        if (newVid) {
+          setVideos(prev => [...prev, newVid])
+          try {
+            const res = await fetch('/api/transcode-video', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ table: 'property_videos', id: newVid.id, url: data.publicUrl, bucket: 'property-images', storagePath: fileName }),
+            })
+            const result = await res.json()
+            if (result.ok) setVideos(prev => prev.map(v => v.id === newVid.id ? { ...v, url: result.url } : v))
+          } catch {
+            // transcode failed — original (possibly HEVC) video stays; not fatal
+          }
+        }
       } else {
         alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
@@ -583,7 +596,7 @@ export default function EditPropertyPage() {
               {videos.length < 10 && (
                 <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
                   <span className="text-2xl mb-1">🎬</span>
-                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון'}</span>
+                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה ומעבד...' : 'הוסף סרטון'}</span>
                   <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
                 </label>
               )}

@@ -118,7 +118,7 @@ export default function NewCaravanPage() {
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videos, setVideos] = useState<{id:string,url:string,order:number,storagePath?:string}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
   const newCaravanIdRef = React.useRef<string|null>(null)
 
@@ -205,10 +205,7 @@ export default function NewCaravanPage() {
       const { error } = await supabase.storage.from('caravan-images').upload(fileName, file)
       if (!error) {
         const { data } = supabase.storage.from('caravan-images').getPublicUrl(fileName)
-        if (newCaravanIdRef.current) {
-          const { data: newVid } = await supabase.from('caravan_videos').insert({ caravan_id: newCaravanIdRef.current, url: data.publicUrl, order: videos.length }).select().single()
-          if (newVid) setVideos(prev => [...prev, newVid])
-        }
+        setVideos(prev => [...prev, { id: `pending-${Date.now()}-${Math.random().toString(36).slice(2)}`, url: data.publicUrl, order: prev.length, storagePath: fileName }])
       } else {
         alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
@@ -217,8 +214,7 @@ export default function NewCaravanPage() {
     e.target.value = ''
   }
 
-  const handleVideoDelete = async (id: string) => {
-    await supabase.from('caravan_videos').delete().eq('id', id)
+  const handleVideoDelete = (id: string) => {
     setVideos(prev => prev.filter(v => v.id !== id))
   }
 
@@ -277,6 +273,22 @@ export default function NewCaravanPage() {
       await supabase.from('caravan_images').insert(
         validImages.map((url, i) => ({ caravan_id: data.id, url, is_primary: i === 0, order: i }))
       )
+    }
+
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i]
+      const { data: newVid } = await supabase.from('caravan_videos').insert({ caravan_id: data.id, url: v.url, order: i }).select().single()
+      if (newVid && v.storagePath) {
+        try {
+          await fetch('/api/transcode-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ table: 'caravan_videos', id: newVid.id, url: v.url, bucket: 'caravan-images', storagePath: v.storagePath }),
+          })
+        } catch {
+          // transcode failed — original video stays; not fatal
+        }
+      }
     }
 
     router.push('/dashboard/owner')

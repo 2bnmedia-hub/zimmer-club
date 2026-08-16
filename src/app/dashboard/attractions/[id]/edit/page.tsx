@@ -216,7 +216,20 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
       if (!error) {
         const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
         const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: params.id, url: data.publicUrl, order: videos.length }).select().single()
-        if (newVid) setVideos(prev => [...prev, newVid])
+        if (newVid) {
+          setVideos(prev => [...prev, newVid])
+          try {
+            const res = await fetch('/api/transcode-video', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ table: 'attraction_videos', id: newVid.id, url: data.publicUrl, bucket: 'attraction-images', storagePath: fileName }),
+            })
+            const result = await res.json()
+            if (result.ok) setVideos(prev => prev.map(v => v.id === newVid.id ? { ...v, url: result.url } : v))
+          } catch {
+            // transcode failed — original video stays; not fatal
+          }
+        }
       } else {
         alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }

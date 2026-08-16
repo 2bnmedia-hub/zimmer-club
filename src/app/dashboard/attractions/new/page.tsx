@@ -77,7 +77,7 @@ export default function NewAttractionPage() {
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
+  const [videos, setVideos] = useState<{id:string,url:string,order:number,storagePath?:string}[]>([])
   const [videoUploading, setVideoUploading] = useState(false)
   const [newAttractionId, setNewAttractionId] = useState<string|null>(null)
 
@@ -212,8 +212,7 @@ export default function NewAttractionPage() {
       const { error } = await supabase.storage.from('attraction-images').upload(fileName, file)
       if (!error) {
         const { data } = supabase.storage.from('attraction-images').getPublicUrl(fileName)
-        const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: newAttractionId!, url: data.publicUrl, order: videos.length }).select().single()
-        if (newVid) setVideos(prev => [...prev, newVid])
+        setVideos(prev => [...prev, { id: `pending-${Date.now()}-${Math.random().toString(36).slice(2)}`, url: data.publicUrl, order: prev.length, storagePath: fileName }])
       } else {
         alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
       }
@@ -222,8 +221,7 @@ export default function NewAttractionPage() {
     e.target.value = ''
   }
 
-  const handleVideoDelete = async (id: string) => {
-    await supabase.from('attraction_videos').delete().eq('id', id)
+  const handleVideoDelete = (id: string) => {
     setVideos(prev => prev.filter(v => v.id !== id))
   }
   const handleSubmit = async (e: React.FormEvent) => {
@@ -285,6 +283,23 @@ export default function NewAttractionPage() {
       }
     }
     if (failedImageCount > 0) alert(`${failedImageCount} תמונות לא הועלו בהצלחה. אפשר לנסות להוסיף אותן שוב מדף העריכה.`)
+
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i]
+      const { data: newVid } = await supabase.from('attraction_videos').insert({ attraction_id: attraction.id, url: v.url, order: i }).select().single()
+      if (newVid && v.storagePath) {
+        try {
+          await fetch('/api/transcode-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ table: 'attraction_videos', id: newVid.id, url: v.url, bucket: 'attraction-images', storagePath: v.storagePath }),
+          })
+        } catch {
+          // transcode failed — original video stays; not fatal
+        }
+      }
+    }
+
     setUploading(false)
     router.push('/dashboard/owner')
   }

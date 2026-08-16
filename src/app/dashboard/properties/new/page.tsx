@@ -96,8 +96,7 @@ export default function NewPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [images, setImages] = useState<ImagePreview[]>([])
   const [uploading, setUploading] = useState(false)
-  const [videos, setVideos] = useState<{id:string,url:string,order:number}[]>([])
-  const [videoUploading, setVideoUploading] = useState(false)
+  const [pendingVideos, setPendingVideos] = useState<({ type: 'file'; file: File; previewUrl: string } | { type: 'url'; url: string })[]>([])
   const newPropertyIdRef = React.useRef<string|null>(null)
 
   const [slugPreview, setSlugPreview] = useState('')
@@ -297,30 +296,44 @@ export default function NewPropertyPage() {
   }
 
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
-    if (videos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
-    setVideoUploading(true)
-    for (const file of Array.from(files)) {
-      const ext = file.name.split('.').pop()
-      const fileName = `property-images/${String(newPropertyIdRef.current || Date.now())}/video_${Date.now()}.${ext}`
-      const { error } = await supabase.storage.from('property-images').upload(fileName, file)
-      if (!error) {
-        const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
-        const { data: newVid } = await supabase.from('property_videos').insert({ property_id: newPropertyIdRef.current!, url: data.publicUrl, order: videos.length }).select().single()
-        if (newVid) setVideos(prev => [...prev, newVid])
-      } else {
-        alert(`העלאת הסרטון "${file.name}" נכשלה, נסו שוב`)
-      }
-    }
-    setVideoUploading(false)
+    if (pendingVideos.length + files.length > 10) { alert('מקסימום 10 סרטונים'); return }
+    const newOnes = Array.from(files).map(file => ({ type: 'file' as const, file, previewUrl: URL.createObjectURL(file) }))
+    setPendingVideos(prev => [...prev, ...newOnes])
     e.target.value = ''
   }
 
-  const handleVideoDelete = async (id: string) => {
-    await supabase.from('property_videos').delete().eq('id', id)
-    setVideos(prev => prev.filter(v => v.id !== id))
+  const handleVideoRemove = (index: number) => {
+    setPendingVideos(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const addVideoUrl = (url: string) => {
+    if (!url || pendingVideos.length >= 10) return
+    setPendingVideos(prev => [...prev, { type: 'url' as const, url }])
+  }
+
+  const uploadPendingVideos = async (propertyId: string) => {
+    let failedCount = 0
+    for (let i = 0; i < pendingVideos.length; i++) {
+      const v = pendingVideos[i]
+      if (v.type === 'url') {
+        const { error } = await supabase.from('property_videos').insert({ property_id: propertyId, url: v.url, order: i })
+        if (error) failedCount++
+        continue
+      }
+      const ext = v.file.name.split('.').pop()
+      const fileName = `property-images/${propertyId}/video_${Date.now()}_${i}.${ext}`
+      const { error: upErr } = await supabase.storage.from('property-images').upload(fileName, v.file)
+      if (!upErr) {
+        const { data } = supabase.storage.from('property-images').getPublicUrl(fileName)
+        await supabase.from('property_videos').insert({ property_id: propertyId, url: data.publicUrl, order: i })
+      } else {
+        failedCount++
+      }
+    }
+    if (failedCount > 0) alert(`${failedCount} סרטונים לא הועלו בהצלחה. אפשר לנסות להוסיף אותם שוב מדף העריכה.`)
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -381,6 +394,7 @@ export default function NewPropertyPage() {
 
     setUploading(true)
     if (images.length > 0) await uploadImages(property.id)
+    if (pendingVideos.length > 0) await uploadPendingVideos(property.id)
 
     if (selectedAmenities.length > 0) {
       const { data: amenityRows } = await supabase.from('amenities').select('id, key').in('key', selectedAmenities)
@@ -575,24 +589,26 @@ export default function NewPropertyPage() {
             <h2 className="font-bold text-gray-700 text-lg mb-1">סרטונים</h2>
             <p className="text-xs text-gray-400 mb-4">עד 10 סרטונים (MP4, MOV)</p>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              {videos.map(v => (
-                <div key={v.id} className="relative group rounded-xl overflow-hidden bg-black aspect-video">
-                  <video src={v.url} controls className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => handleVideoDelete(v.id)}
+              {pendingVideos.map((v, i) => (
+                <div key={i} className="relative group rounded-xl overflow-hidden bg-black aspect-video">
+                  {v.type === 'file'
+                    ? <video src={v.previewUrl} controls className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex flex-col items-center justify-center text-white text-xs px-2 text-center gap-1"><span className="text-xl">🎬</span><span className="break-all">{v.url}</span></div>}
+                  <button type="button" onClick={() => handleVideoRemove(i)}
                     className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                     <IconX className="w-3.5 h-3.5 text-white" />
                   </button>
                 </div>
               ))}
-              {videos.length < 10 && (
+              {pendingVideos.length < 10 && (
                 <label className="aspect-video border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors">
                   <span className="text-2xl mb-1">🎬</span>
-                  <span className="text-xs text-gray-400">{videoUploading ? 'מעלה...' : 'הוסף סרטון'}</span>
-                  <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" disabled={videoUploading} />
+                  <span className="text-xs text-gray-400">הוסף סרטון</span>
+                  <input type="file" accept="video/*" multiple onChange={handleVideoSelect} className="hidden" />
                 </label>
               )}
             </div>
-            <p className="text-xs text-gray-400">{videos.length}/10 סרטונים</p>
+            <p className="text-xs text-gray-400">{pendingVideos.length}/10 סרטונים · יועלו בפועל בסיום השמירה</p>
             <div className="flex items-center gap-2 mt-4">
               <div className="flex-1 h-px bg-gray-200" /><span className="text-xs text-gray-400">או הדבק קישור</span><div className="flex-1 h-px bg-gray-200" />
             </div>
@@ -603,10 +619,8 @@ export default function NewPropertyPage() {
                 if (e.key === 'Enter') {
                   e.preventDefault()
                   const url = (e.target as HTMLInputElement).value.trim()
-                  if (url && videos.length < 10) {
-                    setVideos(prev => [...prev, { id: `url-${Date.now()}`, url, order: prev.length }])
-                    ;(e.target as HTMLInputElement).value = ''
-                  }
+                  addVideoUrl(url)
+                  ;(e.target as HTMLInputElement).value = ''
                 }
               }}
             />

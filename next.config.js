@@ -36,6 +36,7 @@ const nextConfig = {
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.userway.org",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https:",
+              "media-src 'self' blob: https:",
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com",
               "frame-src https://maps.google.com https://www.google.com https://www.youtube.com https://player.vimeo.com",

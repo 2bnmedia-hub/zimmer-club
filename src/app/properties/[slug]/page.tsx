@@ -288,7 +288,7 @@ export default function PropertyPage() {
             <p className="font-bold text-gray-900 text-sm">התקשרו לבירור מחיר</p>
           ) : property.price_per_night > 0 && (
             <p className="font-bold text-gray-900 text-base">
-              ₪{property.price_per_night.toLocaleString()}
+              <span className="text-xs font-normal text-gray-500">החל מ</span> ₪{property.price_per_night.toLocaleString()}
               <span className="text-xs font-normal text-gray-500 mr-1">/ לילה</span>
             </p>
           )}

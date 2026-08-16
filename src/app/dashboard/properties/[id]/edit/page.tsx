@@ -281,6 +281,7 @@ export default function EditPropertyPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [priceOnRequest, setPriceOnRequest] = useState(false)
   const [success, setSuccess] = useState(false)
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [isAdmin, setIsAdmin] = useState(false)
@@ -313,6 +314,7 @@ export default function EditPropertyPage() {
       const { data: property } = await supabase.from('properties').select('*').eq('id', params.id).single()
       if (!property) { router.push('/dashboard/owner'); return }
       if (profile?.role !== 'admin' && property.owner_id !== user.id) { router.push('/dashboard/owner'); return }
+      setPriceOnRequest(!!property.price_on_request)
       setForm({
         name: property.name || '', slug: property.slug || '',
         short_description: property.short_description || '', description: property.description || '',
@@ -459,8 +461,10 @@ export default function EditPropertyPage() {
     const { error: updateError } = await supabase.from('properties').update({
       name: form.name, slug: form.slug || undefined, short_description: form.short_description,
       description: form.description, category: [form.category], region: form.region,
-      city: form.city, address: form.address, price_per_night: parseInt(form.price_per_night),
-      price_weekend: form.price_weekend ? parseInt(form.price_weekend) : null,
+      city: form.city, address: form.address,
+      price_per_night: priceOnRequest ? null : (parseInt(form.price_per_night) || null),
+      price_on_request: priceOnRequest,
+      price_weekend: (!priceOnRequest && form.price_weekend) ? parseInt(form.price_weekend) : null,
       min_nights: parseInt(form.min_nights), max_guests: parseInt(form.max_guests),
       bedrooms: parseInt(form.bedrooms), bathrooms: parseInt(form.bathrooms),
       instant_book: form.instant_book, accepts_miluim: form.accepts_miluim, has_shelter: form.has_shelter,
@@ -652,10 +656,17 @@ export default function EditPropertyPage() {
 
           <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-gray-700 text-lg">תמחור וקיבולת</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ"ש (₪)</label><input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="1" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר סוף שבוע (₪) <span className="text-gray-400 font-normal text-xs">אופציונלי</span></label><input name="price_weekend" type="number" value={form.price_weekend} onChange={handleChange} min="1" placeholder="כברירת מחדל — מחיר אמצ׳ש" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
-            </div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-xl px-4 py-2.5 cursor-pointer w-fit">
+              <input type="checkbox" checked={priceOnRequest} onChange={e => setPriceOnRequest(e.target.checked)}
+                className="w-4 h-4 accent-yellow-600" />
+              התקשרו לבירור מחיר (במקום לרשום מחיר קבוע)
+            </label>
+            {!priceOnRequest && (
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ"ש (₪)</label><input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="1" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר סוף שבוע (₪) <span className="text-gray-400 font-normal text-xs">אופציונלי</span></label><input name="price_weekend" type="number" value={form.price_weekend} onChange={handleChange} min="1" placeholder="כברירת מחדל — מחיר אמצ׳ש" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium text-gray-700 mb-1">מינימום לילות</label><input name="min_nights" type="number" value={form.min_nights} onChange={handleChange} min="1" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
             </div>

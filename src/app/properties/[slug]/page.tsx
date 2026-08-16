@@ -26,6 +26,7 @@ type Property = {
   address: string
   price_per_night: number
   price_weekend?: number
+  price_on_request?: boolean
   video_url?: string
   min_nights: number
   max_guests: number
@@ -280,7 +281,9 @@ export default function PropertyPage() {
       {/* Mobile sticky booking bar */}
       <div className="lg:hidden mobile-booking-bar">
         <div>
-          {property.price_per_night > 0 && (
+          {property.price_on_request ? (
+            <p className="font-bold text-gray-900 text-sm">התקשרו לבירור מחיר</p>
+          ) : property.price_per_night > 0 && (
             <p className="font-bold text-gray-900 text-base">
               ₪{property.price_per_night.toLocaleString()}
               <span className="text-xs font-normal text-gray-500 mr-1">/ לילה</span>
@@ -522,6 +525,12 @@ export default function PropertyPage() {
                   מקבלים שובר מילואים
                 </span>
               )}
+              {amenities.includes('ev_charging') && (
+                <span className="badge-shimmer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm"
+                  style={{color:'#15803d', border:'1px solid rgba(21,128,61,0.25)', boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
+                  🔌 עמדת טעינה לרכב חשמלי
+                </span>
+              )}
             </div>
           </div>
           </div>
@@ -598,7 +607,11 @@ export default function PropertyPage() {
                   <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 font-medium">✓ מחיר ישיר מהמארח</span>
                   {property.instant_book && <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-1 font-medium">⚡ מיידי</span>}
                 </div>
-                {property.price_per_night > 0 && (
+                {property.price_on_request ? (
+                  <div className="mb-4 bg-gray-50 rounded-xl p-4 text-center">
+                    <p className="text-lg font-bold text-gray-900">📞 התקשרו לבירור מחיר</p>
+                  </div>
+                ) : property.price_per_night > 0 && (
                   <div className="mb-4">
                     <div className="grid grid-cols-2 gap-2">
                       <div className="bg-gray-50 rounded-xl p-3 text-center">
@@ -638,7 +651,7 @@ export default function PropertyPage() {
                     </select>
                   </div>
                 </div>
-                {nights > 0 && (
+                {!property.price_on_request && nights > 0 && (
                   <div className="border-t border-gray-100 pt-4 mb-4 space-y-2">
                     <div className="flex justify-between text-sm text-gray-600"><span>₪{property.price_per_night} × {nights} לילות</span><span>₪{total}</span></div>
                     <div className="flex justify-between font-bold text-gray-900"><span>סה״כ</span><span>₪{total}</span></div>

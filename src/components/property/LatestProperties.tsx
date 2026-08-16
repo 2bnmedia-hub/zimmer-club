@@ -8,7 +8,7 @@ import { coverImage } from '@/lib/utils'
 
 type Property = {
   slug?: string; id: string; name: string; short_description: string
-  city: string; price_per_night: number; max_guests: number
+  city: string; price_per_night: number; price_on_request?: boolean; max_guests: number
   instant_book: boolean; property_images: { url: string; is_primary?: boolean }[]; avg_rating?: number; accepts_miluim?: boolean; has_shelter?: boolean
   property_amenities?: { amenities: { key: string } | null }[]
 }
@@ -143,7 +143,7 @@ export function LatestProperties() {
               <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
                 <p className="text-white/55 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}>📍 {p0.city}</p>
                 <h3 className="font-bold text-lg leading-tight mb-1">{p0.name}</h3>
-                <p className="font-bold text-base" style={{ color: '#F5C842' }}>₪{p0.price_per_night?.toLocaleString()} <span className="font-normal text-white/50 text-xs">/ לילה</span></p>
+                <p className="font-bold text-base" style={{ color: '#F5C842' }}>{p0.price_on_request ? '📞 התקשרו לבירור מחיר' : <>₪{p0.price_per_night?.toLocaleString()} <span className="font-normal text-white/50 text-xs">/ לילה</span></>}</p>
               </div>
             </Link>
           ) : <PlaceholderFeatured />}
@@ -163,7 +163,7 @@ export function LatestProperties() {
               <div className="absolute bottom-0 right-0 left-0 p-2.5 text-white">
                 <p className="text-white/50 leading-none mb-0.5" style={{ fontSize: '9px' }}>📍 {p.city}</p>
                 <h3 className="font-semibold leading-tight line-clamp-1" style={{ fontSize: '12px' }}>{p.name}</h3>
-                <p className="font-bold mt-0.5" style={{ color: '#F5C842', fontSize: '11px' }}>₪{p.price_per_night?.toLocaleString()}</p>
+                <p className="font-bold mt-0.5" style={{ color: '#F5C842', fontSize: '11px' }}>{p.price_on_request ? '📞 התקשרו' : `₪${p.price_per_night?.toLocaleString()}`}</p>
               </div>
             </Link>
           ))}

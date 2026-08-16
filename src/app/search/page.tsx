@@ -20,6 +20,7 @@ type Property = {
   city: string
   price_per_night: number
   price_weekend?: number
+  price_on_request?: boolean
   max_guests: number
   avg_rating: number
   total_reviews: number
@@ -747,16 +748,22 @@ function SearchContent() {
                         {p.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">{p.short_description}</p>}
 
                         {/* מחיר אמצ"ש / סוף"ש */}
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                          <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center">
-                            <p className="text-[10px] text-gray-400 mb-0.5">אמצ"ש</p>
-                            <p className="text-sm font-bold text-gray-800">₪{p.price_per_night.toLocaleString()}</p>
+                        {p.price_on_request ? (
+                          <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center mb-3">
+                            <p className="text-sm font-bold text-gray-800">📞 התקשרו לבירור מחיר</p>
                           </div>
-                          <div className="bg-amber-50 rounded-lg px-2.5 py-1.5 text-center border border-amber-100">
-                            <p className="text-[10px] text-amber-500 mb-0.5">סוף שבוע</p>
-                            <p className="text-sm font-bold text-amber-700">₪{(p.price_weekend || p.price_per_night).toLocaleString()}</p>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2 mb-3">
+                            <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center">
+                              <p className="text-[10px] text-gray-400 mb-0.5">אמצ"ש</p>
+                              <p className="text-sm font-bold text-gray-800">₪{p.price_per_night.toLocaleString()}</p>
+                            </div>
+                            <div className="bg-amber-50 rounded-lg px-2.5 py-1.5 text-center border border-amber-100">
+                              <p className="text-[10px] text-amber-500 mb-0.5">סוף שבוע</p>
+                              <p className="text-sm font-bold text-amber-700">₪{(p.price_weekend || p.price_per_night).toLocaleString()}</p>
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                         <div className="flex items-center justify-between pt-2.5 border-t border-gray-50">
                           <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">עד {p.max_guests} אורחים</span>

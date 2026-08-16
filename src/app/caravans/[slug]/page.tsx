@@ -8,6 +8,7 @@ import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone, IconX } from '@/components/icons'
 import Image from 'next/image'
+import { FadingVideo } from '@/components/FadingVideo'
 import { buildWhatsAppLink } from '@/lib/utils'
 
 const REGION_LABELS: Record<string, string> = {
@@ -386,7 +387,7 @@ export default function CaravanPage() {
                 <div className={caravanVideos.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : ''}>
                   {caravanVideos.map((url, i) => (
                     <div key={i} className="relative w-full rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
-                      <video src={url} controls preload="metadata" className="w-full h-full object-contain" />
+                      <FadingVideo src={url} className="w-full h-full object-contain" />
                     </div>
                   ))}
                 </div>

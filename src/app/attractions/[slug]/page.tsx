@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
+import { FadingVideo } from '@/components/FadingVideo'
 import { AdminBackButton } from '@/components/AdminBackButton'
 import { GenericReviews } from '@/components/GenericReviews'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
@@ -520,7 +521,7 @@ export default function AttractionPage() {
               <div className={attractionVideos.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : ''}>
                 {attractionVideos.map((url, i) => (
                   <div key={i} className="relative w-full rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
-                    <video src={url} controls preload="metadata" className="w-full h-full object-contain" />
+                    <FadingVideo src={url} className="w-full h-full object-contain" />
                   </div>
                 ))}
               </div>

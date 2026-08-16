@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
+import { FadingVideo } from '@/components/FadingVideo'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { REGIONS } from '@/lib/constants'
 import { buildWhatsAppLink } from '@/lib/utils'
@@ -592,7 +593,7 @@ export default function PropertyPage() {
                   <div className={propertyVideos.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : ''}>
                     {propertyVideos.map((url, i) => (
                       <div key={i} className="relative w-full rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
-                        <video src={url} controls preload="metadata" className="w-full h-full object-contain" />
+                        <FadingVideo src={url} className="w-full h-full object-contain" />
                       </div>
                     ))}
                   </div>

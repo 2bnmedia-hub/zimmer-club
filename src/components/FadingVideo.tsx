@@ -18,7 +18,7 @@ export function FadingVideo({ src, className }: { src: string; className?: strin
       preload="metadata"
       className={className}
       style={{ opacity, transition: `opacity ${FADE_MS}ms ease` }}
-      onCanPlay={(e) => { e.currentTarget.play().catch(() => {}); setOpacity(1) }}
+      onPlaying={() => setOpacity(1)}
       onTimeUpdate={(e) => {
         const v = e.currentTarget
         if (v.duration && v.duration - v.currentTime < FADE_START_BEFORE_END) setOpacity(0)

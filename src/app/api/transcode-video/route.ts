@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
     // Static ffmpeg build — avoids relying on dnf package availability/licensing on the sandbox image
     const setup = await sandbox.runCommand('sh', ['-c',
-      `curl -sL -o /tmp/ffmpeg.tar.xz ${FFMPEG_URL} && tar -xf /tmp/ffmpeg.tar.xz -C /tmp && mv /tmp/ffmpeg-*-amd64-static/ffmpeg /tmp/ffmpeg && chmod +x /tmp/ffmpeg`
+      `(sudo dnf install -y xz 2>&1 || true) && curl -sL -o /tmp/ffmpeg.tar.xz ${FFMPEG_URL} && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp && mv /tmp/ffmpeg-*-amd64-static/ffmpeg /tmp/ffmpeg && chmod +x /tmp/ffmpeg`
     ])
     if (setup.exitCode !== 0) {
       throw new Error(`ffmpeg setup failed: ${await setup.stderr()}`)

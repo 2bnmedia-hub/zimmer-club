@@ -59,6 +59,7 @@ export default function CaravanPage() {
   const [currentImage, setCurrentImage] = useState(0)
   const [galleryExpanded, setGalleryExpanded] = useState(false)
   const lightboxRef = useRef<HTMLDivElement>(null)
+  const lightboxCloseRef = useRef<HTMLButtonElement>(null)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
 
@@ -71,6 +72,14 @@ export default function CaravanPage() {
   useEffect(() => {
     document.body.style.overflow = galleryExpanded ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
+  }, [galleryExpanded])
+
+  useEffect(() => {
+    if (!galleryExpanded) return
+    lightboxCloseRef.current?.focus()
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') setGalleryExpanded(false) }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [galleryExpanded])
 
   const goToImage = (index: number) => {
@@ -211,6 +220,7 @@ export default function CaravanPage() {
                   {!galleryExpanded && (
                     <div className="md:hidden grid grid-cols-3 grid-rows-2 gap-1 p-1" style={{ height: 280 }}>
                       <button type="button" onClick={() => { setCurrentImage(0); setGalleryExpanded(true) }}
+                        aria-label={`פתח גלריית תמונות, תמונה 1 מתוך ${images.length}`}
                         className="col-span-2 row-span-2 relative rounded-r-xl overflow-hidden">
                         <Image src={images[0]} alt={caravan.name} fill sizes="66vw" className="object-cover" priority />
                       </button>
@@ -220,6 +230,7 @@ export default function CaravanPage() {
                         const isLastSlot = i === 2
                         return (
                           <button key={idx} type="button" onClick={() => { setCurrentImage(idx); setGalleryExpanded(true) }}
+                            aria-label={isLastSlot && remaining > 0 ? `הצג את כל ${images.length} התמונות` : `פתח גלריית תמונות, תמונה ${idx + 1} מתוך ${images.length}`}
                             className={`relative overflow-hidden ${i === 0 ? 'rounded-tl-xl' : ''} ${isLastSlot ? 'rounded-bl-xl' : ''}`}>
                             <Image src={url} alt={caravan.name} fill sizes="33vw" className="object-cover" />
                             {isLastSlot && remaining > 0 && (
@@ -233,8 +244,9 @@ export default function CaravanPage() {
                     </div>
                   )}
                   {galleryExpanded && (
-                    <div className="md:hidden fixed inset-0 z-[999997] bg-black flex flex-col" role="dialog" aria-modal="true">
-                      <button type="button" onClick={() => setGalleryExpanded(false)}
+                    <div className="md:hidden fixed inset-0 z-[999997] bg-black flex flex-col" role="dialog" aria-modal="true" aria-label="גלריית תמונות במסך מלא">
+                      <button type="button" ref={lightboxCloseRef} onClick={() => setGalleryExpanded(false)}
+                        aria-label="סגור גלריית תמונות"
                         className="absolute top-4 right-4 z-10 bg-white/15 text-white p-2.5 rounded-full">
                         <IconX className="w-5 h-5" />
                       </button>
@@ -258,7 +270,7 @@ export default function CaravanPage() {
                       </div>
                       {images.length > 1 && (
                         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                          {images.map((_, i) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/40'}`} />)}
+                          {images.map((_, i) => <button key={i} onClick={() => goToImage(i)} aria-label={`עבור לתמונה ${i + 1}`} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/40'}`} />)}
                         </div>
                       )}
                     </div>
@@ -273,16 +285,19 @@ export default function CaravanPage() {
                     {images.length > 1 && (
                       <>
                         <button onClick={() => setCurrentImage(prev => (prev - 1 + images.length) % images.length)}
+                          aria-label="התמונה הקודמת"
                           className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md z-10">
                           <IconChevronRight className="w-5 h-5" />
                         </button>
                         <button onClick={() => setCurrentImage(prev => (prev + 1) % images.length)}
+                          aria-label="התמונה הבאה"
                           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md z-10">
                           <IconChevronLeft className="w-5 h-5" />
                         </button>
                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                           {images.map((_, i) => (
                             <button key={i} onClick={() => setCurrentImage(i)}
+                              aria-label={`עבור לתמונה ${i + 1}`}
                               className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`} />
                           ))}
                         </div>

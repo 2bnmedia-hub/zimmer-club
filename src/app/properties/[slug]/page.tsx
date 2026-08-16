@@ -158,6 +158,7 @@ export default function PropertyPage() {
   const [currentImage, setCurrentImage] = useState(0)
   const [galleryExpanded, setGalleryExpanded] = useState(false)
   const mobileGalleryRef = useRef<HTMLDivElement>(null)
+  const lightboxCloseRef = useRef<HTMLButtonElement>(null)
   const { toggle, isLiked } = useWishlist()
   const { addItem: addRecentItem } = useRecentlyViewed()
   const [loading, setLoading] = useState(true)
@@ -172,6 +173,14 @@ export default function PropertyPage() {
   useEffect(() => {
     document.body.style.overflow = galleryExpanded ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
+  }, [galleryExpanded])
+
+  useEffect(() => {
+    if (!galleryExpanded) return
+    lightboxCloseRef.current?.focus()
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') setGalleryExpanded(false) }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [galleryExpanded])
   const [checkIn, setCheckIn] = useState('')
   const [guestName, setGuestName] = useState('')
@@ -395,6 +404,7 @@ export default function PropertyPage() {
                 {!galleryExpanded && (
                   <div className="md:hidden grid grid-cols-3 grid-rows-2 gap-1 p-1" style={{ height: 280 }}>
                     <button type="button" onClick={() => { setCurrentImage(0); setGalleryExpanded(true) }}
+                      aria-label={`פתח גלריית תמונות, תמונה 1 מתוך ${displayImages.length}`}
                       className="col-span-2 row-span-2 relative rounded-r-xl overflow-hidden">
                       <Image src={displayImages[0]} alt={property.name} fill sizes="66vw" className="object-cover" priority />
                     </button>
@@ -404,6 +414,7 @@ export default function PropertyPage() {
                       const isLastSlot = i === 2
                       return (
                         <button key={idx} type="button" onClick={() => { setCurrentImage(idx); setGalleryExpanded(true) }}
+                          aria-label={isLastSlot && remaining > 0 ? `הצג את כל ${displayImages.length} התמונות` : `פתח גלריית תמונות, תמונה ${idx + 1} מתוך ${displayImages.length}`}
                           className={`relative overflow-hidden ${i === 0 ? 'rounded-tl-xl' : ''} ${isLastSlot ? 'rounded-bl-xl' : ''}`}>
                           <Image src={url} alt={property.name} fill sizes="33vw" className="object-cover" />
                           {isLastSlot && remaining > 0 && (
@@ -418,8 +429,9 @@ export default function PropertyPage() {
                 )}
                 {/* Mobile: full-screen lightbox */}
                 {galleryExpanded && (
-                  <div className="md:hidden fixed inset-0 z-[999997] bg-black flex flex-col" role="dialog" aria-modal="true">
-                    <button type="button" onClick={() => setGalleryExpanded(false)}
+                  <div className="md:hidden fixed inset-0 z-[999997] bg-black flex flex-col" role="dialog" aria-modal="true" aria-label="גלריית תמונות במסך מלא">
+                    <button type="button" ref={lightboxCloseRef} onClick={() => setGalleryExpanded(false)}
+                      aria-label="סגור גלריית תמונות"
                       className="absolute top-4 right-4 z-10 bg-white/15 text-white p-2.5 rounded-full">
                       <IconX className="w-5 h-5" />
                     </button>
@@ -443,7 +455,7 @@ export default function PropertyPage() {
                     </div>
                     {displayImages.length > 1 && (
                       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                        {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/40'}`} />)}
+                        {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} aria-label={`עבור לתמונה ${i + 1}`} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/40'}`} />)}
                       </div>
                     )}
                   </div>
@@ -457,15 +469,17 @@ export default function PropertyPage() {
                 {displayImages.length > 1 && (
                   <div className="hidden md:block">
                     <button onClick={() => goToImage((safeIndex - 1 + displayImages.length) % displayImages.length)}
+                      aria-label="התמונה הקודמת"
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronRight className="w-5 h-5" />
                     </button>
                     <button onClick={() => goToImage((safeIndex + 1) % displayImages.length)}
+                      aria-label="התמונה הבאה"
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-md hover:bg-white transition-colors z-10">
                       <IconChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
+                      {displayImages.map((_: string, i: number) => <button key={i} onClick={() => goToImage(i)} aria-label={`עבור לתמונה ${i + 1}`} className={`w-2 h-2 rounded-full transition-colors ${i === safeIndex ? 'bg-white' : 'bg-white/50'}`} />)}
                     </div>
                     <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">{safeIndex + 1} / {displayImages.length}</div>
                   </div>

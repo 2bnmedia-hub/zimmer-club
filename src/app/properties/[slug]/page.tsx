@@ -53,6 +53,7 @@ const AMENITY_LABELS: Record<string, string> = {
   ac: 'מיזוג אוויר', kitchen: 'מטבח', outdoor_kitchen: 'מטבח חוץ', dining_room: 'חדר אוכל',
   fireplace: 'קמין', garden: 'גינה',
   sea_view: 'נוף לים', mountain_view: 'נוף להרים', sauna: 'סאונה', gym: 'חדר כושר',
+  ev_charging: 'עמדת טעינה לרכב חשמלי', smart_tv: 'טלוויזיה חכמה',
   baby_cot: 'עריסה לתינוק', wheelchair: 'נגיש לנכים', shelter: 'מרחב מוגן',
   heated_pool: 'בריכה מחוממת', pets: 'ידידותי לכלבים', spa: 'ספא צמוד',
   private_pool: 'בריכה פרטית', snooker: 'שולחן סנוקר', ping_pong: 'שולחן פינג-פונג',

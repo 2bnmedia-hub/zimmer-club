@@ -10,6 +10,11 @@ type Property = {
   slug?: string; id: string; name: string; short_description: string
   city: string; price_per_night: number; max_guests: number
   instant_book: boolean; property_images: { url: string; is_primary?: boolean }[]; avg_rating?: number; accepts_miluim?: boolean; has_shelter?: boolean
+  property_amenities?: { amenities: { key: string } | null }[]
+}
+
+function hasEvCharging(p: Property): boolean {
+  return !!p.property_amenities?.some(pa => pa.amenities?.key === 'ev_charging')
 }
 
 const TARGET = 7
@@ -86,12 +91,12 @@ export function LatestProperties() {
       if (featured && featured.length > 0) {
         const ids = featured.map((f: any) => f.item_id)
         const { data } = await supabase.from('properties')
-          .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter').in('id', ids)
+          .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter, property_amenities(amenities(key))').in('id', ids)
         const sorted = featured.map((f: any) => data?.find((p: any) => p.id === f.item_id)).filter(Boolean) as Property[]
         setProperties(sorted)
       } else {
         const { data } = await supabase.from('properties')
-          .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter')
+          .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter, property_amenities(amenities(key))')
           .eq('status', 'active').order('created_at', { ascending: false }).limit(TARGET)
         setProperties(data || [])
       }
@@ -132,6 +137,7 @@ export function LatestProperties() {
               <div className="absolute top-3 right-3 flex flex-col gap-1.5">
                 {p0.instant_book && <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}>הזמנה מיידית</span>}
                 {p0.accepts_miluim && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#1d4ed8' }}>🎖 מילואים</span>}
+                {hasEvCharging(p0) && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#15803d' }}>🔌 טעינה חשמלית</span>}
               </div>
               {p0.avg_rating && <span className="absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}>★ {p0.avg_rating.toFixed(1)}</span>}
               <div className="absolute bottom-0 right-0 left-0 p-5 text-white">

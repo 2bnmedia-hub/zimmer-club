@@ -10,6 +10,11 @@ type Property = {
   slug?: string; id: string; name: string; short_description: string
   city: string; price_per_night: number; max_guests: number
   instant_book: boolean; property_images: { url: string; is_primary?: boolean }[]; accepts_miluim?: boolean; has_shelter?: boolean; avg_rating?: number
+  property_amenities?: { amenities: { key: string } | null }[]
+}
+
+function hasEvCharging(p: Property): boolean {
+  return !!p.property_amenities?.some(pa => pa.amenities?.key === 'ev_charging')
 }
 
 const TARGET = 7
@@ -81,7 +86,7 @@ export function NewProperties() {
   useEffect(() => {
     async function load() {
       const { data } = await supabase.from('properties')
-        .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter')
+        .select('*, property_images(url, "order", is_primary), accepts_miluim, has_shelter, property_amenities(amenities(key))')
         .eq('status', 'active')
         .gte('created_at', new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString())
         .order('created_at', { ascending: false }).limit(TARGET)
@@ -123,6 +128,7 @@ export function NewProperties() {
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-white">✦ חדש</span>
                 {p0.instant_book && <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}>הזמנה מיידית</span>}
                 {p0.accepts_miluim && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#1d4ed8' }}>🎖 מילואים</span>}
+                {hasEvCharging(p0) && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#15803d' }}>🔌 טעינה חשמלית</span>}
               </div>
               {p0.avg_rating && <span className="absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}>★ {p0.avg_rating.toFixed(1)}</span>}
               <div className="absolute bottom-0 right-0 left-0 p-5 text-white">

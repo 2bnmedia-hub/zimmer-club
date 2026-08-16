@@ -30,6 +30,8 @@ const AMENITIES_LIST = [
   { key: 'mountain_view', label: 'נוף להרים' },
   { key: 'sauna', label: 'סאונה' },
   { key: 'gym', label: 'חדר כושר' },
+  { key: 'ev_charging', label: 'עמדת טעינה לרכב חשמלי' },
+  { key: 'smart_tv', label: 'טלוויזיה חכמה' },
   { key: 'baby_cot', label: 'עריסה לתינוק' },
   { key: 'wheelchair', label: 'נגיש לנכים' },
   { key: 'shelter', label: 'מרחב מוגן' },

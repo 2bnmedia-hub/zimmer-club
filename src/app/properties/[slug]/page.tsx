@@ -416,10 +416,10 @@ export default function PropertyPage() {
                       className="col-span-2 row-span-2 relative rounded-r-xl overflow-hidden">
                       <Image src={displayImages[0]} alt={property.name} fill sizes="66vw" className="object-cover" priority />
                     </button>
-                    {displayImages.slice(1, 4).map((url: string, i: number) => {
+                    {displayImages.slice(1, 3).map((url: string, i: number) => {
                       const idx = i + 1
-                      const remaining = displayImages.length - 4
-                      const isLastSlot = i === 2
+                      const remaining = displayImages.length - 3
+                      const isLastSlot = i === 1
                       return (
                         <button key={idx} type="button" onClick={() => { setCurrentImage(idx); setGalleryExpanded(true) }}
                           aria-label={isLastSlot && remaining > 0 ? `הצג את כל ${displayImages.length} התמונות` : `פתח גלריית תמונות, תמונה ${idx + 1} מתוך ${displayImages.length}`}
@@ -541,9 +541,9 @@ export default function PropertyPage() {
 
           </div>{/* סוף grid תמונה+מידע */}
 
-          {/* תמונות ממוזערות */}
+          {/* תמונות ממוזערות — דסקטופ בלבד, בנייד יש גלריית grid למעלה */}
           {images.length > 1 && (
-            <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+            <div className="hidden md:flex gap-2 mb-8 overflow-x-auto pb-2">
               {images.map((url, i) => (
                 <button key={i} onClick={() => setCurrentImage(i)} className={`shrink-0 w-20 h-16 relative rounded-xl overflow-hidden border-2 transition-colors ${i === currentImage ? 'border-yellow-600' : 'border-transparent'}`}>
                   <Image src={url} alt={`${property.name} — תמונה ${i + 1}`} fill sizes="80px" className="object-contain bg-gray-100" />

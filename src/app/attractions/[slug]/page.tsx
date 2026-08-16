@@ -173,6 +173,7 @@ export default function AttractionPage() {
   const supabase = createClient()
   const [attraction, setAttraction] = useState<Attraction | null>(null)
   const [images, setImages] = useState<string[]>([])
+  const [attractionVideos, setAttractionVideos] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
   const [galleryExpanded, setGalleryExpanded] = useState(false)
   const lightboxRef = useRef<HTMLDivElement>(null)
@@ -217,6 +218,8 @@ export default function AttractionPage() {
       setAttraction(data)
       const { data: imgData } = await supabase.from('attraction_images').select('url').eq('attraction_id', data.id).order('order')
       setImages(imgData?.map((i: any) => i.url) || [])
+      const { data: vidData } = await supabase.from('attraction_videos').select('url').eq('attraction_id', data.id).order('order')
+      setAttractionVideos(vidData?.map((v: any) => v.url) || [])
       setLoading(false)
     }
     load()
@@ -511,6 +514,18 @@ export default function AttractionPage() {
               </div>
             )
           })()}
+          {attractionVideos.length > 0 && (
+            <div className="border-t border-gray-100 pt-6 mb-6">
+              {!attraction.video_url && <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון</h2>}
+              <div className={attractionVideos.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : ''}>
+                {attractionVideos.map((url, i) => (
+                  <div key={i} className="relative w-full rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
+                    <video src={url} controls preload="metadata" className="w-full h-full object-contain" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <GenericReviews entityId={attraction.id} table="attraction_reviews" foreignKey="attraction_id" />
           <AdminGenericReviews entityId={attraction.id} table="attraction_reviews" foreignKey="attraction_id" />

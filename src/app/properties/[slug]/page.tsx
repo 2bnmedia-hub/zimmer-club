@@ -156,6 +156,7 @@ export default function PropertyPage() {
   const supabase = createClient()
   const [property, setProperty] = useState<Property | null>(null)
   const [amenities, setAmenities] = useState<string[]>([])
+  const [propertyVideos, setPropertyVideos] = useState<string[]>([])
   const [images, setImages] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
   const [galleryExpanded, setGalleryExpanded] = useState(false)
@@ -239,6 +240,8 @@ export default function PropertyPage() {
 
       const { data: imgData } = await supabase.from('property_images').select('url').eq('property_id', data.id).order('order')
       setImages(imgData?.map((i: any) => i.url) || [])
+      const { data: vidData } = await supabase.from('property_videos').select('url').eq('property_id', data.id).order('order')
+      setPropertyVideos(vidData?.map((v: any) => v.url) || [])
       const { data: unitsData } = await supabase.from('property_units').select('*, property_unit_images(url, order)').eq('property_id', data.id).order('sort_order')
       if (unitsData && unitsData.length > 0) {
         setUnits(unitsData.map((u: any) => ({ ...u, images: (u.property_unit_images || []).sort((a: any, b: any) => a.order - b.order) })))
@@ -583,6 +586,18 @@ export default function PropertyPage() {
                   </div>
                 )
               })()}
+              {propertyVideos.length > 0 && (
+                <div className="border-t border-gray-100 pt-6 mb-6">
+                  {!property.video_url && <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון הנכס</h2>}
+                  <div className={propertyVideos.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : ''}>
+                    {propertyVideos.map((url, i) => (
+                      <div key={i} className="relative w-full rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
+                        <video src={url} controls preload="metadata" className="w-full h-full object-contain" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               {amenities.length > 0 && (
                 <div className="border-t border-gray-100 pt-6">
                   <h2 className="font-bold text-gray-900 text-lg mb-4">מה יש בנכס</h2>

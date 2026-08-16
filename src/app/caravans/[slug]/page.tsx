@@ -56,6 +56,7 @@ export default function CaravanPage() {
   const supabase = createClient()
   const [caravan, setCaravan] = useState<Caravan | null>(null)
   const [images, setImages] = useState<string[]>([])
+  const [caravanVideos, setCaravanVideos] = useState<string[]>([])
   const [currentImage, setCurrentImage] = useState(0)
   const [galleryExpanded, setGalleryExpanded] = useState(false)
   const lightboxRef = useRef<HTMLDivElement>(null)
@@ -105,6 +106,8 @@ export default function CaravanPage() {
       setCaravan(data)
       const { data: imgData } = await supabase.from('caravan_images').select('url').eq('caravan_id', data.id).order('order')
       setImages(imgData?.map((i: any) => i.url) || [])
+      const { data: vidData } = await supabase.from('caravan_videos').select('url').eq('caravan_id', data.id).order('order')
+      setCaravanVideos(vidData?.map((v: any) => v.url) || [])
       setLoading(false)
     }
     load()
@@ -377,6 +380,18 @@ export default function CaravanPage() {
                 </div>
               )
             })()}
+            {caravanVideos.length > 0 && (
+              <div className="border-t border-gray-100 pt-6 mb-6">
+                {!caravan.video_url && <h2 className="font-bold text-gray-900 text-lg mb-4">סרטון</h2>}
+                <div className={caravanVideos.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : ''}>
+                  {caravanVideos.map((url, i) => (
+                    <div key={i} className="relative w-full rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
+                      <video src={url} controls preload="metadata" className="w-full h-full object-contain" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <GenericReviews entityId={caravan.id} table="caravan_reviews" foreignKey="caravan_id" />
               <AdminGenericReviews entityId={caravan.id} table="caravan_reviews" foreignKey="caravan_id" />

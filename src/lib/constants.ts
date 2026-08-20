@@ -52,6 +52,75 @@ export const AMENITIES = [
 ]
 
 // ===========================
+// PROPERTY AMENITIES — source of truth
+// category 'feature' = displayed in "מה יש בנכס"
+// category 'audience' = displayed in "קהל יעד"
+// ===========================
+
+export const PROPERTY_AMENITIES = [
+  // מתקנים ושירותים
+  { key: 'pool',            label: 'בריכה',                       category: 'feature' },
+  { key: 'private_pool',   label: 'בריכה פרטית',                 category: 'feature' },
+  { key: 'heated_pool',    label: 'בריכה מחוממת',                 category: 'feature' },
+  { key: 'jacuzzi',        label: "ג'קוזי",                       category: 'feature' },
+  { key: 'private_jacuzzi',label: "ג'קוזי פרטי",                  category: 'feature' },
+  { key: 'sauna',          label: 'סאונה',                        category: 'feature' },
+  { key: 'spa',            label: 'ספא צמוד',                    category: 'feature' },
+  { key: 'wifi',           label: 'WiFi',                         category: 'feature' },
+  { key: 'parking',        label: 'חניה',                        category: 'feature' },
+  { key: 'bbq',            label: 'ברביקיו',                     category: 'feature' },
+  { key: 'ac',             label: 'מיזוג אוויר',                 category: 'feature' },
+  { key: 'kitchen',        label: 'מטבח',                        category: 'feature' },
+  { key: 'outdoor_kitchen',label: 'מטבח חוץ',                    category: 'feature' },
+  { key: 'dining_room',    label: 'חדר אוכל',                    category: 'feature' },
+  { key: 'fireplace',      label: 'קמין',                        category: 'feature' },
+  { key: 'garden',         label: 'גינה',                        category: 'feature' },
+  { key: 'sea_view',       label: 'נוף לים',                     category: 'feature' },
+  { key: 'mountain_view',  label: 'נוף להרים',                   category: 'feature' },
+  { key: 'gym',            label: 'חדר כושר',                    category: 'feature' },
+  { key: 'ev_charging',    label: 'עמדת טעינה לרכב חשמלי',       category: 'feature' },
+  { key: 'smart_tv',       label: 'טלוויזיה חכמה',               category: 'feature' },
+  { key: 'baby_cot',       label: 'עריסה לתינוק',                category: 'feature' },
+  { key: 'wheelchair',     label: 'נגיש לנכים',                  category: 'feature' },
+  { key: 'shelter',        label: 'מרחב מוגן',                   category: 'feature' },
+  { key: 'shelter_nearby', label: 'מרחב מוגן קרוב',              category: 'feature' },
+  { key: 'pets',           label: 'ידידותי לכלבים',              category: 'feature' },
+  { key: 'snooker',        label: 'שולחן סנוקר',                 category: 'feature' },
+  { key: 'ping_pong',      label: 'שולחן פינג-פונג',             category: 'feature' },
+  { key: 'suite',          label: 'סוויטה',                      category: 'feature' },
+  { key: 'treehouse',      label: 'בקתת עץ',                    category: 'feature' },
+  { key: 'cave',           label: 'צימר מערה',                   category: 'feature' },
+  { key: 'mobile',         label: 'צימר מבודד',                  category: 'feature' },
+  { key: 'longstay',       label: 'צימרים לטווח ארוך',           category: 'feature' },
+  { key: 'vacation',       label: 'דירת נופש',                   category: 'feature' },
+  // קהל יעד
+  { key: 'couples',        label: 'מתאים לזוגות',                category: 'audience' },
+  { key: 'families',       label: 'מתאים למשפחות',               category: 'audience' },
+  { key: 'groups',         label: 'מתאים לקבוצות',               category: 'audience' },
+  { key: 'animals',        label: 'מקבלים בעלי חיים',            category: 'audience' },
+  { key: 'guests',         label: 'מתאים לאירועים',              category: 'audience' },
+  { key: 'religious',      label: 'מתאים לדתיים',                category: 'audience' },
+  { key: 'accessible',     label: 'נגישות מלאה',                 category: 'audience' },
+] as const
+
+export type AmenityKey = typeof PROPERTY_AMENITIES[number]['key']
+
+// רשומת מפתח→תווית לכל האמניטיז
+export const AMENITY_LABELS: Record<string, string> = Object.fromEntries(
+  PROPERTY_AMENITIES.map(a => [a.key, a.label])
+)
+
+// רשימת feature בלבד (לסקציה "מה יש בנכס" בחיפוש)
+export const FEATURE_AMENITIES = PROPERTY_AMENITIES
+  .filter(a => a.category === 'feature')
+  .map(a => a.key)
+
+// קהל יעד בלבד (לסקציה "קהל יעד" בחיפוש)
+export const AUDIENCE_AMENITIES: Record<string, string> = Object.fromEntries(
+  PROPERTY_AMENITIES.filter(a => a.category === 'audience').map(a => [a.key, a.label])
+)
+
+// ===========================
 // BOOKING STATUS
 // ===========================
 

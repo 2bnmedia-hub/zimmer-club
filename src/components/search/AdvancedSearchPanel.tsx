@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
+import { AMENITY_LABELS, AUDIENCE_AMENITIES, FEATURE_AMENITIES } from '@/lib/constants'
 
 const PROPERTY_TYPES = [
   { value: '', label: 'הכל' },
@@ -14,26 +15,6 @@ const PROPERTY_TYPES = [
   { value: 'camping', label: 'קמפינג' },
   { value: 'attraction', label: 'אטרקציות' },
 ]
-
-const AMENITY_LABELS: Record<string, string> = {
-  pool: 'בריכה', jacuzzi: "ג'קוזי", wifi: 'WiFi', parking: 'חניה', bbq: 'ברביקיו',
-  ac: 'מיזוג אוויר', kitchen: 'מטבח', fireplace: 'קמין', garden: 'גינה',
-  sea_view: 'נוף לים', mountain_view: 'נוף להרים', sauna: 'סאונה', gym: 'חדר כושר',
-  baby_cot: 'עריסה לתינוק', wheelchair: 'נגיש לנכים', shelter: 'מרחב מוגן',
-  heated_pool: 'בריכה מחוממת', pets: 'ידידותי לכלבים', spa: 'ספא צמוד',
-  private_pool: 'בריכה פרטית', snooker: 'שולחן סנוקר', private_jacuzzi: "ג'קוזי פרטי",
-  suite: 'סוויטה', treehouse: 'בקתת עץ', cave: 'צימר מערה',
-  mobile: 'צימר מבודד', longstay: 'לטווח ארוך', vacation: 'דירת נופש',
-  shelter_nearby: 'מרחב מוגן קרוב',
-}
-
-const AUDIENCE_AMENITIES: Record<string, string> = {
-  couples: 'מתאים לזוגות', families: 'מתאים למשפחות', groups: 'מתאים לקבוצות',
-  religious: 'מתאים לדתיים', animals: 'מקבלים בע״ח', accessible: 'נגישות',
-  guests: 'מתאים לאירועים',
-}
-
-const FEATURE_AMENITIES = Object.keys(AMENITY_LABELS)
 
 export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onToggle?: () => void }) {
   const router = useRouter()

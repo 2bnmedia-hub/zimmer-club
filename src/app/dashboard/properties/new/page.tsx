@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
+import { PROPERTY_AMENITIES } from '@/lib/constants'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -14,49 +15,7 @@ const PROPERTY_TYPES = [
   { value: 'camping', label: 'קמפינג' },
 ]
 
-const AMENITIES_LIST = [
-  { key: 'pool', label: 'בריכה' },
-  { key: 'jacuzzi', label: "ג'קוזי" },
-  { key: 'wifi', label: 'WiFi' },
-  { key: 'parking', label: 'חניה' },
-  { key: 'bbq', label: 'ברביקיו' },
-  { key: 'ac', label: 'מיזוג' },
-  { key: 'kitchen', label: 'מטבח' },
-  { key: 'outdoor_kitchen', label: 'מטבח חוץ' },
-  { key: 'dining_room', label: 'חדר אוכל' },
-  { key: 'fireplace', label: 'קמין' },
-  { key: 'garden', label: 'גינה' },
-  { key: 'sea_view', label: 'נוף לים' },
-  { key: 'mountain_view', label: 'נוף להרים' },
-  { key: 'sauna', label: 'סאונה' },
-  { key: 'gym', label: 'חדר כושר' },
-  { key: 'ev_charging', label: 'עמדת טעינה לרכב חשמלי' },
-  { key: 'smart_tv', label: 'טלוויזיה חכמה' },
-  { key: 'baby_cot', label: 'עריסה לתינוק' },
-  { key: 'wheelchair', label: 'נגיש לנכים' },
-  { key: 'shelter', label: 'מרחב מוגן' },
-  { key: 'heated_pool', label: 'בריכה מחוממת' },
-  { key: 'pets', label: 'ידידותי לכלבים' },
-  { key: 'spa', label: 'ספא צמוד' },
-  { key: 'private_pool', label: 'בריכה פרטית' },
-  { key: 'snooker', label: 'שולחן סנוקר' },
-  { key: 'ping_pong', label: 'שולחן פינג-פונג' },
-  { key: 'private_jacuzzi', label: "ג'קוזי פרטי" },
-  { key: 'accessible', label: 'צימר עם נגישות' },
-  { key: 'couples', label: 'מתאים לזוגות' },
-  { key: 'families', label: 'מתאים למשפחות' },
-  { key: 'groups', label: 'מתאים לקבוצות' },
-  { key: 'animals', label: 'מקבלים בעלי חיים' },
-  { key: 'guests', label: 'מתאים לאורועים' },
-  { key: 'religious', label: 'מתאים לציבור הדתי' },
-  { key: 'suite', label: 'סוויטה' },
-  { key: 'treehouse', label: 'בקתת עץ' },
-  { key: 'cave', label: 'צימר מערה' },
-  { key: 'mobile', label: 'צימר מבודד' },
-  { key: 'longstay', label: 'צימרים לטווח ארוך' },
-  { key: 'vacation', label: 'דירת נופש' },
-  { key: 'shelter_nearby', label: 'מרחב מוגן קרוב' },
-]
+const AMENITIES_LIST = PROPERTY_AMENITIES
 
 type UnitForm = {
   name: string

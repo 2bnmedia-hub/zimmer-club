@@ -111,7 +111,7 @@ export const AMENITY_LABELS: Record<string, string> = Object.fromEntries(
 )
 
 // רשימת feature בלבד (לסקציה "מה יש בנכס" בחיפוש)
-export const FEATURE_AMENITIES = PROPERTY_AMENITIES
+export const FEATURE_AMENITIES: string[] = PROPERTY_AMENITIES
   .filter(a => a.category === 'feature')
   .map(a => a.key)
 

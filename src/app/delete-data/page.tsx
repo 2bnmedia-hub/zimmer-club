@@ -84,13 +84,13 @@ export default function DeleteDataPage() {
 
         <div className="px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="text-xs" style={{ color: '#9A7C5E' }}>צריכים עזרה נוספת?</p>
-          <a href="mailto:info@zimmer.club"
+          <a href="mailto:zimmer.club.israel@gmail.com"
             className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all"
             style={{ background: 'rgba(139,105,20,0.08)', color: '#8B6914', border: '1px solid rgba(139,105,20,0.18)', textDecoration: 'none' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/>
             </svg>
-            info@zimmer.club
+            zimmer.club.israel@gmail.com
           </a>
         </div>
       </div>

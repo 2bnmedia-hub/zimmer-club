@@ -65,15 +65,21 @@ export async function POST(req: Request) {
     </div>
   `
 
+  const BUSINESS_EMAILS = ['2bnbussiness@gmail.com', 'zimmer.club.israel@gmail.com']
+
+  const extraEmails = emailContacts
+    .map(c => c.value)
+    .filter((v: string) => !BUSINESS_EMAILS.includes(v))
+
+  const allRecipients = [...BUSINESS_EMAILS, ...extraEmails]
+
   try {
-    if (emailContacts.length > 0) {
-      await resend.emails.send({
-        from: 'noreply@zimmer.club',
-        to: emailContacts.map(c => c.value),
-        subject: `פנייה חדשה מ-zimmer.club — ${full_name}`,
-        html: htmlBody,
-      })
-    }
+    await resend.emails.send({
+      from: 'noreply@zimmer.club',
+      to: allRecipients,
+      subject: 'התקבלה פניה מלקוח המעוניין לפרסם באתר',
+      html: htmlBody,
+    })
 
     return NextResponse.json({ ok: true })
   } catch {

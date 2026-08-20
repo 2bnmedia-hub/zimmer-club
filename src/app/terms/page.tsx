@@ -76,7 +76,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-3">10. יצירת קשר</h2>
-            <p className="text-sm">לשאלות: <a href="mailto:legal@zimmer.club" className="text-amber-700 hover:underline">legal@zimmer.club</a></p>
+            <p className="text-sm">לשאלות: <a href="mailto:zimmer.club.israel@gmail.com" className="text-amber-700 hover:underline">zimmer.club.israel@gmail.com</a></p>
           </section>
         </div>
       </div>

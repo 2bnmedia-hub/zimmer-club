@@ -1194,6 +1194,11 @@ export default function AdminDashboard() {
               style={{ background:'#fff', color:'#111827', border:'1.5px solid #e5e7eb' }}>
               <IconPhone className="w-3.5 h-3.5 text-gray-900" />תקשורת
             </Link>
+            <Link href="/dashboard/admin/leads"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:shadow-md"
+              style={{ background:'#FDF3DC', color:'#8B6914', border:'1.5px solid #f0c040' }}>
+              📩 פניות פרסום
+            </Link>
           </div>
         </div>
 

@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
 import { FadingVideo } from '@/components/FadingVideo'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
-import { REGIONS } from '@/lib/constants'
+import { REGIONS, AMENITY_LABELS } from '@/lib/constants'
 import { buildWhatsAppLink } from '@/lib/utils'
 import { useWishlist } from '@/hooks/useWishlist'
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
@@ -49,23 +49,6 @@ type Property = {
 }
 
 type DateStatus = 'blocked' | 'approved'
-
-const AMENITY_LABELS: Record<string, string> = {
-  pool: 'בריכה', jacuzzi: "ג'קוזי", wifi: 'WiFi', parking: 'חניה', bbq: 'ברביקיו',
-  ac: 'מיזוג אוויר', kitchen: 'מטבח', outdoor_kitchen: 'מטבח חוץ', dining_room: 'חדר אוכל',
-  fireplace: 'קמין', garden: 'גינה',
-  sea_view: 'נוף לים', mountain_view: 'נוף להרים', sauna: 'סאונה', gym: 'חדר כושר',
-  ev_charging: 'עמדת טעינה לרכב חשמלי', smart_tv: 'טלוויזיה חכמה',
-  baby_cot: 'עריסה לתינוק', wheelchair: 'נגיש לנכים', shelter: 'מרחב מוגן',
-  heated_pool: 'בריכה מחוממת', pets: 'ידידותי לכלבים', spa: 'ספא צמוד',
-  private_pool: 'בריכה פרטית', snooker: 'שולחן סנוקר', ping_pong: 'שולחן פינג-פונג',
-  private_jacuzzi: "ג'קוזי פרטי",
-  accessible: 'צימר עם נגישות', couples: 'מתאים לזוגות', families: 'מתאים למשפחות',
-  groups: 'מתאים לקבוצות', animals: 'מקבלים בעלי חיים', guests: 'מתאים לאורועים',
-  religious: 'מתאים לציבור הדתי', suite: 'סוויטה', treehouse: 'בקתת עץ',
-  cave: 'צימר מערה', mobile: 'צימר מבודד', longstay: 'צימרים לטווח ארוך',
-  vacation: 'דירת נופש', shelter_nearby: 'מרחב מוגן קרוב',
-}
 
 const HEBREW_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר']
 const HEBREW_DAYS = ['א','ב','ג','ד','ה','ו','ש']

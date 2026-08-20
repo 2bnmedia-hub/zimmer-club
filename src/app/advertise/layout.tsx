@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.zimmer.club/advertise' },
   openGraph: {
     title: 'פרסמו את הנכס ב-zimmer.club',
-    description: 'הצטרפו לפלטפורמת האירוח המובילה בישראל. הרשמה חינמית.',
+    description: 'הצטרפו לפלטפורמת האירוח המובילה בישראל. הרשמה פשוטה ומהירה.',
     url: 'https://www.zimmer.club/advertise',
     locale: 'he_IL',
     type: 'website',

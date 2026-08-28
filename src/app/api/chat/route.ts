@@ -210,14 +210,16 @@ export async function POST(req: NextRequest) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: [{ role: 'system', content: systemPrompt }, ...groqMessages],
       max_tokens: 220,
       temperature: 0.4,
+      reasoning_effort: 'low',
     }),
   })
 
   if (!res.ok) {
+    console.error('Zimi Groq API error:', res.status, await res.text())
     return NextResponse.json({ reply: 'מצטער, אני לא זמין כרגע. נסה שוב עוד רגע 😊' })
   }
 

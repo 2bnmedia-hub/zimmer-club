@@ -45,7 +45,7 @@ function ResultCard({ r, onClose }: { r: SearchResult; onClose: () => void }) {
 }
 
 /* ─── Big centered mic button ─── */
-function BigMic({ recording, loading, onClick }: { recording: boolean; loading: boolean; onClick: () => void }) {
+function BigMic({ recording, loading, onClick, gender }: { recording: boolean; loading: boolean; onClick: () => void; gender: Gender }) {
   const color = recording ? '#ef4444' : '#C8960C'
   const bg = recording
     ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
@@ -77,7 +77,7 @@ function BigMic({ recording, loading, onClick }: { recording: boolean; loading: 
       <button
         onClick={onClick}
         disabled={loading}
-        aria-label={recording ? 'עצרי הקלטה' : 'התחילי הקלטה'}
+        aria-label={recording ? (gender === 'female' ? 'עצרי הקלטה' : 'עצור הקלטה') : (gender === 'female' ? 'התחילי הקלטה' : 'התחל הקלטה')}
         style={{
           width: 100, height: 100, borderRadius: '50%',
           background: loading ? 'linear-gradient(135deg, #e5e7eb, #d1d5db)' : bg,
@@ -280,7 +280,7 @@ export default function ZimiWidget() {
           onMouseDown={isMobile ? undefined : onMouseDown}
           onTouchStart={isMobile ? undefined : onTouchStart}
           onClick={() => { if (!didDrag.current) { setDismissed(false); if (!isMobile) return; handleOpen() } }}
-          aria-label="פתחי את זימי"
+          aria-label={gender === 'female' ? 'פתחי את זימי' : 'פתח את זימי'}
           style={{
             position: 'fixed',
             bottom: isMobile ? 20 : pos.y,
@@ -323,7 +323,7 @@ export default function ZimiWidget() {
               <strong style={{ fontSize: 12, color: '#5C3A00', marginBottom: 2 }}>היי! אני זימי ✨</strong>
               <span style={{ fontSize: 10.5, color: '#8B6914', lineHeight: 1.5 }}>מחפשים נופש? אני אמצא לכם!</span>
             </div>
-            <button onClick={e => { e.stopPropagation(); setDismissed(true) }} aria-label="סגרי" style={{
+            <button onClick={e => { e.stopPropagation(); setDismissed(true) }} aria-label={gender === 'female' ? 'סגרי' : 'סגור'} style={{
               position: 'absolute', top: -6, left: -6, width: 22, height: 22, borderRadius: '50%',
               border: '1.5px solid #C8960C', background: '#fff', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -472,19 +472,21 @@ export default function ZimiWidget() {
               padding: '20px 0 16px', flexShrink: 0,
             }}>
               {hasSpeechSupport && (
-                <BigMic recording={recording} loading={loading} onClick={toggleMic} />
+                <BigMic recording={recording} loading={loading} onClick={toggleMic} gender={gender} />
               )}
-              <p style={{
-                marginTop: 12, fontSize: 13, fontWeight: 600,
-                color: recording ? '#fca5a5' : loading ? '#F5D078' : 'rgba(245,208,120,0.6)',
-                letterSpacing: '0.02em', transition: 'color 0.3s',
-              }}>
-                {loading
-                  ? gender === 'female' ? 'חושבת...' : 'חושב...'
-                  : recording
-                    ? gender === 'female' ? '🎙 מקשיבה — לחצי לסיום' : '🎙 מקשיב — לחץ לסיום'
-                    : 'לחץ למיקרופון'}
-              </p>
+              {(hasSpeechSupport || loading) && (
+                <p style={{
+                  marginTop: 12, fontSize: 13, fontWeight: 600,
+                  color: recording ? '#fca5a5' : loading ? '#F5D078' : 'rgba(245,208,120,0.6)',
+                  letterSpacing: '0.02em', transition: 'color 0.3s',
+                }}>
+                  {loading
+                    ? gender === 'female' ? 'חושבת...' : 'חושב...'
+                    : recording
+                      ? gender === 'female' ? '🎙 מקשיבה — לחצי לסיום' : '🎙 מקשיב — לחץ לסיום'
+                      : 'לחץ למיקרופון'}
+                </p>
+              )}
             </div>
 
             {/* Text input row */}

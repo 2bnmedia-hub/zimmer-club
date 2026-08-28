@@ -57,7 +57,6 @@ export const metadata: Metadata = {
     description: 'צימרים ווילות יוקרה בישראל',
     images: ['https://www.zimmer.club/opengraph-image'],
   },
-  icons: { icon: '/favicon.ico' },
   robots: {
     index: true,
     follow: true,

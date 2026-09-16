@@ -9,7 +9,7 @@ import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone, IconX, IconBed, IconCalendar, IconCaravan } from '@/components/icons'
 import Image from 'next/image'
 import { FadingVideo } from '@/components/FadingVideo'
-import { buildWhatsAppLink } from '@/lib/utils'
+import { buildWhatsAppLink, safeJsonLd } from '@/lib/utils'
 
 const REGION_LABELS: Record<string, string> = {
   north: 'צפון', galil_upper: 'גליל עליון', galil_lower: 'גליל תחתון',
@@ -142,7 +142,7 @@ export default function CaravanPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }} />
       <AdminBackButton />
       <main className="min-h-screen bg-white pt-4" dir="rtl">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">

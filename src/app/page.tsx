@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { safeJsonLd } from '@/lib/utils'
 import { Navbar } from '@/components/layout/Navbar'
 import { SearchBar } from '@/components/search/SearchBar'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
@@ -35,8 +36,8 @@ const websiteJsonLd = {
 export default function HomePage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteJsonLd) }} />
 
       <main>
         {/* HERO */}

@@ -8,7 +8,7 @@ import { GenericReviews } from '@/components/GenericReviews'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { buildWhatsAppLink } from '@/lib/utils'
+import { buildWhatsAppLink, safeJsonLd } from '@/lib/utils'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX, IconTarget } from '@/components/icons'
 
 const DAYS_LABELS: Record<string, string> = {
@@ -70,10 +70,11 @@ type Attraction = {
 
 type Review = {
   id: string
+  user_id: string
   rating: number
   comment: string
   created_at: string
-  profiles: { full_name: string }
+  profiles?: { full_name: string }
 }
 
 function ReviewsSection({ attractionId }: { attractionId: string }) {
@@ -92,10 +93,21 @@ function ReviewsSection({ attractionId }: { attractionId: string }) {
   async function loadReviews() {
     const { data } = await supabase
       .from('attraction_reviews')
-      .select('*, profiles(full_name)')
+      .select('*')
       .eq('attraction_id', attractionId)
       .order('created_at', { ascending: false })
-    setReviews(data || [])
+    const rows = data || []
+    const userIds = Array.from(new Set(rows.map(r => r.user_id).filter(Boolean)))
+    if (userIds.length > 0) {
+      const { data: authors } = await supabase
+        .from('profile_public')
+        .select('id, full_name')
+        .in('id', userIds)
+      const byId = new Map((authors || []).map(a => [a.id, a]))
+      setReviews(rows.map(r => ({ ...r, profiles: byId.get(r.user_id) })))
+    } else {
+      setReviews(rows)
+    }
   }
 
   async function submitReview(e: React.FormEvent) {
@@ -253,7 +265,7 @@ export default function AttractionPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }} />
     <main className="min-h-screen bg-white pt-4" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
 

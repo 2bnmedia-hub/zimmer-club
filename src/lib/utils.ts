@@ -116,3 +116,16 @@ export function buildQueryString(params: Record<string, string | number | boolea
 export function coverImage(images: { url: string; is_primary?: boolean }[] | undefined): string | undefined {
   return images?.find((img) => img.is_primary)?.url || images?.[0]?.url
 }
+
+// Safely serialize an object for a <script type="application/ld+json"> tag rendered via
+// dangerouslySetInnerHTML. JSON.stringify does not escape "<", so owner-controlled text
+// (a property/attraction/caravan name or description) containing "</script>" would close
+// the script tag early and inject arbitrary HTML into every visitor's page — a stored XSS.
+// Escaping to < (and the related JS-string-breakout chars) keeps the JSON semantically
+// identical while making that impossible.
+export function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+}

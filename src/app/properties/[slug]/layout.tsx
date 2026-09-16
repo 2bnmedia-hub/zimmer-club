@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { safeJsonLd } from '@/lib/utils'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -100,7 +101,7 @@ export default async function PropertyLayout({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       {children}
     </>

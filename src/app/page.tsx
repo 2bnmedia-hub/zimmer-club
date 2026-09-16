@@ -8,7 +8,7 @@ import { NewProperties } from '@/components/property/NewProperties'
 import { FeaturedAttractions } from '@/components/FeaturedAttractions'
 import { FeaturedCaravans } from '@/components/FeaturedCaravans'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
-import { IconHeart, IconUsers, IconBuilding, IconPawPrint, IconWaves, IconBath, IconShield } from '@/components/icons'
+import { IconHeart, IconUsers, IconBuilding, IconPawPrint, IconWaves, IconBath, IconShield, IconCalendar, IconSunset, IconSparkles, IconZap } from '@/components/icons'
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
@@ -104,23 +104,23 @@ export default function HomePage() {
             {/* Quick Availability Filters */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
               {[
-                { href: '/search?available=today',    label: 'פנוי להיום',        icon: '📅' },
-                { href: '/search?available=weekend',  label: 'סוף"ש הקרוב',       icon: '🌅' },
-                { href: '/search?available=thursday', label: 'חמישי הקרוב',       icon: '🗓️' },
-                { href: '/search?available=friday',   label: 'שישי הקרוב',        icon: '✨' },
+                { href: '/search?available=today',    label: 'פנוי להיום',        Icon: IconZap },
+                { href: '/search?available=weekend',  label: 'סוף"ש הקרוב',       Icon: IconSunset },
+                { href: '/search?available=thursday', label: 'חמישי הקרוב',       Icon: IconCalendar },
+                { href: '/search?available=friday',   label: 'שישי הקרוב',        Icon: IconSparkles },
               ].map(item => (
                 <a
                   key={item.href}
                   href={item.href}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105"
                   style={{
-                    background: 'rgba(255,255,255,0.18)',
-                    backdropFilter: 'blur(8px)',
-                    border: '1px solid rgba(255,255,255,0.35)',
-                    color: 'rgba(255,255,255,0.9)',
+                    background: 'rgba(255,255,255,0.92)',
+                    boxShadow: '0 2px 10px rgba(61,47,32,0.12)',
+                    border: '1px solid rgba(61,47,32,0.08)',
+                    color: '#3D2F20',
                   }}
                 >
-                  <span>{item.icon}</span>
+                  <item.Icon size={13} />
                   {item.label}
                 </a>
               ))}

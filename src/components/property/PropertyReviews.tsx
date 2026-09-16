@@ -152,10 +152,10 @@ function ReviewCard({ review, isAdmin, onUpdate, onDelete }: {
               </div>
               {isAdmin && (
                 <div className="flex gap-1">
-                  <button onClick={startEdit} className="p-1.5 rounded-lg text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 transition-colors">
+                  <button onClick={startEdit} aria-label="עריכת ביקורת" className="p-1.5 rounded-lg text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 transition-colors">
                     <IconPencil className="w-4 h-4" />
                   </button>
-                  <button onClick={() => onDelete(review.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                  <button onClick={() => onDelete(review.id)} aria-label="מחיקת ביקורת" className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                     <IconTrash className="w-4 h-4" color="#9ca3af" />
                   </button>
                 </div>

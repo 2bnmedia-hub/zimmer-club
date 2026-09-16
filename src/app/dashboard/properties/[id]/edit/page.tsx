@@ -127,9 +127,9 @@ function Calendar({ propertyId, supabase }: { propertyId: string; supabase: Retu
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-red-400" /><span className="text-xs text-gray-500">תפוס</span></div>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <button type="button" onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100"><IconChevronRight className="w-4 h-4 text-gray-500" /></button>
+        <button type="button" onClick={nextMonth} aria-label="החודש הבא" className="p-1.5 rounded-lg hover:bg-gray-100"><IconChevronRight className="w-4 h-4 text-gray-500" /></button>
         <span className="font-bold text-gray-800 text-sm">{HEBREW_MONTHS[currentMonth]} {currentYear}</span>
-        <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100"><IconChevronLeft className="w-4 h-4 text-gray-500" /></button>
+        <button type="button" onClick={prevMonth} aria-label="החודש הקודם" className="p-1.5 rounded-lg hover:bg-gray-100"><IconChevronLeft className="w-4 h-4 text-gray-500" /></button>
       </div>
       {loadingDates ? <div className="text-center py-8 text-gray-400 text-sm">טוען תאריכים...</div> : (
         <div className="grid grid-cols-7 gap-1">

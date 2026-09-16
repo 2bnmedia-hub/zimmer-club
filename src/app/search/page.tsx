@@ -167,12 +167,25 @@ function SearchContent() {
   const [areaBounds, setAreaBounds] = useState<MapBounds | null>(null)
   const mapHandleRef = useRef<SearchMapHandle>(null)
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const desktopMapWrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const check = () => setShowMap(window.innerWidth >= 1024)
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // כניסה ישירה לתצוגת מפה — מקישור "הצג על מפה" (למשל מדף הבית)
+  useEffect(() => {
+    if (searchParams.get('view') !== 'map') return
+    if (window.innerWidth >= 1024) {
+      setShowMap(true)
+      desktopMapWrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      setMobileView('map')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const [filters, setFilters] = useState({
     category: searchParams.get('available') || searchParams.get('category') || '',
@@ -223,7 +236,6 @@ function SearchContent() {
     setSuggestions(data || [])
     setShowSuggestions(true)
   }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   async function fetchProperties() {
     setLoading(true)
@@ -941,7 +953,7 @@ function SearchContent() {
 
             {/* מפה — דסקטופ */}
             {showMap && (
-              <div className="hidden lg:block shrink-0 sticky self-start" style={{ width: '42%', top: '104px', height: 'calc(100vh - 140px)' }}>
+              <div ref={desktopMapWrapRef} className="hidden lg:block shrink-0 sticky self-start" style={{ width: '42%', top: '104px', height: 'calc(100vh - 140px)' }}>
                 <MapErrorBoundary>
                   <SearchMap
                     ref={mapHandleRef}

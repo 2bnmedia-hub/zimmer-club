@@ -124,6 +124,21 @@ export default function HomePage() {
               ))}
             </div>
 
+            {/* Show on map CTA */}
+            <div className="mt-4">
+              <Link
+                href="/search?view=map"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:scale-105"
+                style={{
+                  background: 'linear-gradient(135deg, #C8960C, #8B6914)',
+                  boxShadow: '0 4px 16px rgba(139,105,20,0.35)',
+                }}
+              >
+                <span>🗺️</span>
+                הצג נכסים על המפה
+              </Link>
+            </div>
+
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 sm:mt-8">
               {[

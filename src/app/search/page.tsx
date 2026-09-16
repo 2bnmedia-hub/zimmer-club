@@ -161,13 +161,20 @@ function SearchContent() {
   // ── מפה ──
   const [showMap, setShowMap] = useState(true)
   // מסך מלא: נכנסים אליו ישירות מקישור "הצג נכסים על המפה" (view=map), או מכפתור המפה במובייל
-  const [mapFullscreen, setMapFullscreen] = useState(() => searchParams.get('view') === 'map')
+  // תמיד false בעת ה-render הראשון (זהה בשרת ובלקוח) — נקבע רק אחרי ה-mount כדי למנוע
+  // hydration mismatch (ומפה כפולה בעקבותיו) כשה-URL מכיל view=map
+  const [mapFullscreen, setMapFullscreen] = useState(false)
   const [activePropertyId, setActivePropertyId] = useState<string | null>(null)
   const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null)
   const [mapUserMoved, setMapUserMoved] = useState(false)
   const [areaBounds, setAreaBounds] = useState<MapBounds | null>(null)
   const mapHandleRef = useRef<SearchMapHandle>(null)
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  useEffect(() => {
+    if (searchParams.get('view') === 'map') setMapFullscreen(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const check = () => setShowMap(window.innerWidth >= 1024)

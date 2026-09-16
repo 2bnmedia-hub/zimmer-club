@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useWishlist } from '@/hooks/useWishlist'
-import { IconSearch, IconMapPin, IconBed, IconUsers, IconHeart, IconTrash, IconArrowRight } from '@/components/icons'
+import { IconSearch, IconMapPin, IconBed, IconUsers, IconHeart, IconTrash, IconArrowRight, IconCaravan, IconTarget, IconHome } from '@/components/icons'
 
 type Item = {
   id: string; type: 'property' | 'caravan' | 'attraction'
@@ -151,7 +151,7 @@ export default function WishlistPage() {
                     <Image src={item.img} alt={item.name} fill sizes="(max-width:640px) 100vw,33vw" className="object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300 text-sm">
-                      {item.type === 'caravan' ? '🚐' : item.type === 'attraction' ? '🎯' : '🏡'}
+                      {item.type === 'caravan' ? <IconCaravan size={22} /> : item.type === 'attraction' ? <IconTarget size={22} /> : <IconHome size={22} />}
                     </div>
                   )}
                   <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-amber-700">

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import { IconUser, IconPhone, IconArrowRight, IconEye, IconEyeOff, IconTrash, IconPlus, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconZoomIn, IconZoomOut, IconX, IconMail, IconGlobe } from '@/components/icons'
+import { IconUser, IconPhone, IconArrowRight, IconEye, IconEyeOff, IconTrash, IconPlus, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconZoomIn, IconZoomOut, IconX, IconMail, IconGlobe, IconMessageCircle } from '@/components/icons'
 import { createClient } from '@/lib/supabase/client'
 import { useProfile } from '@/contexts/ProfileContext'
 
@@ -366,7 +366,7 @@ export default function EditProfilePage() {
               {contacts.length === 0 && <p className="text-xs text-gray-400">אין אמצעי תקשורת</p>}
               {contacts.map(c => (
                 <div key={c.id} className="flex items-center gap-3 p-3 bg-[#f5f5f7] rounded-2xl">
-                  <span className="text-lg">{c.type === 'email' ? '📧' : '💬'}</span>
+                  {c.type === 'email' ? <IconMail size={17} /> : <IconMessageCircle size={17} />}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-800 truncate">{c.value}</p>
                     {c.label && <p className="text-xs text-gray-400">{c.label}</p>}
@@ -384,8 +384,8 @@ export default function EditProfilePage() {
             <div className="space-y-2">
               <div className="grid grid-cols-2 gap-2">
                 <select value={newType} onChange={e => setNewType(e.target.value as 'email' | 'whatsapp')} className={inp}>
-                  <option value="email">📧 אימייל</option>
-                  <option value="whatsapp">💬 וואטסאפ</option>
+                  <option value="email">אימייל</option>
+                  <option value="whatsapp">וואטסאפ</option>
                 </select>
                 <input value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder="תיאור" className={inp} />
               </div>

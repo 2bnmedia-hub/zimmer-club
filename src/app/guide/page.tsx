@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { IconShirt, IconDroplet, IconCandle, IconUtensils, IconPlug, IconLightbulb } from '@/components/icons'
 
 export const metadata: Metadata = {
   title: 'מה לקחת לצימר? המדריך המלא | Zimmer Club',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: 'ביגוד ולינה',
-    icon: '👕',
+    Icon: IconShirt,
     items: [
       'בגדים נוחים — לפי מספר הלילות',
       'בגד ים (אם יש בריכה / ג\'קוזי)',
@@ -21,7 +22,7 @@ const sections = [
   },
   {
     title: 'טואלטיקה',
-    icon: '🧴',
+    Icon: IconDroplet,
     items: [
       'מברשת שיניים ומשחה',
       'שמפו ומרכך (ברוב הצימרים יש, אבל לא תמיד)',
@@ -34,7 +35,7 @@ const sections = [
   },
   {
     title: 'בידור ורומנטיקה',
-    icon: '🕯️',
+    Icon: IconCandle,
     items: [
       'נרות ריחניים',
       'מוזיקה אהובה (רמקול Bluetooth)',
@@ -46,7 +47,7 @@ const sections = [
   },
   {
     title: 'אוכל וצניינות',
-    icon: '🥗',
+    Icon: IconUtensils,
     items: [
       'ארוחת בוקר — קפה, ביצים, לחם',
       'חטיפים ופירות',
@@ -58,7 +59,7 @@ const sections = [
   },
   {
     title: 'ציוד שכח לא לשכוח',
-    icon: '🔌',
+    Icon: IconPlug,
     items: [
       'מטען לטלפון',
       'מצלמה',
@@ -85,7 +86,7 @@ export default function GuidePage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Quick Tips */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100 mb-10">
-          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">💡 טיפים לפני היציאה</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><IconLightbulb size={20} />טיפים לפני היציאה</h2>
           <ul className="space-y-2 text-sm text-gray-600">
             <li className="flex items-start gap-2"><span className="text-amber-600 font-bold mt-0.5">•</span>בדקו מראש עם המארח מה כלול — מגבות, שמפו, קפה, כלי מיטה.</li>
             <li className="flex items-start gap-2"><span className="text-amber-600 font-bold mt-0.5">•</span>שאלו על חיות מחמד אם מתכננים להגיע עם כלב.</li>
@@ -99,7 +100,7 @@ export default function GuidePage() {
           {sections.map((section) => (
             <div key={section.title} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span className="text-2xl">{section.icon}</span>
+                <section.Icon size={22} />
                 {section.title}
               </h2>
               <ul className="space-y-2">

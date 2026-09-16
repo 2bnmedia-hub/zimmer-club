@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { coverImage } from '@/lib/utils'
-import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal } from '@/components/icons'
+import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal, IconWaves, IconPalmTree, IconCactus, IconSnowflake, IconWheat } from '@/components/icons'
 
 type Property = {
   slug?: string; id: string; name: string; short_description: string
@@ -21,12 +21,12 @@ function hasEvCharging(p: Property): boolean {
 const TARGET = 7
 
 const PH_DESTINATIONS = [
-  { name: 'אילת',       region: 'eilat',     emoji: '🐠', from: '#0a3045', to: '#0a5a7a', price: '₪1,200' },
-  { name: 'הכנרת',     region: 'kinneret',  emoji: '⛵',  from: '#1a2d45', to: '#2d4a70', price: '₪680' },
-  { name: 'שרון וחוף', region: 'sharon',    emoji: '🌴', from: '#1a3828', to: '#2d5c3e', price: '₪750' },
-  { name: 'ערבה',      region: 'arava',     emoji: '🌵', from: '#3a1a0a', to: '#6a3a18', price: '₪830' },
-  { name: 'חרמון',     region: 'hermon',    emoji: '❄️', from: '#1a2a3a', to: '#2d4050', price: '₪990' },
-  { name: 'שפלה',      region: 'shfela',    emoji: '🌾', from: '#2a3a1a', to: '#445c2d', price: '₪640' },
+  { name: 'אילת',       region: 'eilat',     Icon: IconWaves,     from: '#0a3045', to: '#0a5a7a', price: '₪1,200' },
+  { name: 'הכנרת',     region: 'kinneret',  Icon: IconWaves,     from: '#1a2d45', to: '#2d4a70', price: '₪680' },
+  { name: 'שרון וחוף', region: 'sharon',    Icon: IconPalmTree,  from: '#1a3828', to: '#2d5c3e', price: '₪750' },
+  { name: 'ערבה',      region: 'arava',     Icon: IconCactus,    from: '#3a1a0a', to: '#6a3a18', price: '₪830' },
+  { name: 'חרמון',     region: 'hermon',    Icon: IconSnowflake, from: '#1a2a3a', to: '#2d4050', price: '₪990' },
+  { name: 'שפלה',      region: 'shfela',    Icon: IconWheat,     from: '#2a3a1a', to: '#445c2d', price: '₪640' },
 ]
 
 function PlaceholderFeatured() {
@@ -47,7 +47,7 @@ function PlaceholderFeatured() {
         <span className="text-white/80 font-medium" style={{ fontSize: '9px' }}>עכשיו זמין</span>
       </div>
       <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
-        <p className="text-white/50 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}>📍 הנכס החדש שלך</p>
+        <p className="text-white/50 mb-1 uppercase tracking-widest flex items-center gap-1" style={{ fontSize: '10px' }}><IconMapPin size={11} color="rgba(255,255,255,0.5)" /> הנכס החדש שלך</p>
         <h3 className="font-bold text-xl leading-tight mb-1.5">הוסיפו נכס חדש</h3>
         <p className="text-sm text-white/65 mb-3">הגיע הזמן שהנכס שלכם יופיע כאן</p>
         <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border border-white/30 text-white/90 hover:bg-white/10 transition-colors">
@@ -66,7 +66,7 @@ function PlaceholderCard({ index }: { index: number }) {
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 25%, rgba(255,255,255,0.07), transparent 65%)' }} />
       <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 62%)' }} />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span className="opacity-14 group-hover:opacity-22 transition-opacity duration-400" style={{ fontSize: 36 }}>{d.emoji}</span>
+        <d.Icon size={36} color="#fff" className="opacity-14 group-hover:opacity-22 transition-opacity duration-400" />
       </div>
       <div className="absolute bottom-0 right-0 left-0 p-2.5 text-white">
         <h3 className="font-semibold leading-tight" style={{ fontSize: '12px' }}>{d.name}</h3>

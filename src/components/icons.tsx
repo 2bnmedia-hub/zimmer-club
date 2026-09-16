@@ -302,13 +302,13 @@ export const IconHome = ({ size = 20, className, 'aria-hidden': ah = true }: P) 
   )
 }
 
-export const IconMail = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconMail = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <rect x="2" y="4" width="20" height="16" rx="2" stroke={s(id)} strokeWidth="1.8"/>
-    <path d="M2 8l10 6 10-6" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    {!color && grad(id)}
+    <rect x="2" y="4" width="20" height="16" rx="2" stroke={color || s(id)} strokeWidth="1.8"/>
+    <path d="M2 8l10 6 10-6" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
   )
 }
@@ -450,13 +450,13 @@ export const IconAlertCircle = ({ size = 20, className, 'aria-hidden': ah = true
   )
 }
 
-export const IconCheckCircle = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconCheckCircle = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <circle cx="12" cy="12" r="10" stroke={s(id)} strokeWidth="1.8"/>
-    <path d="M9 12l2 2 4-4" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad(id)}
+    <circle cx="12" cy="12" r="10" stroke={color || s(id)} strokeWidth="1.8"/>
+    <path d="M9 12l2 2 4-4" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
   )
 }
@@ -605,6 +605,246 @@ export const IconCaravan = ({ size = 20, className, 'aria-hidden': ah = true }: 
     <circle cx="7" cy="18" r="1.8" stroke={s(id)} strokeWidth="1.8"/>
     <circle cx="16.5" cy="18" r="1.8" stroke={s(id)} strokeWidth="1.8"/>
     <path d="M6 8V5.5" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+export const IconBell = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M13.73 21a2 2 0 01-3.46 0" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconBuilding = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <rect x="4" y="3" width="16" height="18" rx="1.5" stroke={color || s(id)} strokeWidth="1.8"/>
+    <path d="M8 7h1M8 11h1M8 15h1M15 7h1M15 11h1M15 15h1" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M10 21v-4h4v4" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconTent = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 3l9 17H3l9-17z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 3v17M8 20l4-8 4 8" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconFile = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M14 2v6h6" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconPaperclip = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 01-7.78-7.78l9.19-9.19a3.5 3.5 0 015 5l-9.2 9.19a1.5 1.5 0 01-2.12-2.12l8.49-8.48" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconPawPrint = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <circle cx="12" cy="16.5" r="4" stroke={color || s(id)} strokeWidth="1.8"/>
+    <circle cx="6.5" cy="10.5" r="2.1" stroke={color || s(id)} strokeWidth="1.8"/>
+    <circle cx="17.5" cy="10.5" r="2.1" stroke={color || s(id)} strokeWidth="1.8"/>
+    <circle cx="9.5" cy="6" r="1.9" stroke={color || s(id)} strokeWidth="1.8"/>
+    <circle cx="14.5" cy="6" r="1.9" stroke={color || s(id)} strokeWidth="1.8"/>
+  </svg>
+  )
+}
+
+export const IconWaves = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M2 8c1.5-1.5 3.5-1.5 5 0s3.5 1.5 5 0 3.5-1.5 5 0 3.5 1.5 5 0" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M2 14c1.5-1.5 3.5-1.5 5 0s3.5 1.5 5 0 3.5-1.5 5 0 3.5 1.5 5 0" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M2 20c1.5-1.5 3.5-1.5 5 0s3.5 1.5 5 0 3.5-1.5 5 0 3.5 1.5 5 0" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+export const IconPalmTree = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 22V11" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M12 11c0-3.5-2.5-6-6-6.5C6.3 8 8.7 10.5 12 11z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 11c0-3.8 2.7-6.3 6.5-6.8C18.3 8 15.6 10.6 12 11z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 10.5c-.5-2.8-2.7-4.7-5.5-4.7C7 8.3 9.3 10 12 10.5z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconCactus = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 21V8a3 3 0 013-3" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 12H8a2 2 0 01-2-2V7" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 16h4a2 2 0 002-2v-3" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8 21h8" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+export const IconSnowflake = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 2v20M4.2 7l15.6 9M4.2 16l15.6-9" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M8.5 4.5L12 7l3.5-2.5M8.5 19.5L12 17l3.5 2.5M4.8 10.5L4.2 7l3.3-1.2M4.8 13.5L4.2 17l3.3 1.2M19.2 10.5l.6-3.5-3.3-1.2M19.2 13.5l.6 3.5-3.3 1.2" stroke={color || s(id)} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconWheat = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 21V4" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M12 6c-2 0-3.5-1.3-3.5-3.3C10.5 2.7 12 4 12 6zM12 6c2 0 3.5-1.3 3.5-3.3C13.5 2.7 12 4 12 6z" stroke={color || s(id)} strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M12 10c-2 0-3.5-1.3-3.5-3.3M12 10c2 0 3.5-1.3 3.5-3.3" stroke={color || s(id)} strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M12 14c-2 0-3.5-1.3-3.5-3.3M12 14c2 0 3.5-1.3 3.5-3.3" stroke={color || s(id)} strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M12 18c-2 0-3.5-1.3-3.5-3.3M12 18c2 0 3.5-1.3 3.5-3.3" stroke={color || s(id)} strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+export const IconTree = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 2L6 11h3l-4 6h5v5h4v-5h5l-4-6h3L12 2z" stroke={color || s(id)} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconMountain = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M3 19L9.5 7l4 6.5L16 11l5 8H3z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconSunset = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M17 17a5 5 0 00-10 0" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M12 3v6M4.5 8.5l2 2M19.5 8.5l-2 2" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M2 21h20M2 17h3M19 17h3" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+export const IconShirt = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M8 3L3 6.5l2.5 3L7 8.5V21h10V8.5l1.5 1 2.5-3L16 3l-2 1.5h-4L8 3z" stroke={color || s(id)} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconDroplet = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 3s6.5 7.2 6.5 11.5a6.5 6.5 0 01-13 0C5.5 10.2 12 3 12 3z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconCandle = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 2c1 1.3 1.6 2.2 1.6 3.1 0 .9-.7 1.4-1.6 1.4s-1.6-.5-1.6-1.4C10.4 4.2 11 3.3 12 2z" stroke={color || s(id)} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="8.5" y="8" width="7" height="13" rx="1" stroke={color || s(id)} strokeWidth="1.8"/>
+    <path d="M8.5 12h7" stroke={color || s(id)} strokeWidth="1.4"/>
+  </svg>
+  )
+}
+
+export const IconUtensils = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M7 2v8M5 2v5.5a2 2 0 002 2 2 2 0 002-2V2M7 12v10" stroke={color || s(id)} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M17 2c-1.7 0-3 2-3 5s1.3 5 3 5v10" stroke={color || s(id)} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconPlug = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M9 3v5M15 3v5M6.5 8h11v4a5.5 5.5 0 01-11 0V8z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 17.5V21" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+export const IconLightbulb = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M9 18h6M10 21h4" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M12 2a7 7 0 00-4 12.7c.6.5 1 1.2 1 2.3h6c0-1.1.4-1.8 1-2.3A7 7 0 0012 2z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconMessageCircle = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"
+      stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
   )
 }

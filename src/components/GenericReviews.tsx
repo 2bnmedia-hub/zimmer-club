@@ -43,7 +43,6 @@ function SliderRating({ value, onChange, label }: { value: number; onChange: (v:
     return `hsl(${hue}, 100%, 45%)`
   }
   const color = getColor(value)
-  const emoji = value >= 9 ? '🤩' : value >= 7 ? '😊' : value >= 5 ? '😐' : value > 0 ? '😕' : '💫'
   return (
     <div className="w-full">
       <style>{`
@@ -67,7 +66,7 @@ function SliderRating({ value, onChange, label }: { value: number; onChange: (v:
       <div className="flex items-center justify-between mb-2">
         {label && <span className="text-xs font-bold text-gray-700">{label}</span>}
         <div className="flex items-center gap-1 mr-auto">
-          <span className="text-base">{emoji}</span>
+          <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: color }} />
           <span className="text-xl font-black transition-all duration-200" style={{color}}>{value > 0 ? value : '—'}</span>
           <span className="text-xs text-gray-400 mt-1">/10</span>
         </div>

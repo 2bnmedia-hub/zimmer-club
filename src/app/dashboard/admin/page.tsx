@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX, IconEye } from '@/components/icons'
+import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX, IconEye, IconDownload, IconSearch, IconBell, IconCheckCircle, IconStar, IconPencil, IconShield, IconFile, IconPaperclip, IconSave, IconChevronLeft, IconHome, IconTarget, IconCaravan, IconBuilding, IconTent, IconUsers, IconSparkles, IconSettings, IconAlertCircle, IconMail, IconGlobe, IconMapPin, IconPriceTag } from '@/components/icons'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { HomepageFeaturedManager } from '@/components/HomepageFeaturedManager'
 import { SiteSettingsManager } from '@/components/SiteSettingsManager'
@@ -261,15 +261,15 @@ function UsersTable({ users }: { users: any[] }) {
           <div className="flex items-center gap-2">
             <button onClick={() => exportData('csv')}
               className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all hover:opacity-80"
-              style={{ background:'linear-gradient(135deg, #25D366, #128C7E)' }}>⬇ CSV</button>
+              style={{ background:'linear-gradient(135deg, #25D366, #128C7E)' }}><IconDownload size={13} color="#fff" /> CSV</button>
             <button onClick={() => exportData('xlsx')}
               className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all hover:opacity-80"
-              style={{ background:'linear-gradient(135deg, #25D366, #128C7E)' }}>⬇ Excel</button>
+              style={{ background:'linear-gradient(135deg, #25D366, #128C7E)' }}><IconDownload size={13} color="#fff" /> Excel</button>
           </div>
         </div>
         <div className="flex flex-wrap gap-3">
           <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="🔍 חיפוש לפי שם, אימייל, טלפון..."
+            placeholder="חיפוש לפי שם, אימייל, טלפון..."
             className="flex-1 min-w-48 border rounded-xl px-4 py-2 text-sm outline-none"
             style={{ borderColor:'rgba(139,105,20,0.2)' }} />
           <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
@@ -528,12 +528,12 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
 
   const contractStatusBadge = (row: any) => {
     const s = getContractStatus(row)
-    if (s === 'expired') return <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">⛔ פג</span>
+    if (s === 'expired') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700"><IconAlertCircle size={11} color="#b91c1c" /> פג</span>
     if (s === 'expiring') {
       const days = Math.ceil((new Date(row.admin_contract_end).getTime() - today.getTime()) / 86400000)
-      return <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">🔔 {days}י׳</span>
+      return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700"><IconBell size={11} color="#b45309" /> {days}י׳</span>
     }
-    if (s === 'active') return <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">✅</span>
+    if (s === 'active') return <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700"><IconCheckCircle size={13} color="#15803d" /></span>
     return <span className="text-gray-300 text-xs">—</span>
   }
 
@@ -590,7 +590,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
         <title>ניהול כספי — zimmer.club</title>
         <style>body{font-family:Arial,sans-serif;margin:24px;direction:rtl} h1{color:#2D1E0F;font-size:20px} .summary{color:#8B6914;font-size:14px;margin-bottom:16px} table{border-collapse:collapse;width:100%} @media print{body{margin:0}}</style>
       </head><body>
-        <h1>💰 ניהול כספי — zimmer.club</h1>
+        <h1>ניהול כספי — zimmer.club</h1>
         <p class="summary">סה״כ ${allRows.length} עסקים | הכנסה חודשית: ₪${totalMonthlyExport.toLocaleString()} | תאריך הפקה: ${new Date().toLocaleDateString('he-IL')}</p>
         <table>${tableRows}</table>
       </body></html>`)
@@ -607,28 +607,28 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl p-5 flex items-center gap-4" style={{ background: 'linear-gradient(135deg,#fdf8ef,#fef3d0)', border: '1.5px solid #f5d98b' }}>
-          <span className="text-2xl">💰</span>
+          <IconPriceTag size={22} />
           <div>
             <p className="text-xs text-gray-500 mb-0.5">הכנסה חודשית</p>
             <p className="text-xl font-bold" style={{ color: '#8B6914' }}>₪{totalMonthly.toLocaleString()}</p>
           </div>
         </div>
         <div className="rounded-2xl p-5 flex items-center gap-4 cursor-pointer" style={{ background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', border: '1.5px solid #86efac' }} onClick={() => setFilterStatus(filterStatus === 'active' ? 'all' : 'active')}>
-          <span className="text-2xl">✅</span>
+          <IconCheckCircle size={22} color="#16a34a" />
           <div>
             <p className="text-xs text-gray-500 mb-0.5">חוזים פעילים</p>
             <p className="text-xl font-bold text-green-700">{activeContracts}</p>
           </div>
         </div>
         <div className="rounded-2xl p-5 flex items-center gap-4 cursor-pointer" style={{ background: 'linear-gradient(135deg,#fffbeb,#fef9c3)', border: '1.5px solid #fde68a' }} onClick={() => setFilterStatus(filterStatus === 'expiring' ? 'all' : 'expiring')}>
-          <span className="text-2xl">🔔</span>
+          <IconBell size={22} color="#b45309" />
           <div>
             <p className="text-xs text-gray-500 mb-0.5">מסתיימים בקרוב</p>
             <p className="text-xl font-bold text-amber-700">{expiringContracts}</p>
           </div>
         </div>
         <div className="rounded-2xl p-5 flex items-center gap-4 cursor-pointer" style={{ background: 'linear-gradient(135deg,#fff1f2,#ffe4e6)', border: '1.5px solid #fda4af' }} onClick={() => setFilterStatus(filterStatus === 'expired' ? 'all' : 'expired')}>
-          <span className="text-2xl">⛔</span>
+          <IconAlertCircle size={22} color="#dc2626" />
           <div>
             <p className="text-xs text-gray-500 mb-0.5">פגי תוקף</p>
             <p className="text-xl font-bold text-red-700">{expiredContracts}</p>
@@ -640,7 +640,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
       <div className="flex items-center gap-3 flex-wrap">
         <input
           value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="🔍 חיפוש לפי שם, בעלים, טלפון, אימייל..."
+          placeholder="חיפוש לפי שם, בעלים, טלפון, אימייל..."
           className="flex-1 min-w-60 border rounded-xl px-4 py-2.5 text-sm outline-none"
           style={{ borderColor: 'rgba(139,105,20,0.2)' }}
         />
@@ -653,7 +653,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
             borderColor: showFavOnly ? '#fbbf24' : '#e5e7eb',
           }}
         >
-          {showFavOnly ? '⭐' : '☆'} מועדפים
+          <IconStar size={13} filled={showFavOnly} color={showFavOnly ? '#fbbf24' : undefined} /> מועדפים
           {favorites.size > 0 && (
             <span className="px-1.5 py-0.5 rounded-full text-xs font-bold"
               style={{ background: showFavOnly ? '#fbbf24' : '#f3f4f6', color: showFavOnly ? '#fff' : '#6b7280' }}>
@@ -663,7 +663,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
         </button>
         {filterStatus !== 'all' && (
           <button onClick={() => setFilterStatus('all')} className="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200">
-            ✕ נקה סינון
+            <IconX size={12} className="inline" /> נקה סינון
           </button>
         )}
         <span className="text-sm text-gray-400">{filtered.length} עסקים</span>
@@ -673,17 +673,17 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
           <button onClick={() => exportData('csv')}
             className="px-3 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-80 flex items-center gap-1.5"
             style={{ background: 'linear-gradient(135deg,#25D366,#128C7E)' }}>
-            ⬇ CSV
+            <IconDownload size={13} color="#fff" className="inline" /> CSV
           </button>
           <button onClick={() => exportData('xlsx')}
             className="px-3 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-80 flex items-center gap-1.5"
             style={{ background: 'linear-gradient(135deg,#217346,#155724)' }}>
-            ⬇ Excel
+            <IconDownload size={13} color="#fff" className="inline" /> Excel
           </button>
           <button onClick={() => exportData('pdf')}
             className="px-3 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-80 flex items-center gap-1.5"
             style={{ background: 'linear-gradient(135deg,#c0392b,#922b21)' }}>
-            ⬇ PDF
+            <IconDownload size={13} color="#fff" className="inline" /> PDF
           </button>
         </div>
       </div>
@@ -695,7 +695,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
             <thead style={{ background: '#faf8f4' }}>
               <tr style={{ color: '#8B6914' }}>
                 {[
-                  { label: '☆', hint: 'מועדפים' },
+                  { label: <IconStar size={13} />, hint: 'מועדפים' },
                   { label: 'שם העסק', hint: 'שם הנכס' },
                   { label: 'שם הבעלים', hint: 'מפרופיל המשתמש' },
                   { label: 'טלפון', hint: 'מפרופיל המשתמש' },
@@ -705,8 +705,8 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                   { label: 'חוזה חתום', hint: 'מוזן ידנית' },
                   { label: 'הערות', hint: 'מוזן ידנית' },
                   { label: '', hint: '' },
-                ].map(h => (
-                  <th key={h.label} title={h.hint} className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-help">{h.label}</th>
+                ].map((h, i) => (
+                  <th key={i} title={h.hint} className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-help">{h.label}</th>
                 ))}
               </tr>
             </thead>
@@ -726,7 +726,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                         <td className="px-3 py-3" onClick={e => { e.stopPropagation(); toggleFav(row.id) }}>
                           <button className="text-lg leading-none transition-transform hover:scale-125"
                             title={favorites.has(row.id) ? 'הסר ממועדפים' : 'הוסף למועדפים'}>
-                            {favorites.has(row.id) ? '⭐' : '☆'}
+                            <IconStar size={16} filled={favorites.has(row.id)} color={favorites.has(row.id) ? '#fbbf24' : undefined} />
                           </button>
                         </td>
                         <td className="px-4 py-3">
@@ -735,7 +735,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                               <p className="font-semibold text-sm" style={{ color: '#111827' }}>{row.name}</p>
                               <p className="text-xs text-gray-400">{row.city}</p>
                             </div>
-                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">✅</span>
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700"><IconCheckCircle size={13} color="#15803d" /></span>
                             <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-400 border border-blue-100">דוגמה</span>
                           </div>
                         </td>
@@ -760,7 +760,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                             className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:opacity-80 whitespace-nowrap"
                             style={{ background: isOpen ? '#111827' : '#f9f5ef', color: isOpen ? '#fff' : '#8B6914', border: '1px solid #e5d98b' }}
                           >
-                            {isOpen ? '✕ סגור' : '✏️ ערוך'}
+                            {isOpen ? <><IconX size={11} className="inline" /> סגור</> : <><IconPencil size={11} className="inline" /> ערוך</>}
                           </button>
                         </td>
                       </tr>
@@ -772,7 +772,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                               <div className="rounded-2xl p-5 border border-amber-200 bg-white space-y-4">
                                 <div className="flex items-center gap-3">
                                   <h3 className="font-bold text-base flex items-center gap-2" style={{ color: '#8B6914' }}>
-                                    🔐 פרטי התקשרות — {row.name}
+                                    <IconShield size={15} className="inline" /> פרטי התקשרות — {row.name}
                                   </h3>
                                   <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-400 border border-blue-100">שורת דוגמה — שינויים לא יישמרו</span>
                                 </div>
@@ -817,7 +817,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                   <button onClick={() => deleteBusiness(row)}
                                     title="שורת דוגמה — לא ניתן למחוק"
                                     className="px-6 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-all">
-                                    🗑️ מחק עסק
+                                    <IconTrash size={13} className="inline" /> מחק עסק
                                   </button>
                                 </div>
                               </div>
@@ -844,7 +844,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                         <td className="px-3 py-3" onClick={e => { e.stopPropagation(); toggleFav(row.id) }}>
                           <button className="text-lg leading-none transition-transform hover:scale-125"
                             title={favorites.has(row.id) ? 'הסר ממועדפים' : 'הוסף למועדפים'}>
-                            {favorites.has(row.id) ? '⭐' : '☆'}
+                            <IconStar size={16} filled={favorites.has(row.id)} color={favorites.has(row.id) ? '#fbbf24' : undefined} />
                           </button>
                         </td>
                         {/* שם עסק */}
@@ -884,7 +884,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                           {row.admin_contract_url
                             ? <a href={row.admin_contract_url} target="_blank" rel="noopener noreferrer"
                                 className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline whitespace-nowrap">
-                                📄 צפייה
+                                <IconFile size={12} className="inline" /> צפייה
                               </a>
                             : <span className="text-xs text-gray-300">לא הועלה</span>}
                         </td>
@@ -899,7 +899,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                             className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:opacity-80 whitespace-nowrap"
                             style={{ background: isOpen ? '#111827' : '#f9f5ef', color: isOpen ? '#fff' : '#8B6914', border: '1px solid #e5d98b' }}
                           >
-                            {isOpen ? '✕ סגור' : '✏️ ערוך'}
+                            {isOpen ? <><IconX size={11} className="inline" /> סגור</> : <><IconPencil size={11} className="inline" /> ערוך</>}
                           </button>
                         </td>
                       </tr>
@@ -910,7 +910,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                             <div className="px-6 py-5" dir="rtl">
                               <div className="rounded-2xl p-5 border border-amber-200 bg-white space-y-4">
                                 <h3 className="font-bold text-base flex items-center gap-2" style={{ color: '#8B6914' }}>
-                                  🔐 פרטי התקשרות — {row.name}
+                                  <IconShield size={15} className="inline" /> פרטי התקשרות — {row.name}
                                 </h3>
 
                                 {/* תאריכים + מחיר */}
@@ -948,7 +948,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                     <label className="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-1.5">חוזה חתום</label>
                                     <div className="flex items-center gap-3 flex-wrap">
                                       <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer border transition-colors ${contractUploading ? 'opacity-50 cursor-not-allowed' : 'border-amber-200 hover:bg-amber-50'} bg-white`}>
-                                        <span>📎</span>
+                                        <IconPaperclip size={14} />
                                         {contractUploading ? 'מעלה...' : 'העלה חוזה (PDF/DOC)'}
                                         <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" className="hidden" disabled={contractUploading}
                                           onChange={e => handleContractUpload(e, row.id)} />
@@ -956,7 +956,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                       {editForm.admin_contract_url && (
                                         <a href={editForm.admin_contract_url} target="_blank" rel="noopener noreferrer"
                                           className="flex items-center gap-1.5 text-sm text-amber-700 font-medium hover:underline">
-                                          📄 צפה בחוזה
+                                          <IconFile size={12} className="inline" /> צפה בחוזה
                                         </a>
                                       )}
                                     </div>
@@ -970,7 +970,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                         className="flex-1 border border-amber-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-amber-400 bg-white" />
                                       <button type="button" onClick={setReminder45} disabled={!editForm.admin_contract_end}
                                         className="px-3 py-2.5 rounded-xl text-xs font-bold border border-amber-300 text-amber-700 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap">
-                                        🔔 45 יום לפני
+                                        <IconBell size={11} className="inline" /> 45 יום לפני
                                       </button>
                                     </div>
                                     {editForm.admin_reminder_date && (
@@ -996,7 +996,7 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                   <button onClick={() => saveContract(row.id)} disabled={saving}
                                     className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
                                     style={{ background: 'linear-gradient(135deg, #C8960C, #8B6914)' }}>
-                                    {saving ? 'שומר...' : '💾 שמור'}
+                                    {saving ? 'שומר...' : <><IconSave size={13} className="inline" /> שמור</>}
                                   </button>
                                   <button onClick={() => setExpandedId(null)}
                                     className="px-6 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all">
@@ -1004,11 +1004,11 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                   </button>
                                   <button onClick={() => deleteBusiness(row)} disabled={deleting}
                                     className="px-6 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-all disabled:opacity-50">
-                                    {deleting ? 'מוחק...' : '🗑️ מחק עסק'}
+                                    {deleting ? 'מוחק...' : <><IconTrash size={13} className="inline" /> מחק עסק</>}
                                   </button>
                                   <Link href={`/dashboard/properties/${row.id}/edit`}
                                     className="mr-auto text-xs text-gray-400 hover:text-gray-600 hover:underline">
-                                    עריכה מלאה של הנכס ←
+                                    עריכה מלאה של הנכס <IconChevronLeft size={10} className="inline" />
                                   </Link>
                                 </div>
                               </div>
@@ -1143,16 +1143,16 @@ export default function AdminDashboard() {
   ]
 
   const tabs = [
-    { key:'overview', label:'סקירה כללית', icon:'📊' },
-    { key:'properties', label:'צימרים, וילות ובקתות', icon:'🏠' },
-    { key:'attractions', label:'אטרקציות', icon:'🎯' },
-    { key:'caravans', label:'קרוואנים', icon:'🚐' },
-    { key:'hotels', label:'מלונות', icon:'🏨' },
-    { key:'camping', label:'קמפינג', icon:'⛺' },
-    { key:'users', label:'משתמשים', icon:'👥' },
-    { key:'featured', label:'ניהול דף הבית', icon:'✨' },
-    { key:'financial', label:'ניהול כספי', icon:'💰' },
-    { key:'settings', label:'הגדרות', icon:'⚙️' },
+    { key:'overview', label:'סקירה כללית', icon:<IconGlobe size={15} /> },
+    { key:'properties', label:'צימרים, וילות ובקתות', icon:<IconHome size={15} /> },
+    { key:'attractions', label:'אטרקציות', icon:<IconTarget size={15} /> },
+    { key:'caravans', label:'קרוואנים', icon:<IconCaravan size={15} /> },
+    { key:'hotels', label:'מלונות', icon:<IconBuilding size={15} /> },
+    { key:'camping', label:'קמפינג', icon:<IconTent size={15} /> },
+    { key:'users', label:'משתמשים', icon:<IconUsers size={15} /> },
+    { key:'featured', label:'ניהול דף הבית', icon:<IconSparkles size={15} /> },
+    { key:'financial', label:'ניהול כספי', icon:<IconPriceTag size={15} /> },
+    { key:'settings', label:'הגדרות', icon:<IconSettings size={15} /> },
   ]
 
   return (
@@ -1162,7 +1162,7 @@ export default function AdminDashboard() {
       {contractAlerts.length > 0 && (
         <div className="bg-red-600 text-white px-4 py-2.5">
           <div className="max-w-7xl mx-auto flex items-center gap-3 flex-wrap">
-            <span className="text-base">⚠️</span>
+            <IconAlertCircle size={16} color="#fff" />
             <span className="font-bold text-sm">התראות חוזים:</span>
             {contractAlerts.map(a => (
               <Link
@@ -1171,7 +1171,7 @@ export default function AdminDashboard() {
                 className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full font-medium transition-colors"
               >
                 {a.name} —{' '}
-                {a.days <= 0 ? '⛔ פג!' : a.days === 1 ? 'מחר!' : `עוד ${a.days} ימים`}
+                {a.days <= 0 ? <><IconAlertCircle size={11} className="inline" /> פג!</> : a.days === 1 ? 'מחר!' : `עוד ${a.days} ימים`}
               </Link>
             ))}
           </div>
@@ -1224,7 +1224,7 @@ export default function AdminDashboard() {
             <Link href="/dashboard/admin/leads"
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:shadow-md"
               style={{ background:'#FDF3DC', color:'#8B6914', border:'1.5px solid #f0c040' }}>
-              📩 פניות פרסום
+              <IconMail size={13} className="inline" /> פניות פרסום
             </Link>
           </div>
         </div>
@@ -1251,13 +1251,13 @@ export default function AdminDashboard() {
           <>
             {/* KPI row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <KpiCard label="סה״כ באתר" value={allItems.length} icon="🌐"
+              <KpiCard label="סה״כ באתר" value={allItems.length} icon={<IconGlobe size={20} />}
                 grad="linear-gradient(135deg,#eff6ff,#dbeafe)" color="#1d4ed8" border="#93c5fd" />
-              <KpiCard label="פעילים" value={allItems.filter(i=>i.status==='active').length} icon="✅"
+              <KpiCard label="פעילים" value={allItems.filter(i=>i.status==='active').length} icon={<IconCheckCircle size={20} color="#16a34a" />}
                 grad="linear-gradient(135deg,#f0fdf4,#dcfce7)" color="#15803d" border="#86efac" />
               <KpiCard label="ממתינים לאישור" value={totalPending} icon="⏳"
                 grad="linear-gradient(135deg,#fffbeb,#fef9c3)" color="#b45309" border="#fde68a" />
-              <KpiCard label="נדחו" value={allItems.filter(i=>i.status==='rejected').length} icon="❌"
+              <KpiCard label="נדחו" value={allItems.filter(i=>i.status==='rejected').length} icon={<IconX size={20} color="#be123c" />}
                 grad="linear-gradient(135deg,#fff1f2,#ffe4e6)" color="#be123c" border="#fda4af" />
             </div>
 
@@ -1310,7 +1310,7 @@ export default function AdminDashboard() {
               {/* Map */}
               <div className="bg-white rounded-2xl p-5" style={{ border:'1.5px solid #f0ece4', boxShadow:'0 2px 16px rgba(0,0,0,0.05)' }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style={{ background:'#fdf8ef' }}>🗺</div>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background:'#fdf8ef' }}><IconMapPin size={16} /></div>
                   <p className="font-bold text-sm" style={{ color:'#111827' }}>פיזור גיאוגרפי</p>
                 </div>
                 <IsraelMap pins={mapPins} />
@@ -1319,7 +1319,7 @@ export default function AdminDashboard() {
               {/* Bar charts */}
               <div className="bg-white rounded-2xl p-5" style={{ border:'1.5px solid #f0ece4', boxShadow:'0 2px 16px rgba(0,0,0,0.05)' }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style={{ background:'#fdf8ef' }}>📊</div>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background:'#fdf8ef' }}><IconGlobe size={16} /></div>
                   <p className="font-bold text-sm" style={{ color:'#111827' }}>נכסים לפי אזור</p>
                 </div>
                 <div className="space-y-2.5">
@@ -1327,7 +1327,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="mt-5 pt-4" style={{ borderTop:'1px solid #f5f0e8' }}>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style={{ background:'#fdf8ef' }}>🏠</div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background:'#fdf8ef' }}><IconHome size={16} /></div>
                     <p className="font-bold text-sm" style={{ color:'#111827' }}>סוגי נכסים</p>
                   </div>
                   <div className="space-y-2">
@@ -1349,7 +1349,7 @@ export default function AdminDashboard() {
                 </div>
                 {totalPending === 0 ? (
                   <div className="text-center py-10">
-                    <p className="text-lg mb-2">✅</p>
+                    <p className="mb-2"><IconCheckCircle size={22} color="#16a34a" className="mx-auto" /></p>
                     <p className="text-sm text-gray-400">הכל מאושר!</p>
                   </div>
                 ) : (
@@ -1370,7 +1370,7 @@ export default function AdminDashboard() {
                           <p className="text-sm font-semibold truncate" style={{ color:'#111827' }}>{item.name}</p>
                           <p className="text-sm flex items-center gap-1" style={{ color:'#111827' }}>
                             {group.type} · {item.city || REGION_LABELS[item.region||''] || ''} · {new Date(item.created_at).toLocaleDateString('he-IL')}
-                            <span className="text-xs" style={{ color:'#d97706' }}>← צפייה</span>
+                            <span className="inline-flex items-center gap-0.5 text-xs" style={{ color:'#d97706' }}><IconChevronLeft size={10} /> צפייה</span>
                           </p>
                         </Link>
                         <div className="flex gap-1.5 mr-3 shrink-0">

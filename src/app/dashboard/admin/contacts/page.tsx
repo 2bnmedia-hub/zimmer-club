@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX, IconMessageCircle } from '@/components/icons'
 
 type Contact = {
   id: string
@@ -83,8 +83,8 @@ export default function AdminContactsPage() {
           {contacts.length === 0 && <p className="text-sm text-gray-400">אין אמצעי תקשורת מוגדרים</p>}
           {contacts.map(c => (
             <div key={c.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl">
-              <span className={`text-xs font-bold px-2 py-1 rounded-lg ${c.type === 'email' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
-                {c.type === 'email' ? '📧 אימייל' : '💬 וואטסאפ'}
+              <span className={`text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 ${c.type === 'email' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
+                {c.type === 'email' ? <><IconMail size={12} color="currentColor" /> אימייל</> : <><IconMessageCircle size={12} color="currentColor" /> וואטסאפ</>}
               </span>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-800">{c.value}</p>
@@ -109,8 +109,8 @@ export default function AdminContactsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">סוג</label>
               <select value={newType} onChange={(e) => setNewType(e.target.value as 'email' | 'whatsapp')}
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
-                <option value="email">📧 אימייל</option>
-                <option value="whatsapp">💬 וואטסאפ</option>
+                <option value="email">אימייל</option>
+                <option value="whatsapp">וואטסאפ</option>
               </select>
             </div>
             <div>
@@ -128,7 +128,7 @@ export default function AdminContactsPage() {
                 placeholder="למשל: אימייל ראשי"
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" />
             </div>
-            {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 text-sm text-green-700">נוסף בהצלחה ✅</div>}
+            {success && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 text-sm text-green-700 flex items-center gap-1.5"><IconCheckCircle size={14} color="currentColor" />נוסף בהצלחה</div>}
             <button onClick={addContact} disabled={saving || !newValue.trim()}
               className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50"
               style={{ backgroundColor: '#8B6914' }}>

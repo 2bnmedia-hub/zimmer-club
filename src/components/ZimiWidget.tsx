@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { X, Send, Mic, Square } from 'lucide-react'
+import { X, Send, Mic, Square, Home, Loader2 } from 'lucide-react'
 import { ZimiCharacter } from './ZimiCharacter'
 import type { SearchResult } from '@/app/api/chat/route'
 
@@ -26,7 +26,7 @@ function ResultCard({ r, onClose }: { r: SearchResult; onClose: () => void }) {
       {r.image ? (
         <img src={r.image} alt={r.name} style={{ width: 52, height: 52, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
       ) : (
-        <div style={{ width: 52, height: 52, borderRadius: 8, background: 'rgba(200,150,12,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🏡</div>
+        <div style={{ width: 52, height: 52, borderRadius: 8, background: 'rgba(200,150,12,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Home size={22} color="#C8960C" /></div>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 700, fontSize: 13, color: '#FDE68A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
@@ -92,7 +92,7 @@ function BigMic({ recording, loading, onClick, gender }: { recording: boolean; l
         }}
       >
         {loading
-          ? <span style={{ fontSize: 32 }}>🏡</span>
+          ? <Loader2 size={32} color="#fff" className="animate-spin" />
           : recording
             ? <Square size={34} color="#fff" fill="#fff" />
             : <Mic size={38} color="#fff" strokeWidth={1.8} />
@@ -295,7 +295,7 @@ export default function ZimiWidget() {
             boxShadow: '0 4px 16px rgba(200,150,12,0.35)',
             touchAction: isMobile ? 'auto' : 'none',
           }}
-        >🏡</button>
+        ><Home size={isMobile ? 22 : 26} color="#C8960C" /></button>
       )}
 
       {/* ───────── CLOSED: floating character (desktop only) ───────── */}
@@ -483,7 +483,7 @@ export default function ZimiWidget() {
                   {loading
                     ? gender === 'female' ? 'חושבת...' : 'חושב...'
                     : recording
-                      ? gender === 'female' ? '🎙 מקשיבה — לחצי לסיום' : '🎙 מקשיב — לחץ לסיום'
+                      ? gender === 'female' ? 'מקשיבה — לחצי לסיום' : 'מקשיב — לחץ לסיום'
                       : 'לחץ למיקרופון'}
                 </p>
               )}

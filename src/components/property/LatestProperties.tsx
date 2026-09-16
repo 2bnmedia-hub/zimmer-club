@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { coverImage } from '@/lib/utils'
-import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal } from '@/components/icons'
+import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal, IconTree, IconMountain, IconSunset, IconWaves, IconCactus, IconBuilding, IconHome } from '@/components/icons'
 
 type Property = {
   slug?: string; id: string; name: string; short_description: string
@@ -21,12 +21,12 @@ function hasEvCharging(p: Property): boolean {
 const TARGET = 7
 
 const PH_DESTINATIONS = [
-  { name: 'גליל עליון', region: 'galil',     emoji: '🌲', from: '#1a3d2b', to: '#2d5c42', price: '₪850' },
-  { name: 'רמת הגולן',  region: 'golan',     emoji: '⛰️',  from: '#1c3045', to: '#2d4a6a', price: '₪950' },
-  { name: 'ים המלח',   region: 'dead_sea',  emoji: '🌅', from: '#3d2b1a', to: '#6a4a2d', price: '₪1,100' },
-  { name: 'כרמל',      region: 'carmel',    emoji: '🌊', from: '#1a2d40', to: '#2d4a61', price: '₪780' },
-  { name: 'הנגב',      region: 'negev',     emoji: '🏜️', from: '#3a2a15', to: '#5c4020', price: '₪720' },
-  { name: 'ירושלים',   region: 'jerusalem', emoji: '🕌', from: '#2a2015', to: '#4a3820', price: '₪890' },
+  { name: 'גליל עליון', region: 'galil',     Icon: IconTree,     from: '#1a3d2b', to: '#2d5c42', price: '₪850' },
+  { name: 'רמת הגולן',  region: 'golan',     Icon: IconMountain, from: '#1c3045', to: '#2d4a6a', price: '₪950' },
+  { name: 'ים המלח',   region: 'dead_sea',  Icon: IconSunset,   from: '#3d2b1a', to: '#6a4a2d', price: '₪1,100' },
+  { name: 'כרמל',      region: 'carmel',    Icon: IconWaves,    from: '#1a2d40', to: '#2d4a61', price: '₪780' },
+  { name: 'הנגב',      region: 'negev',     Icon: IconCactus,   from: '#3a2a15', to: '#5c4020', price: '₪720' },
+  { name: 'ירושלים',   region: 'jerusalem', Icon: IconBuilding, from: '#2a2015', to: '#4a3820', price: '₪890' },
 ]
 
 function PlaceholderFeatured() {
@@ -37,7 +37,7 @@ function PlaceholderFeatured() {
       <div className="absolute inset-0" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(255,255,255,0.018) 18px, rgba(255,255,255,0.018) 19px)' }} />
       <div className="absolute inset-0 transition-opacity duration-700" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)' }} />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-        <span className="opacity-10 group-hover:opacity-18 transition-opacity duration-500" style={{ fontSize: 110 }}>🏡</span>
+        <IconHome size={110} color="#fff" className="opacity-10 group-hover:opacity-18 transition-opacity duration-500" />
       </div>
       <div className="absolute top-3 right-3">
         <span className="text-xs font-bold px-3 py-1.5 rounded-full text-white" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)', boxShadow: '0 2px 10px rgba(200,150,12,0.45)' }}>+ פרסם נכס</span>
@@ -47,7 +47,7 @@ function PlaceholderFeatured() {
         <span className="text-white/80 font-medium" style={{ fontSize: '9px' }}>מקום פנוי</span>
       </div>
       <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
-        <p className="text-white/50 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}>📍 הנכס המיוחד שלך</p>
+        <p className="text-white/50 mb-1 uppercase tracking-widest flex items-center gap-1" style={{ fontSize: '10px' }}><IconMapPin size={11} color="rgba(255,255,255,0.5)" /> הנכס המיוחד שלך</p>
         <h3 className="font-bold text-xl leading-tight mb-1.5">הצטרפו ל-zimmer.club</h3>
         <p className="text-sm text-white/65 mb-3">פרסמו את הנכס שלכם וקבלו הזמנות ישירות</p>
         <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border border-white/30 text-white/90 hover:bg-white/10 transition-colors">
@@ -66,7 +66,7 @@ function PlaceholderCard({ index }: { index: number }) {
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 25%, rgba(255,255,255,0.07), transparent 65%)' }} />
       <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 62%)' }} />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span className="opacity-14 group-hover:opacity-22 transition-opacity duration-400" style={{ fontSize: 36 }}>{d.emoji}</span>
+        <d.Icon size={36} color="#fff" className="opacity-14 group-hover:opacity-22 transition-opacity duration-400" />
       </div>
       <div className="absolute bottom-0 right-0 left-0 p-2.5 text-white">
         <h3 className="font-semibold leading-tight" style={{ fontSize: '12px' }}>{d.name}</h3>

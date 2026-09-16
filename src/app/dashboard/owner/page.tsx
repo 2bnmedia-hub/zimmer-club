@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { IconEye, IconEdit, IconPlus, IconArrowRight } from '@/components/icons'
+import { IconEye, IconEdit, IconPlus, IconArrowRight, IconHome, IconCaravan, IconTarget, IconStar } from '@/components/icons'
 
 type Property = { id: string; name: string; slug: string; category: string[]; region: string; price_per_night: number; status: string; avg_rating: number; total_reviews: number }
 type Caravan = { id: string; name: string; slug: string; caravan_type: string; region: string; price_per_night: number; status: string; avg_rating: number }
@@ -104,13 +104,13 @@ export default function OwnerDashboard() {
         {/* Add buttons */}
         <div className="flex gap-3 mb-10">
           {[
-            { href: '/dashboard/properties/new', label: 'נכס חדש', emoji: '🏠' },
-            { href: '/dashboard/caravans/new', label: 'קרוואן חדש', emoji: '🚐' },
-            { href: '/dashboard/attractions/new', label: 'אטרקציה חדשה', emoji: '🎯' },
-          ].map(({ href, label, emoji }) => (
+            { href: '/dashboard/properties/new', label: 'נכס חדש', Icon: IconHome },
+            { href: '/dashboard/caravans/new', label: 'קרוואן חדש', Icon: IconCaravan },
+            { href: '/dashboard/attractions/new', label: 'אטרקציה חדשה', Icon: IconTarget },
+          ].map(({ href, label, Icon }) => (
             <Link key={href} href={href}
               className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-xl text-sm font-medium text-gray-700 shadow-sm hover:shadow-md hover:bg-gray-50 transition-all border border-black/5">
-              <span>{emoji}</span>{label}
+              <Icon size={15} />{label}
               <IconPlus className="w-3.5 h-3.5 text-gray-400" />
             </Link>
           ))}
@@ -119,52 +119,52 @@ export default function OwnerDashboard() {
         {/* Tables */}
         {[
           {
-            title: 'נכסים', emoji: '🏠',
+            title: 'נכסים', Icon: IconHome,
             items: properties,
             cols: ['שם', 'אזור', 'מחיר/לילה', 'דירוג', 'סטטוס', ''],
             row: (p: Property) => [
               <span key="name" className="font-medium text-gray-900">{p.name}</span>,
               <span key="region" className="text-gray-400">{REGION[p.region] || p.region}</span>,
               <span key="price" className="text-gray-700">₪{p.price_per_night?.toLocaleString()}</span>,
-              <span key="rating" className="text-gray-400">{p.avg_rating ? `${p.avg_rating} ⭐` : '—'}</span>,
+              <span key="rating" className="text-gray-400">{p.avg_rating ? <span className="inline-flex items-center gap-1">{p.avg_rating} <IconStar size={11} filled color="#fbbf24" /></span> : '—'}</span>,
               <StatusBadge key="status" status={p.status} />,
               <Actions key="actions" viewHref={`/properties/${p.slug}`} editHref={`/dashboard/properties/${p.id}/edit`} />,
             ],
             addHref: '/dashboard/properties/new',
           },
           {
-            title: 'אטרקציות', emoji: '🎯',
+            title: 'אטרקציות', Icon: IconTarget,
             items: attractions,
             cols: ['שם', 'אזור', 'מחיר/אדם', 'דירוג', 'סטטוס', ''],
             row: (a: Attraction) => [
               <span key="name" className="font-medium text-gray-900">{a.name}</span>,
               <span key="region" className="text-gray-400">{REGION[a.region] || a.region}</span>,
               <span key="price" className="text-gray-700">החל מ ₪{a.price_per_person?.toLocaleString()}</span>,
-              <span key="rating" className="text-gray-400">{a.avg_rating ? `${a.avg_rating} ⭐` : '—'}</span>,
+              <span key="rating" className="text-gray-400">{a.avg_rating ? <span className="inline-flex items-center gap-1">{a.avg_rating} <IconStar size={11} filled color="#fbbf24" /></span> : '—'}</span>,
               <StatusBadge key="status" status={a.status} />,
               <Actions key="actions" viewHref={`/attractions/${a.slug}`} editHref={`/dashboard/attractions/${a.id}/edit`} />,
             ],
             addHref: '/dashboard/attractions/new',
           },
           {
-            title: 'קרוואנים', emoji: '🚐',
+            title: 'קרוואנים', Icon: IconCaravan,
             items: caravans,
             cols: ['שם', 'סוג', 'מחיר/לילה', 'דירוג', 'סטטוס', ''],
             row: (c: Caravan) => [
               <span key="name" className="font-medium text-gray-900">{c.name}</span>,
               <span key="type" className="text-gray-400">{CARAVAN_TYPE[c.caravan_type] || c.caravan_type}</span>,
               <span key="price" className="text-gray-700">₪{c.price_per_night?.toLocaleString()}</span>,
-              <span key="rating" className="text-gray-400">{c.avg_rating ? `${c.avg_rating} ⭐` : '—'}</span>,
+              <span key="rating" className="text-gray-400">{c.avg_rating ? <span className="inline-flex items-center gap-1">{c.avg_rating} <IconStar size={11} filled color="#fbbf24" /></span> : '—'}</span>,
               <StatusBadge key="status" status={c.status} />,
               <Actions key="actions" viewHref={`/caravans/${c.slug}`} editHref={`/dashboard/caravans/${c.id}/edit`} />,
             ],
             addHref: '/dashboard/caravans/new',
           },
-        ].map(({ title, emoji, items, cols, row, addHref }) => (
+        ].map(({ title, Icon, items, cols, row, addHref }) => (
           <div key={title} className="bg-white rounded-2xl shadow-sm overflow-hidden mb-5">
             <div className="px-6 py-4 flex items-center justify-between border-b border-gray-50">
               <div className="flex items-center gap-2">
-                <span>{emoji}</span>
+                <Icon size={15} />
                 <h2 className="font-semibold text-gray-800 text-sm">{title}</h2>
                 <span className="text-xs text-gray-300 font-normal">({items.length})</span>
               </div>

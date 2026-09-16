@@ -7,6 +7,7 @@ import { NewProperties } from '@/components/property/NewProperties'
 import { FeaturedAttractions } from '@/components/FeaturedAttractions'
 import { FeaturedCaravans } from '@/components/FeaturedCaravans'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
+import { IconHeart, IconUsers, IconBuilding, IconPawPrint, IconWaves, IconBath, IconShield } from '@/components/icons'
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
@@ -177,13 +178,13 @@ export default function HomePage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" style={{ gridAutoRows: '130px' }}>
               {[
-                { key: 'couples',  href: '/search?amenity=couples',        label: 'רומנטי',              emoji: '💑', desc: 'נכסים מושלמים לזוגות',       from: '#5a1a35', to: '#9c3060' },
-                { key: 'families', href: '/search?amenity=families',       label: 'מתאים למשפחות',       emoji: '👨‍👩‍👧‍👦', desc: 'מרחב ונוחות לכל המשפחה',   from: '#0f2d5c', to: '#1a4d9c' },
-                { key: 'villa',    href: '/search?category=villa',         label: 'וילות יוקרה',         emoji: '🏰', desc: 'חוויה יוקרתית ומפנקת',     from: '#5c3a14', to: '#a06b20' },
-                { key: 'pets',     href: '/search?amenity=pets',           label: 'ידידותי לבעלי חיים',  emoji: '🐾', desc: 'גם הכלב מוזמן',            from: '#1a4020', to: '#2d6e38' },
-                { key: 'pool',     href: '/search?amenity=pool',           label: 'עם בריכה',            emoji: '🏊', desc: 'קירור וכיף במים',           from: '#0a2840', to: '#0a4a72' },
-                { key: 'jacuzzi',  href: '/search?amenity=jacuzzi',        label: "עם ג'קוזי",           emoji: '🛁', desc: 'רגיעה מוחלטת',             from: '#2e0f5c', to: '#5a20a0' },
-                { key: 'shelter',  href: '/search?amenity=shelter_nearby', label: 'עם מרחב מוגן',        emoji: '🛡️', desc: 'בטחון ורוגע',              from: '#1e2030', to: '#303450' },
+                { key: 'couples',  href: '/search?amenity=couples',        label: 'רומנטי',              Icon: IconHeart,    desc: 'נכסים מושלמים לזוגות',       from: '#5a1a35', to: '#9c3060' },
+                { key: 'families', href: '/search?amenity=families',       label: 'מתאים למשפחות',       Icon: IconUsers,    desc: 'מרחב ונוחות לכל המשפחה',   from: '#0f2d5c', to: '#1a4d9c' },
+                { key: 'villa',    href: '/search?category=villa',         label: 'וילות יוקרה',         Icon: IconBuilding, desc: 'חוויה יוקרתית ומפנקת',     from: '#5c3a14', to: '#a06b20' },
+                { key: 'pets',     href: '/search?amenity=pets',           label: 'ידידותי לבעלי חיים',  Icon: IconPawPrint, desc: 'גם הכלב מוזמן',            from: '#1a4020', to: '#2d6e38' },
+                { key: 'pool',     href: '/search?amenity=pool',           label: 'עם בריכה',            Icon: IconWaves,    desc: 'קירור וכיף במים',           from: '#0a2840', to: '#0a4a72' },
+                { key: 'jacuzzi',  href: '/search?amenity=jacuzzi',        label: "עם ג'קוזי",           Icon: IconBath,     desc: 'רגיעה מוחלטת',             from: '#2e0f5c', to: '#5a20a0' },
+                { key: 'shelter',  href: '/search?amenity=shelter_nearby', label: 'עם מרחב מוגן',        Icon: IconShield,   desc: 'בטחון ורוגע',              from: '#1e2030', to: '#303450' },
               ].map((cat) => (
                 <Link
                   key={cat.key}
@@ -195,13 +196,13 @@ export default function HomePage() {
                   <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1), transparent 55%)' }} />
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 60%)' }} />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="opacity-20 group-hover:opacity-30 transition-opacity duration-300" style={{ fontSize: 52 }}>{cat.emoji}</span>
+                    <cat.Icon size={52} color="#fff" className="opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
                   </div>
                   <div className="absolute bottom-0 right-0 left-0 p-3.5 text-white">
                     <p className="font-bold leading-tight" style={{ fontSize: '13px' }}>{cat.label}</p>
                     <p className="text-white/60 mt-0.5" style={{ fontSize: '10px' }}>{cat.desc}</p>
                   </div>
-                  <div className="absolute top-3 right-3 text-lg leading-none">{cat.emoji}</div>
+                  <cat.Icon size={16} color="#fff" className="absolute top-3 right-3 opacity-80" />
                 </Link>
               ))}
             </div>

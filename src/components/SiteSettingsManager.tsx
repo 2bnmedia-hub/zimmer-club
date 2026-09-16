@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { IconSettings, IconHome } from '@/components/icons'
 
 function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: () => void; disabled?: boolean }) {
   return (
@@ -67,14 +68,14 @@ export function SiteSettingsManager() {
   return (
     <div className="p-6 max-w-4xl mx-auto" dir="rtl">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold" style={{ color: '#111827' }}>⚙️ הגדרות האתר</h2>
+        <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: '#111827' }}><IconSettings size={22} /> הגדרות האתר</h2>
         {msg && <span className="text-sm font-bold px-4 py-2 rounded-full" style={{ background: '#f0fdf4', color: '#16a34a' }}>{msg}</span>}
       </div>
 
       <div className="rounded-2xl p-6" style={{ background: '#fff', border: '1.5px solid #f0ece4', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <span className="text-3xl">🏡</span>
+            <IconHome size={30} />
             <div>
               <p className="font-bold text-base" style={{ color: '#111827' }}>זימי — עוזר ה-AI באתר</p>
               <p className="text-sm mt-1" style={{ color: '#6b7280' }}>

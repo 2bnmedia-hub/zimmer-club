@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { IconHome, IconTarget, IconCaravan, IconSparkles } from '@/components/icons'
 
 type FeaturedItem = {
   id: string; section: string; item_id: string; item_type: string; slot: number; name?: string; city?: string
@@ -65,9 +66,9 @@ export function HomepageFeaturedManager() {
   }
 
   const sections = [
-    { key: 'latest', label: 'הנכסים הנצפים ביותר', slots: 5, type: 'property' as const, icon: '🏠' },
-    { key: 'attractions', label: 'אטרקציות חמות', slots: 3, type: 'attraction' as const, icon: '🎯' },
-    { key: 'caravans', label: 'קרוואנים ומסעות', slots: 3, type: 'caravan' as const, icon: '🚐' },
+    { key: 'latest', label: 'הנכסים הנצפים ביותר', slots: 5, type: 'property' as const, Icon: IconHome },
+    { key: 'attractions', label: 'אטרקציות חמות', slots: 3, type: 'attraction' as const, Icon: IconTarget },
+    { key: 'caravans', label: 'קרוואנים ומסעות', slots: 3, type: 'caravan' as const, Icon: IconCaravan },
   ]
 
   function getOptions(type: string) {
@@ -79,7 +80,7 @@ export function HomepageFeaturedManager() {
   return (
     <div className="p-6 max-w-4xl mx-auto" dir="rtl">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold" style={{ color: "#111827" }}>✨ ניהול דף הבית</h2>
+        <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: "#111827" }}><IconSparkles size={22} /> ניהול דף הבית</h2>
         <p className="text-sm mt-1" style={{ color: "#6b7280" }}>השינויים נשמרים אוטומטית עם כל בחירה</p>
         {msg && <span className="text-sm font-bold px-4 py-2 rounded-full" style={{ background: '#f0fdf4', color: '#16a34a' }}>{msg}</span>}
         {saving && <span className="text-sm text-gray-400">שומר...</span>}
@@ -88,7 +89,7 @@ export function HomepageFeaturedManager() {
       <div className="space-y-8">
         {sections.map(sec => (
           <div key={sec.key} className="rounded-2xl p-6" style={{ background: '#fff', border: '1.5px solid #f0ece4', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            <h3 className="text-lg font-bold mb-5" style={{ color: '#8B6914' }}>{sec.icon} {sec.label}</h3>
+            <h3 className="text-lg font-bold mb-5 flex items-center gap-2" style={{ color: '#8B6914' }}><sec.Icon size={18} /> {sec.label}</h3>
             <div className="space-y-3">
               {Array.from({ length: sec.slots }, (_, i) => i + 1).map(slot => {
                 const current = getSlot(sec.key, slot)

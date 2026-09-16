@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings, IconClock, IconHeart } from '@/components/icons'
+import { IconMenu, IconX, IconSearch, IconUser, IconChevronDown, IconLogOut, IconSettings, IconClock, IconHeart, IconMapPin, IconUsers, IconCalendar, IconTrendingUp, IconCaravan, IconStar, IconTarget, IconPlus, IconChevronLeft, IconHome } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { ZIMMER_MENU, VILLAS_MENU, ATTRACTIONS_MENU, CARAVAN_MENU } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
@@ -13,7 +13,7 @@ import { useWishlist } from '@/hooks/useWishlist'
 const NAV_ITEMS = [
   { href: '/hotels', label: 'מלונות' },
   { href: '/camping', label: 'קמפינג' },
-  { href: '/miluim', label: '🎖️ מילואים' },
+  { href: '/miluim', label: 'מילואים' },
   { href: '/deals', label: 'מבצעים', badge: true },
   { href: '/advertise', label: 'פרסמו באתר' },
   { href: '/find', label: 'סוכן Ai' },
@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 type MenuItem = { href: string; label: string }
 
 function MegaMenu({ sections, onClose, isOpen }: {
-  sections: { title: string; icon: string; items: MenuItem[] }[]
+  sections: { title: string; icon: React.ComponentType<{ size?: number }>; items: MenuItem[] }[]
   onClose: () => void
   isOpen: boolean
 }) {
@@ -79,7 +79,7 @@ function MegaMenu({ sections, onClose, isOpen }: {
           {sections.map((section, i) => (
             <div key={section.title} className={cn('px-8', i === 0 && 'pr-0', i === sections.length - 1 && 'pl-0')}>
               <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid rgba(139,105,20,0.10)' }}>
-                <span className="text-base">{section.icon}</span>
+                <section.icon size={16} />
                 <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: '#B8964A', letterSpacing: '0.14em' }}>
                   {section.title}
                 </h3>
@@ -99,7 +99,7 @@ function MegaMenu({ sections, onClose, isOpen }: {
           <Link href="/search" onClick={onClose}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all hover:scale-105"
             style={{ background: 'rgba(139,105,20,0.08)', color: '#8B6914', border: '1px solid rgba(139,105,20,0.18)' }}>
-            לכל החיפוש המתקדם ←
+            לכל החיפוש המתקדם <IconChevronLeft size={12} />
           </Link>
         </div>
       </div>
@@ -158,24 +158,24 @@ export function Navbar() {
   const toggleMenu = (name: string) => setActiveMenu(prev => prev === name ? null : name)
 
   const zimmerSections = [
-    { title: 'לפי אזור', icon: '📍', items: ZIMMER_MENU.byRegion },
-    { title: 'לפי קהל יעד', icon: '👥', items: ZIMMER_MENU.byAudience },
-    { title: 'לפי זמינות', icon: '📅', items: ZIMMER_MENU.byAvailability },
+    { title: 'לפי אזור', icon: IconMapPin, items: ZIMMER_MENU.byRegion },
+    { title: 'לפי קהל יעד', icon: IconUsers, items: ZIMMER_MENU.byAudience },
+    { title: 'לפי זמינות', icon: IconCalendar, items: ZIMMER_MENU.byAvailability },
   ]
   const villasSections = [
-    { title: 'לפי אזור', icon: '📍', items: VILLAS_MENU.byRegion },
-    { title: 'לפי קהל יעד', icon: '👥', items: VILLAS_MENU.byAudience },
-    { title: 'חיפושים פופולריים', icon: '🔥', items: VILLAS_MENU.byFeatures },
+    { title: 'לפי אזור', icon: IconMapPin, items: VILLAS_MENU.byRegion },
+    { title: 'לפי קהל יעד', icon: IconUsers, items: VILLAS_MENU.byAudience },
+    { title: 'חיפושים פופולריים', icon: IconTrendingUp, items: VILLAS_MENU.byFeatures },
   ]
   const caravanSections = [
-    { title: 'סוג קרוואן', icon: '🚐', items: CARAVAN_MENU.byType },
-    { title: 'לפי אזור', icon: '📍', items: CARAVAN_MENU.byRegion },
-    { title: 'חיפושים פופולריים', icon: '🔥', items: CARAVAN_MENU.byFeature },
+    { title: 'סוג קרוואן', icon: IconCaravan, items: CARAVAN_MENU.byType },
+    { title: 'לפי אזור', icon: IconMapPin, items: CARAVAN_MENU.byRegion },
+    { title: 'חיפושים פופולריים', icon: IconTrendingUp, items: CARAVAN_MENU.byFeature },
   ]
   const attractionsSections = [
-    { title: 'לפי אזור', icon: '📍', items: ATTRACTIONS_MENU.byRegion },
-    { title: 'לפי קהל יעד', icon: '👥', items: ATTRACTIONS_MENU.byAudience },
-    { title: 'אטרקציות פופולריות', icon: '⭐', items: ATTRACTIONS_MENU.popular as { href: string; label: string }[] },
+    { title: 'לפי אזור', icon: IconMapPin, items: ATTRACTIONS_MENU.byRegion },
+    { title: 'לפי קהל יעד', icon: IconUsers, items: ATTRACTIONS_MENU.byAudience },
+    { title: 'אטרקציות פופולריות', icon: IconStar, items: ATTRACTIONS_MENU.popular as { href: string; label: string }[] },
   ]
 
   return (
@@ -307,7 +307,7 @@ export function Navbar() {
                           {item.imageUrl ? (
                             <img src={item.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                           ) : (
-                            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-lg flex-shrink-0">🏡</div>
+                            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0"><IconHome size={18} /></div>
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
@@ -349,13 +349,13 @@ export function Navbar() {
                       </p>
                     </div>
                     {[
-                      { href: '/dashboard/properties/new', icon: '+', label: 'הוספת צימר/וילה/בקתה' },
-                      { href: '/dashboard/attractions/new', icon: '🎯', label: 'הוספת אטרקציה' },
-                      { href: '/dashboard/caravans/new', icon: '🚐', label: 'הוספת קרוואן' },
+                      { href: '/dashboard/properties/new', icon: IconPlus, label: 'הוספת צימר/וילה/בקתה' },
+                      { href: '/dashboard/attractions/new', icon: IconTarget, label: 'הוספת אטרקציה' },
+                      { href: '/dashboard/caravans/new', icon: IconCaravan, label: 'הוספת קרוואן' },
                     ].map(item => (
                       <Link key={item.href} href={item.href} onClick={() => setActiveMenu(null)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                        <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center text-sm font-bold">{item.icon}</div>
+                        <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center"><item.icon size={15} /></div>
                         {item.label}
                       </Link>
                     ))}

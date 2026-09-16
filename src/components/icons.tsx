@@ -56,12 +56,12 @@ export const IconX = ({ size = 20, className, color, 'aria-hidden': ah = true }:
   )
 }
 
-export const IconChevronDown = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconChevronDown = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <path d="M6 9l6 6 6-6" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad(id)}
+    <path d="M6 9l6 6 6-6" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
   )
 }
@@ -89,14 +89,14 @@ export const IconSettings = ({ size = 20, className, 'aria-hidden': ah = true }:
   )
 }
 
-export const IconStar = ({ size = 20, className, filled, 'aria-hidden': ah = true }: P & { filled?: boolean }) => {
+export const IconStar = ({ size = 20, className, color, filled, 'aria-hidden': ah = true }: P & { filled?: boolean }) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
+    {!color && grad(id)}
     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-      stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
-      fill={filled ? s(id) : 'none'}/>
+      stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+      fill={filled ? (color || s(id)) : 'none'}/>
   </svg>
   )
 }
@@ -113,13 +113,13 @@ export const IconHeart = ({ size = 20, className, filled, 'aria-hidden': ah = tr
   )
 }
 
-export const IconMapPin = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconMapPin = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke={s(id)} strokeWidth="1.8"/>
-    <circle cx="12" cy="10" r="3" stroke={s(id)} strokeWidth="1.8"/>
+    {!color && grad(id)}
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke={color || s(id)} strokeWidth="1.8"/>
+    <circle cx="12" cy="10" r="3" stroke={color || s(id)} strokeWidth="1.8"/>
   </svg>
   )
 }
@@ -158,12 +158,12 @@ export const IconCalendar = ({ size = 20, className, 'aria-hidden': ah = true }:
   )
 }
 
-export const IconPhone = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconPhone = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+    {!color && grad(id)}
+    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
   )
 }
@@ -483,32 +483,32 @@ export const IconSliders = ({ size = 20, className, 'aria-hidden': ah = true }: 
   )
 }
 
-export const IconChevronLeft = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconChevronLeft = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <path d="M15 18l-6-6 6-6" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad(id)}
+    <path d="M15 18l-6-6 6-6" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
   )
 }
 
-export const IconChevronRight = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconChevronRight = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <path d="M9 18l6-6-6-6" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad(id)}
+    <path d="M9 18l6-6-6-6" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
   )
 }
 
-export const IconChevronUp = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+export const IconChevronUp = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
   const id = React.useId()
   return (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
-    {grad(id)}
-    <path d="M18 15l-6-6-6 6" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    {!color && grad(id)}
+    <path d="M18 15l-6-6-6 6" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
   )
 }
@@ -544,3 +544,89 @@ export const IconPencil = ({ size = 20, className, 'aria-hidden': ah = true }: P
   </svg>
   )
 }
+
+export const IconShield = ({ size = 20, className, filled, color, 'aria-hidden': ah = true }: P & { filled?: boolean }) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M12 3l7 3v5c0 4.5-2.9 8.2-7 9.5-4.1-1.3-7-5-7-9.5V6l7-3z"
+      stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+      fill={filled ? (color || s(id)) : 'none'}/>
+    {filled && <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>}
+  </svg>
+  )
+}
+
+export const IconMedal = ({ size = 20, className, color, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {!color && grad(id)}
+    <path d="M8.5 3L6 9l3 2M15.5 3L18 9l-3 2" stroke={color || s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="15" r="6" stroke={color || s(id)} strokeWidth="1.8"/>
+    <path d="M12 12.5l1.1 2.2 2.4.35-1.75 1.7.4 2.4-2.15-1.13-2.15 1.13.4-2.4-1.75-1.7 2.4-.35L12 12.5z"
+      stroke={color || s(id)} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+  )
+}
+
+export const IconPriceTag = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {grad(id)}
+    <path d="M12.6 3H5a2 2 0 00-2 2v7.6c0 .53.21 1.04.59 1.41l8.4 8.4a2 2 0 002.82 0l6-6a2 2 0 000-2.82l-8.4-8.4A2 2 0 0012.6 3z"
+      stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="8" cy="8" r="1.4" fill={s(id)}/>
+  </svg>
+  )
+}
+
+export const IconTarget = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {grad(id)}
+    <circle cx="12" cy="12" r="8.5" stroke={s(id)} strokeWidth="1.8"/>
+    <circle cx="12" cy="12" r="4.5" stroke={s(id)} strokeWidth="1.8"/>
+    <circle cx="12" cy="12" r="1.2" fill={s(id)}/>
+  </svg>
+  )
+}
+
+export const IconCaravan = ({ size = 20, className, 'aria-hidden': ah = true }: P) => {
+  const id = React.useId()
+  return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    {grad(id)}
+    <path d="M2.5 15V8a1 1 0 011-1h13.5a2 2 0 012 2v6" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M2.5 15h17.5M19 11h2.5v4H19" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="7" cy="18" r="1.8" stroke={s(id)} strokeWidth="1.8"/>
+    <circle cx="16.5" cy="18" r="1.8" stroke={s(id)} strokeWidth="1.8"/>
+    <path d="M6 8V5.5" stroke={s(id)} strokeWidth="1.8" strokeLinecap="round"/>
+  </svg>
+  )
+}
+
+type BrandP = { size?: number; className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }
+
+export const IconFacebook = ({ size = 20, className, 'aria-hidden': ah = true }: BrandP) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden={ah}>
+    <path d="M13.5 21v-7.5h2.5l.4-3H13.5V8.4c0-.87.24-1.46 1.5-1.46h1.6V4.35C16.3 4.24 15.4 4 14.35 4 12.15 4 10.65 5.34 10.65 7.8v2.7H8.1v3h2.55V21h2.85z"/>
+  </svg>
+)
+
+export const IconInstagram = ({ size = 20, className, 'aria-hidden': ah = true }: BrandP) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden={ah}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" strokeWidth="1.7"/>
+    <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.7"/>
+    <circle cx="17.2" cy="6.8" r="1.15" fill="currentColor"/>
+  </svg>
+)
+
+export const IconTikTok = ({ size = 20, className, 'aria-hidden': ah = true }: BrandP) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden={ah}>
+    <path d="M16.6 5.2c.7.9 1.7 1.5 2.9 1.6v2.7c-1.3 0-2.5-.4-3.5-1.1v5.9c0 3-2.4 5.4-5.4 5.4S5.2 17.3 5.2 14.3c0-2.9 2.3-5.3 5.2-5.4v2.8c-1.4.1-2.4 1.2-2.4 2.6 0 1.4 1.2 2.6 2.6 2.6s2.6-1.2 2.6-2.6V3.5h2.7c.1.6.4 1.2.7 1.7z"/>
+  </svg>
+)

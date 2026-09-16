@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { IconChevronLeft } from '@/components/icons'
 
 export const metadata: Metadata = {
   title: 'אודות zimmer.club — הסיפור שלנו',
@@ -205,13 +206,13 @@ export default function AboutPage() {
             <p className="text-[10px] font-medium tracking-[2px] uppercase text-white/50 mb-2">לאורחים</p>
             <h3 className="text-lg md:text-xl font-bold text-[#F5EDD6] mb-3 leading-snug">מצאו את החופשה שתזכרו לתמיד</h3>
             <p className="text-sm text-[#F5EDD6]/70 leading-relaxed mb-5">צימרים, וילות, קרוואנים ואטרקציות — מעל 1,000 נכסים מאומתים, ללא עמלות, עם סוכן AI שיעזור לכם למצוא בדיוק מה שחיפשתם.</p>
-            <Link href="/search" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים ←</Link>
+            <Link href="/search" className="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים <IconChevronLeft size={13} color="#fff" /></Link>
           </div>
           <div className="bg-[#F5EDD6] rounded-2xl p-6 md:p-8 border border-[#8B6914]/20">
             <p className="text-[10px] font-medium tracking-[2px] uppercase text-[#9A8060] mb-2">לבעלי נכסים</p>
             <h3 className="text-lg md:text-xl font-bold text-[#2C2418] mb-3 leading-snug">הנכס שלכם ראוי לקהל שיעריך אותו</h3>
             <p className="text-sm text-[#5C4A28] leading-relaxed mb-5">צימר, וילה, קרוואן או אטרקציה — פרסמו, קבלו הזמנות ישירות, ושמרו 100% מהתשלום. מתחילים חינם.</p>
-            <Link href="/dashboard/properties/new" className="inline-flex items-center justify-center px-6 py-3 rounded-full border-2 border-[#8B6914] text-[#8B6914] text-sm font-bold min-h-[44px]">פרסמו את הנכס שלכם ←</Link>
+            <Link href="/dashboard/properties/new" className="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-full border-2 border-[#8B6914] text-[#8B6914] text-sm font-bold min-h-[44px]">פרסמו את הנכס שלכם <IconChevronLeft size={13} /></Link>
           </div>
         </div>
       </div>

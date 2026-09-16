@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { IconStar, IconZap, IconMapPin } from '@/components/icons'
+import { IconStar, IconZap, IconMapPin, IconChevronLeft, IconHome } from '@/components/icons'
 import { formatPrice } from '@/lib/utils'
 import { REGIONS } from '@/lib/constants'
 import type { Region } from '@/types'
@@ -99,7 +99,7 @@ export default function DealsPage() {
             <p className="text-2xl font-bold text-gray-700 mb-2">אין מבצעים כרגע</p>
             <p className="text-gray-400 mb-6">חזרו אלינו בקרוב — מבצעים חדשים מתעדכנים כל הזמן</p>
             <Link href="/search" className="inline-flex items-center gap-2 text-amber-700 font-semibold hover:underline">
-              לכל הנכסים ←
+              לכל הנכסים <IconChevronLeft size={13} />
             </Link>
           </div>
         ) : (
@@ -117,7 +117,7 @@ export default function DealsPage() {
                         {img ? (
                           <Image src={img} alt={deal.name} fill className="object-cover" sizes="(max-width: 640px) 50vw, 25vw" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-4xl opacity-30">🏠</div>
+                          <div className="w-full h-full flex items-center justify-center opacity-30"><IconHome size={36} /></div>
                         )}
                         {/* Discount Badge */}
                         <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">

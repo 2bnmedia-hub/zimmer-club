@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useWishlist } from '@/hooks/useWishlist'
-import { IconHeart } from '@/components/icons'
+import { IconHeart, IconStar, IconMapPin, IconChevronLeft } from '@/components/icons'
 
 const FALLBACK = [
   { id:'1', name:'קרוואן יוקרה גולן', city:'רמת הגולן', price_per_night:890, img:'https://images.unsplash.com/photo-1561361058-c12e02b4c1a5?w=1200&q=80' },
@@ -54,7 +54,7 @@ export function FeaturedCaravans() {
             <p className="font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#B8964A', fontSize: '10px' }}>חוויה ייחודית</p>
             <h2 className="text-xl font-bold shimmer-text">קרוואנים ומסעות</h2>
           </div>
-          <Link href="/caravans" className="text-xs font-semibold hover:underline" style={{ color: '#8B6914' }}>כל הקרוואנים ←</Link>
+          <Link href="/caravans" className="inline-flex items-center gap-1 text-xs font-semibold hover:underline" style={{ color: '#8B6914' }}>כל הקרוואנים <IconChevronLeft size={12} /></Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5" style={{ gridAutoRows: '162px' }}>
@@ -67,9 +67,9 @@ export function FeaturedCaravans() {
                   ? <Image src={isFallback ? c0.img : c0.caravan_images[0].url} alt={c0.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
                   : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-6xl">🚐</div>}
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,5,0,0.88) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)' }} />
-                {c0.avg_rating && <span className="absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}>★ {Number(c0.avg_rating).toFixed(1)}</span>}
+                {c0.avg_rating && <span className="absolute inline-flex items-center gap-1 top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}><IconStar size={11} filled color="#F5C842" /> {Number(c0.avg_rating).toFixed(1)}</span>}
                 <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
-                  <p className="text-white/55 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}>📍 {c0.city}</p>
+                  <p className="flex items-center gap-1 text-white/55 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}><IconMapPin size={11} color="currentColor" /> {c0.city}</p>
                   <h3 className="font-bold text-lg leading-tight mb-1">{c0.name}</h3>
                   <p className="font-bold text-base" style={{ color: '#F5C842' }}>₪{c0.price_per_night} <span className="font-normal text-white/50 text-xs">/ לילה</span></p>
                 </div>
@@ -94,9 +94,9 @@ export function FeaturedCaravans() {
                     ? <Image src={img} alt={c.name} fill sizes="(max-width: 768px) 50vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                     : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-3xl">🚐</div>}
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%)' }} />
-                  {c.avg_rating && <span className="absolute top-2 left-2 font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842', fontSize: '10px' }}>★ {Number(c.avg_rating).toFixed(1)}</span>}
+                  {c.avg_rating && <span className="absolute inline-flex items-center gap-0.5 top-2 left-2 font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842', fontSize: '10px' }}><IconStar size={9} filled color="#F5C842" /> {Number(c.avg_rating).toFixed(1)}</span>}
                   <div className="absolute bottom-0 right-0 left-0 p-2.5 text-white">
-                    <p className="text-white/50 leading-none mb-0.5" style={{ fontSize: '9px' }}>📍 {c.city}</p>
+                    <p className="flex items-center gap-0.5 text-white/50 leading-none mb-0.5" style={{ fontSize: '9px' }}><IconMapPin size={9} color="currentColor" /> {c.city}</p>
                     <h3 className="font-semibold leading-tight line-clamp-1" style={{ fontSize: '12px' }}>{c.name}</h3>
                     <p className="font-bold mt-0.5" style={{ color: '#F5C842', fontSize: '11px' }}>₪{c.price_per_night}</p>
                   </div>

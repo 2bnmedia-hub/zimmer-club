@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { GenericReviews } from '@/components/GenericReviews'
 import { AdminBackButton } from '@/components/AdminBackButton'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
-import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone, IconX } from '@/components/icons'
+import { IconMapPin, IconNavigation, IconArrowRight, IconStar, IconHeart, IconChevronLeft, IconChevronRight, IconZap, IconUsers, IconPhone, IconX, IconBed, IconCalendar, IconCaravan } from '@/components/icons'
 import Image from 'next/image'
 import { FadingVideo } from '@/components/FadingVideo'
 import { buildWhatsAppLink } from '@/lib/utils'
@@ -175,9 +175,9 @@ export default function CaravanPage() {
                   </div>
                 )}
                 {caravan.max_guests > 0 && <div className="flex items-center gap-1.5"><IconUsers className="w-4 h-4 text-gray-400" />עד {caravan.max_guests} אורחים</div>}
-                {caravan.sleeping_capacity > 0 && <div>🛏 {caravan.sleeping_capacity} מיטות שינה</div>}
-                {caravan.manufacture_year > 0 && <div>📅 שנת ייצור: {caravan.manufacture_year}</div>}
-                {caravan.can_relocate && <div>🚐 ניתן להצבה בשטח</div>}
+                {caravan.sleeping_capacity > 0 && <div className="flex items-center gap-1.5"><IconBed size={14} /> {caravan.sleeping_capacity} מיטות שינה</div>}
+                {caravan.manufacture_year > 0 && <div className="flex items-center gap-1.5"><IconCalendar size={14} /> שנת ייצור: {caravan.manufacture_year}</div>}
+                {caravan.can_relocate && <div className="flex items-center gap-1.5"><IconCaravan size={14} /> ניתן להצבה בשטח</div>}
                 {caravan.instant_book && <div className="flex items-center gap-1"><IconZap className="w-4 h-4" style={{color:'#C4A56B'}} />הזמנה מיידית</div>}
                 <div className="flex items-center gap-1.5"><IconMapPin className="w-4 h-4 text-gray-400" />{caravan.city || REGION_LABELS[caravan.region]}</div>
               </div>
@@ -211,7 +211,7 @@ export default function CaravanPage() {
                       <IconNavigation className="w-5 h-5" style={{color:'#8B6914'}} />
                     </div>
                     <p className="text-xs font-bold text-gray-700">{caravan.city}</p>
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full shadow" style={{backgroundColor:'#fff', color:'#8B6914'}}>📍 פתח בגוגל מפות</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full shadow" style={{backgroundColor:'#fff', color:'#8B6914'}}><IconMapPin size={12} /> פתח בגוגל מפות</span>
                   </a>
                 </div>
               )}
@@ -310,7 +310,7 @@ export default function CaravanPage() {
                   </div>
                 </>
               ) : (
-                <div className="h-64 flex items-center justify-center text-gray-400 text-4xl">🚐</div>
+                <div className="h-64 flex items-center justify-center text-gray-400"><IconCaravan size={40} /></div>
               )}
               <button onClick={() => setLiked(l => !l)} className="absolute top-4 left-4 z-10 bg-white/90 p-2.5 rounded-full shadow-md">
                 <IconHeart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />

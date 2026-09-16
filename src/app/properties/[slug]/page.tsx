@@ -289,7 +289,7 @@ export default function PropertyPage() {
           className="flex-1 py-3 rounded-xl font-bold text-white text-sm"
           style={{ background: 'linear-gradient(135deg, #C8960C 0%, #8B6914 100%)' }}
           onClick={() => { const el = document.getElementById('booking-form'); el?.scrollIntoView({ behavior: 'smooth' }) }}>
-          {property.instant_book ? '⚡ הזמן עכשיו' : 'בקש הזמנה'}
+          {property.instant_book ? <span className="inline-flex items-center gap-1.5"><IconZap size={14} color="#fff" /> הזמן עכשיו</span> : 'בקש הזמנה'}
         </button>
       </div>
 
@@ -350,8 +350,8 @@ export default function PropertyPage() {
                       <IconMapPin className="w-5 h-5" style={{color:'#8B6914'}} />
                     </div>
                     <p className="text-xs font-bold text-gray-700">{property.address || property.city}</p>
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full shadow" style={{backgroundColor:"#fff", color:"#8B6914"}}>
-                      📍 פתח בגוגל מפות
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full shadow" style={{backgroundColor:"#fff", color:"#8B6914"}}>
+                      <IconMapPin size={12} /> פתח בגוגל מפות
                     </span>
                   </a>
                 </div>
@@ -604,12 +604,12 @@ export default function PropertyPage() {
               <div id="booking-form" className="sticky top-24 bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
                 <p className="text-lg font-bold text-center mb-3" style={{color:'#8B6914'}}>אשמח לבצע הזמנה 😊</p>
                 <div className="flex items-center justify-center gap-1.5 mb-4">
-                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 font-medium">✓ מחיר ישיר מהמארח</span>
-                  {property.instant_book && <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-1 font-medium">⚡ מיידי</span>}
+                  <span className="inline-flex items-center gap-1 text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 font-medium"><IconCheck size={11} color="#15803d" /> מחיר ישיר מהמארח</span>
+                  {property.instant_book && <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-1 font-medium"><IconZap size={11} color="#b45309" /> מיידי</span>}
                 </div>
                 {property.price_on_request ? (
                   <div className="mb-4 bg-gray-50 rounded-xl p-4 text-center">
-                    <p className="text-lg font-bold text-gray-900">📞 התקשרו לבירור מחיר</p>
+                    <p className="flex items-center justify-center gap-2 text-lg font-bold text-gray-900"><IconPhone size={16} /> התקשרו לבירור מחיר</p>
                   </div>
                 ) : property.price_per_night > 0 && (
                   <div className="mb-4">

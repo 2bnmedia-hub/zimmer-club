@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { CARAVAN_TYPES } from '@/lib/constants'
+import { IconChevronLeft } from '@/components/icons'
 
 type Caravan = {
   id: string
@@ -267,8 +268,8 @@ function CaravansContent() {
                             <span className="font-bold text-gray-900">₪{c.price_per_night?.toLocaleString()}</span>
                             <span className="text-xs text-gray-400 mr-1">/ לילה</span>
                           </div>
-                          <span className="text-xs px-2 py-1 rounded-lg" style={{ background: 'rgba(139,105,20,0.06)', color: '#8B6914' }}>
-                            לפרטים ←
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg" style={{ background: 'rgba(139,105,20,0.06)', color: '#8B6914' }}>
+                            לפרטים <IconChevronLeft size={11} />
                           </span>
                         </div>
                       </div>

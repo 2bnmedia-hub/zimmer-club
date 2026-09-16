@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
+import { IconChevronLeft } from '@/components/icons'
 
 export const metadata: Metadata = {
   title: 'שובר מילואים — נופש לחיילי מילואים | zimmer.club',
@@ -95,8 +96,8 @@ export default async function MiluimPage() {
             )}
           </h2>
           <Link href="/search?accepts_miluim=true"
-            className="text-sm font-bold text-amber-700 hover:underline">
-            הצג הכל ←
+            className="inline-flex items-center gap-1 text-sm font-bold text-amber-700 hover:underline">
+            הצג הכל <IconChevronLeft size={12} />
           </Link>
         </div>
 

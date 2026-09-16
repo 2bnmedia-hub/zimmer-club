@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { IconFacebook, IconInstagram, IconTikTok } from '@/components/icons'
 
 const footerLinks = {
   'אירוח': [
@@ -23,9 +24,9 @@ const footerLinks = {
 }
 
 const SOCIAL_LINKS = [
-  { icon: '📘', label: 'פייסבוק', href: 'https://facebook.com/zimmerclub' },
-  { icon: '📸', label: 'אינסטגרם', href: 'https://instagram.com/zimmerclub' },
-  { icon: '🎵', label: 'טיקטוק', href: 'https://tiktok.com/@zimmerclub' },
+  { Icon: IconFacebook, label: 'פייסבוק', href: 'https://facebook.com/zimmerclub' },
+  { Icon: IconInstagram, label: 'אינסטגרם', href: 'https://instagram.com/zimmerclub' },
+  { Icon: IconTikTok, label: 'טיקטוק', href: 'https://tiktok.com/@zimmerclub' },
 ]
 
 export function Footer() {
@@ -50,9 +51,9 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-sm"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-cream-50"
                 >
-                  <span aria-hidden="true">{s.icon}</span>
+                  <s.Icon size={16} />
                 </a>
               ))}
             </div>

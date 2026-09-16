@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Footer } from '@/components/layout/Footer'
+import { IconChevronLeft } from '@/components/icons'
 
 export const metadata = { title: 'הצהרת נגישות | Zimmer Club Israel' }
 
@@ -9,7 +10,7 @@ export default function AccessibilityPage() {
       <main className="max-w-3xl mx-auto px-4 py-12">
 
         <div className="mb-8">
-          <Link href="/" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">← חזרה לדף הבית</Link>
+          <Link href="/" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"><IconChevronLeft size={13} /> חזרה לדף הבית</Link>
           <h1 className="text-3xl font-bold text-gray-900 mt-4 mb-2">הצהרת נגישות</h1>
           <p className="text-sm text-gray-400">עודכן לאחרונה: ינואר 2026</p>
         </div>

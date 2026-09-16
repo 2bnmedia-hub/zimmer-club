@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX, IconShield, IconMedal, IconPriceTag, IconTarget } from '@/components/icons'
 import { Heart, Map as MapIcon, List as ListIcon } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
 import { AMENITY_LABELS, AUDIENCE_AMENITIES, FEATURE_AMENITIES } from '@/lib/constants'
@@ -541,7 +541,8 @@ function SearchContent() {
                 />
                 {textSearch && (
                   <button onClick={() => { setTextSearch(''); setSuggestions([]); setShowSuggestions(false) }}
-                    className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
+                    aria-label="נקה חיפוש"
+                    className="text-gray-400 hover:text-gray-600"><IconX size={13} /></button>
                 )}
               </div>
               {showSuggestions && suggestions.length > 0 && (
@@ -602,7 +603,7 @@ function SearchContent() {
                 {/* קוביה 1 — סוג נכס */}
                 <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4" style={{gridColumn: 'span 1'}}>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">🏡</span>
+                    <IconHome size={16} />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">סוג נכס</span>
                     {filters.category && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
                   </div>
@@ -625,7 +626,7 @@ function SearchContent() {
                 {/* קוביה 2 — אזור */}
                 <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">📍</span>
+                    <IconMapPin size={16} />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">אזור בארץ</span>
                     {filters.region && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
                   </div>
@@ -653,7 +654,7 @@ function SearchContent() {
                 {/* קוביה 3 — אורחים */}
                 <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">👥</span>
+                    <IconUsers size={16} />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מספר אורחים</span>
                     {filters.guests && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
                   </div>
@@ -680,7 +681,7 @@ function SearchContent() {
                 {/* קוביה 4 — מחיר */}
                 <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">💰</span>
+                    <IconPriceTag size={16} />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מחיר ללילה</span>
                     {(priceRange[0] > 200 || priceRange[1] < 35000) && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
                   </div>
@@ -691,7 +692,7 @@ function SearchContent() {
               {/* שורה 2: מה יש בנכס — קוביה רחבה */}
               <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-base">✨</span>
+                  <IconSparkles size={16} />
                   <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מה יש בנכס</span>
                   {selectedAmenities.filter(k => FEATURE_AMENITIES.includes(k)).length > 0 && (
                     <span className="mr-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'#FEF3C7', color:'#92400E'}}>
@@ -721,7 +722,7 @@ function SearchContent() {
                 {/* קהל יעד */}
                 <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">🎯</span>
+                    <IconTarget size={16} />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">קהל יעד</span>
                     {selectedAmenities.filter(k => Object.keys(AUDIENCE_AMENITIES).includes(k)).length > 0 && (
                       <span className="mr-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'#FEF3C7', color:'#92400E'}}>
@@ -748,7 +749,7 @@ function SearchContent() {
                 {/* הגדרות מיוחדות */}
                 <div className="bg-white rounded-2xl border border-[#e8dcc8] shadow-sm p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">⚙️</span>
+                    <IconSettings size={16} />
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">הגדרות מיוחדות</span>
                     {activeCount > 0 && (
                       <button onClick={clearFilters}
@@ -759,10 +760,10 @@ function SearchContent() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { key: 'instant_book', label: 'הזמנה מיידית', icon: '⚡' },
-                      { key: 'accepts_miluim', label: 'שובר מילואים', icon: '🪖' },
-                      { key: 'has_shelter', label: 'מרחב מוגן', icon: '🛡️' },
-                    ].map(({ key, label, icon }) => (
+                      { key: 'instant_book', label: 'הזמנה מיידית', Icon: IconZap },
+                      { key: 'accepts_miluim', label: 'שובר מילואים', Icon: IconMedal },
+                      { key: 'has_shelter', label: 'מרחב מוגן', Icon: IconShield },
+                    ].map(({ key, label, Icon }) => (
                       <button key={key}
                         onClick={() => setFilters(p => ({ ...p, [key]: !(p as any)[key] }))}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all"
@@ -772,7 +773,7 @@ function SearchContent() {
                           borderColor: (filters as any)[key] ? '#8B6914' : '#e8dcc8',
                           boxShadow: (filters as any)[key] ? '0 2px 6px rgba(139,105,20,0.25)' : 'none',
                         }}>
-                        <span>{icon}</span> {label}
+                        <Icon size={13} color={(filters as any)[key] ? '#fff' : undefined} /> {label}
                       </button>
                     ))}
                   </div>
@@ -849,9 +850,9 @@ function SearchContent() {
                               <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                             )}
                             <div className="absolute top-3 right-3 flex flex-col gap-1.5">
-                              {p.instant_book && <span className="bg-white/95 backdrop-blur-sm text-xs font-bold px-2.5 py-1 rounded-full text-amber-700 shadow-sm">⚡ מיידית</span>}
-                              {p.accepts_miluim && <span className="bg-green-600/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">🪖 מילואים</span>}
-                              {p.has_shelter && <span className="bg-orange-400/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">🛡️ מרחב מוגן</span>}
+                              {p.instant_book && <span className="inline-flex items-center gap-1 bg-white/95 backdrop-blur-sm text-xs font-bold px-2.5 py-1 rounded-full text-amber-700 shadow-sm"><IconZap size={11} /> מיידית</span>}
+                              {p.accepts_miluim && <span className="inline-flex items-center gap-1 bg-green-600/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm"><IconMedal size={11} color="#fff" /> מילואים</span>}
+                              {p.has_shelter && <span className="inline-flex items-center gap-1 bg-orange-400/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm"><IconShield size={11} color="#fff" /> מרחב מוגן</span>}
                             </div>
                           </div>
                           <div className="p-4">
@@ -877,7 +878,7 @@ function SearchContent() {
                             {/* מחיר אמצ"ש / סוף"ש */}
                             {p.price_on_request ? (
                               <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center mb-3">
-                                <p className="text-sm font-bold text-gray-800">📞 התקשרו לבירור מחיר</p>
+                                <p className="flex items-center justify-center gap-1.5 text-sm font-bold text-gray-800"><IconPhone size={13} /> התקשרו לבירור מחיר</p>
                               </div>
                             ) : (
                               <div className="grid grid-cols-2 gap-2 mb-3">

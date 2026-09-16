@@ -9,7 +9,7 @@ import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { buildWhatsAppLink } from '@/lib/utils'
-import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX, IconTarget } from '@/components/icons'
 
 const DAYS_LABELS: Record<string, string> = {
   sun: "א'", mon: "ב'", tue: "ג'", wed: "ד'", thu: "ה'", fri: "ו'", sat: "ש'"
@@ -342,7 +342,7 @@ export default function AttractionPage() {
                     <IconNavigation className="w-5 h-5" style={{ color: '#8B6914' }} />
                   </div>
                   <p className="text-xs font-bold text-gray-700">{attraction.address || attraction.city}</p>
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full shadow" style={{ backgroundColor: '#fff', color: '#8B6914' }}>📍 פתח בגוגל מפות</span>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full shadow" style={{ backgroundColor: '#fff', color: '#8B6914' }}><IconMapPin size={12} /> פתח בגוגל מפות</span>
                 </a>
                 <a href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
                   target="_blank" rel="noopener noreferrer"
@@ -446,7 +446,7 @@ export default function AttractionPage() {
                 </div>
               </>
             ) : (
-              <div className="h-64 flex items-center justify-center text-gray-400 text-4xl">🎯</div>
+              <div className="h-64 flex items-center justify-center text-gray-400"><IconTarget size={40} /></div>
             )}
             <button onClick={() => setLiked(l => !l)}
               className="absolute top-4 left-4 z-10 bg-white/90 p-2.5 rounded-full shadow-md">

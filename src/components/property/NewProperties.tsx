@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { coverImage } from '@/lib/utils'
+import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal } from '@/components/icons'
 
 type Property = {
   slug?: string; id: string; name: string; short_description: string
@@ -50,7 +51,7 @@ function PlaceholderFeatured() {
         <h3 className="font-bold text-xl leading-tight mb-1.5">הוסיפו נכס חדש</h3>
         <p className="text-sm text-white/65 mb-3">הגיע הזמן שהנכס שלכם יופיע כאן</p>
         <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border border-white/30 text-white/90 hover:bg-white/10 transition-colors">
-          התחילו עכשיו ←
+          התחילו עכשיו <IconChevronLeft size={12} />
         </span>
       </div>
     </Link>
@@ -109,7 +110,7 @@ export function NewProperties() {
             <p className="font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#059669', fontSize: '10px' }}>✦ עלו לאחרונה</p>
             <h2 className="text-xl font-bold shimmer-text">נכסים חדשים באתר</h2>
           </div>
-          <Link href="/search" className="text-xs font-semibold hover:underline" style={{ color: '#8B6914' }}>כל הנכסים ←</Link>
+          <Link href="/search" className="inline-flex items-center gap-1 text-xs font-semibold hover:underline" style={{ color: '#8B6914' }}>כל הנכסים <IconChevronLeft size={12} /></Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5" style={{ gridAutoRows: '162px' }}>
@@ -127,14 +128,14 @@ export function NewProperties() {
               <div className="absolute top-3 right-3 flex flex-col gap-1.5">
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-white">✦ חדש</span>
                 {p0.instant_book && <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}>הזמנה מיידית</span>}
-                {p0.accepts_miluim && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#1d4ed8' }}>🎖 מילואים</span>}
+                {p0.accepts_miluim && <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#1d4ed8' }}><IconMedal size={12} color="#1d4ed8" /> מילואים</span>}
                 {hasEvCharging(p0) && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/90" style={{ color: '#15803d' }}>🔌 טעינה חשמלית</span>}
               </div>
-              {p0.avg_rating && <span className="absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}>★ {p0.avg_rating.toFixed(1)}</span>}
+              {p0.avg_rating && <span className="absolute top-3 left-3 inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}><IconStar size={11} filled color="#F5C842" /> {p0.avg_rating.toFixed(1)}</span>}
               <div className="absolute bottom-0 right-0 left-0 p-5 text-white">
-                <p className="text-white/55 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}>📍 {p0.city}</p>
+                <p className="flex items-center gap-1 text-white/55 mb-1 uppercase tracking-widest" style={{ fontSize: '10px' }}><IconMapPin size={11} color="currentColor" /> {p0.city}</p>
                 <h3 className="font-bold text-lg leading-tight mb-1">{p0.name}</h3>
-                <p className="font-bold text-base" style={{ color: '#F5C842' }}>{p0.price_on_request ? '📞 התקשרו לבירור מחיר' : <>₪{p0.price_per_night?.toLocaleString()} <span className="font-normal text-white/50 text-xs">/ לילה</span></>}</p>
+                <p className="font-bold text-base" style={{ color: '#F5C842' }}>{p0.price_on_request ? <span className="inline-flex items-center gap-1"><IconPhone size={13} color="#F5C842" /> התקשרו לבירור מחיר</span> : <>₪{p0.price_per_night?.toLocaleString()} <span className="font-normal text-white/50 text-xs">/ לילה</span></>}</p>
               </div>
             </Link>
           ) : <PlaceholderFeatured />}
@@ -149,15 +150,15 @@ export function NewProperties() {
                   : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-3xl">🏡</div>}
               </div>
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%)' }} />
-              {p.avg_rating && <span className="absolute top-2 left-2 font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842', fontSize: '10px' }}>★ {p.avg_rating.toFixed(1)}</span>}
+              {p.avg_rating && <span className="absolute top-2 left-2 inline-flex items-center gap-0.5 font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842', fontSize: '10px' }}><IconStar size={9} filled color="#F5C842" /> {p.avg_rating.toFixed(1)}</span>}
               <div className="absolute top-2 right-2 flex flex-col gap-1">
                 <span className="bg-emerald-500 text-white rounded-full px-1.5 py-0.5 font-semibold" style={{ fontSize: '9px' }}>✦ חדש</span>
                 {p.instant_book && <span className="text-white rounded-full px-1.5 py-0.5 font-semibold" style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)', fontSize: '9px' }}>מיידי</span>}
               </div>
               <div className="absolute bottom-0 right-0 left-0 p-2.5 text-white">
-                <p className="text-white/50 leading-none mb-0.5" style={{ fontSize: '9px' }}>📍 {p.city}</p>
+                <p className="flex items-center gap-0.5 text-white/50 leading-none mb-0.5" style={{ fontSize: '9px' }}><IconMapPin size={9} color="currentColor" /> {p.city}</p>
                 <h3 className="font-semibold leading-tight line-clamp-1" style={{ fontSize: '12px' }}>{p.name}</h3>
-                <p className="font-bold mt-0.5" style={{ color: '#F5C842', fontSize: '11px' }}>{p.price_on_request ? '📞 התקשרו' : `₪${p.price_per_night?.toLocaleString()}`}</p>
+                <p className="flex items-center gap-1 font-bold mt-0.5" style={{ color: '#F5C842', fontSize: '11px' }}>{p.price_on_request ? <><IconPhone size={10} color="#F5C842" /> התקשרו</> : `₪${p.price_per_night?.toLocaleString()}`}</p>
               </div>
             </Link>
           ))}

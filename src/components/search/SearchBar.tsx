@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome } from '@/components/icons'
+import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconX } from '@/components/icons'
 import { buildQueryString } from '@/lib/utils'
 
 interface SearchBarProps {
@@ -221,8 +221,11 @@ function DateRangePicker({ checkIn, checkOut, onChange, onClear }: {
         style={{ color: hasSelection ? '#374151' : '#9ca3af', fontWeight: hasSelection ? '600' : '400' }}>
         <span>{label}</span>
         {hasSelection && (
-          <span onClick={e => { e.stopPropagation(); onClear() }}
-            className="text-gray-300 hover:text-red-400 transition-colors text-xs ml-1 cursor-pointer">✕</span>
+          <button type="button" onClick={e => { e.stopPropagation(); onClear() }}
+            aria-label="נקה תאריכים"
+            className="text-gray-300 hover:text-red-400 transition-colors ml-1">
+            <IconX size={14} />
+          </button>
         )}
       </button>
 

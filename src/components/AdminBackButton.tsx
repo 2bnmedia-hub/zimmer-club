@@ -2,6 +2,7 @@
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
+import { IconChevronLeft } from '@/components/icons'
 
 function BackButton() {
   const searchParams = useSearchParams()
@@ -17,7 +18,7 @@ function BackButton() {
         boxShadow: '0 4px 16px rgba(0,96,57,0.4)',
       }}
     >
-      ← לוח הבקרה
+      <IconChevronLeft size={14} color="#fff" /> לוח הבקרה
     </Link>
   )
 }

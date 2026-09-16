@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Navbar } from '@/components/layout/Navbar'
 import { SearchBar } from '@/components/search/SearchBar'
 import { REGIONS, CATEGORIES } from '@/lib/constants'
@@ -178,13 +179,13 @@ export default function HomePage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" style={{ gridAutoRows: '130px' }}>
               {[
-                { key: 'couples',  href: '/search?amenity=couples',        label: 'רומנטי',              Icon: IconHeart,    desc: 'נכסים מושלמים לזוגות',       from: '#5a1a35', to: '#9c3060' },
-                { key: 'families', href: '/search?amenity=families',       label: 'מתאים למשפחות',       Icon: IconUsers,    desc: 'מרחב ונוחות לכל המשפחה',   from: '#0f2d5c', to: '#1a4d9c' },
-                { key: 'villa',    href: '/search?category=villa',         label: 'וילות יוקרה',         Icon: IconBuilding, desc: 'חוויה יוקרתית ומפנקת',     from: '#5c3a14', to: '#a06b20' },
-                { key: 'pets',     href: '/search?amenity=pets',           label: 'ידידותי לבעלי חיים',  Icon: IconPawPrint, desc: 'גם הכלב מוזמן',            from: '#1a4020', to: '#2d6e38' },
-                { key: 'pool',     href: '/search?amenity=pool',           label: 'עם בריכה',            Icon: IconWaves,    desc: 'קירור וכיף במים',           from: '#0a2840', to: '#0a4a72' },
-                { key: 'jacuzzi',  href: '/search?amenity=jacuzzi',        label: "עם ג'קוזי",           Icon: IconBath,     desc: 'רגיעה מוחלטת',             from: '#2e0f5c', to: '#5a20a0' },
-                { key: 'shelter',  href: '/search?amenity=shelter_nearby', label: 'עם מרחב מוגן',        Icon: IconShield,   desc: 'בטחון ורוגע',              from: '#1e2030', to: '#303450' },
+                { key: 'couples',  href: '/search?amenity=couples',        label: 'רומנטי',              Icon: IconHeart,    desc: 'נכסים מושלמים לזוגות',       img: 'https://images.unsplash.com/photo-1657692310479-48b1dd077231?w=800&q=80' },
+                { key: 'families', href: '/search?amenity=families',       label: 'מתאים למשפחות',       Icon: IconUsers,    desc: 'מרחב ונוחות לכל המשפחה',   img: 'https://images.unsplash.com/photo-1760531486152-90af0bc99c2f?w=800&q=80' },
+                { key: 'villa',    href: '/search?category=villa',         label: 'וילות יוקרה',         Icon: IconBuilding, desc: 'חוויה יוקרתית ומפנקת',     img: 'https://images.unsplash.com/photo-1762811054947-605b20298615?w=800&q=80' },
+                { key: 'pets',     href: '/search?amenity=pets',           label: 'ידידותי לבעלי חיים',  Icon: IconPawPrint, desc: 'גם הכלב מוזמן',            img: 'https://images.unsplash.com/photo-1785952473255-96900d71547c?w=800&q=80' },
+                { key: 'pool',     href: '/search?amenity=pool',           label: 'עם בריכה',            Icon: IconWaves,    desc: 'קירור וכיף במים',           img: 'https://images.unsplash.com/photo-1713903315531-5fd73a271ecb?w=800&q=80' },
+                { key: 'jacuzzi',  href: '/search?amenity=jacuzzi',        label: "עם ג'קוזי",           Icon: IconBath,     desc: 'רגיעה מוחלטת',             img: 'https://images.unsplash.com/photo-1772040942277-b194d9d0b648?w=800&q=80' },
+                { key: 'shelter',  href: '/search?amenity=shelter_nearby', label: 'עם מרחב מוגן',        Icon: IconShield,   desc: 'בטחון ורוגע',              img: 'https://images.unsplash.com/photo-1770217614322-bcb9fa17f6ac?w=800&q=80' },
               ].map((cat) => (
                 <Link
                   key={cat.key}
@@ -192,17 +193,16 @@ export default function HomePage() {
                   className="group relative rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl"
                   style={{ boxShadow: '0 4px 18px rgba(0,0,0,0.14)' }}
                 >
-                  <div className="absolute inset-0" style={{ background: `linear-gradient(145deg, ${cat.from}, ${cat.to})` }} />
-                  <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1), transparent 55%)' }} />
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 60%)' }} />
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <cat.Icon size={52} color="#fff" className="opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
-                  </div>
+                  <Image src={cat.img} alt={cat.label} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)' }} />
                   <div className="absolute bottom-0 right-0 left-0 p-3.5 text-white">
                     <p className="font-bold leading-tight" style={{ fontSize: '13px' }}>{cat.label}</p>
-                    <p className="text-white/60 mt-0.5" style={{ fontSize: '10px' }}>{cat.desc}</p>
+                    <p className="text-white/70 mt-0.5" style={{ fontSize: '10px' }}>{cat.desc}</p>
                   </div>
-                  <cat.Icon size={16} color="#fff" className="absolute top-3 right-3 opacity-80" />
+                  <div className="absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}>
+                    <cat.Icon size={14} color="#fff" />
+                  </div>
                 </Link>
               ))}
             </div>

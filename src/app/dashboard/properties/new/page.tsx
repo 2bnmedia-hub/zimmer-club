@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { PROPERTY_AMENITIES } from '@/lib/constants'
+import { LocationPicker } from '@/components/dashboard/LocationPicker'
 
 const PROPERTY_TYPES = [
   { value: 'zimmer', label: 'צימר' },
@@ -91,6 +92,8 @@ export default function NewPropertyPage() {
     contact_via_email2: false,
   })
 
+  const [coords, setCoords] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null })
+
   useEffect(() => {
     const initAutocomplete = () => {
       if (!addressInputRef.current || !window.google?.maps?.places) return
@@ -111,6 +114,8 @@ export default function NewPropertyPage() {
         }
         const address = [street, streetNumber].filter(Boolean).join(' ')
         setForm(prev => ({ ...prev, address, city }))
+        const loc = place.geometry?.location
+        if (loc) setCoords({ lat: loc.lat(), lng: loc.lng() })
       })
     }
 
@@ -321,7 +326,11 @@ export default function NewPropertyPage() {
     const { data: existing } = await supabase.from('properties').select('id').eq('slug', slug).single()
     if (existing) { setError('שם זה כבר תפוס — נסה שם אחר'); setLoading(false); return }
 
-    const geoCoords = await geocodeAddress(form.city, form.address)
+    // אם המשתמש קבע סיכה ידנית (או שמולאה אוטומטית מהשלמת הכתובת) — היא הקובעת;
+    // רק אם אין סיכה בכלל ננסה לגאוקד מהכתובת כגיבוי
+    const geoCoords = (coords.lat != null && coords.lng != null)
+      ? coords
+      : await geocodeAddress(form.city, form.address)
 
     const { data: property, error: insertError } = await supabase.from('properties').insert({
       owner_id: user.id,
@@ -499,6 +508,10 @@ export default function NewPropertyPage() {
                 <input name="city" value={form.city} onChange={handleChange} required readOnly
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 bg-gray-50" />
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">מיקום על המפה</label>
+              <LocationPicker lat={coords.lat} lng={coords.lng} onChange={(lat, lng) => setCoords({ lat, lng })} />
             </div>
           </div>
 

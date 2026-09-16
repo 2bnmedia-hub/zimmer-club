@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo, Suspense, useRef, useCallback, Component, type ReactNode } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -139,16 +139,14 @@ function PriceRangeSlider({ min, max, value, onChange }: {
 
 function SearchContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const supabase = createClient()
   const { toggle, isLiked } = useWishlist()
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
+  // סגור כברירת מחדל — מציגים קודם את תוצאות החיפוש, וחיפוש מתקדם נפתח רק בלחיצה על הכפתור
   const [showFilters, setShowFilters] = useState(false)
   const [textSearch, setTextSearch] = useState(searchParams.get('q') || '')
-
-  useEffect(() => {
-    setShowFilters(window.innerWidth >= 768)
-  }, [])
   const [suggestions, setSuggestions] = useState<{id:string, name:string, city:string, category:string[]}[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
@@ -170,18 +168,34 @@ function SearchContent() {
   const [areaBounds, setAreaBounds] = useState<MapBounds | null>(null)
   const mapHandleRef = useRef<SearchMapHandle>(null)
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  // האם נכנסנו למפה ישירות דרך קישור view=map (מהדף הבית) — במקרה כזה סגירה צריכה
+  // לחזור להיסטוריה הקודמת (הדף הבית) ולא לחשוף את דף החיפוש המתקדם שמתחת לפופ-אפ
+  const openedMapFromUrlRef = useRef(false)
 
   useEffect(() => {
-    if (searchParams.get('view') === 'map') setMapFullscreen(true)
+    if (searchParams.get('view') === 'map') {
+      setMapFullscreen(true)
+      openedMapFromUrlRef.current = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const closeMapFullscreen = () => {
+    if (openedMapFromUrlRef.current) {
+      openedMapFromUrlRef.current = false
+      router.back()
+      return
+    }
+    setMapFullscreen(false)
+  }
 
   // סגירת חלון המפה במקש Escape
   useEffect(() => {
     if (!mapFullscreen) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMapFullscreen(false) }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeMapFullscreen() }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapFullscreen])
 
   useEffect(() => {
@@ -1011,11 +1025,11 @@ function SearchContent() {
           role="dialog"
           aria-modal="true"
           aria-label="מפת נכסים"
-          onClick={e => { if (e.target === e.currentTarget) setMapFullscreen(false) }}
+          onClick={e => { if (e.target === e.currentTarget) closeMapFullscreen() }}
         >
           <div className="relative w-full h-full sm:h-full sm:max-w-6xl bg-white sm:rounded-2xl overflow-hidden shadow-2xl">
             <button
-              onClick={() => setMapFullscreen(false)}
+              onClick={closeMapFullscreen}
               aria-label="סגירת המפה"
               title="סגירה"
               className="absolute top-3 left-3 z-[1000] w-10 h-10 rounded-full flex items-center justify-center shadow-lg bg-white text-gray-700 hover:bg-gray-100 transition-colors"
@@ -1036,7 +1050,7 @@ function SearchContent() {
               />
             </MapErrorBoundary>
             {!loading && properties.length > 0 && geoProperties.length === 0 && (
-              <div className="absolute inset-x-4 top-16 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 text-center shadow-sm">
+              <div className={`absolute inset-x-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 text-center shadow-sm ${mapUserMoved ? 'bottom-24' : 'bottom-6'}`}>
                 אין נכסים עם מיקום מדויק להצגה במפה כרגע
               </div>
             )}

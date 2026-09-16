@@ -8,12 +8,12 @@ import { useWishlist } from '@/hooks/useWishlist'
 import { IconHeart, IconStar, IconMapPin, IconChevronLeft } from '@/components/icons'
 
 const FALLBACK = [
-  { id:'1', name:'קרוואן יוקרה גולן', city:'רמת הגולן', price_per_night:890, img:'https://images.unsplash.com/photo-1561361058-c12e02b4c1a5?w=1200&q=80' },
+  { id:'1', name:'קרוואן יוקרה גולן', city:'רמת הגולן', price_per_night:890, img:'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=1200&q=80' },
   { id:'2', name:'אוטו קרוואן צפון', city:'גליל עליון', price_per_night:650, img:'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800&q=80' },
   { id:'3', name:'קרוואן מוצב ים המלח', city:'ים המלח', price_per_night:750, img:'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80' },
   { id:'4', name:'קרוואן אלפיני חרמון', city:'חרמון', price_per_night:990, img:'https://images.unsplash.com/photo-1537225228614-56cc3556d7ed?w=800&q=80' },
   { id:'5', name:'בית על גלגלים כנרת', city:'כנרת', price_per_night:580, img:'https://images.unsplash.com/photo-1478827536114-da961b7f86d2?w=800&q=80' },
-  { id:'6', name:'קרוואן מדבר נגב', city:'נגב', price_per_night:720, img:'https://images.unsplash.com/photo-1520166012956-add9ba0835a4?w=800&q=80' },
+  { id:'6', name:'קרוואן מדבר נגב', city:'נגב', price_per_night:720, img:'https://images.unsplash.com/photo-1618225120299-3a54cf6ee909?w=800&q=80' },
   { id:'7', name:'קרוואן כרמל הירוק', city:'הכרמל', price_per_night:680, img:'https://images.unsplash.com/photo-1533282960533-51328aa49826?w=800&q=80' },
 ]
 

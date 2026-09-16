@@ -37,10 +37,6 @@ type Props = {
 }
 
 const ISRAEL_CENTER = { lat: 31.5, lng: 35.0 }
-// גבולות רחבים — עד כמה מותר למשתמש לגלול/לצאת מהם
-const ISRAEL_BOUNDS = { north: 33.5, south: 29.2, west: 33.9, east: 36.1 }
-// גבולות מדויקים של ישראל — משמשים למסגור הראשוני כשאין נכסים להתאים אליהם
-const ISRAEL_FIT_BOUNDS = { north: 33.35, south: 29.45, west: 34.2, east: 35.95 }
 // Google-provided ID for local development / apps that don't need custom cloud styling —
 // still renders AdvancedMarkerElement content correctly.
 const MAP_ID = 'DEMO_MAP_ID'
@@ -189,20 +185,24 @@ const SearchMap = forwardRef<SearchMapHandle, Props>(function SearchMap(
         gRef.current = g
 
         const map = new g.maps.Map(mapDiv, {
-          center: ISRAEL_CENTER, zoom: 7, minZoom: 6, maxZoom: 18,
+          // static zoom/center, tuned to frame Israel tightly on its own — deliberately
+          // NOT computed via fitBounds: fitBounds needs the map's projection to be
+          // ready, and calling it before a frame has actually rendered (which, across
+          // different mount timings — a plain page vs. a modal popup — proved unreliable
+          // in practice) silently falls back to a near-world zoom. A fixed value has
+          // no such timing dependency, so it can't regress that way again.
+          center: ISRAEL_CENTER, zoom: 7.4, minZoom: 6, maxZoom: 18,
           mapId: MAP_ID,
-          restriction: { latLngBounds: ISRAEL_BOUNDS, strictBounds: false },
           disableDefaultUI: true,
           zoomControl: true,
           zoomControlOptions: { position: g.maps.ControlPosition.LEFT_BOTTOM },
           gestureHandling: 'greedy',
         })
         mapRef.current = map
-        // the map's very first settle (even with zero markers, nothing fit) is never a user move
+        // the map's very first settle (its initial static view rendering for the
+        // first time) is never a user move
         programmaticMoveRef.current = true
-        // frame tightly on Israel itself, not the wider region — markers (if any) will
-        // re-fit to their own bounds right after, in the idsKey effect below
-        map.fitBounds(ISRAEL_FIT_BOUNDS, 0)
+
         infoWindowRef.current = new g.maps.InfoWindow({ maxWidth: 240 })
 
         const clusterer = new MarkerClusterer({

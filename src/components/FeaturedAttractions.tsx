@@ -8,13 +8,13 @@ import { useWishlist } from '@/hooks/useWishlist'
 import { IconHeart, IconStar, IconMapPin, IconChevronLeft } from '@/components/icons'
 
 const FALLBACK = [
-  { id:'1', name:'טיול ג׳יפים בגולן', city:'רמת הגולן', price_per_person:280, tag:'אדרנלין', slug:'1', img:'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1200&q=80' },
-  { id:'2', name:'שיט בכנרת', city:'כנרת', price_per_person:180, tag:'רומנטי', slug:'2', img:'https://images.unsplash.com/photo-1500514966906-fe245eea9344?w=800&q=80' },
+  { id:'1', name:'טיול ג׳יפים בגולן', city:'רמת הגולן', price_per_person:280, tag:'אדרנלין', slug:'1', img:'https://images.unsplash.com/photo-1498038116800-4159eb9b2a62?w=1200&q=80' },
+  { id:'2', name:'שיט בכנרת', city:'כנרת', price_per_person:180, tag:'רומנטי', slug:'2', img:'https://images.unsplash.com/photo-1782757717130-efa9a7cdf175?w=800&q=80' },
   { id:'3', name:'סדנת בישול איטלקי', city:'תל אביב', price_per_person:320, tag:'תרבות', slug:'3', img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80' },
   { id:'4', name:'רכיבה על סוסים בגליל', city:'הגליל', price_per_person:250, tag:'טבע', slug:'4', img:'https://images.unsplash.com/photo-1450052590821-8bf91254a353?w=800&q=80' },
-  { id:'5', name:'ספא ויין ביקב', city:'שומרון', price_per_person:450, tag:'רילקס', slug:'5', img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80' },
-  { id:'6', name:'חדר בריחה יוקרה', city:'ירושלים', price_per_person:190, tag:'משחק', slug:'6', img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80' },
-  { id:'7', name:'ריחפן מעל מכתש רמון', city:'מכתש רמון', price_per_person:380, tag:'אדרנלין', slug:'7', img:'https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?w=800&q=80' },
+  { id:'5', name:'ספא מפנק', city:'שומרון', price_per_person:450, tag:'רילקס', slug:'5', img:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80' },
+  { id:'6', name:'חדר בריחה', city:'ירושלים', price_per_person:190, tag:'משחק', slug:'6', img:'https://images.unsplash.com/photo-1609770231080-e321deccc34c?w=800&q=80' },
+  { id:'7', name:'מסעדות שוות', city:'תל אביב', price_per_person:220, tag:'קולינריה', slug:'7', img:'https://images.unsplash.com/photo-1767510533362-4d5dbdaaf8c7?w=800&q=80' },
 ]
 
 export function FeaturedAttractions() {

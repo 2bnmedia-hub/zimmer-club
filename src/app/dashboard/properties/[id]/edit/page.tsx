@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
 import { PropertyQR } from '@/components/property/PropertyQR'
 import { AdminReviews } from '@/components/property/AdminReviews'
+import { LocationPicker } from '@/components/dashboard/LocationPicker'
 import { createPortal } from 'react-dom'
 import { PROPERTY_AMENITIES } from '@/lib/constants'
 
@@ -256,7 +257,8 @@ export default function EditPropertyPage() {
   const [unitUploading, setUnitUploading] = useState<Record<string, boolean>>({})
   const [form, setForm] = useState({
     name: '', slug: '', short_description: '', description: '', category: 'zimmer',
-    region: '', city: '', address: '', price_per_night: '', price_weekend: '', min_nights: '1',
+    region: '', city: '', address: '', lat: null as number | null, lng: null as number | null,
+    price_per_night: '', price_weekend: '', min_nights: '1',
     max_guests: '2', bedrooms: '1', bathrooms: '1', instant_book: false,
     accepts_miluim: false, has_shelter: false, status: 'pending', video_url: '',
     phone_landline: '', whatsapp1: '', whatsapp2: '', email1: '', email2: '',
@@ -279,6 +281,8 @@ export default function EditPropertyPage() {
         short_description: property.short_description || '', description: property.description || '',
         category: property.category?.[0] || 'zimmer', region: property.region || '',
         city: property.city || '', address: property.address || '',
+        lat: property.lat != null ? Number(property.lat) : null,
+        lng: property.lng != null ? Number(property.lng) : null,
         price_per_night: property.price_per_night?.toString() || '', price_weekend: property.price_weekend?.toString() || '', min_nights: property.min_nights?.toString() || '1',
         max_guests: property.max_guests?.toString() || '2', bedrooms: property.bedrooms?.toString() || '1',
         bathrooms: property.bathrooms?.toString() || '1', instant_book: property.instant_book || false,
@@ -435,7 +439,7 @@ export default function EditPropertyPage() {
     const { error: updateError } = await supabase.from('properties').update({
       name: form.name, slug: form.slug || undefined, short_description: form.short_description,
       description: form.description, category: [form.category], region: form.region,
-      city: form.city, address: form.address,
+      city: form.city, address: form.address, lat: form.lat, lng: form.lng,
       price_per_night: priceOnRequest ? null : (parseInt(form.price_per_night) || null),
       price_on_request: priceOnRequest,
       price_weekend: (!priceOnRequest && form.price_weekend) ? parseInt(form.price_weekend) : null,
@@ -605,6 +609,10 @@ export default function EditPropertyPage() {
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium text-gray-700 mb-1">עיר/יישוב</label><input name="city" value={form.city} onChange={handleChange} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
               <div><label className="block text-sm font-medium text-gray-700 mb-1">כתובת</label><input name="address" value={form.address} onChange={handleChange} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">מיקום על המפה</label>
+              <LocationPicker lat={form.lat} lng={form.lng} onChange={(lat, lng) => setForm(f => ({ ...f, lat, lng }))} />
             </div>
           </div>
 

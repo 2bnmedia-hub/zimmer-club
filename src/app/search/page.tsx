@@ -160,32 +160,20 @@ function SearchContent() {
 
   // ── מפה ──
   const [showMap, setShowMap] = useState(true)
-  const [mobileView, setMobileView] = useState<'list' | 'map'>('list')
+  // מסך מלא: נכנסים אליו ישירות מקישור "הצג נכסים על המפה" (view=map), או מכפתור המפה במובייל
+  const [mapFullscreen, setMapFullscreen] = useState(() => searchParams.get('view') === 'map')
   const [activePropertyId, setActivePropertyId] = useState<string | null>(null)
   const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null)
   const [mapUserMoved, setMapUserMoved] = useState(false)
   const [areaBounds, setAreaBounds] = useState<MapBounds | null>(null)
   const mapHandleRef = useRef<SearchMapHandle>(null)
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const desktopMapWrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const check = () => setShowMap(window.innerWidth >= 1024)
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
-  }, [])
-
-  // כניסה ישירה לתצוגת מפה — מקישור "הצג על מפה" (למשל מדף הבית)
-  useEffect(() => {
-    if (searchParams.get('view') !== 'map') return
-    if (window.innerWidth >= 1024) {
-      setShowMap(true)
-      desktopMapWrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      setMobileView('map')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const [filters, setFilters] = useState({
     category: searchParams.get('available') || searchParams.get('category') || '',
@@ -534,7 +522,8 @@ function SearchContent() {
   return (
     <>
       <main className="min-h-screen bg-[#FAF7F2] pt-4" dir="rtl">
-
+      {!mapFullscreen && (
+      <>
         {/* סרגל עליון */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-16 z-40 shadow-sm">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3">
@@ -797,7 +786,7 @@ function SearchContent() {
         {/* תוצאות + מפה */}
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex gap-6 items-start">
-            <div className={`min-w-0 flex-1 ${!showMap || mobileView === 'map' ? '' : 'hidden lg:block'}`}>
+            <div className={`min-w-0 flex-1 ${!showMap ? '' : 'hidden lg:block'}`}>
               {loading ? (
                 <div className={`grid grid-cols-1 sm:grid-cols-2 ${showMap ? '' : 'lg:grid-cols-3'} gap-4 sm:gap-6`}>
                   {[...Array(6)].map((_, i) => (
@@ -953,7 +942,7 @@ function SearchContent() {
 
             {/* מפה — דסקטופ */}
             {showMap && (
-              <div ref={desktopMapWrapRef} className="hidden lg:block shrink-0 sticky self-start" style={{ width: '42%', top: '104px', height: 'calc(100vh - 140px)' }}>
+              <div className="hidden lg:block shrink-0 sticky self-start" style={{ width: '42%', top: '104px', height: 'calc(100vh - 140px)' }}>
                 <MapErrorBoundary>
                   <SearchMap
                     ref={mapHandleRef}
@@ -984,49 +973,62 @@ function SearchContent() {
           </div>
         </div>
 
-        {/* מפה — מובייל, מסך מלא */}
-        {mobileView === 'map' && (
-          <div className="lg:hidden fixed inset-x-0 bottom-0 z-50" style={{ top: '64px' }}>
-            <div className="relative w-full h-full">
-              <MapErrorBoundary>
-                <SearchMap
-                  ref={mapHandleRef}
-                  properties={mapMarkers}
-                  activeId={activePropertyId}
-                  hoveredId={hoveredPropertyId}
-                  onMarkerClick={id => { setActivePropertyId(id); setMobileView('list') }}
-                  onUserMoved={setMapUserMoved}
-                />
-              </MapErrorBoundary>
-              {!loading && properties.length > 0 && geoProperties.length === 0 && (
-                <div className="absolute inset-x-4 top-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 text-center shadow-sm">
-                  אין נכסים עם מיקום מדויק להצגה במפה כרגע
-                </div>
-              )}
-              {mapUserMoved && (
-                <button
-                  onClick={handleSearchThisArea}
-                  className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-lg"
-                  style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}
-                >
-                  <IconSearch className="w-3.5 h-3.5" /> חפש באזור זה
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* כפתור מעבר רשימה/מפה — מובייל */}
+        {/* כפתור מעבר לתצוגת מפה — מובייל */}
         {!loading && properties.length > 0 && (
           <button
-            onClick={() => setMobileView(v => v === 'list' ? 'map' : 'list')}
-            aria-label={mobileView === 'list' ? 'עבור לתצוגת מפה' : 'עבור לתצוגת רשימה'}
+            onClick={() => setMapFullscreen(true)}
+            aria-label="עבור לתצוגת מפה"
             className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-white shadow-xl"
             style={{ background: '#111827' }}
           >
-            {mobileView === 'list' ? <><MapIcon className="w-4 h-4" /> מפה</> : <><ListIcon className="w-4 h-4" /> רשימה</>}
+            <MapIcon className="w-4 h-4" /> מפה
           </button>
         )}
+      </>
+      )}
+
+      {/* מפה — מסך מלא (מכל גודל מסך): נכנסים אליה מ-view=map או מכפתור המפה במובייל */}
+      {mapFullscreen && (
+        <div className="fixed inset-x-0 bottom-0 z-50" style={{ top: '64px' }}>
+          <div className="relative w-full h-full">
+            <div className="absolute top-3 inset-x-3 z-[1000] flex items-center gap-2">
+              <button
+                onClick={() => setMapFullscreen(false)}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold shadow-lg bg-white text-gray-800 hover:bg-gray-50 transition-colors"
+              >
+                <ListIcon className="w-4 h-4" /> חזרה לרשימה
+              </button>
+              <span aria-live="polite" aria-atomic="true" className="mr-auto bg-white/95 backdrop-blur-sm px-3 py-2 rounded-full text-xs font-bold text-gray-600 shadow-sm">
+                {loading ? 'טוען...' : `${mapMarkers.length} נכסים על המפה`}
+              </span>
+            </div>
+            <MapErrorBoundary>
+              <SearchMap
+                ref={mapHandleRef}
+                properties={mapMarkers}
+                activeId={activePropertyId}
+                hoveredId={hoveredPropertyId}
+                onMarkerClick={setActivePropertyId}
+                onUserMoved={setMapUserMoved}
+              />
+            </MapErrorBoundary>
+            {!loading && properties.length > 0 && geoProperties.length === 0 && (
+              <div className="absolute inset-x-4 top-16 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 text-center shadow-sm">
+                אין נכסים עם מיקום מדויק להצגה במפה כרגע
+              </div>
+            )}
+            {mapUserMoved && (
+              <button
+                onClick={handleSearchThisArea}
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-lg"
+                style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}
+              >
+                <IconSearch className="w-3.5 h-3.5" /> חפש באזור זה
+              </button>
+            )}
+          </div>
+        </div>
+      )}
       </main>
     </>
   )

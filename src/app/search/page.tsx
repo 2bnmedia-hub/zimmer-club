@@ -7,7 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX, IconShield, IconMedal, IconPriceTag, IconTarget } from '@/components/icons'
-import { Heart, Map as MapIcon, List as ListIcon } from 'lucide-react'
+import { Heart, Map as MapIcon } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
 import { AMENITY_LABELS, AUDIENCE_AMENITIES, FEATURE_AMENITIES } from '@/lib/constants'
 import { buildWhatsAppLink } from '@/lib/utils'
@@ -175,6 +175,14 @@ function SearchContent() {
     if (searchParams.get('view') === 'map') setMapFullscreen(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // סגירת חלון המפה במקש Escape
+  useEffect(() => {
+    if (!mapFullscreen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMapFullscreen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mapFullscreen])
 
   useEffect(() => {
     const check = () => setShowMap(window.innerWidth >= 1024)
@@ -995,21 +1003,28 @@ function SearchContent() {
       </>
       )}
 
-      {/* מפה — מסך מלא (מכל גודל מסך): נכנסים אליה מ-view=map או מכפתור המפה במובייל */}
+      {/* מפה — חלון popup (מכל גודל מסך): נכנסים אליו מ-view=map או מכפתור המפה במובייל */}
       {mapFullscreen && (
-        <div className="fixed inset-x-0 bottom-0 z-50" style={{ top: '64px' }}>
-          <div className="relative w-full h-full">
-            <div className="absolute top-3 inset-x-3 z-[1000] flex items-center gap-2">
-              <button
-                onClick={() => setMapFullscreen(false)}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold shadow-lg bg-white text-gray-800 hover:bg-gray-50 transition-colors"
-              >
-                <ListIcon className="w-4 h-4" /> חזרה לרשימה
-              </button>
-              <span aria-live="polite" aria-atomic="true" className="mr-auto bg-white/95 backdrop-blur-sm px-3 py-2 rounded-full text-xs font-bold text-gray-600 shadow-sm">
-                {loading ? 'טוען...' : `${mapMarkers.length} נכסים על המפה`}
-              </span>
-            </div>
+        <div
+          className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center sm:p-6"
+          style={{ top: '64px', background: 'rgba(20,15,5,0.45)' }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="מפת נכסים"
+          onClick={e => { if (e.target === e.currentTarget) setMapFullscreen(false) }}
+        >
+          <div className="relative w-full h-full sm:h-full sm:max-w-6xl bg-white sm:rounded-2xl overflow-hidden shadow-2xl">
+            <button
+              onClick={() => setMapFullscreen(false)}
+              aria-label="סגירת המפה"
+              title="סגירה"
+              className="absolute top-3 left-3 z-[1000] w-10 h-10 rounded-full flex items-center justify-center shadow-lg bg-white text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              <IconX className="w-4 h-4" />
+            </button>
+            <span aria-live="polite" aria-atomic="true" className="absolute top-3 right-3 z-[1000] bg-white/95 backdrop-blur-sm px-3 py-2 rounded-full text-xs font-bold text-gray-600 shadow-sm">
+              {loading ? 'טוען...' : `${mapMarkers.length} נכסים על המפה`}
+            </span>
             <MapErrorBoundary>
               <SearchMap
                 ref={mapHandleRef}

@@ -37,7 +37,10 @@ type Props = {
 }
 
 const ISRAEL_CENTER = { lat: 31.5, lng: 35.0 }
+// גבולות רחבים — עד כמה מותר למשתמש לגלול/לצאת מהם
 const ISRAEL_BOUNDS = { north: 33.5, south: 29.2, west: 33.9, east: 36.1 }
+// גבולות מדויקים של ישראל — משמשים למסגור הראשוני כשאין נכסים להתאים אליהם
+const ISRAEL_FIT_BOUNDS = { north: 33.35, south: 29.45, west: 34.2, east: 35.95 }
 // Google-provided ID for local development / apps that don't need custom cloud styling —
 // still renders AdvancedMarkerElement content correctly.
 const MAP_ID = 'DEMO_MAP_ID'
@@ -197,6 +200,9 @@ const SearchMap = forwardRef<SearchMapHandle, Props>(function SearchMap(
         mapRef.current = map
         // the map's very first settle (even with zero markers, nothing fit) is never a user move
         programmaticMoveRef.current = true
+        // frame tightly on Israel itself, not the wider region — markers (if any) will
+        // re-fit to their own bounds right after, in the idsKey effect below
+        map.fitBounds(ISRAEL_FIT_BOUNDS, 0)
         infoWindowRef.current = new g.maps.InfoWindow({ maxWidth: 240 })
 
         const clusterer = new MarkerClusterer({

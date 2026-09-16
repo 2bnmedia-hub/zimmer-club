@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { coverImage } from '@/lib/utils'
-import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal, IconWaves, IconPalmTree, IconCactus, IconSnowflake, IconWheat } from '@/components/icons'
+import { IconStar, IconMapPin, IconPhone, IconChevronLeft, IconMedal } from '@/components/icons'
 
 type Property = {
   slug?: string; id: string; name: string; short_description: string
@@ -21,12 +21,12 @@ function hasEvCharging(p: Property): boolean {
 const TARGET = 7
 
 const PH_DESTINATIONS = [
-  { name: 'אילת',       region: 'eilat',     Icon: IconWaves,     from: '#0a3045', to: '#0a5a7a', price: '₪1,200' },
-  { name: 'הכנרת',     region: 'kinneret',  Icon: IconWaves,     from: '#1a2d45', to: '#2d4a70', price: '₪680' },
-  { name: 'שרון וחוף', region: 'sharon',    Icon: IconPalmTree,  from: '#1a3828', to: '#2d5c3e', price: '₪750' },
-  { name: 'ערבה',      region: 'arava',     Icon: IconCactus,    from: '#3a1a0a', to: '#6a3a18', price: '₪830' },
-  { name: 'חרמון',     region: 'hermon',    Icon: IconSnowflake, from: '#1a2a3a', to: '#2d4050', price: '₪990' },
-  { name: 'שפלה',      region: 'shfela',    Icon: IconWheat,     from: '#2a3a1a', to: '#445c2d', price: '₪640' },
+  { name: 'אילת',       region: 'eilat',     img: 'https://images.unsplash.com/photo-1562525329-13b94b5c49d7?w=600&q=80', price: '₪1,200' },
+  { name: 'הכנרת',     region: 'kinneret',  img: 'https://images.unsplash.com/photo-1678134017317-4edd53da833d?w=600&q=80', price: '₪680' },
+  { name: 'שרון וחוף', region: 'sharon',    img: 'https://images.unsplash.com/photo-1769457776360-ab264d26bea1?w=600&q=80', price: '₪750' },
+  { name: 'ערבה',      region: 'arava',     img: 'https://images.unsplash.com/photo-1644808772026-deabdf59c1fd?w=600&q=80', price: '₪830' },
+  { name: 'חרמון',     region: 'hermon',    img: 'https://images.unsplash.com/photo-1531436040007-7216019112d7?w=600&q=80', price: '₪990' },
+  { name: 'שפלה',      region: 'shfela',    img: 'https://images.unsplash.com/photo-1783406175318-d79a8b38f338?w=600&q=80', price: '₪640' },
 ]
 
 function PlaceholderFeatured() {
@@ -62,12 +62,9 @@ function PlaceholderCard({ index }: { index: number }) {
   const d = PH_DESTINATIONS[index % PH_DESTINATIONS.length]
   return (
     <Link href={`/search?region=${d.region}`} className="group relative rounded-xl overflow-hidden" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-      <div className="absolute inset-0" style={{ background: `linear-gradient(145deg, ${d.from}, ${d.to})` }} />
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 25%, rgba(255,255,255,0.07), transparent 65%)' }} />
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 62%)' }} />
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <d.Icon size={36} color="#fff" className="opacity-14 group-hover:opacity-22 transition-opacity duration-400" />
-      </div>
+      <Image src={d.img} alt={d.name} fill sizes="(max-width: 640px) 50vw, 20vw"
+        className="object-cover transition-transform duration-500 group-hover:scale-105" />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 55%, transparent 75%)' }} />
       <div className="absolute bottom-0 right-0 left-0 p-2.5 text-white">
         <h3 className="font-semibold leading-tight" style={{ fontSize: '12px' }}>{d.name}</h3>
         <p className="font-bold mt-0.5" style={{ color: '#86efac', fontSize: '11px' }}>{d.price} <span className="font-normal text-white/40" style={{ fontSize: '9px' }}>/ לילה</span></p>

@@ -130,7 +130,7 @@ export function AdvancedSearchPanel({ open, onToggle }: { open?: boolean; onTogg
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
                 מחיר ללילה: <span style={{color:'#8B6914'}}>₪{priceRange[0].toLocaleString()} — ₪{priceRange[1].toLocaleString()}</span>
               </p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4" dir="ltr">
                 <span className="text-xs text-gray-400">₪200</span>
                 <div className="flex-1 space-y-2">
                   <input type="range" min={200} max={35000} step={100} value={priceRange[0]}

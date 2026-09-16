@@ -637,7 +637,7 @@ export default function EditPropertyPage() {
             </label>
             {!priceOnRequest && (
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ"ש (₪)</label><input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="1" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ&quot;ש (₪)</label><input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="1" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">מחיר סוף שבוע (₪) <span className="text-gray-400 font-normal text-xs">אופציונלי</span></label><input name="price_weekend" type="number" value={form.price_weekend} onChange={handleChange} min="1" placeholder="כברירת מחדל — מחיר אמצ׳ש" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" /></div>
               </div>
             )}
@@ -803,7 +803,7 @@ export default function EditPropertyPage() {
               })}
               {units.filter(u => !u.toDelete).length === 0 && (
                 <div className="text-center py-6 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-2xl">
-                  אין יחידות — לחץ "הוסף יחידה" להוספה
+                  אין יחידות — לחץ &quot;הוסף יחידה&quot; להוספה
                 </div>
               )}
             </div>

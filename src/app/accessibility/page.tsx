@@ -27,7 +27,7 @@ export default function AccessibilityPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-2">התאמות הנגישות באתר</h2>
-            <p className="mb-3">האתר הונגש בהתאם להוראות תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע"ג–2013, ובהתאם לדרישות התקן הישראלי ת"י 5568, המבוסס על הנחיות W3C ברמת AA.</p>
+            <p className="mb-3">האתר הונגש בהתאם להוראות תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע&quot;ג–2013, ובהתאם לדרישות התקן הישראלי ת&quot;י 5568, המבוסס על הנחיות W3C ברמת AA.</p>
             <p className="mb-2">האתר נבדק ומותאם לדפדפנים:</p>
             <ul className="list-disc list-inside space-y-1 text-sm pr-2">
               <li>Google Chrome</li>

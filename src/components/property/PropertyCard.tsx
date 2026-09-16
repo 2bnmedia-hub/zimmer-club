@@ -116,9 +116,9 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             <div className="text-right">
               {property.price_weekend ? (
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-xs text-taupe">אמצ"ש:</span>
+                  <span className="text-xs text-taupe">אמצ&quot;ש:</span>
                   <span className="text-sm font-bold text-charcoal">{formatPrice(property.price_per_night)}</span>
-                  <span className="text-xs text-amber-600 font-semibold">ס"ש: {formatPrice(property.price_weekend)}</span>
+                  <span className="text-xs text-amber-600 font-semibold">ס&quot;ש: {formatPrice(property.price_weekend)}</span>
                 </div>
               ) : (
                 <>

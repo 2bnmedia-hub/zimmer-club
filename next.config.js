@@ -3,6 +3,7 @@ const path = require('path')
 
 const nextConfig = {
   outputFileTracingRoot: path.join(__dirname),
+  agentRules: false,
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },

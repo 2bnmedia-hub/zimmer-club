@@ -59,8 +59,6 @@ export default function EditProfilePage() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleting, setDeleting] = useState(false)
 
-  useEffect(() => { loadProfile() }, [])
-
   async function loadProfile() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/auth/login'); return }
@@ -81,6 +79,8 @@ export default function EditProfilePage() {
     setContacts(cd || [])
     setLoading(false)
   }
+
+  useEffect(() => { loadProfile() }, [])
 
   function showToast(type: 'success' | 'error', message: string) {
     setToast({ type, message }); setTimeout(() => setToast(null), 3000)
@@ -361,7 +361,7 @@ export default function EditProfilePage() {
         {profile?.role === 'admin' && (
           <div className="bg-white rounded-3xl p-6 shadow-sm">
             <h2 className="text-base font-semibold text-gray-900 mb-1">אמצעי תקשורת</h2>
-            <p className="text-xs text-gray-400 mb-4">פניות מ"פרסמו אצלנו" יישלחו לאמצעים הפעילים</p>
+            <p className="text-xs text-gray-400 mb-4">פניות מ&quot;פרסמו אצלנו&quot; יישלחו לאמצעים הפעילים</p>
             <div className="space-y-2 mb-4">
               {contacts.length === 0 && <p className="text-xs text-gray-400">אין אמצעי תקשורת</p>}
               {contacts.map(c => (

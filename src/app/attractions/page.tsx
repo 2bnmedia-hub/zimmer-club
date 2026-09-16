@@ -63,8 +63,6 @@ function AttractionsContent() {
     setActivityType(searchParams.get('type') || '')
   }, [searchParams])
 
-  useEffect(() => { fetchAttractions() }, [region, audience, activityType])
-
   async function fetchAttractions() {
     setLoading(true)
     let query = supabase
@@ -107,6 +105,8 @@ function AttractionsContent() {
     setAttractions(results)
     setLoading(false)
   }
+
+  useEffect(() => { fetchAttractions() }, [region, audience, activityType])
 
   const filtered = search
     ? attractions.filter(a => a.name.includes(search) || a.city?.includes(search) || a.short_description?.includes(search))

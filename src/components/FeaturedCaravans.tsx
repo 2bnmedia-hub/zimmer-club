@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useWishlist } from '@/hooks/useWishlist'
 import { IconHeart } from '@/components/icons'
@@ -63,7 +64,7 @@ export function FeaturedCaravans() {
             <div className="col-span-2 row-span-2 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 6px 24px rgba(0,0,0,0.14)' }}>
               <Link href={isFallback ? '/caravans' : `/caravans/${c0.slug || c0.id}`} className="absolute inset-0">
                 {(isFallback ? c0.img : c0.caravan_images?.[0]?.url)
-                  ? <img src={isFallback ? c0.img : c0.caravan_images[0].url} alt={c0.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ? <Image src={isFallback ? c0.img : c0.caravan_images[0].url} alt={c0.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
                   : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-6xl">🚐</div>}
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,5,0,0.88) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)' }} />
                 {c0.avg_rating && <span className="absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842' }}>★ {Number(c0.avg_rating).toFixed(1)}</span>}
@@ -90,7 +91,7 @@ export function FeaturedCaravans() {
               <div key={c.id || i} className="group relative rounded-xl overflow-hidden" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.09)' }}>
                 <Link href={href} className="absolute inset-0">
                   {img
-                    ? <img src={img} alt={c.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ? <Image src={img} alt={c.name} fill sizes="(max-width: 768px) 50vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                     : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-3xl">🚐</div>}
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%)' }} />
                   {c.avg_rating && <span className="absolute top-2 left-2 font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(0,0,0,0.5)', color: '#F5C842', fontSize: '10px' }}>★ {Number(c.avg_rating).toFixed(1)}</span>}

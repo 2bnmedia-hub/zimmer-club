@@ -1,6 +1,7 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+import Link from 'next/link'
 
 function BackButton() {
   const searchParams = useSearchParams()
@@ -8,7 +9,7 @@ function BackButton() {
   if (from !== 'dashboard') return null
 
   return (
-    <a
+    <Link
       href="/dashboard/admin"
       className="fixed bottom-6 left-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-lg transition-all hover:scale-105"
       style={{
@@ -17,7 +18,7 @@ function BackButton() {
       }}
     >
       ← לוח הבקרה
-    </a>
+    </Link>
   )
 }
 

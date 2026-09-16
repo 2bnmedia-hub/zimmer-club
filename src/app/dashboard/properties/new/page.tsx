@@ -60,6 +60,36 @@ export default function NewPropertyPage() {
 
   const [slugPreview, setSlugPreview] = useState('')
   const addressInputRef = useRef<HTMLInputElement>(null)
+  const [form, setForm] = useState({
+    name: '',
+    name_en: '',
+    short_description: '',
+    description: '',
+    category: 'zimmer',
+    region: '',
+    city: '',
+    address: '',
+    price_per_night: '',
+    price_weekend: '',
+    min_nights: '1',
+    max_guests: '2',
+    bedrooms: '1',
+    bathrooms: '1',
+    instant_book: false,
+    accepts_miluim: false,
+    has_shelter: false,
+    video_url: '',
+    phone_landline: '',
+    whatsapp1: '',
+    whatsapp2: '',
+    email1: '',
+    email2: '',
+    contact_via_phone_landline: false,
+    contact_via_whatsapp1: false,
+    contact_via_whatsapp2: false,
+    contact_via_email1: false,
+    contact_via_email2: false,
+  })
 
   useEffect(() => {
     const initAutocomplete = () => {
@@ -107,36 +137,6 @@ export default function NewPropertyPage() {
   }, [])
   const [units, setUnits] = useState<UnitForm[]>([])
   const [hasUnits, setHasUnits] = useState(false)
-  const [form, setForm] = useState({
-    name: '',
-    name_en: '',
-    short_description: '',
-    description: '',
-    category: 'zimmer',
-    region: '',
-    city: '',
-    address: '',
-    price_per_night: '',
-    price_weekend: '',
-    min_nights: '1',
-    max_guests: '2',
-    bedrooms: '1',
-    bathrooms: '1',
-    instant_book: false,
-    accepts_miluim: false,
-    has_shelter: false,
-    video_url: '',
-    phone_landline: '',
-    whatsapp1: '',
-    whatsapp2: '',
-    email1: '',
-    email2: '',
-    contact_via_phone_landline: false,
-    contact_via_whatsapp1: false,
-    contact_via_whatsapp2: false,
-    contact_via_email1: false,
-    contact_via_email2: false,
-  })
 
   const addUnit = () => {
     setUnits(prev => [...prev, { name: '', description: '', price_per_night: '', max_guests: '2', bedrooms: '1', bathrooms: '1', images: [] }])
@@ -608,7 +608,7 @@ export default function NewPropertyPage() {
             {!priceOnRequest && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ"ש (₪)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">מחיר אמצ&quot;ש (₪)</label>
                   <input name="price_per_night" type="number" value={form.price_per_night} onChange={handleChange} min="0"
                     className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600" placeholder="500" />
                 </div>

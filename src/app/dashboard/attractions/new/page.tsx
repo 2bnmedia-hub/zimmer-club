@@ -88,6 +88,24 @@ export default function NewAttractionPage() {
   const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(defaultWeeklyHours())
   const [slugPreview, setSlugPreview] = useState('')
   const addressInputRef = useRef<HTMLInputElement>(null)
+  const [form, setForm] = useState({
+    name: '',
+    name_en: '',
+    short_description: '',
+    description: '',
+    region: '',
+    city: '',
+    address: '',
+    price_per_person: '',
+    min_age: '',
+    max_age: '',
+    notes: '',
+    phone: '',
+    whatsapp: '',
+    email: '',
+    website: '',
+    video_url: '',
+  })
 
   useEffect(() => {
     const initAutocomplete = () => {
@@ -133,24 +151,6 @@ export default function NewAttractionPage() {
       return () => clearInterval(interval)
     }
   }, [])
-  const [form, setForm] = useState({
-    name: '',
-    name_en: '',
-    short_description: '',
-    description: '',
-    region: '',
-    city: '',
-    address: '',
-    price_per_person: '',
-    min_age: '',
-    max_age: '',
-    notes: '',
-    phone: '',
-    whatsapp: '',
-    email: '',
-    website: '',
-    video_url: '',
-  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target

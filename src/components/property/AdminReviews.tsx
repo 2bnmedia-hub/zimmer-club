@@ -44,8 +44,6 @@ export function AdminReviews({ propertyId }: { propertyId: string }) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<Review>>({})
 
-  useEffect(() => { loadReviews() }, [])
-
   async function loadReviews() {
     const { data } = await supabase
       .from('reviews')
@@ -55,6 +53,8 @@ export function AdminReviews({ propertyId }: { propertyId: string }) {
     setReviews(data || [])
     setLoading(false)
   }
+
+  useEffect(() => { loadReviews() }, [])
 
   async function handleDelete(id: string) {
     if (!confirm('למחוק את הביקורת הזו לצמיתות?')) return

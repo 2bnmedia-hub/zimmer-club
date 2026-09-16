@@ -76,7 +76,7 @@ export default function AdminContactsPage() {
           <h1 className="text-2xl font-bold text-gray-900">ניהול אמצעי תקשורת</h1>
         </div>
 
-        <p className="text-sm text-gray-500 mb-6">פניות מדף "פרסמו אצלנו" יישלחו לכל האמצעים הפעילים למטה.</p>
+        <p className="text-sm text-gray-500 mb-6">פניות מדף &quot;פרסמו אצלנו&quot; יישלחו לכל האמצעים הפעילים למטה.</p>
 
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 space-y-3">
           <h2 className="font-bold text-gray-700 mb-4">אמצעים פעילים</h2>

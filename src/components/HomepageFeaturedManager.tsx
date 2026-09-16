@@ -17,8 +17,6 @@ export function HomepageFeaturedManager() {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
-  useEffect(() => { loadAll() }, [])
-
   async function loadAll() {
     const [{ data: feat }, { data: props }, { data: attrs }, { data: cars }] = await Promise.all([
       supabase.from('homepage_featured').select('*').order('section').order('slot'),
@@ -40,6 +38,8 @@ export function HomepageFeaturedManager() {
     setAttractions(attrs || [])
     setCaravans(cars || [])
   }
+
+  useEffect(() => { loadAll() }, [])
 
   function getSlot(section: string, slot: number) {
     return featured.find(f => f.section === section && f.slot === slot)

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useWishlist } from '@/hooks/useWishlist'
 import { IconHeart } from '@/components/icons'
@@ -64,7 +65,7 @@ export function FeaturedAttractions() {
             <div className="col-span-2 row-span-2 group relative rounded-2xl overflow-hidden" style={{ boxShadow: '0 6px 24px rgba(0,0,0,0.14)' }}>
               <Link href={isFallback ? '/attractions' : `/attractions/${a0.slug || a0.id}`} className="absolute inset-0">
                 {(isFallback ? a0.img : a0.attraction_images?.[0]?.url)
-                  ? <img src={isFallback ? a0.img : a0.attraction_images[0].url} alt={a0.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ? <Image src={isFallback ? a0.img : a0.attraction_images[0].url} alt={a0.name} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
                   : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-6xl">🎯</div>}
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,5,0,0.88) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)' }} />
                 <div className="absolute top-3 right-3">
@@ -98,7 +99,7 @@ export function FeaturedAttractions() {
               <div key={a.id || i} className="group relative rounded-xl overflow-hidden" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.09)' }}>
                 <Link href={href} className="absolute inset-0">
                   {img
-                    ? <img src={img} alt={a.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ? <Image src={img} alt={a.name} fill sizes="(max-width: 768px) 50vw, 20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                     : <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-3xl">🎯</div>}
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%)' }} />
                   {tag && <span className="absolute top-2 right-2 rounded-full px-1.5 py-0.5 bg-white/90 font-semibold" style={{ color: '#8B6914', fontSize: '9px' }}>{tag}</span>}

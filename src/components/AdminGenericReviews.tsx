@@ -107,11 +107,6 @@ export function AdminGenericReviews({ entityId, table, foreignKey }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<Review>>({})
 
-  useEffect(() => {
-    loadReviews()
-    checkAdmin()
-  }, [])
-
   async function checkAdmin() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -125,6 +120,11 @@ export function AdminGenericReviews({ entityId, table, foreignKey }: Props) {
     setReviews((data as any) || [])
     setLoading(false)
   }
+
+  useEffect(() => {
+    loadReviews()
+    checkAdmin()
+  }, [])
 
   async function handleDelete(id: string) {
     if (!confirm('למחוק ביקורת זו?')) return

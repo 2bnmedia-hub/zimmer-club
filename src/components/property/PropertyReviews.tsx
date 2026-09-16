@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { IconUser, IconSend, IconTrash, IconPencil, IconCheck, IconX } from '@/components/icons'
 
@@ -319,7 +320,7 @@ export function PropertyReviews({ propertyId }: { propertyId: string }) {
 
       {!user && (
         <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-600 mb-6">
-          <a href="/auth/login" className="font-medium hover:underline" style={{color:'#8B6914'}}>התחבר</a> כדי להשאיר חוות דעת
+          <Link href="/auth/login" className="font-medium hover:underline" style={{color:'#8B6914'}}>התחבר</Link> כדי להשאיר חוות דעת
         </div>
       )}
 

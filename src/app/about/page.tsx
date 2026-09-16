@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'אודות zimmer.club — הסיפור שלנו',
@@ -27,10 +28,12 @@ export default function AboutPage() {
     { icon: '⭐', title: 'איכות שאפשר לסמוך עליה', text: 'כל נכס עובר אימות. הדירוגים שלנו אמיתיים, הביקורות — מאורחים שהיו שם.' },
   ]
 
-  const plans = [
-    { plan: 'בסיסי', price: 'חינם', sub: 'ללא עלות, לתמיד', highlight: false, features: ['נכס אחד פעיל', 'עד 10 תמונות', 'דף נכס סטנדרטי', 'קשר ישיר עם אורחים'] },
-    { plan: 'מקצועי', price: '₪99', sub: 'לחודש', highlight: true, features: ['עד 5 נכסים פעילים', 'תמונות + וידאו ללא הגבלה', 'הופעה בולטת בחיפוש', 'לוח שנה זמינות', 'סטטיסטיקות וצפיות'] },
-    { plan: 'עסקי', price: '₪199', sub: 'לחודש', highlight: false, features: ['נכסים ללא הגבלה', "כל פיצ'רי המקצועי", 'מיתוג עסקי מותאם', 'תמיכה אישית עדיפות', "גישה מוקדמת לפיצ'רים"] },
+  const included = [
+    'פרסום נכסים ללא הגבלה, ללא עלות',
+    'תמונות ווידאו ללא הגבלה',
+    'קשר ישיר עם אורחים — ללא מתווכים',
+    '0% עמלה על הזמנות, לתמיד',
+    'לוח בקרה לניהול תאריכים, מחירים וביקורות',
   ]
 
   const chat = [
@@ -106,7 +109,7 @@ export default function AboutPage() {
             <span className="inline-block border border-[#C9A84C]/30 bg-[#C9A84C]/10 rounded-full px-4 py-1 text-[10px] font-medium tracking-[2px] text-[#C9A84C] uppercase mb-4">חדש</span>
             <h2 className="text-xl md:text-3xl font-bold text-[#F5EDD6] leading-snug mb-4">סוכן AI אישי —<br />החופשה שלך מתחילה כאן</h2>
             <p className="text-sm text-[#F5EDD6]/70 leading-relaxed mb-3">הסוכן החכם מנתח את ההעדפות שלכם — תקציב, אזור, סגנון, מספר אורחים — ומציע את הנכס המושלם.</p>
-            <p className="text-sm text-[#F5EDD6]/70 leading-relaxed">פשוט שאלו: <em className="text-[#C9A84C]">"חופשה רומנטית לזוג עם ג׳קוזי עד 800₪ בגליל"</em></p>
+            <p className="text-sm text-[#F5EDD6]/70 leading-relaxed">פשוט שאלו: <em className="text-[#C9A84C]">&quot;חופשה רומנטית לזוג עם ג׳קוזי עד 800₪ בגליל&quot;</em></p>
           </div>
           <div className="bg-white/5 rounded-2xl p-4 border border-[#C9A84C]/20">
             <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
@@ -151,37 +154,32 @@ export default function AboutPage() {
 
       {/* ── PRICING ── */}
       <div className="bg-[#F5EDD6] py-14 px-4 border-t border-[#8B6914]/15">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
             <p className="text-[10px] font-medium tracking-[3px] text-[#8B6914] uppercase mb-2">לבעלי נכסים</p>
             <h2 className="text-xl md:text-3xl font-bold text-[#2C2418] mb-3">תמחור פשוט. ללא הפתעות.</h2>
-            <p className="text-sm text-[#5C4A28] max-w-sm mx-auto">שמרו 100% מהתשלום מהאורח — בכל התוכניות</p>
+            <p className="text-sm text-[#5C4A28] max-w-sm mx-auto">שמרו 100% מהתשלום מהאורח</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {plans.map(p => (
-              <div key={p.plan} className={`rounded-2xl p-6 relative ${p.highlight ? 'bg-[#2C2418]' : 'bg-white border border-[#8B6914]/15'}`}>
-                {p.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#8B6914] text-white text-xs font-semibold px-4 py-1 rounded-full whitespace-nowrap">הכי פופולרי</div>
-                )}
-                <p className={`text-[10px] font-medium tracking-[2px] uppercase mb-2 ${p.highlight ? 'text-[#C9A84C]' : 'text-[#9A8060]'}`}>{p.plan}</p>
-                <div className={`text-4xl font-bold mb-1 ${p.highlight ? 'text-[#F5EDD6]' : 'text-[#2C2418]'}`}>{p.price}</div>
-                <p className={`text-xs mb-4 ${p.highlight ? 'text-[#F5EDD6]/50' : 'text-[#9A8060]'}`}>{p.sub}</p>
-                <div className={`h-px mb-4 ${p.highlight ? 'bg-white/10' : 'bg-[#8B6914]/12'}`} />
-                <ul className="space-y-2 mb-6">
-                  {p.features.map(f => (
-                    <li key={f} className={`text-xs leading-relaxed flex items-start gap-2 ${p.highlight ? 'text-[#F5EDD6]/80' : 'text-[#5C4A28]'}`}>
-                      <span className="text-[#8B6914] font-bold mt-0.5">✓</span>{f}
-                    </li>
-                  ))}
-                </ul>
-                <a href="/dashboard/properties/new"
-                  className={`block text-center py-3 rounded-full text-sm font-bold min-h-[44px] flex items-center justify-center ${p.highlight ? 'bg-[#8B6914] text-white' : 'border-2 border-[#8B6914] text-[#8B6914]'}`}>
-                  {p.price === 'חינם' ? 'התחילו חינם' : 'התחילו עכשיו'}
-                </a>
-              </div>
-            ))}
+          <div className="rounded-2xl p-8 bg-white border border-[#8B6914]/15">
+            <p className="text-[10px] font-medium tracking-[2px] uppercase mb-2 text-[#9A8060]">פרסום באתר</p>
+            <div className="text-4xl font-bold mb-1 text-[#2C2418]">חינם</div>
+            <p className="text-xs mb-4 text-[#9A8060]">ללא עלות, לתמיד</p>
+            <div className="h-px mb-4 bg-[#8B6914]/12" />
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
+              {included.map(f => (
+                <li key={f} className="text-xs leading-relaxed flex items-start gap-2 text-[#5C4A28]">
+                  <span className="text-[#8B6914] font-bold mt-0.5">✓</span>{f}
+                </li>
+              ))}
+            </ul>
+            <Link href="/dashboard/properties/new"
+              className="block text-center py-3 rounded-full text-sm font-bold min-h-[44px] flex items-center justify-center bg-[#8B6914] text-white">
+              התחילו חינם
+            </Link>
           </div>
-          <p className="text-center text-xs text-[#9A8060] mt-6">* אין עמלות על הזמנות — אתם שומרים 100% מהתשלום מהאורח בכל התוכניות</p>
+          <p className="text-center text-xs text-[#5C4A28] mt-6">
+            מחפשים חשיפה מוגברת לנכס העסקי שלכם? <Link href="/advertise" className="font-semibold underline" style={{color:'#8B6914'}}>דברו איתנו</Link> — נתאים הצעה אישית.
+          </p>
         </div>
       </div>
 
@@ -207,13 +205,13 @@ export default function AboutPage() {
             <p className="text-[10px] font-medium tracking-[2px] uppercase text-white/50 mb-2">לאורחים</p>
             <h3 className="text-lg md:text-xl font-bold text-[#F5EDD6] mb-3 leading-snug">מצאו את החופשה שתזכרו לתמיד</h3>
             <p className="text-sm text-[#F5EDD6]/70 leading-relaxed mb-5">צימרים, וילות, קרוואנים ואטרקציות — מעל 1,000 נכסים מאומתים, ללא עמלות, עם סוכן AI שיעזור לכם למצוא בדיוק מה שחיפשתם.</p>
-            <a href="/search" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים ←</a>
+            <Link href="/search" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים ←</Link>
           </div>
           <div className="bg-[#F5EDD6] rounded-2xl p-6 md:p-8 border border-[#8B6914]/20">
             <p className="text-[10px] font-medium tracking-[2px] uppercase text-[#9A8060] mb-2">לבעלי נכסים</p>
             <h3 className="text-lg md:text-xl font-bold text-[#2C2418] mb-3 leading-snug">הנכס שלכם ראוי לקהל שיעריך אותו</h3>
             <p className="text-sm text-[#5C4A28] leading-relaxed mb-5">צימר, וילה, קרוואן או אטרקציה — פרסמו, קבלו הזמנות ישירות, ושמרו 100% מהתשלום. מתחילים חינם.</p>
-            <a href="/dashboard/properties/new" className="inline-flex items-center justify-center px-6 py-3 rounded-full border-2 border-[#8B6914] text-[#8B6914] text-sm font-bold min-h-[44px]">פרסמו את הנכס שלכם ←</a>
+            <Link href="/dashboard/properties/new" className="inline-flex items-center justify-center px-6 py-3 rounded-full border-2 border-[#8B6914] text-[#8B6914] text-sm font-bold min-h-[44px]">פרסמו את הנכס שלכם ←</Link>
           </div>
         </div>
       </div>

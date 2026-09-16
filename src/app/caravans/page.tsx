@@ -62,8 +62,6 @@ function CaravansContent() {
     })
   }, [searchParams])
 
-  useEffect(() => { fetchCaravans() }, [filters])
-
   const regionGroups: Record<string, string[]> = {
     north: ['north', 'galil', 'galil_upper', 'galil_lower', 'galil_west', 'kinneret', 'hermon', 'golan'],
     negev: ['negev', 'south', 'arava'],
@@ -91,6 +89,8 @@ function CaravansContent() {
     setCaravans(data || [])
     setLoading(false)
   }
+
+  useEffect(() => { fetchCaravans() }, [filters])
 
   return (
     <>

@@ -9,6 +9,7 @@ import { WishlistProvider } from '@/hooks/useWishlist'
 import Script from 'next/script'
 import ZimiWidget from '@/components/ZimiWidget'
 import { CookieConsent } from '@/components/CookieConsent'
+import { getSiteSettings } from '@/lib/site-settings'
 
 const assistant = Assistant({
   subsets: ['hebrew', 'latin'],
@@ -63,7 +64,8 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { zimiEnabled } = await getSiteSettings()
   return (
     <html lang="he" dir="rtl" className={assistant.variable}>
       <body className={`${assistant.className} antialiased`}>
@@ -79,7 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ScrollToTop />
             <div id="main-content">{children}</div>
             <Footer />
-            <ZimiWidget />
+            {zimiEnabled && <ZimiWidget />}
             <CookieConsent />
           </WishlistProvider>
         </ProfileProvider>

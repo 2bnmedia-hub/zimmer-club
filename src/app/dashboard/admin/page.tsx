@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { IconArrowRight, IconTrash, IconEdit, IconPlus, IconCheck, IconPhone, IconX, IconEye } from '@/components/icons'
 import { AdminGenericReviews } from '@/components/AdminGenericReviews'
 import { HomepageFeaturedManager } from '@/components/HomepageFeaturedManager'
+import { SiteSettingsManager } from '@/components/SiteSettingsManager'
 import dynamic from 'next/dynamic'
 const IsraelMap = dynamic(() => import('@/components/map/IsraelMap'), { ssr: false, loading: () => <div style={{ height: '300px', background: '#f9f5ef', borderRadius: '16px' }} className="animate-pulse" /> })
 
@@ -486,6 +487,22 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
     setSaving(false)
   }
 
+  const [deleting, setDeleting] = React.useState(false)
+
+  const deleteBusiness = async (row: any) => {
+    if (row.id === '__demo__') { setExpandedId(null); return }
+    if (!confirm(`למחוק לצמיתות את "${row.name}"? הפעולה תמחק את הנכס וכל הנתונים המשויכים אליו ולא ניתנת לביטול.`)) return
+    setDeleting(true)
+    const { error } = await supabase.from('properties').delete().eq('id', row.id)
+    if (!error) {
+      setContracts(prev => prev.filter(r => r.id !== row.id))
+      setExpandedId(null)
+    } else {
+      alert('שגיאה במחיקת העסק: ' + error.message)
+    }
+    setDeleting(false)
+  }
+
   const handleContractUpload = async (e: React.ChangeEvent<HTMLInputElement>, propId: string) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -797,6 +814,11 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                     className="px-6 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all">
                                     סגור
                                   </button>
+                                  <button onClick={() => deleteBusiness(row)}
+                                    title="שורת דוגמה — לא ניתן למחוק"
+                                    className="px-6 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-all">
+                                    🗑️ מחק עסק
+                                  </button>
                                 </div>
                               </div>
                             </div>
@@ -980,6 +1002,10 @@ function FinancialManagement({ properties }: { properties: Item[] }) {
                                     className="px-6 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all">
                                     ביטול
                                   </button>
+                                  <button onClick={() => deleteBusiness(row)} disabled={deleting}
+                                    className="px-6 py-2.5 rounded-xl text-sm font-bold border border-red-200 text-red-600 hover:bg-red-50 transition-all disabled:opacity-50">
+                                    {deleting ? 'מוחק...' : '🗑️ מחק עסק'}
+                                  </button>
                                   <Link href={`/dashboard/properties/${row.id}/edit`}
                                     className="mr-auto text-xs text-gray-400 hover:text-gray-600 hover:underline">
                                     עריכה מלאה של הנכס ←
@@ -1017,7 +1043,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [adminName, setAdminName] = useState('')
   const [adminAvatar, setAdminAvatar] = useState('')
-  const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'|'users'|'featured'|'financial'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'properties'|'caravans'|'attractions'|'hotels'|'camping'|'users'|'featured'|'financial'|'settings'>('overview')
   const [users, setUsers] = useState<any[]>([])
   const [contractAlerts, setContractAlerts] = useState<{id:string;name:string;admin_contract_end:string;days:number}[]>([])
 
@@ -1126,6 +1152,7 @@ export default function AdminDashboard() {
     { key:'users', label:'משתמשים', icon:'👥' },
     { key:'featured', label:'ניהול דף הבית', icon:'✨' },
     { key:'financial', label:'ניהול כספי', icon:'💰' },
+    { key:'settings', label:'הגדרות', icon:'⚙️' },
   ]
 
   return (
@@ -1402,6 +1429,8 @@ export default function AdminDashboard() {
         {activeTab === 'featured' && <HomepageFeaturedManager />}
 
         {activeTab === 'financial' && <FinancialManagement properties={properties} />}
+
+        {activeTab === 'settings' && <SiteSettingsManager />}
 
       </main>
     </div>

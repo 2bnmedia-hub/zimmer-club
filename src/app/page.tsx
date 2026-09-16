@@ -45,15 +45,18 @@ export default function HomePage() {
           {/* Background Image */}
 <div
   className="absolute inset-0 z-0 overflow-hidden"
-  style={{
-    backgroundImage: "url('/hero-bg.png')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    animation: 'kenBurns 18s ease-in-out infinite',
-    transformOrigin: 'center center',
-  }}
-/>
+  style={{ animation: 'kenBurns 18s ease-in-out infinite', transformOrigin: 'center center' }}
+>
+  <Image
+    src="/hero-bg.png"
+    alt=""
+    fill
+    priority
+    fetchPriority="high"
+    sizes="100vw"
+    style={{ objectFit: 'cover', objectPosition: 'center' }}
+  />
+</div>
           {/* Overlay */}
 
           <div className="relative max-w-4xl mx-auto hero-text-animate" style={{zIndex:9999}}>

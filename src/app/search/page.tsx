@@ -1,15 +1,57 @@
 'use client'
 
-import { useEffect, useState, Suspense, useRef, useCallback } from 'react'
+import { useEffect, useState, useMemo, Suspense, useRef, useCallback, Component, type ReactNode } from 'react'
 import { useSearchParams } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX } from '@/components/icons'
-import { Heart } from 'lucide-react'
+import { Heart, Map as MapIcon, List as ListIcon } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
 import { AMENITY_LABELS, AUDIENCE_AMENITIES, FEATURE_AMENITIES } from '@/lib/constants'
 import { buildWhatsAppLink } from '@/lib/utils'
+import type { MapProperty, MapBounds, SearchMapHandle } from '@/components/search/SearchMap'
+
+const SearchMap = dynamic(() => import('@/components/search/SearchMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-[#faf7f2] rounded-2xl animate-pulse">
+      <span className="text-sm text-gray-400">טוען מפה...</span>
+    </div>
+  ),
+})
+
+class MapErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) { super(props); this.state = { hasError: false } }
+  static getDerivedStateFromError() { return { hasError: true } }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#faf7f2] rounded-2xl text-center px-4">
+          <span className="text-2xl">🗺️</span>
+          <p className="text-sm text-gray-500 font-medium">לא ניתן לטעון את המפה כרגע</p>
+          <p className="text-xs text-gray-400">רשימת הנכסים עדיין זמינה במלואה</p>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+const REGION_LABELS: Record<string, string> = {
+  north: 'צפון', galil_west: 'גליל המערבי', galil_upper: 'גליל העליון', galil_lower: 'גליל התחתון',
+  kinneret: 'כנרת', hermon: 'חרמון', center: 'מרכז', jerusalem: 'ירושלים',
+  dead_sea: 'ים המלח', negev: 'דרום', eilat: 'אילת', golan: 'רמת הגולן',
+}
+
+const isValidCoord = (lat: any, lng: any): lat is number =>
+  typeof lat === 'number' && typeof lng === 'number' &&
+  Number.isFinite(lat) && Number.isFinite(lng) &&
+  lat >= 29.0 && lat <= 33.5 && lng >= 34.0 && lng <= 36.0
+
+const inBounds = (lat: number, lng: number, b: MapBounds) =>
+  lat <= b.north && lat >= b.south && lng <= b.east && lng >= b.west
 
 type Property = {
   slug?: string
@@ -33,6 +75,8 @@ type Property = {
   contact_via_phone_landline?: boolean
   contact_via_whatsapp1?: boolean
   property_images: { url: string }[]
+  lat?: number | null
+  lng?: number | null
 }
 
 const PROPERTY_TYPES = [
@@ -54,7 +98,7 @@ function PriceRangeSlider({ min, max, value, onChange }: {
   const pct = (v: number) => ((v - min) / (max - min)) * 100
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" dir="ltr">
       <div className="flex items-center justify-between">
         <span className="text-xs text-gray-400">₪{min.toLocaleString()}</span>
         <div className="flex items-center gap-2">
@@ -113,6 +157,23 @@ function SearchContent() {
   const [priceRange, setPriceRange] = useState<[number, number]>([200, 35000])
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<'rating' | 'price_asc' | 'price_desc' | 'newest'>('rating')
+
+  // ── מפה ──
+  const [showMap, setShowMap] = useState(true)
+  const [mobileView, setMobileView] = useState<'list' | 'map'>('list')
+  const [activePropertyId, setActivePropertyId] = useState<string | null>(null)
+  const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null)
+  const [mapUserMoved, setMapUserMoved] = useState(false)
+  const [areaBounds, setAreaBounds] = useState<MapBounds | null>(null)
+  const mapHandleRef = useRef<SearchMapHandle>(null)
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  useEffect(() => {
+    const check = () => setShowMap(window.innerWidth >= 1024)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   const [filters, setFilters] = useState({
     category: searchParams.get('available') || searchParams.get('category') || '',
     region: searchParams.get('region') || '',
@@ -140,8 +201,6 @@ function SearchContent() {
     })
   }, [searchParams])
 
-  useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities, textSearch, sortBy])
-
   // סגור הצעות בלחיצה מחוץ
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -168,6 +227,8 @@ function SearchContent() {
 
   async function fetchProperties() {
     setLoading(true)
+    setAreaBounds(null)
+    setActivePropertyId(null)
 
     // קרוואנים — שליפה מטבלה נפרדת
     if (filters.category === 'caravan') {
@@ -385,6 +446,61 @@ function SearchContent() {
     setLoading(false)
   }
 
+  useEffect(() => { fetchProperties() }, [filters, priceRange, selectedAmenities, textSearch, sortBy])
+
+  // נכסים עם קואורדינטות תקינות בלבד — בסיס למפה
+  const geoProperties = useMemo(
+    () => properties.filter(p => isValidCoord(p.lat, p.lng)),
+    [properties]
+  )
+
+  // כשיש סינון "חפש באזור זה" פעיל — גם הרשימה וגם המפה מוצגות לפי אותה תוצאה מצומצמת
+  const visibleProperties = useMemo(() => {
+    if (!areaBounds) return properties
+    return properties.filter(p => isValidCoord(p.lat, p.lng) && inBounds(p.lat as number, p.lng as number, areaBounds))
+  }, [properties, areaBounds])
+
+  const mapMarkers: MapProperty[] = useMemo(() => {
+    const source = areaBounds ? visibleProperties : geoProperties
+    return source
+      .filter(p => isValidCoord(p.lat, p.lng))
+      .map(p => ({
+        id: p.id,
+        href: p.slug ? `/properties/${p.slug}` : `/property/${p.id}`,
+        name: p.name,
+        city: p.city,
+        regionLabel: REGION_LABELS[p.region],
+        lat: p.lat as number,
+        lng: p.lng as number,
+        price: p.price_per_night,
+        priceWeekend: p.price_weekend,
+        priceOnRequest: p.price_on_request,
+        avgRating: p.avg_rating,
+        totalReviews: p.total_reviews,
+        image: p.property_images?.[0]?.url || null,
+      }))
+  }, [geoProperties, visibleProperties, areaBounds])
+
+  // גלילה לכרטיס הנכס כשנבחר סמן במפה
+  useEffect(() => {
+    if (!activePropertyId) return
+    cardRefs.current[activePropertyId]?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'nearest',
+    })
+  }, [activePropertyId])
+
+  const handleSearchThisArea = useCallback(() => {
+    const bounds = mapHandleRef.current?.getBounds()
+    if (bounds) setAreaBounds(bounds)
+    setMapUserMoved(false)
+  }, [])
+
+  const clearAreaFilter = useCallback(() => {
+    setAreaBounds(null)
+    mapHandleRef.current?.refit()
+  }, [])
+
   const clearFilters = () => {
     setFilters({ category: '', region: '', guests: '', check_in: '', check_out: '', instant_book: false, accepts_miluim: false, has_shelter: false, amenity: '' })
     setPriceRange([200, 35000])
@@ -409,8 +525,8 @@ function SearchContent() {
 
         {/* סרגל עליון */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-16 z-40 shadow-sm">
-          <div className="max-w-7xl mx-auto flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none" style={{scrollbarWidth:"none"}}>
-            <div ref={searchRef} className="relative w-64">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3">
+            <div ref={searchRef} className="relative w-full sm:w-64">
               <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
                 <IconSearch className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 <input
@@ -447,8 +563,20 @@ function SearchContent() {
               {activeCount > 0 && <span className="bg-amber-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{activeCount}</span>}
             </button>
             <span aria-live="polite" aria-atomic="true" className="text-sm text-gray-400 mr-auto whitespace-nowrap">
-              {loading ? 'מחפש...' : `${properties.length} נכסים`}
+              {loading ? 'מחפש...' : `${visibleProperties.length} נכסים`}
             </span>
+            {areaBounds && (
+              <button onClick={clearAreaFilter}
+                className="flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-full whitespace-nowrap"
+                style={{ background: '#FEF3C7', color: '#92400E' }}>
+                <IconX className="w-3 h-3" /> אזור מסונן
+              </button>
+            )}
+            <button onClick={() => setShowMap(v => !v)}
+              className={`hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all whitespace-nowrap ${showMap ? 'bg-amber-800 text-white border-amber-800' : 'bg-white text-gray-600 border-gray-200 hover:border-amber-400'}`}>
+              <MapIcon className="w-4 h-4" />
+              {showMap ? 'הסתר מפה' : 'הצג מפה'}
+            </button>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as typeof sortBy)}
@@ -555,15 +683,6 @@ function SearchContent() {
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">מחיר ללילה</span>
                     {(priceRange[0] > 200 || priceRange[1] < 35000) && <span className="mr-auto w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
                   </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{background:'#FEF3C7', color:'#92400E'}}>
-                      ₪{priceRange[0].toLocaleString()}
-                    </span>
-                    <span className="text-gray-300 text-xs mx-1">—</span>
-                    <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{background:'#FEF3C7', color:'#92400E'}}>
-                      ₪{priceRange[1].toLocaleString()}
-                    </span>
-                  </div>
                   <PriceRangeSlider min={200} max={35000} value={priceRange} onChange={setPriceRange} />
                 </div>
               </div>
@@ -663,128 +782,239 @@ function SearchContent() {
           </div>
         )}
 
-        {/* תוצאות */}
+        {/* תוצאות + מפה */}
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
-                  <div className="h-52 bg-gray-100" />
-                  <div className="p-4 space-y-3">
-                    <div className="h-4 bg-gray-100 rounded-lg w-3/4" />
-                    <div className="h-3 bg-gray-100 rounded-lg w-1/2" />
-                    <div className="h-3 bg-gray-100 rounded-lg w-1/3" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : properties.length === 0 ? (
-            <div className="text-center py-24">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <IconSearch className="w-7 h-7 text-gray-300" />
-              </div>
-              <p className="text-gray-500 text-lg font-medium mb-2">לא נמצאו נכסים</p>
-              <p className="text-gray-400 text-sm mb-6">נסה לשנות את הפילטרים</p>
-              <button onClick={clearFilters}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
-                style={{ backgroundColor: '#8B6914' }}>
-                נקה פילטרים
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {properties.map((p) => {
-                const firstImage = p.property_images?.[0]?.url
-                return (
-                  <div key={p.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group relative">
-                    <Link href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`}>
-                      <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
-                        {firstImage ? (
-                          <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
-                        )}
-                        <div className="absolute top-3 right-3 flex flex-col gap-1.5">
-                          {p.instant_book && <span className="bg-white/95 backdrop-blur-sm text-xs font-bold px-2.5 py-1 rounded-full text-amber-700 shadow-sm">⚡ מיידית</span>}
-                          {p.accepts_miluim && <span className="bg-green-600/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">🪖 מילואים</span>}
-                          {p.has_shelter && <span className="bg-orange-400/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">🛡️ מרחב מוגן</span>}
-                        </div>
+          <div className="flex gap-6 items-start">
+            <div className={`min-w-0 flex-1 ${!showMap || mobileView === 'map' ? '' : 'hidden lg:block'}`}>
+              {loading ? (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${showMap ? '' : 'lg:grid-cols-3'} gap-4 sm:gap-6`}>
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
+                      <div className="h-52 bg-gray-100" />
+                      <div className="p-4 space-y-3">
+                        <div className="h-4 bg-gray-100 rounded-lg w-3/4" />
+                        <div className="h-3 bg-gray-100 rounded-lg w-1/2" />
+                        <div className="h-3 bg-gray-100 rounded-lg w-1/3" />
                       </div>
-                      <div className="p-4">
-                        <div className="flex items-start justify-between mb-1.5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs text-gray-400 mb-0.5">{p.city || ({north:"צפון",galil_west:"גליל המערבי",galil_upper:"גליל העליון",galil_lower:"גליל התחתון",kinneret:"כנרת",hermon:"חרמון",center:"מרכז",jerusalem:"ירושלים",dead_sea:"ים המלח",negev:"דרום",eilat:"אילת",golan:"רמת הגולן"} as Record<string,string>)[p.region]}</p>
-                            <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-amber-800 transition-colors truncate">{p.name}</h3>
+                    </div>
+                  ))}
+                </div>
+              ) : properties.length === 0 ? (
+                <div className="text-center py-24">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <IconSearch className="w-7 h-7 text-gray-300" />
+                  </div>
+                  <p className="text-gray-500 text-lg font-medium mb-2">לא נמצאו נכסים</p>
+                  <p className="text-gray-400 text-sm mb-6">נסה לשנות את הפילטרים</p>
+                  <button onClick={clearFilters}
+                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                    style={{ backgroundColor: '#8B6914' }}>
+                    נקה פילטרים
+                  </button>
+                </div>
+              ) : visibleProperties.length === 0 ? (
+                <div className="text-center py-24">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <IconMapPin className="w-7 h-7 text-gray-300" />
+                  </div>
+                  <p className="text-gray-500 text-lg font-medium mb-2">אין נכסים באזור המוצג במפה</p>
+                  <p className="text-gray-400 text-sm mb-6">נסה להזיז את המפה או לנקות את סינון האזור</p>
+                  <button onClick={clearAreaFilter}
+                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                    style={{ backgroundColor: '#8B6914' }}>
+                    נקה סינון אזור
+                  </button>
+                </div>
+              ) : (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${showMap ? '' : 'lg:grid-cols-3'} gap-4 sm:gap-6`}>
+                  {visibleProperties.map((p) => {
+                    const firstImage = p.property_images?.[0]?.url
+                    const isActive = p.id === activePropertyId
+                    const isHovered = p.id === hoveredPropertyId
+                    const hasCoords = isValidCoord(p.lat, p.lng)
+                    return (
+                      <div key={p.id}
+                        ref={el => { cardRefs.current[p.id] = el }}
+                        onMouseEnter={() => setHoveredPropertyId(p.id)}
+                        onMouseLeave={() => setHoveredPropertyId(null)}
+                        className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group relative"
+                        style={(isActive || isHovered) ? { boxShadow: '0 0 0 2.5px #C8960C, 0 8px 20px rgba(139,105,20,0.18)' } : undefined}
+                      >
+                        <Link href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`}>
+                          <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
+                            {firstImage ? (
+                              <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
+                            )}
+                            <div className="absolute top-3 right-3 flex flex-col gap-1.5">
+                              {p.instant_book && <span className="bg-white/95 backdrop-blur-sm text-xs font-bold px-2.5 py-1 rounded-full text-amber-700 shadow-sm">⚡ מיידית</span>}
+                              {p.accepts_miluim && <span className="bg-green-600/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">🪖 מילואים</span>}
+                              {p.has_shelter && <span className="bg-orange-400/95 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">🛡️ מרחב מוגן</span>}
+                            </div>
                           </div>
-                          {p.avg_rating > 0 && (
-                            <div className="flex flex-col items-end gap-0.5 shrink-0 mr-2">
-                              <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
-                                <IconStar className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                <span className="text-xs font-bold text-amber-800">{p.avg_rating}</span>
+                          <div className="p-4">
+                            <div className="flex items-start justify-between mb-1.5">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-400 mb-0.5">{p.city || REGION_LABELS[p.region]}</p>
+                                <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-amber-800 transition-colors truncate">{p.name}</h3>
                               </div>
-                              {p.total_reviews > 0 && (
-                                <span className="text-[10px] text-gray-400">{p.total_reviews} המלצות</span>
+                              {p.avg_rating > 0 && (
+                                <div className="flex flex-col items-end gap-0.5 shrink-0 mr-2">
+                                  <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
+                                    <IconStar className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                    <span className="text-xs font-bold text-amber-800">{p.avg_rating}</span>
+                                  </div>
+                                  {p.total_reviews > 0 && (
+                                    <span className="text-[10px] text-gray-400">{p.total_reviews} המלצות</span>
+                                  )}
+                                </div>
                               )}
                             </div>
-                          )}
-                        </div>
-                        {p.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">{p.short_description}</p>}
+                            {p.short_description && <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">{p.short_description}</p>}
 
-                        {/* מחיר אמצ"ש / סוף"ש */}
-                        {p.price_on_request ? (
-                          <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center mb-3">
-                            <p className="text-sm font-bold text-gray-800">📞 התקשרו לבירור מחיר</p>
-                          </div>
-                        ) : (
-                          <div className="grid grid-cols-2 gap-2 mb-3">
-                            <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center">
-                              <p className="text-[10px] text-gray-400 mb-0.5">אמצ"ש</p>
-                              <p className="text-sm font-bold text-gray-800">₪{p.price_per_night.toLocaleString()}</p>
+                            {/* מחיר אמצ"ש / סוף"ש */}
+                            {p.price_on_request ? (
+                              <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center mb-3">
+                                <p className="text-sm font-bold text-gray-800">📞 התקשרו לבירור מחיר</p>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-2 gap-2 mb-3">
+                                <div className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-center">
+                                  <p className="text-[10px] text-gray-400 mb-0.5">אמצ&quot;ש</p>
+                                  <p className="text-sm font-bold text-gray-800">₪{p.price_per_night.toLocaleString()}</p>
+                                </div>
+                                <div className="bg-amber-50 rounded-lg px-2.5 py-1.5 text-center border border-amber-100">
+                                  <p className="text-[10px] text-amber-500 mb-0.5">סוף שבוע</p>
+                                  <p className="text-sm font-bold text-amber-700">₪{(p.price_weekend || p.price_per_night).toLocaleString()}</p>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="flex items-center justify-between pt-2.5 border-t border-gray-50">
+                              <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">עד {p.max_guests} אורחים</span>
+                              {(p.contact_via_phone_landline && p.phone_landline) ? (
+                                <a
+                                  href={`tel:${p.phone_landline}`}
+                                  onClick={e => e.stopPropagation()}
+                                  className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"
+                                  style={{ backgroundColor: '#4B5563' }}
+                                >
+                                  <IconPhone className="w-3 h-3" />
+                                  חייג
+                                </a>
+                              ) : (p.contact_via_whatsapp1 && p.whatsapp1) ? (
+                                <a
+                                  href={buildWhatsAppLink(p.whatsapp1)}
+                                  target="_blank" rel="noopener noreferrer"
+                                  onClick={e => e.stopPropagation()}
+                                  className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"
+                                  style={{ backgroundColor: '#25D366' }}
+                                >
+                                  <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.826L.057 23.886l6.232-1.638A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.893 9.893 0 01-5.032-1.37l-.361-.214-3.741.981.999-3.648-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106c5.42 0 9.894 4.474 9.894 9.894 0 5.42-4.474 9.894-9.894 9.894z"/></svg>
+                                  וואטסאפ
+                                </a>
+                              ) : null}
                             </div>
-                            <div className="bg-amber-50 rounded-lg px-2.5 py-1.5 text-center border border-amber-100">
-                              <p className="text-[10px] text-amber-500 mb-0.5">סוף שבוע</p>
-                              <p className="text-sm font-bold text-amber-700">₪{(p.price_weekend || p.price_per_night).toLocaleString()}</p>
-                            </div>
                           </div>
+                        </Link>
+                        <button onClick={() => toggle(p.id)}
+                          className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110">
+                          <IconHeart className={`w-4 h-4 transition-colors ${isLiked(p.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                        </button>
+                        {hasCoords && showMap && (
+                          <button
+                            onClick={e => { e.preventDefault(); e.stopPropagation(); setActivePropertyId(p.id) }}
+                            aria-label="הצג את הנכס במפה"
+                            title="הצג במפה"
+                            className="hidden lg:flex absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110 items-center justify-center"
+                          >
+                            <IconMapPin className="w-4 h-4 text-amber-700" />
+                          </button>
                         )}
-
-                        <div className="flex items-center justify-between pt-2.5 border-t border-gray-50">
-                          <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">עד {p.max_guests} אורחים</span>
-                          {(p.contact_via_phone_landline && p.phone_landline) ? (
-                            <a
-                              href={`tel:${p.phone_landline}`}
-                              onClick={e => e.stopPropagation()}
-                              className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"
-                              style={{ backgroundColor: '#4B5563' }}
-                            >
-                              <IconPhone className="w-3 h-3" />
-                              חייג
-                            </a>
-                          ) : (p.contact_via_whatsapp1 && p.whatsapp1) ? (
-                            <a
-                              href={buildWhatsAppLink(p.whatsapp1)}
-                              target="_blank" rel="noopener noreferrer"
-                              onClick={e => e.stopPropagation()}
-                              className="flex items-center gap-1 text-xs font-bold text-white px-2.5 py-1 rounded-lg transition-colors"
-                              style={{ backgroundColor: '#25D366' }}
-                            >
-                              <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.826L.057 23.886l6.232-1.638A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.893 9.893 0 01-5.032-1.37l-.361-.214-3.741.981.999-3.648-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106c5.42 0 9.894 4.474 9.894 9.894 0 5.42-4.474 9.894-9.894 9.894z"/></svg>
-                              וואטסאפ
-                            </a>
-                          ) : null}
-                        </div>
                       </div>
-                    </Link>
-                    <button onClick={() => toggle(p.id)}
-                      className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110">
-                      <IconHeart className={`w-4 h-4 transition-colors ${isLiked(p.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-                    </button>
-                  </div>
-                )
-              })}
+                    )
+                  })}
+                </div>
+              )}
             </div>
-          )}
+
+            {/* מפה — דסקטופ */}
+            {showMap && (
+              <div className="hidden lg:block shrink-0 sticky self-start" style={{ width: '42%', top: '104px', height: 'calc(100vh - 140px)' }}>
+                <MapErrorBoundary>
+                  <SearchMap
+                    ref={mapHandleRef}
+                    properties={mapMarkers}
+                    activeId={activePropertyId}
+                    hoveredId={hoveredPropertyId}
+                    onMarkerClick={setActivePropertyId}
+                    onMarkerHover={setHoveredPropertyId}
+                    onUserMoved={setMapUserMoved}
+                  />
+                </MapErrorBoundary>
+                {!loading && properties.length > 0 && geoProperties.length === 0 && (
+                  <div className="absolute inset-x-4 top-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 text-center shadow-sm">
+                    אין נכסים עם מיקום מדויק להצגה במפה כרגע
+                  </div>
+                )}
+                {mapUserMoved && (
+                  <button
+                    onClick={handleSearchThisArea}
+                    className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-lg transition-transform hover:scale-105"
+                    style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}
+                  >
+                    <IconSearch className="w-3.5 h-3.5" /> חפש באזור זה
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* מפה — מובייל, מסך מלא */}
+        {mobileView === 'map' && (
+          <div className="lg:hidden fixed inset-x-0 bottom-0 z-50" style={{ top: '64px' }}>
+            <div className="relative w-full h-full">
+              <MapErrorBoundary>
+                <SearchMap
+                  ref={mapHandleRef}
+                  properties={mapMarkers}
+                  activeId={activePropertyId}
+                  hoveredId={hoveredPropertyId}
+                  onMarkerClick={id => { setActivePropertyId(id); setMobileView('list') }}
+                  onUserMoved={setMapUserMoved}
+                />
+              </MapErrorBoundary>
+              {!loading && properties.length > 0 && geoProperties.length === 0 && (
+                <div className="absolute inset-x-4 top-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 text-center shadow-sm">
+                  אין נכסים עם מיקום מדויק להצגה במפה כרגע
+                </div>
+              )}
+              {mapUserMoved && (
+                <button
+                  onClick={handleSearchThisArea}
+                  className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold text-white shadow-lg"
+                  style={{ background: 'linear-gradient(135deg,#C8960C,#8B6914)' }}
+                >
+                  <IconSearch className="w-3.5 h-3.5" /> חפש באזור זה
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* כפתור מעבר רשימה/מפה — מובייל */}
+        {!loading && properties.length > 0 && (
+          <button
+            onClick={() => setMobileView(v => v === 'list' ? 'map' : 'list')}
+            aria-label={mobileView === 'list' ? 'עבור לתצוגת מפה' : 'עבור לתצוגת רשימה'}
+            className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-white shadow-xl"
+            style={{ background: '#111827' }}
+          >
+            {mobileView === 'list' ? <><MapIcon className="w-4 h-4" /> מפה</> : <><ListIcon className="w-4 h-4" /> רשימה</>}
+          </button>
+        )}
       </main>
     </>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import 'leaflet/dist/leaflet.css'
 
 type MapPin = {
   lat: number; lng: number; name: string
@@ -63,7 +64,6 @@ export default function IsraelMap({ pins }: { pins: MapPin[] }) {
 
   return (
     <div className="relative">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
       <div ref={containerRef} />
       <div className="flex items-center gap-4 mt-3 justify-center">
         {[

@@ -217,7 +217,7 @@ function DateRangePicker({ checkIn, checkOut, onChange, onClear }: {
       <label className="label">בחירת תאריכים</label>
       <button ref={btnRef} type="button"
         onClick={() => setOpen(v => !v)}
-        className="w-full text-sm text-right outline-none flex items-center justify-between gap-1"
+        className="w-full text-sm text-right outline-none flex items-center justify-between gap-1 py-2.5 -my-2.5 min-h-11"
         style={{ color: hasSelection ? '#374151' : '#9ca3af', fontWeight: hasSelection ? '600' : '400' }}>
         <span>{label}</span>
         {hasSelection && (
@@ -330,7 +330,7 @@ function Drop({ id, open, setOpen, label, value, options, onChange }: {
   return (
     <div>
       <button ref={btnRef} type="button" onClick={(e) => { e.stopPropagation(); setOpen(isOpen ? null : id) }}
-        className="w-full text-sm text-right text-charcoal font-medium flex items-center justify-between gap-1 outline-none">
+        className="w-full text-sm text-right text-charcoal font-medium flex items-center justify-between gap-1 outline-none py-2.5 -my-2.5 min-h-11">
         <span className={!value ? 'text-gray-400' : ''}>{selected?.label || label}</span>
         <span className="text-gold text-xs" style={{display:'inline-block', transition:'transform 0.15s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'}}>▾</span>
       </button>

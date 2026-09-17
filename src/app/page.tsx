@@ -116,7 +116,7 @@ export default function HomePage() {
                 <a
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105"
+                  className="flex items-center gap-1.5 px-3.5 rounded-full text-xs font-semibold transition-all hover:scale-105 min-h-10"
                   style={{
                     background: 'rgba(255,255,255,0.92)',
                     boxShadow: '0 2px 10px rgba(61,47,32,0.12)',

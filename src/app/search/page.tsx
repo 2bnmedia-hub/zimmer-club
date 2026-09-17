@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 import { IconSearch, IconMapPin, IconCalendar, IconUsers, IconHome, IconChevronDown, IconChevronUp, IconChevronLeft, IconChevronRight, IconStar, IconHeart, IconUser, IconPhone, IconGlobe, IconNavigation, IconArrowRight, IconZap, IconEye, IconEyeOff, IconUpload, IconTrash, IconEdit, IconPlus, IconCheck, IconMail, IconSend, IconRefresh, IconSparkles, IconBed, IconBath, IconTrendingUp, IconLoader, IconCamera, IconSave, IconAlertCircle, IconCheckCircle, IconClock, IconSliders, IconPencil, IconQr, IconShare, IconDownload, IconZoomIn, IconZoomOut, IconLogOut, IconSettings, IconMenu, IconX, IconShield, IconMedal, IconPriceTag, IconTarget } from '@/components/icons'
 import { Heart, Map as MapIcon } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
-import { AMENITY_LABELS, AUDIENCE_AMENITIES, FEATURE_AMENITIES } from '@/lib/constants'
+import { AMENITY_LABELS, AUDIENCE_AMENITIES, FEATURE_AMENITIES, REGIONS } from '@/lib/constants'
 import { buildWhatsAppLink } from '@/lib/utils'
 import type { MapProperty, MapBounds, SearchMapHandle } from '@/components/search/SearchMap'
 
@@ -553,6 +553,11 @@ function SearchContent() {
       <main className="min-h-screen bg-[#FAF7F2] pt-4" dir="rtl">
       {!mapFullscreen && (
       <>
+        <h1 className="sr-only">
+          {filters.region && REGIONS[filters.region as keyof typeof REGIONS]
+            ? `חיפוש צימרים, וילות ונכסי נופש ב${REGIONS[filters.region as keyof typeof REGIONS].label}`
+            : 'חיפוש צימרים, וילות ובתי אירוח בישראל'}
+        </h1>
         {/* סרגל עליון */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-16 z-40 shadow-sm">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-2 sm:gap-3">

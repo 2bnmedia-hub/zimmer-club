@@ -61,7 +61,6 @@ export async function POST(req: Request) {
   if (!url.startsWith(prefix) || url.endsWith('_h264.mp4') || url.includes('..')) {
     return NextResponse.json({ ok: false, error: 'invalid source' }, { status: 400 })
   }
-  const storagePath = decodeURIComponent(url.slice(prefix.length))
 
   let sandbox: Sandbox | null = null
   try {
@@ -108,7 +107,9 @@ export async function POST(req: Request) {
 
     const outputBuffer = await sandbox.fs.readFile('/tmp/output.mp4')
 
-    const newPath = storagePath.replace(/\.[^./]+$/, '') + '_h264.mp4'
+    // Output path comes from trusted ids only, so a crafted source URL can't make the
+    // service-role upsert overwrite another listing's file.
+    const newPath = `${parentId}/${id}_h264.mp4`
     const { error: upErr } = await supabase.storage.from(bucket).upload(newPath, outputBuffer, {
       contentType: 'video/mp4',
       upsert: true,

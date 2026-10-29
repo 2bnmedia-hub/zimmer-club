@@ -56,7 +56,7 @@ for (const path of ['/auth/login', '/auth/register', '/advertise', '/privacy']) 
 }
 
 test('auth callback never redirects off-site', async ({ request }) => {
-  for (const target of ['https://evil.example', '//evil.example', '/\\evil.example']) {
+  for (const target of ['https://evil.example', '//evil.example', '/\\evil.example', '/\t/evil.example']) {
     const res = await request.get(`/auth/callback?redirect=${encodeURIComponent(target)}`, { maxRedirects: 0 })
     expect(res.status()).toBe(307)
     expect(new URL(res.headers()['location'], 'http://x').host, target).not.toBe('evil.example')

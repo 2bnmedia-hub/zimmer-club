@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import { safeJsonLd } from '@/lib/utils'
 import { Navbar } from '@/components/layout/Navbar'
@@ -10,6 +11,9 @@ import { FeaturedAttractions } from '@/components/FeaturedAttractions'
 import { FeaturedCaravans } from '@/components/FeaturedCaravans'
 import { GlobalSearch } from '@/components/search/GlobalSearch'
 import { IconHeart, IconUsers, IconBuilding, IconPawPrint, IconWaves, IconBath, IconShield, IconCalendar, IconSunset, IconSparkles, IconZap } from '@/components/icons'
+
+// Canonical lives here, not in the root layout, so other pages don't inherit the home URL.
+export const metadata: Metadata = { alternates: { canonical: 'https://www.zimmer.club' } }
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',

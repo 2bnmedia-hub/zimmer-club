@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'אודות zimmer.club — הסיפור שלנו',
   description: 'zimmer.club נוצרה מתוך אמונה שישראלים ראויים לחופשה שמתחילה ברגע שמוצאים אותה. צימרים, וילות, קרוואנים ואטרקציות — במקום אחד, ללא עמלות.',
   alternates: { canonical: 'https://www.zimmer.club/about' },
-  openGraph: {
+  openGraph: { images: ['https://www.zimmer.club/opengraph-image'],
     title: 'אודות zimmer.club',
     description: 'הסיפור מאחורי פלטפורמת האירוח המובילה בישראל.',
     url: 'https://www.zimmer.club/about',
@@ -91,12 +91,12 @@ export default function AboutPage() {
         </div>
         <div className="bg-[#F5EDD6] rounded-2xl p-6 md:p-10 text-center border border-[#8B6914]/15">
           <div className="text-5xl md:text-6xl font-bold text-[#8B6914] leading-none">1,000+</div>
-          <div className="text-sm text-[#9A8060] mt-1 mb-6">נכסים ברחבי ישראל</div>
+          <div className="text-sm text-[#7A6448] mt-1 mb-6">נכסים ברחבי ישראל</div>
           <div className="grid grid-cols-2 gap-3">
             {[{ num: '₪0', label: 'עמלת הזמנה' }, { num: '100%', label: 'קשר ישיר' }, { num: '4', label: 'סוגי אירוח' }, { num: '24/7', label: 'סוכן AI' }].map(s => (
               <div key={s.label} className="bg-white rounded-xl p-3 border border-[#8B6914]/10">
                 <span className="text-2xl font-bold text-[#8B6914] block">{s.num}</span>
-                <span className="text-xs text-[#9A8060]">{s.label}</span>
+                <span className="text-xs text-[#7A6448]">{s.label}</span>
               </div>
             ))}
           </div>
@@ -162,9 +162,9 @@ export default function AboutPage() {
             <p className="text-sm text-[#5C4A28] max-w-sm mx-auto">שמרו 100% מהתשלום מהאורח</p>
           </div>
           <div className="rounded-2xl p-8 bg-white border border-[#8B6914]/15">
-            <p className="text-[10px] font-medium tracking-[2px] uppercase mb-2 text-[#9A8060]">פרסום באתר</p>
+            <p className="text-[10px] font-medium tracking-[2px] uppercase mb-2 text-[#7A6448]">פרסום באתר</p>
             <div className="text-4xl font-bold mb-1 text-[#2C2418]">חינם</div>
-            <p className="text-xs mb-4 text-[#9A8060]">ללא עלות, לתמיד</p>
+            <p className="text-xs mb-4 text-[#7A6448]">ללא עלות, לתמיד</p>
             <div className="h-px mb-4 bg-[#8B6914]/12" />
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
               {included.map(f => (
@@ -191,7 +191,7 @@ export default function AboutPage() {
             &ldquo;ישראל יפה מדי מכדי לבלות אותה בצימר הלא נכון.<br />
             אנחנו כאן כדי שזה <strong className="font-bold text-[#8B6914] not-italic">לא יקרה לכם.</strong>&rdquo;
           </p>
-          <p className="text-xs text-[#9A8060] tracking-wider">— הצוות של zimmer.club</p>
+          <p className="text-xs text-[#7A6448] tracking-wider">— הצוות של zimmer.club</p>
         </div>
       </div>
 
@@ -209,7 +209,7 @@ export default function AboutPage() {
             <Link href="/search" className="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-full bg-[#8B6914] text-white text-sm font-bold min-h-[44px]">גלו נכסים <IconChevronLeft size={13} color="#fff" /></Link>
           </div>
           <div className="bg-[#F5EDD6] rounded-2xl p-6 md:p-8 border border-[#8B6914]/20">
-            <p className="text-[10px] font-medium tracking-[2px] uppercase text-[#9A8060] mb-2">לבעלי נכסים</p>
+            <p className="text-[10px] font-medium tracking-[2px] uppercase text-[#7A6448] mb-2">לבעלי נכסים</p>
             <h3 className="text-lg md:text-xl font-bold text-[#2C2418] mb-3 leading-snug">הנכס שלכם ראוי לקהל שיעריך אותו</h3>
             <p className="text-sm text-[#5C4A28] leading-relaxed mb-5">צימר, וילה, קרוואן או אטרקציה — פרסמו, קבלו הזמנות ישירות, ושמרו 100% מהתשלום. מתחילים חינם.</p>
             <Link href="/dashboard/properties/new" className="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-full border-2 border-[#8B6914] text-[#8B6914] text-sm font-bold min-h-[44px]">פרסמו את הנכס שלכם <IconChevronLeft size={13} /></Link>

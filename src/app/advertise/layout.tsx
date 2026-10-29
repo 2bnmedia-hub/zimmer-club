@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: 'פרסמו את הנכס שלכם',
   description: 'הצטרפו לרשת הצימרים, הוילות והנכסים המובילה בישראל. פרסמו חינם, קבלו חשיפה לאלפי מטיילים בכל חודש, ושמרו 100% מהתשלום.',
   alternates: { canonical: 'https://www.zimmer.club/advertise' },
-  openGraph: {
+  openGraph: { images: ['https://www.zimmer.club/opengraph-image'],
     title: 'פרסמו את הנכס ב-zimmer.club',
     description: 'הצטרפו לפלטפורמת האירוח המובילה בישראל. הרשמה פשוטה ומהירה.',
     url: 'https://www.zimmer.club/advertise',

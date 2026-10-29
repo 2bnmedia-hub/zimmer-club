@@ -35,7 +35,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'zimmer.club' }],
   creator: 'zimmer.club',
-  alternates: { canonical: 'https://www.zimmer.club' },
   openGraph: {
     type: 'website',
     locale: 'he_IL',

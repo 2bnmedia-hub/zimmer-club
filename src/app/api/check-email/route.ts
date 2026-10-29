@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
       { email_input: normalized }
     )
     if (!rpcError) {
-      console.log(`[check-email] RPC result for ${normalized}: ${rpcResult}`)
       return NextResponse.json({ exists: rpcResult === true })
     }
     console.log(`[check-email] RPC not available (${rpcError.message}), falling back to listUsers`)
@@ -44,9 +43,7 @@ export async function POST(req: NextRequest) {
     }
 
     const users = listData?.users ?? []
-    console.log(`[check-email] listUsers returned ${users.length} users, searching for ${normalized}`)
     const found = users.some(u => u.email?.toLowerCase() === normalized)
-    console.log(`[check-email] found=${found}`)
     return NextResponse.json({ exists: found })
 
   } catch (err) {

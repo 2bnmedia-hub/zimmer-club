@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     'israel attractions', 'things to do in israel',
   ],
   alternates: { canonical: 'https://www.zimmer.club/attractions' },
-  openGraph: { title: 'אטרקציות תיירותיות בישראל | zimmer.club', description: 'פעילויות, אטרקציות ויעדי בילוי ברחבי ישראל — לזוגות, משפחות וחברים.', url: 'https://www.zimmer.club/attractions', locale: 'he_IL', type: 'website' },
+  openGraph: { images: ['https://www.zimmer.club/opengraph-image'], title: 'אטרקציות תיירותיות בישראל | zimmer.club', description: 'פעילויות, אטרקציות ויעדי בילוי ברחבי ישראל — לזוגות, משפחות וחברים.', url: 'https://www.zimmer.club/attractions', locale: 'he_IL', type: 'website' },
 }
 
 export default function AttractionsLayout({ children }: { children: React.ReactNode }) {

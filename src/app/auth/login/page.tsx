@@ -46,7 +46,7 @@ function PasswordInput({ id, name, value, onChange, placeholder }: {
         type="button"
         onClick={handleToggle}
         aria-label={show ? 'הסתר סיסמה' : 'הצג סיסמה'}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
       >
         {show ? <IconEyeOff className="w-4 h-4" aria-hidden="true" /> : <IconEye className="w-4 h-4" aria-hidden="true" />}
       </button>
@@ -115,7 +115,10 @@ function LoginContent() {
 
   const handleForgotPassword = async () => {
     if (!form.email) { setError('הכנס אימייל כדי לאפס סיסמה'); return }
-    await supabase.auth.resetPasswordForEmail(form.email)
+    // Reset link must land on /auth/callback (exchanges the code); the cookie then sends the
+    // signed-in user to the profile page, where a new password can be set.
+    document.cookie = 'pending_redirect=/dashboard/profile; path=/; max-age=3600; SameSite=Lax'
+    await supabase.auth.resetPasswordForEmail(form.email, { redirectTo: `${window.location.origin}/auth/callback` })
     setSuccess('נשלח אימייל לאיפוס סיסמה — בדוק את תיבת הדואר שלך')
     setError('')
   }
@@ -124,7 +127,7 @@ function LoginContent() {
     <div className="min-h-screen bg-gray-50 flex items-start justify-center px-4 pt-8" dir="rtl">
       <div className="bg-white rounded-2xl p-8 shadow-sm max-w-md w-full">
         <div className="text-center mb-8">
-          <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={400} height={160} className="h-12 w-auto mx-auto mb-4" priority /></Link>
+          <Link href="/"><Image src="/logo.png" alt="Zimmer Club" width={400} height={160} sizes="120px" className="h-12 w-auto mx-auto mb-4" priority /></Link>
           <h1 className="text-2xl font-bold text-gray-900">כניסה לחשבון</h1>
           <p className="text-sm text-gray-500 mt-1">ברוך השב!</p>
         </div>

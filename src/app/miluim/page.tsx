@@ -5,9 +5,10 @@ import { createClient } from '@/lib/supabase/server'
 import { IconChevronLeft } from '@/components/icons'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.zimmer.club/miluim' },
   title: 'שובר מילואים — נופש לחיילי מילואים | zimmer.club',
   description: 'צימרים ווילות המקבלים שובר מילואים. הזמינו נופש עם שובר מילואים ברחבי ישראל — צפון, גולן, ים המלח ועוד.',
-  openGraph: {
+  openGraph: { images: ['https://www.zimmer.club/opengraph-image'],
     title: 'שובר מילואים | zimmer.club',
     description: 'נכסי נופש המקבלים שובר מילואים — הזמנה ישירה ללא עמלה.',
     locale: 'he_IL',

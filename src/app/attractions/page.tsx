@@ -226,7 +226,7 @@ function AttractionsContent() {
                         </div>
                       </div>
                     </Link>
-                    <button onClick={() => toggle(a.id)}
+                    <button onClick={() => toggle(a.id)} aria-label={isLiked(a.id) ? 'הסר מהמועדפים' : 'הוסף למועדפים'} aria-pressed={isLiked(a.id)}
                       className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110">
                       <IconHeart className={`w-4 h-4 transition-colors ${isLiked(a.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
                     </button>

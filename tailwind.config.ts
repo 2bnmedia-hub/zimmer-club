@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Assistant', 'sans-serif'],
+        sans: ['var(--font-assistant)', 'Assistant', 'sans-serif'],
       },
       colors: {
         cream: {
@@ -25,7 +25,7 @@ const config: Config = {
           300: '#C4B89A',
         },
         taupe: {
-          DEFAULT: '#8C7B65',
+          DEFAULT: '#756652', // was #8C7B65 — WCAG AA contrast
           light: '#A09080',
           dark: '#6A5A48',
         },

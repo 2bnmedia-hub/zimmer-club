@@ -1,7 +1,4 @@
 @import "animate.css";
-@import url('https://fonts.googleapis.com/css2?family=Gveret+Levin&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -33,7 +30,7 @@
   --warm-white: #FFFDF9;
   --sand: #EDE5D8;
   --stone: #C8B99A;
-  --taupe: #8C7B65;
+  --taupe: #756652; /* was #8C7B65 (4.08:1) — darkened for WCAG AA */
   --espresso: #3D2F20;
   --charcoal: #1E1A16;
 
@@ -47,7 +44,7 @@
   --sage-light: #4A9B6F;
   --sage-dark: #1B5E3B;
 
-  --text-muted: #9A8E80;
+  --text-muted: #7A6D5F; /* was #9A8E80 (3.2:1) — darkened for WCAG AA */
   --radius: 16px;
   --radius-sm: 10px;
   --radius-lg: 24px;
@@ -60,7 +57,7 @@
 }
 
 html {
-  font-family: 'Assistant', sans-serif;
+  font-family: var(--font-assistant), 'Assistant', sans-serif; /* self-hosted via next/font in layout.tsx */
   direction: rtl;
   background-color: var(--cream);
   color: var(--charcoal);
@@ -518,3 +515,7 @@ input[type="date"] {
     animation: none !important;
   }
 }
+
+/* WCAG AA: gray-400 text (#9CA3AF) is 2.5:1 on white; used for ~250 secondary labels.
+   Text-only override (borders/backgrounds keep gray-400). */
+.text-gray-400 { color: #6B7280; }

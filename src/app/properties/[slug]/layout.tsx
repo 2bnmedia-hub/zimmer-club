@@ -1,20 +1,24 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { safeJsonLd } from '@/lib/utils'
+import { safeJsonLd, slugOrIdFilter } from '@/lib/utils'
 
 type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
+  const filter = slugOrIdFilter(slug)
+  if (!filter) notFound()
   const supabase = await createClient()
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('properties')
     .select('id, name, short_description, description, city, slug')
-    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .or(filter)
     .single()
 
-  if (!data) return {}
+  // No row (PGRST116) = real 404; other errors (DB down) keep the page up without metadata.
+  if (!data) { if (error?.code === 'PGRST116') notFound(); return {} }
 
   const { data: imgData } = await supabase
     .from('property_images')
@@ -23,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .order('order')
     .limit(1)
 
-  const imageUrl = imgData?.[0]?.url || 'https://www.zimmer.club/og-image.png'
+  const imageUrl = imgData?.[0]?.url || 'https://www.zimmer.club/opengraph-image'
   const title = `${data.name} — צימר ב${data.city || 'ישראל'}`
   const description = data.short_description || data.description?.slice(0, 160) || 'צימר יוקרה בישראל'
   const canonical = `https://www.zimmer.club/properties/${data.slug || data.id}`
@@ -58,12 +62,14 @@ export default async function PropertyLayout({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+  const filter = slugOrIdFilter(slug)
+  if (!filter) notFound()
   const supabase = await createClient()
 
   const { data: property } = await supabase
     .from('properties')
     .select('id, name, description, short_description, city, price_per_night, avg_rating, total_reviews, slug')
-    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .or(filter)
     .single()
 
   if (!property) return <>{children}</>

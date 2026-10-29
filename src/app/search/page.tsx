@@ -244,6 +244,7 @@ function SearchContent() {
 
   async function fetchSuggestions(q: string) {
     if (q.length < 2) { setSuggestions([]); return }
+    q = q.replace(/[,()"\\]/g, ' ') // PostgREST .or() separators — a comma in the query broke the filter
     const { data } = await supabase
       .from('properties')
       .select('id, name, city, category')
@@ -614,6 +615,7 @@ function SearchContent() {
               {showMap ? 'הסתר מפה' : 'הצג מפה'}
             </button>
             <select
+              aria-label="מיון תוצאות"
               value={sortBy}
               onChange={e => setSortBy(e.target.value as typeof sortBy)}
               className="text-sm border border-gray-200 rounded-xl px-3 py-2 text-gray-600 outline-none focus:border-amber-400 bg-white whitespace-nowrap"
@@ -863,7 +865,7 @@ function SearchContent() {
                 </div>
               ) : (
                 <div className={`grid grid-cols-1 sm:grid-cols-2 ${showMap ? '' : 'lg:grid-cols-3'} gap-4 sm:gap-6`}>
-                  {visibleProperties.map((p) => {
+                  {visibleProperties.map((p, idx) => {
                     const firstImage = p.property_images?.[0]?.url
                     const isActive = p.id === activePropertyId
                     const isHovered = p.id === hoveredPropertyId
@@ -879,7 +881,7 @@ function SearchContent() {
                         <Link href={p.slug ? `/properties/${p.slug}` : `/property/${p.id}`}>
                           <div className="h-48 sm:h-52 bg-gray-100 relative overflow-hidden">
                             {firstImage ? (
-                              <Image src={firstImage} alt={p.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                              <Image src={firstImage} alt={p.name} fill priority={idx === 0} sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-sm">אין תמונה</div>
                             )}
@@ -954,7 +956,7 @@ function SearchContent() {
                             </div>
                           </div>
                         </Link>
-                        <button onClick={() => toggle(p.id)}
+                        <button onClick={() => toggle(p.id)} aria-label={isLiked(p.id) ? 'הסר מהמועדפים' : 'הוסף למועדפים'} aria-pressed={isLiked(p.id)}
                           className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110">
                           <IconHeart className={`w-4 h-4 transition-colors ${isLiked(p.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
                         </button>

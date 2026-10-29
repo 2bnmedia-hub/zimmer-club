@@ -49,7 +49,7 @@ export function GlobalSearch() {
       setOpen(false)
       return
     }
-    const q = `%${debounced}%`
+    const q = `%${debounced.replace(/[,()"\\]/g, ' ')}%` // PostgREST .or() separators
     setLoading(true)
 
     Promise.all([

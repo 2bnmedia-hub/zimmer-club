@@ -14,9 +14,9 @@ export default function HotelsPage() {
         style={{ backgroundColor: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(8px)' }}
       >
         <div className="w-16 h-1 rounded-full mx-auto mb-8" style={{ backgroundColor: '#8B6914' }} />
-        <p className="font-bold text-gray-800 leading-relaxed" style={{ fontSize: '1.8rem' }}>
+        <h1 className="font-bold text-gray-800 leading-relaxed" style={{ fontSize: '1.8rem' }}>
           מערכת ההזמנות המלונאית נמצאת כרגע בשדרוג
-        </p>
+        </h1>
         <p className="mt-3 text-gray-500" style={{ fontSize: '1.2rem' }}>
           עמכם הסליחה
         </p>

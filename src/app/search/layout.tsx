@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     'צימרים לזוגות', 'צימרים למשפחות', 'נופש רומנטי', 'נופש סוף שבוע',
   ],
   alternates: { canonical: 'https://www.zimmer.club/search' },
-  openGraph: {
+  openGraph: { images: ['https://www.zimmer.club/opengraph-image'],
     title: 'חיפוש צימרים בישראל | zimmer.club',
     description: 'מאות צימרים ווילות בכל רחבי הארץ — גליל, גולן, ים המלח, נגב ועוד.',
     url: 'https://www.zimmer.club/search',

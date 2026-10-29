@@ -187,8 +187,18 @@ function buildSystemPrompt(gender: 'male' | 'female', resultCount: number, hasSe
 
 /* ── Handler ── */
 export async function POST(req: NextRequest) {
-  const { messages, gender = 'male' } = await req.json()
-  const lastMsg: string = messages[messages.length - 1]?.content ?? ''
+  let body: any
+  try { body = await req.json() } catch {
+    return NextResponse.json({ reply: 'שגיאה — נסה שוב 😊' }, { status: 400 })
+  }
+  // Only user/assistant text reaches the LLM: blocks injected "system" turns and caps cost per call.
+  const messages = (Array.isArray(body?.messages) ? body.messages : [])
+    .filter((m: any) => (m?.role === 'user' || m?.role === 'assistant') && typeof m?.content === 'string')
+    .slice(-12)
+    .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) }))
+  if (!messages.length) return NextResponse.json({ reply: 'שגיאה — נסה שוב 😊' }, { status: 400 })
+  const gender = body?.gender === 'female' ? 'female' : 'male'
+  const lastMsg: string = messages[messages.length - 1].content
 
   const detectedGender = detectGenderChange(lastMsg)
   const effectiveGender: 'male' | 'female' = detectedGender ?? gender
@@ -203,15 +213,13 @@ export async function POST(req: NextRequest) {
 
   const systemPrompt = buildSystemPrompt(effectiveGender, results.length, intent.type !== null)
 
-  // Strip non-text fields before sending to LLM
-  const groqMessages = messages.map((m: any) => ({ role: m.role, content: m.content }))
 
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.GROQ_API_KEY}` },
     body: JSON.stringify({
       model: 'openai/gpt-oss-120b',
-      messages: [{ role: 'system', content: systemPrompt }, ...groqMessages],
+      messages: [{ role: 'system', content: systemPrompt }, ...messages],
       max_tokens: 220,
       temperature: 0.4,
       reasoning_effort: 'low',

@@ -129,3 +129,12 @@ export function safeJsonLd(data: unknown): string {
     .replace(/>/g, '\\u003e')
     .replace(/&/g, '\\u0026')
 }
+
+// PostgREST `.or()` filter for a URL slug-or-id. The slug comes straight from the URL, so
+// anything outside letters/digits/-/_/%/. is rejected (commas/parens would inject filters),
+// and the id branch is only added for real UUIDs (a non-UUID id.eq makes PostgREST 400).
+export function slugOrIdFilter(slug: string): string | null {
+  if (!/^[\p{L}\p{N}_%.-]{1,200}$/u.test(slug)) return null
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
+  return isUuid ? `slug.eq.${slug},id.eq.${slug}` : `slug.eq.${slug}`
+}

@@ -98,6 +98,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [customActivity, setCustomActivity] = useState('')
   const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(defaultWeeklyHours())
+  const [isAdmin, setIsAdmin] = useState(false)
   const [form, setForm] = useState({
     name: '', short_description: '', description: '', region: '', city: '',
     address: '', price_per_person: '', min_age: '', max_age: '',
@@ -111,6 +112,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
 
       const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
       const isAdmin = profile?.role === 'admin'
+      setIsAdmin(isAdmin)
 
       const { data: attraction, error: fetchError } = await supabase
         .from('attractions').select('*').eq('id', id).single()
@@ -259,7 +261,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
       activity_type: allTypes, opening_hours: JSON.stringify(weeklyHours),
       notes: form.notes, phone: form.phone, whatsapp: form.whatsapp,
       email: form.email, website: form.website, video_url: form.video_url || null,
-      status: form.status, updated_at: new Date().toISOString(),
+      ...(isAdmin && { status: form.status }), updated_at: new Date().toISOString(),
     }).eq('id', id)
 
     if (updateError) { setError(updateError.message); setLoading(false); return }
@@ -460,7 +462,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          {isAdmin && <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-3">סטטוס</h2>
             <select name="status" value={form.status} onChange={handleChange}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600">
@@ -468,7 +470,7 @@ export default function EditAttractionPage({ params }: { params: { id: string } 
               <option value="active">פעיל</option>
               <option value="inactive">לא פעיל</option>
             </select>
-          </div>
+          </div>}
 
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <h2 className="font-bold text-gray-700 text-lg mb-1">תמונות</h2>

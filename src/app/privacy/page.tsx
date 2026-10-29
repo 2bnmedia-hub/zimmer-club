@@ -69,7 +69,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-3">7. זכויות המשתמש</h2>
-            <p className="text-sm">יש לכם זכות לעיין במידע האישי שלכם, לתקנו, או לבקש מחיקתו. לפנייה: <a href="mailto:zimmer.club.israel@gmail.com" className="text-amber-700 hover:underline">zimmer.club.israel@gmail.com</a></p>
+            <p className="text-sm">יש לכם זכות לעיין במידע האישי שלכם, לתקנו, או לבקש מחיקתו. לפנייה: <a href="mailto:zimmer.club.israel@gmail.com" className="text-amber-700 underline">zimmer.club.israel@gmail.com</a></p>
           </section>
 
           <section>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-3">9. יצירת קשר</h2>
-            <p className="text-sm">לשאלות בנושא פרטיות: <a href="mailto:zimmer.club.israel@gmail.com" className="text-amber-700 hover:underline">zimmer.club.israel@gmail.com</a></p>
+            <p className="text-sm">לשאלות בנושא פרטיות: <a href="mailto:zimmer.club.israel@gmail.com" className="text-amber-700 underline">zimmer.club.israel@gmail.com</a></p>
           </section>
         </div>
       </div>

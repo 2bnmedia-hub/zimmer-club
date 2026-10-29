@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
 import { Sandbox } from '@vercel/sandbox'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createUserClient } from '@/lib/supabase/server'
 
 export const maxDuration = 300
 
 const ALLOWED_TABLES = ['property_videos', 'caravan_videos', 'attraction_videos'] as const
 type AllowedTable = (typeof ALLOWED_TABLES)[number]
+
+// Bucket, parent table and FK are fixed per video table — never taken from the request,
+// so a caller can't point the service-role upload/update at another bucket or row.
+const TABLE_META: Record<AllowedTable, { bucket: string; parent: string; fk: string }> = {
+  property_videos:   { bucket: 'property-images',   parent: 'properties',  fk: 'property_id' },
+  caravan_videos:    { bucket: 'caravan-images',    parent: 'caravans',    fk: 'caravan_id' },
+  attraction_videos: { bucket: 'attraction-images', parent: 'attractions', fk: 'attraction_id' },
+}
 
 const FFMPEG_URL = 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz'
 
@@ -17,19 +26,42 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'invalid json' }, { status: 400 })
   }
 
-  const { table, id, url, bucket, storagePath } = (body || {}) as Record<string, unknown>
-  if (
-    typeof table !== 'string' || !ALLOWED_TABLES.includes(table as AllowedTable) ||
-    typeof id !== 'string' || typeof url !== 'string' ||
-    typeof bucket !== 'string' || typeof storagePath !== 'string'
-  ) {
+  const { table, id } = (body || {}) as Record<string, unknown>
+  if (typeof table !== 'string' || !ALLOWED_TABLES.includes(table as AllowedTable) || typeof id !== 'string') {
     return NextResponse.json({ ok: false, error: 'missing or invalid fields' }, { status: 400 })
   }
+  const { bucket, parent, fk } = TABLE_META[table as AllowedTable]
+
+  const userClient = await createUserClient()
+  const { data: { user } } = await userClient.auth.getUser()
+  if (!user) return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 })
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
+
+  const { data } = await supabase.from(table).select(`url, ${fk}`).eq('id', id).maybeSingle()
+  const video = data as unknown as Record<string, unknown> | null
+  const parentId = video?.[fk]
+  if (!video || typeof parentId !== 'string') {
+    return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
+  }
+  const [{ data: owner }, { data: profile }] = await Promise.all([
+    supabase.from(parent).select('owner_id').eq('id', parentId).maybeSingle(),
+    supabase.from('profiles').select('role').eq('id', user.id).maybeSingle(),
+  ])
+  if (owner?.owner_id !== user.id && profile?.role !== 'admin') {
+    return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+  }
+
+  // Only transcode files that already live in this project's public bucket.
+  const url = String(video.url ?? '')
+  const prefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/`
+  if (!url.startsWith(prefix) || url.endsWith('_h264.mp4') || url.includes('..')) {
+    return NextResponse.json({ ok: false, error: 'invalid source' }, { status: 400 })
+  }
+  const storagePath = decodeURIComponent(url.slice(prefix.length))
 
   let sandbox: Sandbox | null = null
   try {

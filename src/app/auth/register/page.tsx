@@ -58,7 +58,7 @@ function PasswordInput({ id, name, value, onChange }: {
         className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-600 pr-10" />
       <button type="button" onClick={toggle}
         aria-label={show ? 'הסתר סיסמה' : 'הצג סיסמה'}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
         {show ? <IconEyeOff className="w-4 h-4" aria-hidden="true" /> : <IconEye className="w-4 h-4" aria-hidden="true" />}
       </button>
     </div>

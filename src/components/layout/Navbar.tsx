@@ -145,7 +145,7 @@ export function Navbar() {
       if (navRef.current && !navRef.current.contains(e.target as Node)) setActiveMenu(null)
     }
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setActiveMenu(null)
+      if (e.key === 'Escape') { setActiveMenu(null); setMobileOpen(false) }
     }
     document.addEventListener('mousedown', handleClick)
     document.addEventListener('keydown', handleKeyDown)
@@ -512,7 +512,7 @@ export function NavbarAuth({ userName, role }: { userName: string; role: 'guest'
       <nav className="max-w-7xl mx-auto px-4">
         <div className="relative flex items-center h-[64px] sm:h-[85px]">
           <Link href="/" className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
-            <Image src="/logo.png" alt="zimmer.club" width={1408} height={542} priority className="logo-shine"
+            <Image src="/logo.png" alt="zimmer.club" width={1408} height={542} priority sizes="180px" className="logo-shine"
               style={{ height: 'clamp(48px, 8vw, 68px)', width: 'auto' }} />
           </Link>
           <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">

@@ -86,7 +86,9 @@ export async function GET(request: NextRequest) {
 
   const redirectParam = requestUrl.searchParams.get('redirect')
   const pendingRedirect = request.cookies.get('pending_redirect')?.value
-  const destination = redirectParam || pendingRedirect || metaRedirect || '/'
+  const requested = redirectParam || pendingRedirect || metaRedirect || '/'
+  // Same-site paths only: blocks open redirects like ?redirect=https://evil.com or //evil.com
+  const destination = requested.startsWith('/') && !requested.startsWith('//') && !requested.startsWith('/\\') ? requested : '/'
 
   const response = NextResponse.redirect(new URL(destination, request.url))
   response.cookies.set('pending_role', '', { maxAge: 0, path: '/' })

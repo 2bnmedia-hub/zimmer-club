@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'קרוואן מאובזר', 'נסיעה בקרוואן', 'טיול בקרוואן ישראל', 'glamping israel',
   ],
   alternates: { canonical: 'https://www.zimmer.club/caravans' },
-  openGraph: { title: 'קרוואנים וגלמפינג בישראל | zimmer.club', description: 'קרוואנים מאובזרים וגלמפינג — לינה ייחודית בטבע ברחבי ישראל.', url: 'https://www.zimmer.club/caravans', locale: 'he_IL', type: 'website' },
+  openGraph: { images: ['https://www.zimmer.club/opengraph-image'], title: 'קרוואנים וגלמפינג בישראל | zimmer.club', description: 'קרוואנים מאובזרים וגלמפינג — לינה ייחודית בטבע ברחבי ישראל.', url: 'https://www.zimmer.club/caravans', locale: 'he_IL', type: 'website' },
 }
 
 export default function CaravansLayout({ children }: { children: React.ReactNode }) {

@@ -39,7 +39,7 @@ const nextConfig = {
               "img-src 'self' data: blob: https:",
               "media-src 'self' blob: https:",
               "font-src 'self' https://fonts.gstatic.com https://cdn.userway.org",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://maps.googleapis.com https://*.google.com https://cdn.userway.org https://*.userway.org",
+              "connect-src 'self' https://fonts.googleapis.com https://*.supabase.co wss://*.supabase.co https://api.resend.com https://maps.googleapis.com https://*.google.com https://cdn.userway.org https://*.userway.org",
               "frame-src https://maps.google.com https://www.google.com https://www.youtube.com https://player.vimeo.com https://cdn.userway.org",
               "object-src 'none'",
               "base-uri 'self'",
